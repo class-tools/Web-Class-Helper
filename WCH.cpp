@@ -1,5 +1,5 @@
 /*
-    Web-Class-Helper v1.0.1
+    Web-Class-Helper v1.0.5
     Under MIT License
     Class Tools Develop Team (jsh-jsh ren-yc)
 */
@@ -10,16 +10,18 @@
 #include <bits/stdc++.h>
 #include "WCH.h"
 using namespace std;
-struct TalkDate{
+struct TalkDate
+{
     int Year;
     int Month;
     int Day;
     int Hour;
     int Minute;
     int Second;
+    int WeekDay;
     string Name;
 };
-multimap<int,pair<int,string> > mm;
+multimap<int, pair<int, string>> mm;
 TalkDate GetTime();
 void PrintTime(TalkDate);
 void PrintError();
@@ -31,6 +33,7 @@ void HideWindow(bool);
 bool JudgeKey();
 void Game();
 string op;
+string UserName;
 string Weekdayname[7] = {
     "Sunday.txt",
     "Monday.txt",
@@ -40,37 +43,40 @@ string Weekdayname[7] = {
     "Friday.txt",
     "Saturday.txt"};
 int n;
-bool fgh=true;
+bool fgh = true;
 ifstream fin;
 ofstream fout;
-int main(){
+int main()
+{
     system("mode con cols=100 lines=20");
     SetConsoleTitle("Web-Class-Helper");
-    TalkDate q=GetTime();
+    TalkDate q = GetTime();
     if (q.Month == 1 || q.Month == 2)
     {
         q.Month += 12;
         q.Year--;
     }
-    int Week = (q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400+1) % 7;
+    int Week = (q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7;
     HideWindow(1);
     fin.open(Weekdayname[Week].c_str());
-    fin>>n;
-    for(int i=1;i<=n;i++){
-        int h=0;
-        int m=0;
-        string tname="NULL";
-        fin>>h>>m>>tname;
-        mm.emplace(make_pair(h,make_pair(m,tname)));
+    fin >> n;
+    for (int i = 1; i <= n; i++)
+    {
+        int h = 0;
+        int m = 0;
+        string tname = "NULL";
+        fin >> h >> m >> tname;
+        mm.emplace(make_pair(h, make_pair(m, tname)));
     }
     printf("Web-Class-Helper 1.0.1\n");
     printf("Copyright (c) 2022 Class Tools Develop Team.\n");
     printf("Type 'help' to get help.\n\n");
     printf("Please input your username: ");
-    cin >> op;
+    cin >> UserName;
     printf("\n");
-    while(op!="quit"){
-        int h=GetTime().Hour;
+    while (op != "quit")
+    {
+        int h = GetTime().Hour;
         for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++)
         {
             if ((it->second).first == GetTime().Minute && ((it->second).second).size() > 0)
@@ -79,29 +85,38 @@ int main(){
                 MessageBox(NULL, ((it->second).second).c_str(), "Web-Class-Helper", MB_OK);
             }
         }
-        if(JudgeKey()){
+        if (JudgeKey())
+        {
             HideWindow(1);
-            fgh=true;
+            fgh = true;
         }
-        if (fgh){
-            printf("$ ");
+        if (fgh)
+        {
+            //cout<<UserName;
+            GetPath();
+            cout<<">";
             cin >> op;
         }
-        if(op=="add"){
-            int h=0;
-            int m=0;
-            string tname="NULL";
-            scanf("%d%d",&h,&m);
-            cin>>tname;
-            if(h>24||m>=60||h<1||m<0){
+        if (op == "add")
+        {
+            int h = 0;
+            int m = 0;
+            string tname = "NULL";
+            scanf("%d%d", &h, &m);
+            cin >> tname;
+            if (h > 24 || m >= 60 || h < 1 || m < 0)
+            {
                 PrintError();
             }
-            else{
+            else
+            {
                 n++;
                 mm.emplace(make_pair(h, make_pair(m, tname)));
                 PrintOK();
             }
-        }else if(op=="help"){
+        }
+        else if (op == "help")
+        {
             printf("Commands:\n");
             printf("1.quit (Quit this program)\n");
             printf("2.add hour minute name (Add clock at hour:minute)\n");
@@ -111,27 +126,33 @@ int main(){
             printf("6.hide (Hide the command line window)\n");
             printf("7.game (Guessing game)\n");
             printf("8.time (Get time at once)\n");
-        }else if(op=="delete"){
-            int h=0;
-            int m=0;
-            int flag=0;
-            string tname="NULL";
-            scanf("%d%d",&h,&m);
-            cin>>tname;
+            printf("9.pi (Screenshots)\n");
+        }
+        else if (op == "delete")
+        {
+            int h = 0;
+            int m = 0;
+            int flag = 0;
+            string tname = "NULL";
+            scanf("%d%d", &h, &m);
+            cin >> tname;
             for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++)
             {
                 if ((it->second).first == m && ((it->second).second) == tname)
                 {
                     mm.erase(it);
                     PrintOK();
-                    flag=1;
+                    flag = 1;
                     n--;
                 }
             }
-            if(!flag){
+            if (!flag)
+            {
                 PrintError();
             }
-        }else if(op=="change"){
+        }
+        else if (op == "change")
+        {
             int h = 0;
             int m = 0;
             int flag = 0;
@@ -151,23 +172,37 @@ int main(){
             {
                 PrintError();
             }
-        }else if(op=="ow"){
+        }
+        else if (op == "ow")
+        {
             GetGet();
-        }else if(op=="hide"){
+        }
+        else if (op == "hide")
+        {
             HideWindow(0);
-            fgh=false;
-        }else if(op=="game"){
+            fgh = false;
+        }
+        else if (op == "game")
+        {
             Game();
-        }else if(op=="time"){
+        }
+        else if (op == "time")
+        {
             PrintTime(GetTime());
-        }else{
+        }
+        else if (op=="pi"){
+            PutPicture();
+        }
+        else
+        {
             printf("%s: The command %s is not recognized as a command.\n", op.c_str(), op.c_str());
         }
     }
     fout.open(Weekdayname[Week].c_str());
-    fout<<n<<endl;
-    for(auto it=mm.begin();it!=mm.end();it++){
-        fout<<(it->first)<<" "<<(it->second).first<<" "<<(it->second).second<<endl;
+    fout << n << endl;
+    for (auto it = mm.begin(); it != mm.end(); it++)
+    {
+        fout << (it->first) << " " << (it->second).first << " " << (it->second).second << endl;
     }
     Bye();
     return 0;
@@ -185,7 +220,7 @@ TalkDate GetTime()
     NowTime.Hour = ptminfo->tm_hour;
     NowTime.Minute = ptminfo->tm_min;
     NowTime.Second = ptminfo->tm_sec;
-    NowTime.Name="NULL";
+    NowTime.Name = "NULL";
     return NowTime;
 }
 void Bye()
@@ -200,7 +235,8 @@ void PrintTime(TalkDate a)
 {
     printf("%d/%02d/%02d %02d %02d %02d\n", a.Year, a.Month, a.Day, a.Hour, a.Minute, a.Second);
 }
-void PrintError(){
+void PrintError()
+{
     printf("This input or code is wrong. Please see your code.\n");
 }
 inline void in_data(string fname)
@@ -219,36 +255,45 @@ void HideWindow(bool ju)
         ShowWindow(hwnd, ju);
     }
 }
-bool JudgeKey(){
-    int a=GetKeyState(VK_CONTROL);
-    int b=GetKeyState(VK_DOWN);
-    if(a<0&&b<0){
+bool JudgeKey()
+{
+    int a = GetKeyState(VK_CONTROL);
+    int b = GetKeyState(VK_DOWN);
+    if (a < 0 && b < 0)
+    {
         return true;
     }
-    else{
+    else
+    {
         return false;
     }
 }
-void Game(){
+void Game()
+{
     srand(time(0));
-    int n=rand()%10000+1;
-    int z=0;
-    while(z!=n){
+    int n = rand() % 10000 + 1;
+    int z = 0;
+    while (z != n)
+    {
         printf("Please input your number: ");
-        cin>>z;
-        if(z>n){
+        cin >> z;
+        if (z > n)
+        {
             printf("The answer is smaller.\n");
         }
-        if(z<n){
+        if (z < n)
+        {
             printf("The answer is bigger.\n");
         }
-        if(z==-100000){
-            return ;
+        if (z == -100000)
+        {
+            return;
         }
     }
     printf("The answer is %d. You WIN!!!\n", n);
-    return ;
+    return;
 }
-void PrintOK(){
+void PrintOK()
+{
     printf("OK!\n");
 }
