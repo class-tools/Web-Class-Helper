@@ -1,5 +1,5 @@
 /*
-    Web-Class-Helper v1.0.5
+    Web-Class-Helper v1.0.6
     Under MIT License
     Class Tools Develop Team (jsh-jsh ren-yc)
 */
@@ -32,13 +32,14 @@ inline void out_data(string);
 void HideWindow(bool);
 bool JudgeKey();
 void Game();
+bool mode = false;
 string op;
 string UserName;
 string Weekdayname[7] = {
     "Sunday.txt",
     "Monday.txt",
     "Tuesday.txt",
-    "Wednesday.txt"
+    "Wednesday.txt",
     "Thursday.txt",
     "Friday.txt",
     "Saturday.txt"};
@@ -68,7 +69,7 @@ int main()
         fin >> h >> m >> tname;
         mm.emplace(make_pair(h, make_pair(m, tname)));
     }
-    printf("Web-Class-Helper 1.0.1\n");
+    printf("Web-Class-Helper 1.0.6\n");
     printf("Copyright (c) 2022 Class Tools Develop Team.\n");
     printf("Type 'help' to get help.\n\n");
     printf("Please input your username: ");
@@ -92,9 +93,7 @@ int main()
         }
         if (fgh)
         {
-            //cout<<UserName;
-            GetPath();
-            cout<<">";
+            GetPath(mode, UserName);
             cin >> op;
         }
         if (op == "add")
@@ -127,6 +126,7 @@ int main()
             printf("7.game (Guessing game)\n");
             printf("8.time (Get time at once)\n");
             printf("9.pi (Screenshots)\n");
+            printf("10.mode cmd-mode (Switch command line mode 1.cmd 2.bash)");
         }
         else if (op == "delete")
         {
@@ -193,16 +193,34 @@ int main()
         else if (op=="pi"){
             PutPicture();
         }
+        else if (op=="mode"){
+            string tmp;
+            cin >> tmp;
+            if (tmp=="cmd"){
+                mode=true;
+                printf("OK!\n\n");
+            }
+            else if (tmp=="bash"){
+                mode=false;
+                printf("OK!\n\n");
+            }
+            else{
+                printf("Unknown mode.\n\n");
+            }
+        }
         else
         {
-            printf("%s: The command %s is not recognized as a command.\n", op.c_str(), op.c_str());
+            printf("%s: The command %s is not recognized as a command.\n\n", op.c_str(), op.c_str());
         }
     }
-    fout.open(Weekdayname[Week].c_str());
-    fout << n << endl;
-    for (auto it = mm.begin(); it != mm.end(); it++)
+    if(n != 0)
     {
-        fout << (it->first) << " " << (it->second).first << " " << (it->second).second << endl;
+        fout.open(Weekdayname[Week].c_str());
+        fout << n << endl;
+        for (auto it = mm.begin(); it != mm.end(); it++)
+        {
+            fout << (it->first) << " " << (it->second).first << " " << (it->second).second << endl;
+        }
     }
     Bye();
     return 0;
@@ -225,19 +243,19 @@ TalkDate GetTime()
 }
 void Bye()
 {
-    printf("Have a good time. Good bye.\n");
+    printf("Have a good time. Good bye.\n\n");
 }
 void Lazy()
 {
-    printf("This code is very lazy, So it didn't work.\n");
+    printf("This code is very lazy, So it didn't work.\n\n");
 }
 void PrintTime(TalkDate a)
 {
-    printf("%d/%02d/%02d %02d %02d %02d\n", a.Year, a.Month, a.Day, a.Hour, a.Minute, a.Second);
+    printf("%d/%02d/%02d %02d %02d %02d\n\n", a.Year, a.Month, a.Day, a.Hour, a.Minute, a.Second);
 }
 void PrintError()
 {
-    printf("This input or code is wrong. Please see your code.\n");
+    printf("This input or code is wrong. Please see your code.\n\n");
 }
 inline void in_data(string fname)
 {
@@ -290,10 +308,10 @@ void Game()
             return;
         }
     }
-    printf("The answer is %d. You WIN!!!\n", n);
+    printf("The answer is %d. You WIN!!!\n\n", n);
     return;
 }
 void PrintOK()
 {
-    printf("OK!\n");
+    printf("OK!\n\n");
 }
