@@ -1,3 +1,8 @@
+/*
+    Web-Class-Helper Header File v1.0.6
+    Under MIT License
+    Class Tools Develop Team (jsh-jsh ren-yc)
+*/
 #include <stdio.h>
 #include <windows.h>
 #include <conio.h>
@@ -26,9 +31,9 @@ char name[32];
 int cnt[8];
 void GetGet()
 {
-    int uid, len, i = 0;
+    int len;
     DWORD unused;
-    char url[128], user[16], *file, *ptr;
+    char url[128], *file;
     HANDLE hFile;
     hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     char ss[128] = "https://v1.hitokoto.cn/?encode=text";
@@ -42,17 +47,29 @@ void GetGet()
     CloseHandle(hFile);
     UTF8ToANSI(file);
     memset(cnt, 0, sizeof(cnt));
-    cout << file << endl;
+    cout << file << endl << endl;
     DeleteFile("download.tmp");
     delete[] file;
 }
-void GetPath(){
+void GetPath(bool mode, string UserName){
     char ExeFile[256];
     _getcwd(ExeFile, 256);
-    printf("%s", ExeFile);
+    if (mode)
+    {
+        cout<<ExeFile;
+        cout<<"> ";
+    }
+    else
+    {
+        string tmp;
+        tmp = ExeFile;
+        tmp.replace(1, 2, "\\");
+        cout<<UserName<<"@\\"<<tmp<<endl;
+        cout<<"$ ";
+    }
 }
 void PutPicture(){
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
     keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP,0);
-    cout << "The picture is in the clipboard"<<endl;
+    cout << "The picture is in the clipboard.\n\n"<<endl;
 }
