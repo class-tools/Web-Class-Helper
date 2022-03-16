@@ -190,30 +190,35 @@ int main()
         {
             PrintTime(GetTime());
         }
-        else if (op=="pi"){
+        else if (op == "pi")
+        {
             PutPicture();
         }
-        else if (op=="mode"){
+        else if (op == "mode")
+        {
             string tmp;
             cin >> tmp;
-            if (tmp=="cmd"){
-                mode=true;
+            if (tmp == "cmd")
+            {
+                mode = true;
                 printf("OK!\n\n");
             }
-            else if (tmp=="bash"){
-                mode=false;
+            else if (tmp == "bash")
+            {
+                mode = false;
                 printf("OK!\n\n");
             }
-            else{
+            else
+            {
                 printf("Unknown mode.\n\n");
             }
         }
-        else
+        else if(op!="quit")
         {
             printf("%s: The command %s is not recognized as a command.\n\n", op.c_str(), op.c_str());
         }
     }
-    if(n != 0)
+    if (n != 0)
     {
         fout.open(Weekdayname[Week].c_str());
         fout << n << endl;
