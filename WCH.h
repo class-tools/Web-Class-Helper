@@ -3,6 +3,7 @@
 #include <conio.h>
 #include <sstream>
 #include <bits/stdc++.h>
+#include <direct.h>
 using namespace std;
 #ifdef URLDownloadToFile
 #undef URLDownloadToFile
@@ -25,9 +26,9 @@ char name[32];
 int cnt[8];
 void GetGet()
 {
-    int len;
+    int uid, len, i = 0;
     DWORD unused;
-    char url[128], *file;
+    char url[128], user[16], *file, *ptr;
     HANDLE hFile;
     hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     char ss[128] = "https://v1.hitokoto.cn/?encode=text";
@@ -44,4 +45,14 @@ void GetGet()
     cout << file << endl;
     DeleteFile("download.tmp");
     delete[] file;
+}
+void GetPath(){
+    char ExeFile[256];
+    _getcwd(ExeFile, 256);
+    printf("%s", ExeFile);
+}
+void PutPicture(){
+    keybd_event(VK_SNAPSHOT, 0, 0, 0);
+    keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP,0);
+    cout << "The picture is in the clipboard"<<endl;
 }
