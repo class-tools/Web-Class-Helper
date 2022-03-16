@@ -25,9 +25,9 @@ char name[32];
 int cnt[8];
 void GetGet()
 {
-    int uid, len, i = 0;
+    int len;
     DWORD unused;
-    char url[128], user[16], *file, *ptr;
+    char url[128], *file;
     HANDLE hFile;
     hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     char ss[128] = "https://v1.hitokoto.cn/?encode=text";
