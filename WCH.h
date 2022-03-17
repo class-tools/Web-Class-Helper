@@ -1,5 +1,5 @@
 /*
-    Web-Class-Helper Header File v1.0.6
+    Web-Class-Helper Header File v1.0.7
     Under MIT License
     Class Tools Develop Team (jsh-jsh ren-yc)
 */
