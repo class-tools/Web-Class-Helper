@@ -1,5 +1,5 @@
 /*
-    Web-Class-Helper Header File v1.0.6
+    Web-Class-Helper Header File v1.0.7
     Under MIT License
     Class Tools Develop Team (jsh-jsh ren-yc)
 */
@@ -64,8 +64,14 @@ void GetPath(bool mode, string UserName){
         string tmp;
         tmp = ExeFile;
         tmp.replace(1, 2, "\\");
-        cout<<UserName<<"@\\"<<tmp<<endl;
-        cout<<"$ ";
+        for (long long unsigned int i = 0; i < tmp.size(); i++)
+        {
+            if (isupper(tmp[i]))
+            {
+                tmp[i] = tolower(tmp[i]);
+            }
+        }
+        cout << UserName << "@\\" << tmp << "$ ";
     }
 }
 void PutPicture(){

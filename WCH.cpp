@@ -1,6 +1,6 @@
 /*
-    Web-Class-Helper v1.0.6
-    Under MIT License
+    Web-Class-Helper v1.0.7
+    This source code file is under MIT License
     Class Tools Develop Team (jsh-jsh ren-yc)
 */
 #include <stdio.h>
@@ -69,7 +69,7 @@ int main()
         fin >> h >> m >> tname;
         mm.emplace(make_pair(h, make_pair(m, tname)));
     }
-    printf("Web-Class-Helper 1.0.6\n");
+    printf("Web-Class-Helper 1.0.7\n");
     printf("Copyright (c) 2022 Class Tools Develop Team.\n");
     printf("Type 'help' to get help.\n\n");
     printf("Please input your username: ");
@@ -126,7 +126,8 @@ int main()
             printf("7.game (Guessing game)\n");
             printf("8.time (Get time at once)\n");
             printf("9.pi (Screenshots)\n");
-            printf("10.mode cmd-mode (Switch command line mode 1.cmd 2.bash)");
+            printf("10.mode cmd-mode (Switch command line mode 1.cmd 2.bash)\n");
+            printf("11.speedtest (Speed test)\n\n");
         }
         else if (op == "delete")
         {
@@ -213,9 +214,21 @@ int main()
                 printf("Unknown mode.\n\n");
             }
         }
-        else if(op!="quit")
+        else if (op == "speedtest")
         {
-            printf("%s: The command %s is not recognized as a command.\n\n", op.c_str(), op.c_str());
+            system("start speedtest.exe");
+            printf("OK!\n\n");
+        }
+        else if (op!="quit")
+        {
+            printf("Is it a system command? (Y/N): ");
+            char tmp;
+            cin >> tmp;
+            if (tmp == 'Y')
+            {
+                system(op.c_str());
+            }
+            cout << endl;
         }
     }
     if (n != 0)
