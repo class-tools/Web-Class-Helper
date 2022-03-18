@@ -1,7 +1,8 @@
 /*
-    Web-Class-Helper v1.0.7
-    This source code file is under MIT License
-    Class Tools Develop Team (jsh-jsh ren-yc)
+Web-Class-Helper 1.0.8
+This source code file is under MIT License.
+Copyright (c) 2022 Class Tools Develop Team
+Contributors: jsh-jsh ren-yc
 */
 #include <stdio.h>
 #include <windows.h>
@@ -10,6 +11,7 @@
 #include <bits/stdc++.h>
 #include "WCH.h"
 using namespace std;
+
 struct TalkDate
 {
     int Year;
@@ -69,7 +71,7 @@ int main()
         fin >> h >> m >> tname;
         mm.emplace(make_pair(h, make_pair(m, tname)));
     }
-    printf("Web-Class-Helper 1.0.7\n");
+    printf("Web-Class-Helper " + GetVersion().c_str() + "\n");
     printf("Copyright (c) 2022 Class Tools Develop Team.\n");
     printf("Type 'help' to get help.\n\n");
     printf("Please input your username: ");

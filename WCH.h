@@ -9,6 +9,7 @@
 #include <sstream>
 #include <bits/stdc++.h>
 #include <direct.h>
+#include "WCH-yaml.h"
 using namespace std;
 #ifdef URLDownloadToFile
 #undef URLDownloadToFile
@@ -78,4 +79,21 @@ void PutPicture(){
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
     keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP,0);
     cout << "The picture is in the clipboard.\n\n"<<endl;
+}
+
+struct NODE1
+{
+    string a, b, c;
+};
+string GetMode()
+{
+    return ReadSettingsFile().a;
+}
+string GetLang()
+{
+    return ReadSettingsFile().b;
+}
+string GetVersion()
+{
+    return ReadSettingsFile().c;
 }

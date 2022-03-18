@@ -1,4 +1,5 @@
 .vscode/
+.vs/
 genexe/
 WCH.exe
 *.txt
