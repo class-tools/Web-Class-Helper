@@ -73,14 +73,13 @@ void GetPath(bool mode, string UserName) {
     }
 }
 
-void PutPicture() {
+void PutPicture(string lang, string output) {
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
     keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP,0);
-    cout << "The picture is in the clipboard.\n\n" << endl;
+    cout << output << endl << endl;
 }
 
-string UTF8ToGB(const char* str)
-{
+string UTF8ToGB(const char* str) {
     string result;
     WCHAR *strSrc;
     LPSTR szRes;
@@ -112,12 +111,13 @@ string GetYaml(string cmdname, string getlang) {
     remove("yaml.tmp");
     return res;
 }
-void SaveImg(string Path){
+
+void SaveImg(string Path) {
     ofstream fout;
-    fout.open("b.txt");
-    fout << Path ;
+    fout.open("img.tmp");
+    fout << Path << endl;
     fout.close();
-    system("start img.py");
+    system("python img.py");
     Sleep(500);
-    remove("b.txt");
+    remove("img.tmp");
 }

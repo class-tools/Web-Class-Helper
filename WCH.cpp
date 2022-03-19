@@ -50,9 +50,9 @@ ifstream fin;
 ofstream fout;
 
 bool mode = false;
-string lang = "Undefined";
+string lang = "Unknown";
 string version = "Unknown";
-string ImagePath ="NULL";
+string ImagePath = "Unknown";
 int main()
 {
     Init();
@@ -200,8 +200,11 @@ int main()
         }
         else if (op == "pi")
         {
-        	HideWindow(0);
-            PutPicture();
+            int s;
+            cin >> s;
+            HideWindow(0);
+            sleep(s);
+            PutPicture(lang, GetYaml("PicClip", lang));
             SaveImg(ImagePath);
             HideWindow(1);
         }
@@ -316,23 +319,30 @@ void Game()
 {
     srand(time(0));
     int n = rand() % 10000 + 1;
-    int z = 0;
-    while (z != n)
+    string z = "0";
+    try
     {
-        cout << GetYaml("InputNumber", lang);
-        cin >> z;
-        if (z > n)
+        while (stoi(z) != n)
         {
-            cout << GetYaml("Smaller", lang) << endl;
+            cout << GetYaml("InputNumber", lang);
+            cin >> z;
+            if (z[0] == '-' || z[0] == '0' || (z.size() > 5 && z != "10000"))
+            {
+                cout << GetYaml("OutOfRange", lang) << endl;
+            }
+            else if (stoi(z) > n)
+            {
+                cout << GetYaml("Smaller", lang) << endl;
+            }
+            else if (stoi(z) < n)
+            {
+                cout << GetYaml("Bigger", lang) << endl;
+            }
         }
-        if (z < n)
-        {
-            cout << GetYaml("Bigger", lang) << endl;
-        }
-        if (z == -100000)
-        {
-            return;
-        }
+    }
+    catch (...)
+    {
+        return;
     }
     printf(GetYaml("Win", lang).c_str(), n);
     return;
@@ -343,10 +353,12 @@ void PrintOK()
     printf("OK!\n\n");
 }
 
-void Init()
-{
+void Init() {
+    char tmp1[256];
+    getcwd(tmp1, 256);
+    string tmp2 = tmp1;
     lang = GetYaml("Language", "None");
     mode = (GetYaml("CommandMode", "None") == "bash" ? false : true);
     version = GetYaml("Version", "None");
-    ImagePath=GetYaml("ImagePath","None");
+    ImagePath = (GetYaml("ImagePath", "None") != "NULL" ? GetYaml("ImagePath", "None") : tmp2);
 }

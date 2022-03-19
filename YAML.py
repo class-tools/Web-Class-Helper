@@ -25,5 +25,5 @@ else:
     res = yaml.load(LanguageFile.read(), Loader = yaml.FullLoader)[command.split()[0]]
     LanguageFile.close()
 File = open('yaml.tmp', 'w', encoding = 'utf-8')
-File.write(res)
+File.write("NULL" if res == None else res)
 File.close()
