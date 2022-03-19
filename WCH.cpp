@@ -1,8 +1,7 @@
 /*
-Web-Class-Helper 1.0.8
-This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc
+    Web-Class-Helper v1.0.7
+    This source code file is under MIT License
+    Class Tools Develop Team (jsh-jsh ren-yc)
 */
 #include <stdio.h>
 #include <windows.h>
@@ -11,7 +10,6 @@ Contributors: jsh-jsh ren-yc
 #include <bits/stdc++.h>
 #include "WCH.h"
 using namespace std;
-
 struct TalkDate
 {
     int Year;
@@ -28,12 +26,13 @@ TalkDate GetTime();
 void PrintTime(TalkDate);
 void PrintError();
 void PrintOK();
-void Init();
+void Bye();
 inline void in_data(string);
 inline void out_data(string);
 void HideWindow(bool);
 bool JudgeKey();
 void Game();
+bool mode = false;
 string op;
 string UserName;
 string Weekdayname[7] = {
@@ -48,16 +47,10 @@ int n;
 bool fgh = true;
 ifstream fin;
 ofstream fout;
-
-bool mode = false;
-string lang = "Unknown";
-string version = "Unknown";
-string ImagePath = "Unknown";
 int main()
 {
-    Init();
     system("mode con cols=100 lines=20");
-    SetConsoleTitle(GetYaml("Title", lang).c_str());
+    SetConsoleTitle("Web-Class-Helper");
     TalkDate q = GetTime();
     if (q.Month == 1 || q.Month == 2)
     {
@@ -76,10 +69,10 @@ int main()
         fin >> h >> m >> tname;
         mm.emplace(make_pair(h, make_pair(m, tname)));
     }
-    cout << "Web-Class-Helper " + version << endl;
-    cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-    cout << "Type 'help' to get help." << endl << endl;
-    cout << "Username: ";
+    printf("Web-Class-Helper 1.0.7\n");
+    printf("Copyright (c) 2022 Class Tools Develop Team.\n");
+    printf("Type 'help' to get help.\n\n");
+    printf("Please input your username: ");
     cin >> UserName;
     printf("\n");
     while (op != "quit")
@@ -90,7 +83,7 @@ int main()
             if ((it->second).first == GetTime().Minute && ((it->second).second).size() > 0)
             {
                 printf("\a");
-                MessageBox(NULL, ((it->second).second).c_str(), GetYaml("Title", lang).c_str(), MB_OK);
+                MessageBox(NULL, ((it->second).second).c_str(), "Web-Class-Helper", MB_OK);
             }
         }
         if (JudgeKey())
@@ -123,18 +116,18 @@ int main()
         }
         else if (op == "help")
         {
-            cout << GetYaml("Quit", lang) << endl;
-            cout << GetYaml("Add", lang) << endl;
-            cout << GetYaml("Delete", lang) << endl;
-            cout << GetYaml("Change", lang) << endl;
-            cout << GetYaml("Ow", lang) << endl;
-            cout << GetYaml("Hide", lang) << endl;
-            cout << GetYaml("Game", lang) << endl;
-            cout << GetYaml("Time", lang) << endl;
-            cout << GetYaml("Pi", lang) << endl;
-            cout << GetYaml("Mode", lang) << endl;
-            cout << GetYaml("Cs", lang) << endl;
-            cout << endl;
+            printf("Commands:\n");
+            printf("1.quit (Quit this program)\n");
+            printf("2.add hour minute name (Add clock at hour:minute)\n");
+            printf("3.delete hour minute name (Delete clock at hour:minute)\n");
+            printf("4.change hour minute name (Change clock at hour:minute)\n");
+            printf("5.ow (Get a sentence) **From web**\n");
+            printf("6.hide (Hide the command line window)\n");
+            printf("7.game (Guessing game)\n");
+            printf("8.time (Get time at once)\n");
+            printf("9.pi (Screenshots)\n");
+            printf("10.mode cmd-mode (Switch command line mode 1.cmd 2.bash)\n");
+            printf("11.speedtest (Speed test)\n\n");
         }
         else if (op == "delete")
         {
@@ -200,13 +193,13 @@ int main()
         }
         else if (op == "pi")
         {
-            int s;
-            cin >> s;
-            HideWindow(0);
-            sleep(s);
-            PutPicture(lang, GetYaml("PicClip", lang));
-            SaveImg(ImagePath);
+        	HideWindow(0);
+            PutPicture();
             HideWindow(1);
+            char ExeFile[256];
+    		_getcwd(ExeFile, 256);
+    		string a=ExeFile;
+            SaveImg(a);
         }
         else if (op == "mode")
         {
@@ -215,26 +208,26 @@ int main()
             if (tmp == "cmd")
             {
                 mode = true;
-                PrintOK();
+                printf("OK!\n\n");
             }
             else if (tmp == "bash")
             {
                 mode = false;
-                PrintOK();
+                printf("OK!\n\n");
             }
             else
             {
-                cout << GetYaml("UnknownMode", lang) << endl;
+                printf("Unknown mode.\n\n");
             }
         }
-        else if (op == "cs")
+        else if (op == "speedtest")
         {
-            system("python speedtest.py");
-            PrintOK();
+            system("start speedtest.exe");
+            printf("OK!\n\n");
         }
         else if (op!="quit")
         {
-            cout << GetYaml("Error", lang);
+            printf("Is it a system command? (Y/N): ");
             char tmp;
             cin >> tmp;
             if (tmp == 'Y')
@@ -253,6 +246,7 @@ int main()
             fout << (it->first) << " " << (it->second).first << " " << (it->second).second << endl;
         }
     }
+    Bye();
     return 0;
 }
 TalkDate GetTime()
@@ -271,27 +265,30 @@ TalkDate GetTime()
     NowTime.Name = "NULL";
     return NowTime;
 }
-
+void Bye()
+{
+    printf("Have a good time. Good bye.\n\n");
+}
+void Lazy()
+{
+    printf("This code is very lazy, So it didn't work.\n\n");
+}
 void PrintTime(TalkDate a)
 {
     printf("%d/%02d/%02d %02d %02d %02d\n\n", a.Year, a.Month, a.Day, a.Hour, a.Minute, a.Second);
 }
-
 void PrintError()
 {
-    cout << GetYaml("PrintError", lang) << endl << endl;
+    printf("This input or code is wrong. Please see your code.\n\n");
 }
-
 inline void in_data(string fname)
 {
     freopen(fname.c_str(), "r", stdin);
 }
-
 inline void out_data(string fname)
 {
     freopen(fname.c_str(), "w", stdout);
 }
-
 void HideWindow(bool ju)
 {
     HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
@@ -300,7 +297,6 @@ void HideWindow(bool ju)
         ShowWindow(hwnd, ju);
     }
 }
-
 bool JudgeKey()
 {
     int a = GetKeyState(VK_CONTROL);
@@ -314,51 +310,32 @@ bool JudgeKey()
         return false;
     }
 }
-
 void Game()
 {
     srand(time(0));
     int n = rand() % 10000 + 1;
-    string z = "0";
-    try
+    int z = 0;
+    while (z != n)
     {
-        while (stoi(z) != n)
+        printf("Please input your number: ");
+        cin >> z;
+        if (z > n)
         {
-            cout << GetYaml("InputNumber", lang);
-            cin >> z;
-            if (z[0] == '-' || z[0] == '0' || (z.size() > 5 && z != "10000"))
-            {
-                cout << GetYaml("OutOfRange", lang) << endl;
-            }
-            else if (stoi(z) > n)
-            {
-                cout << GetYaml("Smaller", lang) << endl;
-            }
-            else if (stoi(z) < n)
-            {
-                cout << GetYaml("Bigger", lang) << endl;
-            }
+            printf("The answer is smaller.\n");
+        }
+        if (z < n)
+        {
+            printf("The answer is bigger.\n");
+        }
+        if (z == -100000)
+        {
+            return;
         }
     }
-    catch (...)
-    {
-        return;
-    }
-    printf(GetYaml("Win", lang).c_str(), n);
+    printf("The answer is %d. You WIN!!!\n\n", n);
     return;
 }
-
 void PrintOK()
 {
     printf("OK!\n\n");
-}
-
-void Init() {
-    char tmp1[256];
-    getcwd(tmp1, 256);
-    string tmp2 = tmp1;
-    lang = GetYaml("Language", "None");
-    mode = (GetYaml("CommandMode", "None") == "bash" ? false : true);
-    version = GetYaml("Version", "None");
-    ImagePath = (GetYaml("ImagePath", "None") != "NULL" ? GetYaml("ImagePath", "None") : tmp2);
 }
