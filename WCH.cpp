@@ -319,23 +319,30 @@ void Game()
 {
     srand(time(0));
     int n = rand() % 10000 + 1;
-    int z = 0;
-    while (z != n)
+    string z = "0";
+    try
     {
-        cout << GetYaml("InputNumber", lang);
-        cin >> z;
-        if (z > n)
+        while (stoi(z) != n)
         {
-            cout << GetYaml("Smaller", lang) << endl;
+            cout << GetYaml("InputNumber", lang);
+            cin >> z;
+            if (z[0] == '-' || z[0] == '0' || (z.size() > 5 && z != "10000"))
+            {
+                cout << GetYaml("OutOfRange", lang) << endl;
+            }
+            else if (stoi(z) > n)
+            {
+                cout << GetYaml("Smaller", lang) << endl;
+            }
+            else if (stoi(z) < n)
+            {
+                cout << GetYaml("Bigger", lang) << endl;
+            }
         }
-        if (z < n)
-        {
-            cout << GetYaml("Bigger", lang) << endl;
-        }
-        if (z == -100000)
-        {
-            return;
-        }
+    }
+    catch (...)
+    {
+        return;
     }
     printf(GetYaml("Win", lang).c_str(), n);
     return;
