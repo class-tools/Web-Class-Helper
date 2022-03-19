@@ -112,3 +112,12 @@ string GetYaml(string cmdname, string getlang) {
     remove("yaml.tmp");
     return res;
 }
+void SaveImg(string Path){
+    ofstream fout;
+    fout.open("b.txt");
+    fout << Path ;
+    fout.close();
+    system("start img.py");
+    Sleep(500);
+    remove("b.txt");
+}
