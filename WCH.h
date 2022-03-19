@@ -1,8 +1,7 @@
 /*
-Web-Class-Helper Header File v1.0.8
-This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc
+    Web-Class-Helper Header File v1.0.7
+    Under MIT License
+    Class Tools Develop Team (jsh-jsh ren-yc)
 */
 #include <stdio.h>
 #include <windows.h>
@@ -52,13 +51,16 @@ void GetGet()
     DeleteFile("download.tmp");
     delete[] file;
 }
-
-void GetPath(bool mode, string UserName) {
+void GetPath(bool mode, string UserName){
     char ExeFile[256];
     _getcwd(ExeFile, 256);
-    if (mode) {
-        cout << ExeFile << "> ";
-    } else {
+    if (mode)
+    {
+        cout<<ExeFile;
+        cout<<"> ";
+    }
+    else
+    {
         string tmp;
         tmp = ExeFile;
         tmp.replace(1, 2, "\\");
@@ -72,52 +74,17 @@ void GetPath(bool mode, string UserName) {
         cout << UserName << "@\\" << tmp << "$ ";
     }
 }
-
-void PutPicture(string lang, string output) {
+void PutPicture(){
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
     keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP,0);
-    cout << output << endl << endl;
+    cout << "The picture is in the Path.\n\n"<<endl;
 }
-
-string UTF8ToGB(const char* str) {
-    string result;
-    WCHAR *strSrc;
-    LPSTR szRes;
-    int i = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
-    strSrc = new WCHAR[i + 1];
-    MultiByteToWideChar(CP_UTF8, 0, str, -1, strSrc, i);
-    i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);
-    szRes = new CHAR[i + 1];
-    WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);
-    result = szRes;
-    delete[]strSrc;
-    delete[]szRes;
-    return result;
-}
-
-string GetYaml(string cmdname, string getlang) {
-    ifstream fin;
-    ofstream fout;
-    fout.open("yaml.tmp");
-    fout << cmdname << " " << getlang << endl;
-    fout.close();
-    system("python YAML.py");
-    Sleep(500);
-    string res;
-    fin.open("yaml.tmp");
-    getline(fin, res);
-    res = UTF8ToGB(res.c_str()).c_str();
-    fin.close();
-    remove("yaml.tmp");
-    return res;
-}
-
 void SaveImg(string Path) {
     ofstream fout;
-    fout.open("img.tmp");
+    fout.open("img.txt");
     fout << Path << endl;
     fout.close();
-    system("python img.py");
+    system("start img.py");
     Sleep(500);
-    remove("img.tmp");
+    remove("img.txt");
 }
