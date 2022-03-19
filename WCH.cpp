@@ -52,7 +52,7 @@ ofstream fout;
 bool mode = false;
 string lang = "Undefined";
 string version = "Unknown";
-
+string ImagePath ="NULL";
 int main()
 {
     Init();
@@ -200,7 +200,10 @@ int main()
         }
         else if (op == "pi")
         {
+        	HideWindow(0);
             PutPicture();
+            SaveImg(ImagePath);
+            HideWindow(1);
         }
         else if (op == "mode")
         {
@@ -345,4 +348,5 @@ void Init()
     lang = GetYaml("Language", "None");
     mode = (GetYaml("CommandMode", "None") == "bash" ? false : true);
     version = GetYaml("Version", "None");
+    ImagePath=GetYaml("ImagePath","None");
 }
