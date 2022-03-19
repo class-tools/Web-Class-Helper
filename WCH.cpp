@@ -50,9 +50,9 @@ ifstream fin;
 ofstream fout;
 
 bool mode = false;
-string lang = "Undefined";
+string lang = "Unknown";
 string version = "Unknown";
-string ImagePath ="NULL";
+string ImagePath = "Unknown";
 int main()
 {
     Init();
@@ -200,8 +200,11 @@ int main()
         }
         else if (op == "pi")
         {
-        	HideWindow(0);
-            PutPicture();
+            int s;
+            cin >> s;
+            HideWindow(0);
+            sleep(s);
+            PutPicture(lang, GetYaml("PicClip", lang));
             SaveImg(ImagePath);
             HideWindow(1);
         }
@@ -343,10 +346,12 @@ void PrintOK()
     printf("OK!\n\n");
 }
 
-void Init()
-{
+void Init() {
+    char tmp1[256];
+    getcwd(tmp1, 256);
+    string tmp2 = tmp1;
     lang = GetYaml("Language", "None");
     mode = (GetYaml("CommandMode", "None") == "bash" ? false : true);
     version = GetYaml("Version", "None");
-    ImagePath=GetYaml("ImagePath","None");
+    ImagePath = (GetYaml("ImagePath", "None") != "NULL" ? GetYaml("ImagePath", "None") : tmp2);
 }
