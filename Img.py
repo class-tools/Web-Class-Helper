@@ -1,13 +1,13 @@
-'''
-Web-Class-Helper 1.0.8
-This source code File is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc
-'''
 import datetime
 from PIL import ImageGrab
+ts = datetime.datetime.now().timestamp()
+f=open("img.txt","r")
+s=f.read()
+s=s.strip("\n")
+s+="/"
+s+=str(ts)
+s+=".jpg"
+image = ImageGrab.grabclipboard() 
+image.save(s)
+f.close()
 
-# Main
-File = open("img.tmp", "r", encoding = 'utf-8')
-ImageGrab.grabclipboard().save(File.read().strip("\n") + "/" + str(datetime.datetime.now().timestamp()) + ".jpg")
-File.close()
