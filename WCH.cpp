@@ -28,13 +28,12 @@ TalkDate GetTime();
 void PrintTime(TalkDate);
 void PrintError();
 void PrintOK();
-void Bye();
+void Init();
 inline void in_data(string);
 inline void out_data(string);
 void HideWindow(bool);
 bool JudgeKey();
 void Game();
-bool mode = false;
 string op;
 string UserName;
 string Weekdayname[7] = {
@@ -49,10 +48,16 @@ int n;
 bool fgh = true;
 ifstream fin;
 ofstream fout;
+
+bool mode = false;
+string lang = "Undefined";
+string version = "Unknown";
+
 int main()
 {
+    Init();
     system("mode con cols=100 lines=20");
-    SetConsoleTitle("Web-Class-Helper");
+    SetConsoleTitle(GetYaml("Title", lang).c_str());
     TalkDate q = GetTime();
     if (q.Month == 1 || q.Month == 2)
     {
@@ -71,10 +76,10 @@ int main()
         fin >> h >> m >> tname;
         mm.emplace(make_pair(h, make_pair(m, tname)));
     }
-    printf("Web-Class-Helper " + GetVersion().c_str() + "\n");
-    printf("Copyright (c) 2022 Class Tools Develop Team.\n");
-    printf("Type 'help' to get help.\n\n");
-    printf("Please input your username: ");
+    cout << "Web-Class-Helper " + version << endl;
+    cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
+    cout << "Type 'help' to get help." << endl << endl;
+    cout << "Username: ";
     cin >> UserName;
     printf("\n");
     while (op != "quit")
@@ -85,7 +90,7 @@ int main()
             if ((it->second).first == GetTime().Minute && ((it->second).second).size() > 0)
             {
                 printf("\a");
-                MessageBox(NULL, ((it->second).second).c_str(), "Web-Class-Helper", MB_OK);
+                MessageBox(NULL, ((it->second).second).c_str(), GetYaml("Title", lang).c_str(), MB_OK);
             }
         }
         if (JudgeKey())
@@ -118,18 +123,18 @@ int main()
         }
         else if (op == "help")
         {
-            printf("Commands:\n");
-            printf("1.quit (Quit this program)\n");
-            printf("2.add hour minute name (Add clock at hour:minute)\n");
-            printf("3.delete hour minute name (Delete clock at hour:minute)\n");
-            printf("4.change hour minute name (Change clock at hour:minute)\n");
-            printf("5.ow (Get a sentence) **From web**\n");
-            printf("6.hide (Hide the command line window)\n");
-            printf("7.game (Guessing game)\n");
-            printf("8.time (Get time at once)\n");
-            printf("9.pi (Screenshots)\n");
-            printf("10.mode cmd-mode (Switch command line mode 1.cmd 2.bash)\n");
-            printf("11.speedtest (Speed test)\n\n");
+            cout << GetYaml("Quit", lang) << endl;
+            cout << GetYaml("Add", lang) << endl;
+            cout << GetYaml("Delete", lang) << endl;
+            cout << GetYaml("Change", lang) << endl;
+            cout << GetYaml("Ow", lang) << endl;
+            cout << GetYaml("Hide", lang) << endl;
+            cout << GetYaml("Game", lang) << endl;
+            cout << GetYaml("Time", lang) << endl;
+            cout << GetYaml("Pi", lang) << endl;
+            cout << GetYaml("Mode", lang) << endl;
+            cout << GetYaml("Cs", lang) << endl;
+            cout << endl;
         }
         else if (op == "delete")
         {
@@ -204,26 +209,26 @@ int main()
             if (tmp == "cmd")
             {
                 mode = true;
-                printf("OK!\n\n");
+                PrintOK();
             }
             else if (tmp == "bash")
             {
                 mode = false;
-                printf("OK!\n\n");
+                PrintOK();
             }
             else
             {
-                printf("Unknown mode.\n\n");
+                cout << GetYaml("UnknownMode", lang) << endl;
             }
         }
-        else if (op == "speedtest")
+        else if (op == "cs")
         {
-            system("start speedtest.exe");
-            printf("OK!\n\n");
+            system("python speedtest.py");
+            PrintOK();
         }
         else if (op!="quit")
         {
-            printf("Is it a system command? (Y/N): ");
+            cout << GetYaml("Error", lang);
             char tmp;
             cin >> tmp;
             if (tmp == 'Y')
@@ -242,7 +247,6 @@ int main()
             fout << (it->first) << " " << (it->second).first << " " << (it->second).second << endl;
         }
     }
-    Bye();
     return 0;
 }
 TalkDate GetTime()
@@ -261,30 +265,27 @@ TalkDate GetTime()
     NowTime.Name = "NULL";
     return NowTime;
 }
-void Bye()
-{
-    printf("Have a good time. Good bye.\n\n");
-}
-void Lazy()
-{
-    printf("This code is very lazy, So it didn't work.\n\n");
-}
+
 void PrintTime(TalkDate a)
 {
     printf("%d/%02d/%02d %02d %02d %02d\n\n", a.Year, a.Month, a.Day, a.Hour, a.Minute, a.Second);
 }
+
 void PrintError()
 {
-    printf("This input or code is wrong. Please see your code.\n\n");
+    cout << GetYaml("PrintError", lang) << endl << endl;
 }
+
 inline void in_data(string fname)
 {
     freopen(fname.c_str(), "r", stdin);
 }
+
 inline void out_data(string fname)
 {
     freopen(fname.c_str(), "w", stdout);
 }
+
 void HideWindow(bool ju)
 {
     HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
@@ -293,6 +294,7 @@ void HideWindow(bool ju)
         ShowWindow(hwnd, ju);
     }
 }
+
 bool JudgeKey()
 {
     int a = GetKeyState(VK_CONTROL);
@@ -306,6 +308,7 @@ bool JudgeKey()
         return false;
     }
 }
+
 void Game()
 {
     srand(time(0));
@@ -313,25 +316,33 @@ void Game()
     int z = 0;
     while (z != n)
     {
-        printf("Please input your number: ");
+        cout << GetYaml("InputNumber", lang);
         cin >> z;
         if (z > n)
         {
-            printf("The answer is smaller.\n");
+            cout << GetYaml("Smaller", lang) << endl;
         }
         if (z < n)
         {
-            printf("The answer is bigger.\n");
+            cout << GetYaml("Bigger", lang) << endl;
         }
         if (z == -100000)
         {
             return;
         }
     }
-    printf("The answer is %d. You WIN!!!\n\n", n);
+    printf(GetYaml("Win", lang).c_str(), n);
     return;
 }
+
 void PrintOK()
 {
     printf("OK!\n\n");
+}
+
+void Init()
+{
+    lang = GetYaml("Language", "None");
+    mode = (GetYaml("CommandMode", "None") == "bash" ? false : true);
+    version = GetYaml("Version", "None");
 }

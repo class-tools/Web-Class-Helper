@@ -2,7 +2,7 @@
 Web-Class-Helper 1.0.8
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: ren-yc
+Contributors: jsh-jsh ren-yc
 '''
 import psutil
 import sys
