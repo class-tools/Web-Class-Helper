@@ -1,13 +1,15 @@
 '''
-Web-Class-Helper 1.0.8
-This source code File is under MIT License.
+Web-Class-Helper Image Grabbing Module 1.0.9
+This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 '''
 import datetime
+import winreg
 from PIL import ImageGrab
 
-# Main
-File = open("img.tmp", "r", encoding = 'utf-8')
-ImageGrab.grabclipboard().save(File.read().strip("\n") + "/" + str(datetime.datetime.now().timestamp()) + ".jpg")
-File.close()
+def get_pictures():
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders')
+    return winreg.QueryValueEx(key, "My Pictures")[0]
+
+ImageGrab.grabclipboard().save(get_pictures() + "/" + str(datetime.datetime.now().timestamp()) + ".jpg")

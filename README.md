@@ -1,4 +1,13 @@
-# Web-Class-Helper
+<p align="center">
+<img src="https://ren-yc.github.io/assets/ClassTools/WCH_big.png" width="200">
+</p>
+
+<h1 align="center">- Web Class Helper -</h1>
+
+<p align="center">
+<img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
+<img src="https://img.shields.io/badge/support-Windows-blue?logo=Windows">
+</p>
 
 A practical command line gadget during online class.
 

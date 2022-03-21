@@ -1,5 +1,5 @@
 '''
-Web-Class-Helper 1.0.8
+Web-Class-Helper Speed Testing Module 1.0.9
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -41,6 +41,6 @@ root = Tk()
 root.geometry('200x100')
 root.title('Speed Test')
 root.resizable(width = False, height = False)
-Label(width = 100, height = 50, name = 'speed_label', text = '--.-- KB / S', font = ('Hack', 20, 'bold')).pack()
+Label(width = 100, height = 50, name = 'speed_label', text = '-.- KB / S', font = ('Hack', 20, 'bold')).pack()
 root.after(1000, lambda :ui_updata(speed_test))
 root.mainloop()

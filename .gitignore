@@ -1,5 +1,7 @@
 .vscode/
-.vs/
 genexe/
-WCH.exe
+genins/
+*.exe
 *.txt
+*.rc
+*.o

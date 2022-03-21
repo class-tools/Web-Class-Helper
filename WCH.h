@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Header File v1.0.8
+Web-Class-Helper Header File 1.0.9
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -11,13 +11,19 @@ Contributors: jsh-jsh ren-yc
 #include <bits/stdc++.h>
 #include <direct.h>
 using namespace std;
+
 #ifdef URLDownloadToFile
 #undef URLDownloadToFile
 #endif
+
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
-void UTF8ToANSI(char *str)
-{
+
+HANDLE hOutput;
+char name[32];
+int cnt[8];
+
+void UTF8ToANSI(char *str) {
     int len = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
     WCHAR *wsz = new WCHAR[len + 1];
     len = MultiByteToWideChar(CP_UTF8, 0, str, -1, wsz, len);
@@ -27,11 +33,8 @@ void UTF8ToANSI(char *str)
     str[len] = 0;
     delete[] wsz;
 }
-HANDLE hOutput;
-char name[32];
-int cnt[8];
-void GetGet()
-{
+
+void GetGet() {
     int len;
     DWORD unused;
     char url[128], *file;
@@ -62,10 +65,8 @@ void GetPath(bool mode, string UserName) {
         string tmp;
         tmp = ExeFile;
         tmp.replace(1, 2, "\\");
-        for (long long unsigned int i = 0; i < tmp.size(); i++)
-        {
-            if (isupper(tmp[i]))
-            {
+        for (long long unsigned int i = 0; i < tmp.size(); i++) {
+            if (isupper(tmp[i])) {
                 tmp[i] = tolower(tmp[i]);
             }
         }
@@ -73,51 +74,13 @@ void GetPath(bool mode, string UserName) {
     }
 }
 
-void PutPicture(string lang, string output) {
+void PutPicture() {
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
-    keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP,0);
-    cout << output << endl << endl;
+    keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
+    cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl << endl;
 }
 
-string UTF8ToGB(const char* str) {
-    string result;
-    WCHAR *strSrc;
-    LPSTR szRes;
-    int i = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
-    strSrc = new WCHAR[i + 1];
-    MultiByteToWideChar(CP_UTF8, 0, str, -1, strSrc, i);
-    i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);
-    szRes = new CHAR[i + 1];
-    WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);
-    result = szRes;
-    delete[]strSrc;
-    delete[]szRes;
-    return result;
-}
-
-string GetYaml(string cmdname, string getlang) {
-    ifstream fin;
-    ofstream fout;
-    fout.open("yaml.tmp");
-    fout << cmdname << " " << getlang << endl;
-    fout.close();
-    system("python YAML.py");
+void SaveImg() {
+    system("start img.exe");
     Sleep(500);
-    string res;
-    fin.open("yaml.tmp");
-    getline(fin, res);
-    res = UTF8ToGB(res.c_str()).c_str();
-    fin.close();
-    remove("yaml.tmp");
-    return res;
-}
-
-void SaveImg(string Path) {
-    ofstream fout;
-    fout.open("img.tmp");
-    fout << Path << endl;
-    fout.close();
-    system("python img.py");
-    Sleep(500);
-    remove("img.tmp");
 }
