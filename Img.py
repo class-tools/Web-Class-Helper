@@ -1,13 +1,15 @@
+'''
+Web-Class-Helper Image Grabbing Module 1.0.9
+This source code file is under MIT License.
+Copyright (c) 2022 Class Tools Develop Team
+Contributors: jsh-jsh ren-yc
+'''
 import datetime
+import winreg
 from PIL import ImageGrab
-ts = datetime.datetime.now().timestamp()
-f=open("img.txt","r")
-s=f.read()
-s=s.strip("\n")
-s+="/"
-s+=str(ts)
-s+=".jpg"
-image = ImageGrab.grabclipboard() 
-image.save(s)
-f.close()
 
+def get_pictures():
+    key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders')
+    return winreg.QueryValueEx(key, "My Pictures")[0]
+
+ImageGrab.grabclipboard().save(get_pictures() + "/" + str(datetime.datetime.now().timestamp()) + ".jpg")

@@ -1,7 +1,8 @@
 /*
-    Web-Class-Helper Header File v1.0.7
-    Under MIT License
-    Class Tools Develop Team (jsh-jsh ren-yc)
+Web-Class-Helper Header File 1.0.9
+This source code file is under MIT License.
+Copyright (c) 2022 Class Tools Develop Team
+Contributors: jsh-jsh ren-yc
 */
 #include <stdio.h>
 #include <windows.h>
@@ -10,13 +11,19 @@
 #include <bits/stdc++.h>
 #include <direct.h>
 using namespace std;
+
 #ifdef URLDownloadToFile
 #undef URLDownloadToFile
 #endif
+
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
-void UTF8ToANSI(char *str)
-{
+
+HANDLE hOutput;
+char name[32];
+int cnt[8];
+
+void UTF8ToANSI(char *str) {
     int len = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
     WCHAR *wsz = new WCHAR[len + 1];
     len = MultiByteToWideChar(CP_UTF8, 0, str, -1, wsz, len);
@@ -26,11 +33,8 @@ void UTF8ToANSI(char *str)
     str[len] = 0;
     delete[] wsz;
 }
-HANDLE hOutput;
-char name[32];
-int cnt[8];
-void GetGet()
-{
+
+void GetGet() {
     int len;
     DWORD unused;
     char url[128], *file;
@@ -51,40 +55,32 @@ void GetGet()
     DeleteFile("download.tmp");
     delete[] file;
 }
-void GetPath(bool mode, string UserName){
+
+void GetPath(bool mode, string UserName) {
     char ExeFile[256];
     _getcwd(ExeFile, 256);
-    if (mode)
-    {
-        cout<<ExeFile;
-        cout<<"> ";
-    }
-    else
-    {
+    if (mode) {
+        cout << ExeFile << "> ";
+    } else {
         string tmp;
         tmp = ExeFile;
         tmp.replace(1, 2, "\\");
-        for (long long unsigned int i = 0; i < tmp.size(); i++)
-        {
-            if (isupper(tmp[i]))
-            {
+        for (long long unsigned int i = 0; i < tmp.size(); i++) {
+            if (isupper(tmp[i])) {
                 tmp[i] = tolower(tmp[i]);
             }
         }
         cout << UserName << "@\\" << tmp << "$ ";
     }
 }
-void PutPicture(){
+
+void PutPicture() {
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
-    keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP,0);
-    cout << "The picture is in the Path.\n\n"<<endl;
+    keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
+    cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl << endl;
 }
-void SaveImg(string Path) {
-    ofstream fout;
-    fout.open("img.txt");
-    fout << Path << endl;
-    fout.close();
-    system("start img.py");
+
+void SaveImg() {
+    system("start img.exe");
     Sleep(500);
-    remove("img.txt");
 }
