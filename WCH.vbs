@@ -17,7 +17,18 @@ s = "cacls """ & CurPath
 s1 = StrReverse(s)
 s2 = mid(s1, 2)
 s = StrReverse(s2)
-WshShell.sendkeys s & """ /T /G Everyone:F" & "{enter}"
+If InStr(s, "(") <> 0 Then
+    tmp = s & """ /T /G Everyone:F" & "{enter}"
+    tmp1 = split(tmp, "(")
+    tmp2 = split(tmp1(1), ")")
+    WshShell.sendkeys tmp1(0)
+    WshShell.sendkeys "{(}"
+    WshShell.sendkeys tmp2(0)
+    WshShell.sendkeys "{)}"
+    WshShell.sendkeys tmp2(1)
+Else
+    WshShell.sendkeys s & """ /T /G Everyone:F" & "{enter}"
+End If
 WScript.sleep 50
 WshShell.sendkeys "Y{enter}"
 WshShell.sendkeys "%{F4}"
