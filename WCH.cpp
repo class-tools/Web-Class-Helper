@@ -24,6 +24,7 @@ struct TalkDate {
 };
 
 multimap<int, pair<int, string>> mm;
+
 TalkDate GetTime();
 void PrintTime(TalkDate);
 void PrintError();
@@ -245,7 +246,7 @@ bool JudgeKey() {
 }
 
 void Game() {
-    srand(time(0));
+    srand(time(NULL));
     int n = rand() % 10000 + 1;
     string z = "0";
     try {
@@ -265,7 +266,7 @@ void Game() {
         cout << "Your input does not meet the requirements, game ending..." << endl << endl;
         return;
     }
-    cout << "The number is " << n << "!!! You WIN!!!" << endl << endl;
+    cout << "The number is " << n << ". You WIN!" << endl << endl;
     return;
 }
 
