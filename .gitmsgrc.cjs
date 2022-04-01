@@ -1,5 +1,5 @@
 module.exports = {
 	debug: false,
-	itemTy: null,
+	itemTy: o => o.concat(""),
 	checker: {}
 }
