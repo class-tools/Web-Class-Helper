@@ -5,17 +5,17 @@ name: Check Commit Message
 on: [push, pull_request]
 jobs:
   check:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: 16.x
-      - name: Install fk-git-commit-msg-std
+      - name: Install ct-git-commit-msg-std
         env:
           COMMIT_MSG: ${{ toJson(github.event.commits.*.message) }}
         run: |
           npm config set registry http://registry.npmjs.org/
           yarn config set registry https://registry.yarnpkg.com
-          yarn add fk-git-commit-msg-std
-          node ./node_modules/fk-git-commit-msg-std/check.js -c "$PWD/.gitmsgrc.cjs" -e COMMIT_MSG
+          yarn add ct-git-commit-msg-std
+          node ./node_modules/ct-git-commit-msg-std/check.js -c "$PWD/.gitmsgrc.cjs" -e COMMIT_MSG
