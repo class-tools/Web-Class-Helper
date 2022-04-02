@@ -4,45 +4,44 @@ This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#pragma once
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <conio.h>
 #include <direct.h>
-#include "file-process.h"
 #include "commands.h"
+#include "file-process.h"
+#include "variables.h"
 #ifdef URLDownloadToFile
 #undef URLDownloadToFile
 #endif
 using namespace std;
 
-struct TalkDate {
-    int Year;
-    int Month;
-    int Day;
-    int Hour;
-    int Minute;
-    int Second;
-    int WeekDay;
-    string Name;
-};
+extern const string Weekdayname[7];
+extern multimap <int, pair <int, string>> mm;
+extern int WCH_clock_num;
+extern bool cmd_line;
+extern bool anti_idle;
+extern bool mode;
+extern string op;
+extern string UserName;
+extern ifstream fin;
+extern ofstream fout;
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
-
-HANDLE hOutput;
-char name[32];
-int cnt[8];
 
 void WCH_SetWindowStatus(bool flag) {
     HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
     if (hwnd) {
         ShowWindow(hwnd, flag);
     }
+    cmd_line = flag;
 }
 
-TalkDate WCH_GetTime() {
-    TalkDate NowTime;
+WCH_Time WCH_GetTime() {
+    WCH_Time NowTime;
     time_t rawtime;
     struct tm *ptminfo;
     time(&rawtime);
@@ -57,25 +56,34 @@ TalkDate WCH_GetTime() {
     return NowTime;
 }
 
-void WCH_Init(int *n, string *UserName, multimap <int, pair <int, string>> *mm) {
+void WCH_Init() {
     system("mode con cols=100 lines=20");
     SetConsoleTitle("Web Class Helper");
-    TalkDate q = WCH_GetTime();
+    WCH_Time q = WCH_GetTime();
     if (q.Month == 1 || q.Month == 2) {
         q.Month += 12;
         q.Year--;
     }
     WCH_SetWindowStatus(true);
-    cout << strcat((char*)"Web Class Helper ", WCH_VER) << endl;
+    string tmp = WCH_VER;
+    cout << "Web Class Helper " + tmp << endl;
     cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
     cout << "Type 'help' to get help." << endl << endl;
-    cout << "Please input your username: " << endl;
-    cin >> *UserName;
+    cout << "Please input your username: ";
+    cin >> UserName;
     cout << endl;
 }
 
-void WCH_Error() {
-    cout << "This input or code is wrong. Please see your code." << endl;
+void WCH_Error(string INFO) {
+    if (INFO == "OOR") {
+        cout << "Your input code is out of range, please check and try again." << endl;
+    }
+    if (INFO == "NF") {
+        cout << "An network error occurred, please check your network connection and try to update this program." << endl;
+    }
+    if (INFO == "CO") {
+        cout << "Cannot Operate the clock, please try to restart this program." << endl;
+    }
 }
 
 bool WCH_ShortCutKeyCheck() {
@@ -85,6 +93,40 @@ bool WCH_ShortCutKeyCheck() {
         return true;
     } else {
         return false;
+    }
+}
+
+void WCH_check_clock() {
+    WCH_Time NOW = WCH_GetTime();
+    for (auto it = mm.equal_range(NOW.Hour).first; it != mm.equal_range(NOW.Hour).second; it++) {
+        if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
+            cout << "\a";
+            MessageBox(NULL, ((it -> second).second).c_str(), "Web Class Helper Clock", MB_OK);
+        }
+    }
+}
+
+void WCH_ReadData() {
+    WCH_Time q = WCH_GetTime();
+    fin.open(Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7].c_str());
+    fin >> WCH_clock_num;
+    for (int i = 1; i <= WCH_clock_num; i++) {
+        int h = 0;
+        int m = 0;
+        string tname = "NULL";
+        fin >> h >> m >> tname;
+        mm.emplace(make_pair(h, make_pair(m, tname)));
+    }
+}
+
+void WCH_save() {
+    if (WCH_clock_num != 0) {
+        WCH_Time q = WCH_GetTime();
+        fout.open(Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7].c_str());
+        fout << WCH_clock_num << endl;
+        for (auto it = mm.begin(); it != mm.end(); it++) {
+            fout << (it -> first) << " " << (it -> second).first << " " << (it -> second).second << endl;
+        }
     }
 }
 
@@ -100,25 +142,29 @@ void UTF8ToANSI(char *str) {
 }
 
 void WCH_ow() {
-    int len;
-    DWORD unused;
-    char url[128], *file;
-    HANDLE hFile;
-    hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-    char ss[128] = "https://v1.hitokoto.cn/?encode=text";
-    sprintf(url, ss);
-    URLDownloadToFile(0, url, "download.tmp", 0, 0);
-    hFile = CreateFile("download.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-    len = GetFileSize(hFile, 0);
-    file = new char[len + 3];
-    ReadFile(hFile, file, len, &unused, 0);
-    file[len] = file[len + 1] = 0;
-    CloseHandle(hFile);
-    UTF8ToANSI(file);
-    memset(cnt, 0, sizeof(cnt));
-    cout << file << endl << endl;
-    DeleteFile("download.tmp");
-    delete[] file;
+    try {
+        int len;
+        DWORD unused;
+        char url[128], *file;
+        HANDLE hFile;
+        char ss[128] = "https://v1.hitokoto.cn/?encode=text";
+        sprintf(url, ss);
+        URLDownloadToFile(0, url, "WCH_STDL.tmp", 0, 0);
+        hFile = CreateFile("WCH_STDL.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+        len = GetFileSize(hFile, 0);
+        file = new char[len + 3];
+        ReadFile(hFile, file, len, &unused, 0);
+        file[len] = file[len + 1] = 0;
+        CloseHandle(hFile);
+        UTF8ToANSI(file);
+        cout << file << endl;
+        DeleteFile("WCH_STDL.tmp");
+        delete[] file;
+    }
+    catch (...) {
+        WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
+        return;
+    }
 }
 
 void WCH_GetPath(bool mode, string UserName) {
@@ -145,7 +191,20 @@ void WCH_PutPicture() {
     cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl << endl;
 }
 
+void WCH_SetTrayStatus(bool flag) {
+    if (flag == false) {
+        string className = "Shell_trayWnd";
+        HWND wnd = FindWindow(className.c_str(), NULL);
+        SetWindowPos(wnd, 0, 0, 0, 0, 0, SWP_HIDEWINDOW);
+    } else {
+        system("TASKKILL -F -IM EXPLORER.EXE");
+        system("START EXPLORER.EXE");
+    }
+}
+
 void WCH_SaveImg() {
-    system("start img.exe");
+    system("START IMG.EXE");
     Sleep(500);
 }
+
+#endif
