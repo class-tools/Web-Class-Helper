@@ -129,8 +129,10 @@ void WCH_anti_idle() {
     cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
     cin >> ch;
     if (ch == 'Y') {
+    	anti_idle=true;
         WCH_SetWindowStatus(false);
         WCH_SetTrayStatus(false);
+        WCH_PleaseYouChooseName(false);
     }
 }
 
