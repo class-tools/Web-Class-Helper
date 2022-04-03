@@ -10,6 +10,7 @@ Contributors: jsh-jsh ren-yc
 #include <windows.h>
 #include <conio.h>
 #include <direct.h>
+#include "apis.h"
 #include "commands.h"
 #include "file-process.h"
 #include "variables.h"
@@ -32,14 +33,6 @@ extern ofstream fout;
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
 
-void WCH_SetWindowStatus(bool flag) {
-    HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
-    if (hwnd) {
-        ShowWindow(hwnd, flag);
-    }
-    cmd_line = flag;
-}
-
 WCH_Time WCH_GetTime() {
     WCH_Time NowTime;
     time_t rawtime;
@@ -59,6 +52,7 @@ WCH_Time WCH_GetTime() {
 void WCH_Init() {
     SetConsoleTitle("Web Class Helper");
     WCH_Time q = WCH_GetTime();
+    UserName = WCH_GetUserName();
     if (q.Month == 1 || q.Month == 2) {
         q.Month += 12;
         q.Year--;
@@ -67,9 +61,7 @@ void WCH_Init() {
     string tmp = WCH_VER;
     cout << "Web Class Helper " + tmp << endl;
     cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-    cout << "Type 'help' to get help." << endl << endl;
-    cout << "Please input your username: ";
-    cin >> UserName;
+    cout << "Type 'help' to get help." << endl;
     cout << endl;
 }
 
@@ -93,15 +85,6 @@ bool WCH_ShortCutKeyCheck() {
     } else {
         return false;
     }
-}
-void WCH_PleaseYouChooseName(bool f) {
-	HWND hwnd=GetForegroundWindow();
-	if(f==1){
-		ShowWindow(hwnd,SW_MINIMIZE);//Min
-	}
-	else{
-		ShowWindow(hwnd,SW_MAXIMIZE);//Max
-	}
 }
 
 void WCH_check_clock() {
@@ -202,12 +185,6 @@ void WCH_PutPicture() {
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
     keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
     cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl << endl;
-}
-
-void WCH_SetTrayStatus(bool flag) {
-    string className = "Shell_trayWnd";
-    HWND wnd = FindWindow(className.c_str(), NULL);
-    ShowWindow(wnd,flag);
 }
 
 void WCH_SaveImg() {

@@ -10,6 +10,7 @@ Contributors: jsh-jsh ren-yc
 #include <windows.h>
 #include <conio.h>
 #include <direct.h>
+#include "apis.h"
 #include "file-process.h"
 #include "functions.h"
 #include "variables.h"
@@ -129,10 +130,12 @@ void WCH_anti_idle() {
     cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
     cin >> ch;
     if (ch == 'Y') {
-    	anti_idle=true;
+        anti_idle = true;
         WCH_SetWindowStatus(false);
+        Sleep(500);
         WCH_SetTrayStatus(false);
-        WCH_PleaseYouChooseName(false);
+        Sleep(500);
+        WCH_SetWindowPos(false);
     }
 }
 
