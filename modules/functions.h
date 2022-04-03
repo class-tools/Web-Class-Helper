@@ -94,6 +94,15 @@ bool WCH_ShortCutKeyCheck() {
         return false;
     }
 }
+void WCH_PleaseYouChooseName(bool f) {
+	HWND hwnd=GetForegroundWindow();
+	if(f==1){
+		ShowWindow(hwnd,SW_MINIMIZE);//Min
+	}
+	else{
+		ShowWindow(hwnd,SW_MAXIMIZE);//Max
+	}
+}
 
 void WCH_check_clock() {
     WCH_Time NOW = WCH_GetTime();
@@ -198,7 +207,7 @@ void WCH_PutPicture() {
 void WCH_SetTrayStatus(bool flag) {
     string className = "Shell_trayWnd";
     HWND wnd = FindWindow(className.c_str(), NULL);
-    SetWindowPos(wnd, 0, 0, 0, 0, 0, (flag == false ? SWP_HIDEWINDOW : SWP_SHOWWINDOW));
+    ShowWindow(wnd,flag);
 }
 
 void WCH_SaveImg() {
