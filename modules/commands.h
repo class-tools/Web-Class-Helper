@@ -134,6 +134,16 @@ void WCH_anti_idle() {
     }
 }
 
+void WCH_trans() {
+    string info;
+    getline(cin, info);
+    info = "START /B TRANS.EXE -i \"" + info + "\"";
+    system(info.c_str());
+    cmd_line = false;
+    Sleep(2000);
+    cmd_line = true;
+}
+
 void WCH_unknown() {
     printf("Is it a system command? (Y/N): ");
     char tmp;
@@ -157,6 +167,7 @@ void WCH_help() {
     cout << "mode {cmd-mode} (Switch command line mode to {cmd-mode} cmd / bash)" << endl;
     cout << "speedtest (Start a speed test with a GUI window)" << endl;
     cout << "anti-idle (Enable anti-idle mode)" << endl;
+    cout << "trans {info} (Translate {info} that was input after spaces between Chinese and English)" << endl;
     cout << "quit (Quit this program)" << endl;
 }
 

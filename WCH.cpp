@@ -24,15 +24,14 @@ int main() {
     WCH_ReadData();
     while (op != "quit") {
         WCH_check_clock();
-        if (WCH_ShortCutKeyCheck()) {
+        if (WCH_ShortCutKeyCheck() && !cmd_line) {
             WCH_SetWindowStatus(true);
             if (anti_idle == true) {
                 WCH_SetTrayStatus(true);
             }
         }
         if (cmd_line) {
-            WCH_GetPath(mode, UserName);
-            cin >> op;
+            WCH_CL_Init();
             if (op == "add") {
                 WCH_add();
             } else if (op == "delete") {
@@ -60,6 +59,8 @@ int main() {
                 WCH_speedtest();
             } else if (op == "anti-idle") {
                 WCH_anti_idle();
+            } else if (op == "trans") {
+                WCH_trans();
             } else if (op != "quit") {
                 WCH_unknown();
             }

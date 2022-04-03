@@ -57,7 +57,6 @@ WCH_Time WCH_GetTime() {
 }
 
 void WCH_Init() {
-    system("mode con cols=100 lines=20");
     SetConsoleTitle("Web Class Helper");
     WCH_Time q = WCH_GetTime();
     if (q.Month == 1 || q.Month == 2) {
@@ -185,6 +184,11 @@ void WCH_GetPath(bool mode, string UserName) {
     }
 }
 
+void WCH_CL_Init() {
+    WCH_GetPath(mode, UserName);
+    cin >> op;
+}
+
 void WCH_PutPicture() {
     keybd_event(VK_SNAPSHOT, 0, 0, 0);
     keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
@@ -192,14 +196,9 @@ void WCH_PutPicture() {
 }
 
 void WCH_SetTrayStatus(bool flag) {
-    if (flag == false) {
-        string className = "Shell_trayWnd";
-        HWND wnd = FindWindow(className.c_str(), NULL);
-        SetWindowPos(wnd, 0, 0, 0, 0, 0, SWP_HIDEWINDOW);
-    } else {
-        system("TASKKILL -F -IM EXPLORER.EXE");
-        system("START EXPLORER.EXE");
-    }
+    string className = "Shell_trayWnd";
+    HWND wnd = FindWindow(className.c_str(), NULL);
+    SetWindowPos(wnd, 0, 0, 0, 0, 0, (flag == false ? SWP_HIDEWINDOW : SWP_SHOWWINDOW));
 }
 
 void WCH_SaveImg() {
