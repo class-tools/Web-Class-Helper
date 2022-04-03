@@ -10,10 +10,10 @@ Contributors: jsh-jsh ren-yc
 #include <windows.h>
 #include <conio.h>
 #include <direct.h>
-#include "apis.h"
 #include "commands.h"
 #include "file-process.h"
 #include "variables.h"
+#include "apis.h"
 #ifdef URLDownloadToFile
 #undef URLDownloadToFile
 #endif

@@ -28,8 +28,9 @@ extern ifstream fin;
 extern ofstream fout;
 
 string WCH_GetUserName() {
-    char tmpc[256];
-    GetUserName(tmpc, (long unsigned int*)256);
+    char tmpc[256] = {0};
+    DWORD Size = 256;
+    GetUserName(tmpc, &Size);
     string tmps = tmpc;
     return tmps;
 }

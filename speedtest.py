@@ -1,5 +1,5 @@
 '''
-Web-Class-Helper Speed Testing Module 1.0.9
+Web-Class-Helper Speed Testing Module 1.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -17,9 +17,9 @@ def errno_1():
 def speed_test():
     try:
         try:
-            s1 = psutil.net_io_counters(pernic = True)["eth0"]
+            s1 = psutil.net_io_counters(pernic = True)["以太网"]
             sleep(1)
-            s2 = psutil.net_io_counters(pernic = True)["eth0"]
+            s2 = psutil.net_io_counters(pernic = True)["以太网"]
         except:
             s1 = psutil.net_io_counters(pernic = True)["WLAN"]
             sleep(1)

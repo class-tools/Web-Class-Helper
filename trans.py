@@ -1,3 +1,9 @@
+'''
+Web-Class-Helper Sentence Translating Module 1.1.0
+This source code file is under MIT License.
+Copyright (c) 2022 Class Tools Develop Team
+Contributors: jsh-jsh ren-yc
+'''
 from urllib.error import URLError
 import requests
 from json import *

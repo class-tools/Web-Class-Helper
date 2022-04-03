@@ -9,7 +9,7 @@
 <img src="https://img.shields.io/badge/support-Windows-blue?logo=Windows">
 </p>
 
-A practical command line gadget during online class.
+A practical command line gadget during web class.
 
 **English** | [简体中文](./README.zh-Hans.md)
 

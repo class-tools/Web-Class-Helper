@@ -1,15 +1,15 @@
 /*
-Web-Class-Helper Main File 1.1.0 
+Web-Class-Helper Main File 1.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER "1.1.0"
-#include "modules/apis.h"
 #include "modules/commands.h"
 #include "modules/file-process.h"
 #include "modules/functions.h"
 #include "modules/variables.h"
+#include "modules/apis.h"
 using namespace std;
 
 extern const string Weekdayname[7];

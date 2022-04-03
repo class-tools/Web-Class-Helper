@@ -1,4 +1,4 @@
-'Web-Class-Helper 1.0.9
+'Web-Class-Helper After Installing Program Runtime Environment Configuration Module 1.1.0
 'This source code file is under MIT License.
 'Copyright (c) 2022 Class Tools Develop Team
 'Contributors: jsh-jsh ren-yc
