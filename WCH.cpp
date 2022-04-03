@@ -72,6 +72,7 @@ int main() {
             cout << endl;
         }
     }
+    printf("Have a Good Day. Bye\n");
     WCH_save();
     return 0;
 }
