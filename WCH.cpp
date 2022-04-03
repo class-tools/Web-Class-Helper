@@ -28,6 +28,7 @@ int main() {
             WCH_SetWindowStatus(true);
             if (anti_idle == true) {
                 WCH_SetTrayStatus(true);
+                WCH_PleaseYouChooseName(true);
             }
         }
         if (cmd_line) {
