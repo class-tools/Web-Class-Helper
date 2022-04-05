@@ -28,9 +28,49 @@ extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 
+inline void in_data(string fname){
+	freopen(fname.c_str(),"r",stdin);
+}
+inline void out_data(string fname){
+	freopen(fname.c_str(),"a",stdout);
+}
+void WCH_printlog(int w,initializer_list<string> other){
+	WCH_Time tmp=WCH_GetTime();
+	string tt[21];
+	char tmp[21];
+	int i=0;
+	sprintf(tmp, "%04d/%02d/%02d %02d %02d %02d", a.Year, a.Month, a.Day, a.Hour, a.Minute, a.Second);
+	for(auto it=other.begin();it!=other.end();it++){
+		if((*it)=="r"){
+			tt[i++]="read";
+		}
+		else if((*it)=="w"){
+			tt[i++]="write";
+		}
+		else{
+			tt[i++]=(*it);
+		}
+	}
+	out_data("WCH_log.txt");
+	if(w==-1){
+		printf("%s WCH start \n ",tmp);
+	}
+	else if(w==0){
+		printf("%s %s \n",tmp,tt[0],c_str());
+	}
+	else if(w==1){
+        printf("%s use the command \"%s\" \n ",tmp,tt[0].c_str());
+	}
+	else if(w==2){
+		printf("%s use the command \"%s\" \n ",tmp,name.c_str());
+		printf("%s %s the file \"%s\" \n",tmp.tt[0].c_str(),tt[1].c_str());
+	}
+}
 void WCH_ReadData() {
+	int WD=(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7;
+    WCH_printlog(2,"w",Weekdayname[WD]);
     WCH_Time q = WCH_GetTime();
-    string FilePath = "./data/" + Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7] + ".dat";
+    string FilePath = "./data/" + Weekdayname[WD] + ".dat";
     fin.open(FilePath);
     if (!fin.is_open()) {
         return;
@@ -50,7 +90,9 @@ void WCH_save() {
         return;
     }
     WCH_Time q = WCH_GetTime();
-    string FilePath = "./data/" + Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7] + ".dat";
+    int WD=(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7;
+    WCH_printlog(2,"w",Weekdayname[WD]);
+	string FilePath = "./data/" + Weekdayname[WD] + ".dat";
     fout.open(FilePath, ios::binary);
     fout << WCH_clock_num << endl;
     for (auto it = mm.begin(); it != mm.end(); it++) {
@@ -69,5 +111,4 @@ void UTF8ToANSI(char *str) {
     str[len] = 0;
     delete[] wsz;
 }
-
 #endif
