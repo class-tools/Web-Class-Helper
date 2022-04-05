@@ -176,13 +176,8 @@ void WCH_trans() {
 	cmd_line = true;
 }
 
-void WCH_unknown() {
-	printf("Is it a system command? (Y/N): ");
-	char tmp;
-	cin >> tmp;
-	if (tmp == 'Y') {
-		system(op.c_str());
-	}
+void WCH_unknown(string op) {
+	cout << op << ": Command not found." << endl;
 }
 
 void WCH_ow() {

@@ -70,9 +70,9 @@ int main() {
 				WCH_trans();
 			} else if (op == "update") {
 				WCH_update();
-			} else if (op != "quit") {
-				WCH_printlog(WCH_LOG_MODE_RC, {"ask-if-system"});
-				WCH_unknown();
+			} else {
+				WCH_printlog(WCH_LOG_MODE_RC, {"unknown"});
+				WCH_unknown(op);
 			}
 			cout << endl;
 		}
