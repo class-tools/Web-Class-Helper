@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Commands Module Header File 1.1.0 
+Web-Class-Helper Commands Module Header File 1.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -11,14 +11,15 @@ Contributors: jsh-jsh ren-yc
 #include <wininet.h>
 #include <conio.h>
 #include <direct.h>
-#include "file-process.h"
 #include "functions.h"
-#include "variables.h"
+#include "file-process.h"
 #include "apis.h"
+#include "variables.h"
+using namespace std;
+
 #ifdef URLDownloadToFile
 #undef URLDownloadToFile
 #endif
-using namespace std;
 
 extern const string Weekdayname[7];
 extern multimap <int, pair <int, string> > mm;
@@ -30,210 +31,210 @@ extern string op;
 extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
+WCH_Time WCH_GetTime();
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
 
+void WCH_hide() {
+	WCH_SetWindowStatus(false);
+}
+
 void WCH_update() {
-	WCH_printlog(1,"update");
-    system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+	system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 }
 
 void WCH_add() {
-	WCH_printlog(1,"add");
-    int h = 0;
-    int m = 0;
-    string tname = "NULL";
-    cin >> h >> m >> tname;
-    if (h > 24 || m >= 60 || h < 1 || m < 0) {
-        WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
-    } else {
-        WCH_clock_num++;
-        mm.emplace(make_pair(h, make_pair(m, tname)));
-    }
+	int h = 0;
+	int m = 0;
+	string tname = "NULL";
+	cin >> h >> m >> tname;
+	if (h > 24 || m >= 60 || h < 1 || m < 0) {
+		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+	} else {
+		WCH_clock_num++;
+		mm.emplace(make_pair(h, make_pair(m, tname)));
+	}
 }
 
 void WCH_delete() {
-	WCH_printlog(1,"delete");
-    int h = 0;
-    int m = 0;
-    bool flag = false;
-    string tname = "NULL";
-    try {
-        cin >> h >> m >> tname;
-        for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
-            if ((it -> second).first == m && (it -> second).second == tname) {
-                mm.erase(it);
-                flag = true;
-                WCH_clock_num--;
-            }
-        }
-    }
-    catch (...) {
-        goto Error;
-    }
-    if (!flag) {
-        Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
-        return;
-    }
+	int h = 0;
+	int m = 0;
+	bool flag = false;
+	string tname = "NULL";
+	try {
+		cin >> h >> m >> tname;
+		for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
+			if ((it -> second).first == m && (it -> second).second == tname) {
+				mm.erase(it);
+				flag = true;
+				WCH_clock_num--;
+			}
+		}
+	}
+	catch (...) {
+		goto Error;
+	}
+	if (!flag) {
+		Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
+		return;
+	}
 }
 
 void WCH_change() {
-	WCH_printlog(1,"change");
-    int h = 0;
-    int m = 0;
-    bool flag = false;
-    string tname = "NULL";
-    try {
-        cin >> h >> m >> tname;
-        for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
-            if ((it -> second).first == m) {
-                (it -> second).second = tname;
-                flag = true;
-            }
-        }
-    }
-    catch (...) {
-        goto Error;
-    }
-    if (!flag) {
-        Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
-        return;
-    }
+	int h = 0;
+	int m = 0;
+	bool flag = false;
+	string tname = "NULL";
+	try {
+		cin >> h >> m >> tname;
+		for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
+			if ((it -> second).first == m) {
+				(it -> second).second = tname;
+				flag = true;
+			}
+		}
+	}
+	catch (...) {
+		goto Error;
+	}
+	if (!flag) {
+		Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
+		return;
+	}
 }
 
 void WCH_game() {
-	WCH_printlog(1,"game");
-    srand(time(NULL));
-    int WCH_clock_num = rand() % 10000 + 1;
-    string z = "0";
-    try {
-        while (stoi(z) != WCH_clock_num) {
-            cout << "Please input your number (1 ~ 10000): ";
-            cin >> z;
-            if (z[0] == '-' || z[0] == '0' || (z.size() > 5 && z != "10000")) {
-                cout << "Number out of range." << endl;
-            } else if (stoi(z) > WCH_clock_num) {
-                cout << "The answer is smaller." << endl;
-            } else if (stoi(z) < WCH_clock_num) {
-                cout << "The answer is bigger." << endl;
-            }
-        }
-    }
-    catch (...) {
-        WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
-        return;
-    }
-    cout << "The number is " << WCH_clock_num << ". You WIN!" << endl;
-    return;
+	srand(time(NULL));
+	int WCH_clock_num = rand() % 10000 + 1;
+	string z = "0";
+	try {
+		while (stoi(z) != WCH_clock_num) {
+			cout << "Please input your number (1 ~ 10000): ";
+			cin >> z;
+			if (z[0] == '-' || z[0] == '0' || (z.size() > 5 && z != "10000")) {
+				cout << "Number out of range." << endl;
+			} else if (stoi(z) > WCH_clock_num) {
+				cout << "The answer is smaller." << endl;
+			} else if (stoi(z) < WCH_clock_num) {
+				cout << "The answer is bigger." << endl;
+			}
+		}
+	}
+	catch (...) {
+		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+		return;
+	}
+	cout << "The number is " << WCH_clock_num << ". You WIN!" << endl;
+	return;
 }
 
 void WCH_speedtest() {
-	WCH_printlog(1,"speedtest");
-    system("START SPEEDTEST.EXE");
+	system("START SPEEDTEST.EXE");
 }
 
 void WCH_pi() {
-	WCH_printlog(1,"pi");
-    WCH_SetWindowStatus(false);
-    WCH_PutPicture();
-    WCH_SetWindowStatus(true);
-    WCH_SaveImg();
+	WCH_SetWindowStatus(false);
+	WCH_PutPicture();
+	WCH_SetWindowStatus(true);
+	WCH_SaveImg();
 }
 
 void WCH_mode() {
-	WCH_printlog(1,"mode");
-    string tmp;
-    cin >> tmp;
-    if (tmp == "cmd") {
-        mode = true;
-    } else if (tmp == "bash") {
-        mode = false;
-    } else {
-        cout << "Unknown mode." << endl;
-    }
+	string tmp;
+	cin >> tmp;
+	if (tmp == "cmd") {
+		mode = true;
+	} else if (tmp == "bash") {
+		mode = false;
+	} else {
+		cout << "Unknown mode." << endl;
+	}
 }
 
 void WCH_anti_idle() {
-	WCH_printlog(1,"anti-idle");
-    char ch;
-    cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
-    cin >> ch;
-    if (ch == 'Y') {
-        anti_idle = true;
-        WCH_SetWindowStatus(false);
-        Sleep(500);
-        WCH_SetTrayStatus(false);
-        Sleep(500);
-        WCH_SetWindowPos(false);
-    }
+	char ch;
+	cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
+	cin >> ch;
+	if (ch == 'Y') {
+		anti_idle = true;
+		WCH_SetWindowStatus(false);
+		Sleep(500);
+		WCH_SetTrayStatus(false);
+		Sleep(500);
+		WCH_SetWindowPos(false);
+	}
 }
 
 void WCH_trans() {
-	WCH_printlog(1,"trans");
-    string info;
-    getline(cin, info);
-    info = "START /B TRANS.EXE -i \"" + info + "\"";
-    system(info.c_str());
-    cmd_line = false;
-    Sleep(2000);
-    cmd_line = true;
+	string info;
+	getline(cin, info);
+	info = "START /B TRANS.EXE -i \"" + info + "\"";
+	system(info.c_str());
+	cmd_line = false;
+	Sleep(2000);
+	cmd_line = true;
 }
 
 void WCH_unknown() {
-    printf("Is it a system command? (Y/N): ");
-    char tmp;
-    cin >> tmp;
-    if (tmp == 'Y') {
-        system(op.c_str());
-    }
+	printf("Is it a system command? (Y/N): ");
+	char tmp;
+	cin >> tmp;
+	if (tmp == 'Y') {
+		system(op.c_str());
+	}
 }
 
 void WCH_ow() {
-	WCH_printlog(1,"ow");
-    try {
-        int len;
-        DWORD unused;
-        char url[128], *file;
-        HANDLE hFile;
-        char ss[128] = "https://v1.hitokoto.cn/?encode=text";
-        sprintf(url, ss);
-        URLDownloadToFile(0, url, "WCH_STDL.tmp", 0, 0);
-        hFile = CreateFile("WCH_STDL.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-        len = GetFileSize(hFile, 0);
-        file = new char[len + 3];
-        ReadFile(hFile, file, len, &unused, 0);
-        file[len] = file[len + 1] = 0;
-        CloseHandle(hFile);
-        UTF8ToANSI(file);
-        cout << file << endl;
-        DeleteFile("WCH_STDL.tmp");
-        delete[] file;
-    }
-    catch (...) {
-        WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
-        return;
-    }
+	try {
+		int len;
+		DWORD unused;
+		char url[128], *file;
+		HANDLE hFile;
+		char ss[128] = "https://v1.hitokoto.cn/?encode=text";
+		sprintf(url, ss);
+		URLDownloadToFile(0, url, "WCH_STDL.tmp", 0, 0);
+		hFile = CreateFile("WCH_STDL.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		len = GetFileSize(hFile, 0);
+		file = new char[len + 3];
+		ReadFile(hFile, file, len, &unused, 0);
+		file[len] = file[len + 1] = 0;
+		CloseHandle(hFile);
+		UTF8ToANSI(file);
+		cout << file << endl;
+		DeleteFile("WCH_STDL.tmp");
+		delete[] file;
+	}
+	catch (...) {
+		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
+		return;
+	}
+}
+
+void WCH_time() {
+	char tmp[21];
+	WCH_Time q = WCH_GetTime();
+	sprintf(tmp, "%04d/%02d/%02d %02d %02d %02d", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
+	cout << tmp << endl;
 }
 
 void WCH_help() {
-	WCH_printlog(1,"help");
-    cout << "Commands:" << endl;
-    cout << "add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
-    cout << "delete hour {minute} {name} (Delete clock at {hour}:{minute})" << endl;
-    cout << "change hour {minute} {name} (Change clock at {hour}:{minute})" << endl;
-    cout << "help (Get help output)" << endl;
-    cout << "ow (Get a sentence) **From web**" << endl;
-    cout << "hide (Hide the command line window)" << endl;
-    cout << "game (Guessing game)" << endl;
-    cout << "time (Get time at once)" << endl;
-    cout << "pi (Make a screenshot)" << endl;
-    cout << "mode {cmd-mode} (Switch command line mode to {cmd-mode} cmd / bash)" << endl;
-    cout << "speedtest (Start a speed test with a GUI window)" << endl;
-    cout << "anti-idle (Enable anti-idle mode)" << endl;
-    cout << "trans {info} (Translate {info} that was input after spaces between Chinese and English)" << endl;
-    cout << "update (Visit the releases page in default browser)" << endl;
-    cout << "quit (Quit this program)" << endl;
+	cout << "Commands:" << endl;
+	cout << "add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
+	cout << "delete hour {minute} {name} (Delete clock at {hour}:{minute})" << endl;
+	cout << "change hour {minute} {name} (Change clock at {hour}:{minute})" << endl;
+	cout << "help (Get help output)" << endl;
+	cout << "ow (Get a sentence) **From web**" << endl;
+	cout << "hide (Hide the command line window)" << endl;
+	cout << "game (Guessing game)" << endl;
+	cout << "time (Get time at once)" << endl;
+	cout << "pi (Make a screenshot)" << endl;
+	cout << "mode {cmd-mode} (Switch command line mode to {cmd-mode} cmd / bash)" << endl;
+	cout << "speedtest (Start a speed test with a GUI window)" << endl;
+	cout << "anti-idle (Enable anti-idle mode)" << endl;
+	cout << "trans {info} (Translate {info} that was input after spaces between Chinese and English)" << endl;
+	cout << "update (Visit the releases page in default browser)" << endl;
+	cout << "quit (Quit this program)" << endl;
 }
 
 #endif

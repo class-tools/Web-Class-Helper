@@ -2,6 +2,7 @@
 genexe/
 genins/
 data/*.dat
+logs/*.log
 *.exe
 *.txt
 *.rc

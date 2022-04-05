@@ -12,28 +12,34 @@ Contributors: jsh-jsh ren-yc
 #include <conio.h>
 #include <direct.h>
 #include "commands.h"
-#include "file-process.h"
 #include "functions.h"
+#include "file-process.h"
 #include "apis.h"
 using namespace std;
 
 #define WCH_ERRNO_OUT_OF_RANGE "OOR"
 #define WCH_ERRNO_NETWORK_FAILURE "NF"
 #define WCH_ERRNO_CLOCK_OPERATION "CO"
+#define WCH_LOG_MODE_ST -1
+#define WCH_LOG_MODE_ERROR 0
+#define WCH_LOG_MODE_RC 1
+#define WCH_LOG_MODE_RW 2
+#define WCH_LOG_STATUS_INFO "[INFO]"
+#define WCH_LOG_STATUS_ERROR "[ERROR]"
 
 struct WCH_Time {
-    int Year;
-    int Month;
-    int Day;
-    int Hour;
-    int Minute;
-    int Second;
-    int WeekDay;
-    string Name;
+	int Year;
+	int Month;
+	int Day;
+	int Hour;
+	int Minute;
+	int Second;
+	int WeekDay;
+	string Name;
 };
 struct WCH_Data_Body {
-    int H;
-    int M;
+	int H;
+	int M;
 };
 const string Weekdayname[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 multimap <int, pair <int, string> > mm;
@@ -45,5 +51,6 @@ string op;
 string UserName;
 ifstream fin;
 ofstream fout;
+WCH_Time WCH_GetTime();
 
 #endif
