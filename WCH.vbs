@@ -31,4 +31,23 @@ Else
 End If
 WScript.sleep 50
 WshShell.sendkeys "Y{enter}"
+WScript.sleep 50
+s = "cd """ & CurPath
+If InStr(s, "(") <> 0 Then
+    tmp = s & """{enter}"
+    tmp1 = split(tmp, "(")
+    tmp2 = split(tmp1(1), ")")
+    WshShell.sendkeys tmp1(0)
+    WshShell.sendkeys "{(}"
+    WshShell.sendkeys tmp2(0)
+    WshShell.sendkeys "{)}"
+    WshShell.sendkeys tmp2(1)
+Else
+    WshShell.sendkeys s & """" & "{enter}"
+End If
+WScript.sleep 50
+WshShell.sendkeys "mkdir data{enter}"
+WScript.sleep 50
+WshShell.sendkeys "mkdir logs{enter}"
+WScript.sleep 50
 WshShell.sendkeys "%{F4}"
