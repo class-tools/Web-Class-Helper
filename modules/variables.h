@@ -8,6 +8,7 @@ Contributors: jsh-jsh ren-yc
 #define VARIABLES_H
 #include <bits/stdc++.h>
 #include <windows.h>
+#include <wininet.h>
 #include <conio.h>
 #include <direct.h>
 #include "commands.h"
@@ -30,8 +31,12 @@ struct WCH_Time {
     int WeekDay;
     string Name;
 };
-const string Weekdayname[7] = {"Sunday.txt", "Monday.txt", "Tuesday.txt", "Wednesday.txt", "Thursday.txt", "Friday.txt", "Saturday.txt"};
-multimap <int, pair <int, string>> mm;
+struct WCH_Data_Body {
+    int H;
+    int M;
+};
+const string Weekdayname[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+multimap <int, pair <int, string> > mm;
 int WCH_clock_num;
 bool cmd_line = true;
 bool anti_idle = false;

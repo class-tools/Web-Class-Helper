@@ -1,6 +1,7 @@
 .vscode/
 genexe/
 genins/
+data/*.dat
 *.exe
 *.txt
 *.rc

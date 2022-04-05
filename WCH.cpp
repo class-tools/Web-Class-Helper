@@ -5,6 +5,7 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER "1.1.0"
+#define WCH_Framework "x64"
 #include "modules/commands.h"
 #include "modules/file-process.h"
 #include "modules/functions.h"
@@ -13,7 +14,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string>> mm;
+extern multimap <int, pair <int, string> > mm;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -26,8 +27,10 @@ extern ofstream fout;
 int main() {
     WCH_Init();
     WCH_ReadData();
+    atexit(WCH_save);
+    thread T(WCH_check_clock);
+    T.detach();
     while (op != "quit") {
-        WCH_check_clock();
         if (WCH_ShortCutKeyCheck() && !cmd_line) {
             WCH_SetWindowStatus(true);
             if (anti_idle == true) {
@@ -66,12 +69,13 @@ int main() {
                 WCH_anti_idle();
             } else if (op == "trans") {
                 WCH_trans();
+            } else if (op == "update") {
+                WCH_update();
             } else if (op != "quit") {
                 WCH_unknown();
             }
             cout << endl;
         }
     }
-    WCH_save();
     return 0;
 }

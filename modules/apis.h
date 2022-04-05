@@ -8,6 +8,7 @@ Contributors: jsh-jsh ren-yc
 #define APIS_H
 #include <bits/stdc++.h>
 #include <windows.h>
+#include <wininet.h>
 #include <conio.h>
 #include <direct.h>
 #include "commands.h"
@@ -17,7 +18,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string>> mm;
+extern multimap <int, pair <int, string> > mm;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;

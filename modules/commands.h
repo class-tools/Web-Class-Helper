@@ -8,16 +8,20 @@ Contributors: jsh-jsh ren-yc
 #define COMMANDS_H
 #include <bits/stdc++.h>
 #include <windows.h>
+#include <wininet.h>
 #include <conio.h>
 #include <direct.h>
 #include "file-process.h"
 #include "functions.h"
 #include "variables.h"
 #include "apis.h"
+#ifdef URLDownloadToFile
+#undef URLDownloadToFile
+#endif
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string>> mm;
+extern multimap <int, pair <int, string> > mm;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -26,6 +30,13 @@ extern string op;
 extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
+
+typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
+UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
+
+void WCH_update() {
+    system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+}
 
 void WCH_add() {
     int h = 0;
@@ -43,18 +54,23 @@ void WCH_add() {
 void WCH_delete() {
     int h = 0;
     int m = 0;
-    int flag = 0;
+    bool flag = false;
     string tname = "NULL";
-    cin >> h >> m >> tname;
-    for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
-        if ((it -> second).first == m && ((it -> second).second) == tname) {
-            mm.erase(it);
-            flag = 1;
-            WCH_clock_num--;
+    try {
+        cin >> h >> m >> tname;
+        for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
+            if ((it -> second).first == m && (it -> second).second == tname) {
+                mm.erase(it);
+                flag = true;
+                WCH_clock_num--;
+            }
         }
     }
+    catch (...) {
+        goto Error;
+    }
     if (!flag) {
-        WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
+        Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
         return;
     }
 }
@@ -64,15 +80,20 @@ void WCH_change() {
     int m = 0;
     bool flag = false;
     string tname = "NULL";
-    cin >> h >> m >> tname;
-    for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
-        if ((it -> second).first == m) {
-            ((it -> second).second) = tname;
-            flag = true;
+    try {
+        cin >> h >> m >> tname;
+        for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
+            if ((it -> second).first == m) {
+                (it -> second).second = tname;
+                flag = true;
+            }
         }
     }
+    catch (...) {
+        goto Error;
+    }
     if (!flag) {
-        WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
+        Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
         return;
     }
 }
@@ -158,6 +179,32 @@ void WCH_unknown() {
     }
 }
 
+void WCH_ow() {
+    try {
+        int len;
+        DWORD unused;
+        char url[128], *file;
+        HANDLE hFile;
+        char ss[128] = "https://v1.hitokoto.cn/?encode=text";
+        sprintf(url, ss);
+        URLDownloadToFile(0, url, "WCH_STDL.tmp", 0, 0);
+        hFile = CreateFile("WCH_STDL.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+        len = GetFileSize(hFile, 0);
+        file = new char[len + 3];
+        ReadFile(hFile, file, len, &unused, 0);
+        file[len] = file[len + 1] = 0;
+        CloseHandle(hFile);
+        UTF8ToANSI(file);
+        cout << file << endl;
+        DeleteFile("WCH_STDL.tmp");
+        delete[] file;
+    }
+    catch (...) {
+        WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
+        return;
+    }
+}
+
 void WCH_help() {
     cout << "Commands:" << endl;
     cout << "add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
@@ -173,6 +220,7 @@ void WCH_help() {
     cout << "speedtest (Start a speed test with a GUI window)" << endl;
     cout << "anti-idle (Enable anti-idle mode)" << endl;
     cout << "trans {info} (Translate {info} that was input after spaces between Chinese and English)" << endl;
+    cout << "update (Visit the releases page in default browser)" << endl;
     cout << "quit (Quit this program)" << endl;
 }
 

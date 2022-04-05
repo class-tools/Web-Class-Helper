@@ -8,19 +8,17 @@ Contributors: jsh-jsh ren-yc
 #define FUNCTIONS_H
 #include <bits/stdc++.h>
 #include <windows.h>
+#include <wininet.h>
 #include <conio.h>
 #include <direct.h>
 #include "commands.h"
 #include "file-process.h"
 #include "variables.h"
 #include "apis.h"
-#ifdef URLDownloadToFile
-#undef URLDownloadToFile
-#endif
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string>> mm;
+extern multimap <int, pair <int, string> > mm;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -29,9 +27,6 @@ extern string op;
 extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
-
-typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
-UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
 
 WCH_Time WCH_GetTime() {
     WCH_Time NowTime;
@@ -50,7 +45,10 @@ WCH_Time WCH_GetTime() {
 }
 
 void WCH_Init() {
-    SetConsoleTitle("Web Class Helper");
+    string tmp = "Web Class Helper (";
+    tmp += WCH_Framework;
+    tmp += ")";
+    SetConsoleTitle(tmp.c_str());
     WCH_Time q = WCH_GetTime();
     UserName = WCH_GetUserName();
     if (q.Month == 1 || q.Month == 2) {
@@ -58,8 +56,7 @@ void WCH_Init() {
         q.Year--;
     }
     WCH_SetWindowStatus(true);
-    string tmp = WCH_VER;
-    cout << "Web Class Helper " + tmp << endl;
+    cout << "Web Class Helper " << WCH_VER << " (" << WCH_Framework << ")" << endl;
     cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
     cout << "Type 'help' to get help." << endl;
     cout << endl;
@@ -88,73 +85,16 @@ bool WCH_ShortCutKeyCheck() {
 }
 
 void WCH_check_clock() {
-    WCH_Time NOW = WCH_GetTime();
-    for (auto it = mm.equal_range(NOW.Hour).first; it != mm.equal_range(NOW.Hour).second; it++) {
-        if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
-            cout << "\a";
-            MessageBox(NULL, ((it -> second).second).c_str(), "Web Class Helper Clock", MB_OK);
+    Sleep((60 - WCH_GetTime().Second) * 1000);
+    while (true) {
+        WCH_Time NOW = WCH_GetTime();
+        for (auto it = mm.equal_range(NOW.Hour).first; it != mm.equal_range(NOW.Hour).second; it++) {
+            if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
+                cout << "\a";
+                MessageBox(NULL, ((it -> second).second).c_str(), "Web Class Helper Clock", MB_OK);
+            }
         }
-    }
-}
-
-void WCH_ReadData() {
-    WCH_Time q = WCH_GetTime();
-    fin.open(Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7].c_str());
-    fin >> WCH_clock_num;
-    for (int i = 1; i <= WCH_clock_num; i++) {
-        int h = 0;
-        int m = 0;
-        string tname = "NULL";
-        fin >> h >> m >> tname;
-        mm.emplace(make_pair(h, make_pair(m, tname)));
-    }
-}
-
-void WCH_save() {
-    if (WCH_clock_num != 0) {
-        WCH_Time q = WCH_GetTime();
-        fout.open(Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7].c_str());
-        fout << WCH_clock_num << endl;
-        for (auto it = mm.begin(); it != mm.end(); it++) {
-            fout << (it -> first) << " " << (it -> second).first << " " << (it -> second).second << endl;
-        }
-    }
-}
-
-void UTF8ToANSI(char *str) {
-    int len = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
-    WCHAR *wsz = new WCHAR[len + 1];
-    len = MultiByteToWideChar(CP_UTF8, 0, str, -1, wsz, len);
-    wsz[len] = 0;
-    len = WideCharToMultiByte(CP_ACP, 0, wsz, -1, 0, 0, 0, 0);
-    len = WideCharToMultiByte(CP_ACP, 0, wsz, -1, str, len, 0, 0);
-    str[len] = 0;
-    delete[] wsz;
-}
-
-void WCH_ow() {
-    try {
-        int len;
-        DWORD unused;
-        char url[128], *file;
-        HANDLE hFile;
-        char ss[128] = "https://v1.hitokoto.cn/?encode=text";
-        sprintf(url, ss);
-        URLDownloadToFile(0, url, "WCH_STDL.tmp", 0, 0);
-        hFile = CreateFile("WCH_STDL.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-        len = GetFileSize(hFile, 0);
-        file = new char[len + 3];
-        ReadFile(hFile, file, len, &unused, 0);
-        file[len] = file[len + 1] = 0;
-        CloseHandle(hFile);
-        UTF8ToANSI(file);
-        cout << file << endl;
-        DeleteFile("WCH_STDL.tmp");
-        delete[] file;
-    }
-    catch (...) {
-        WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
-        return;
+        Sleep(60000);
     }
 }
 
