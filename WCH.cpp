@@ -6,8 +6,8 @@ Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER "1.1.0"
 #define WCH_Framework "x64"
-#include "modules/commands.h"
 #include "modules/file-process.h"
+#include "modules/commands.h"
 #include "modules/functions.h"
 #include "modules/variables.h"
 #include "modules/apis.h"
@@ -51,10 +51,12 @@ int main() {
             } else if (op == "ow") {
                 WCH_ow();
             } else if (op == "hide") {
+            	WCH_printlog(1,"hide");
                 WCH_SetWindowStatus(false);
             } else if (op == "game") {
                 WCH_game();
             } else if (op == "time") {
+            	WCH_printlog(1,"time");
                 char tmp[21];
                 WCH_Time a = WCH_GetTime();
                 sprintf(tmp, "%04d/%02d/%02d %02d %02d %02d", a.Year, a.Month, a.Day, a.Hour, a.Minute, a.Second);
