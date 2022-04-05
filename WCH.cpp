@@ -77,5 +77,6 @@ int main() {
             cout << endl;
         }
     }
+    WCH_save();
     return 0;
 }
