@@ -11,8 +11,8 @@ Contributors: jsh-jsh ren-yc
 #include <wininet.h>
 #include <conio.h>
 #include <direct.h>
-#include "commands.h"
 #include "file-process.h"
+#include "commands.h"
 #include "variables.h"
 #include "apis.h"
 using namespace std;
@@ -45,6 +45,7 @@ WCH_Time WCH_GetTime() {
 }
 
 void WCH_Init() {
+	WCH_printlog(-1);
     string tmp = "Web Class Helper (";
     tmp += WCH_Framework;
     tmp += ")";
@@ -65,13 +66,16 @@ void WCH_Init() {
 void WCH_Error(string INFO) {
     if (INFO == "OOR") {
         cout << "Your input code is out of range, please check and try again." << endl;
-    }
+    	WCH_printlog(0,"input code is out of range");
+	}
     if (INFO == "NF") {
         cout << "An network error occurred, please check your network connection and try to update this program." << endl;
-    }
+    	WCH_printlog(0,"network error");
+	}
     if (INFO == "CO") {
         cout << "Cannot Operate the clock, please try to restart this program." << endl;
-    }
+    	WCH_printlog(0,"Cannot Operate the clock");
+	}
 }
 
 bool WCH_ShortCutKeyCheck() {
