@@ -35,10 +35,12 @@ typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
 
 void WCH_update() {
+	WCH_printlog(1,"update");
     system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 }
 
 void WCH_add() {
+	WCH_printlog(1,"add");
     int h = 0;
     int m = 0;
     string tname = "NULL";
@@ -52,6 +54,7 @@ void WCH_add() {
 }
 
 void WCH_delete() {
+	WCH_printlog(1,"delete");
     int h = 0;
     int m = 0;
     bool flag = false;
@@ -76,6 +79,7 @@ void WCH_delete() {
 }
 
 void WCH_change() {
+	WCH_printlog(1,"change");
     int h = 0;
     int m = 0;
     bool flag = false;
@@ -99,6 +103,7 @@ void WCH_change() {
 }
 
 void WCH_game() {
+	WCH_printlog(1,"game");
     srand(time(NULL));
     int WCH_clock_num = rand() % 10000 + 1;
     string z = "0";
@@ -124,10 +129,12 @@ void WCH_game() {
 }
 
 void WCH_speedtest() {
+	WCH_printlog(1,"speedtest");
     system("START SPEEDTEST.EXE");
 }
 
 void WCH_pi() {
+	WCH_printlog(1,"pi");
     WCH_SetWindowStatus(false);
     WCH_PutPicture();
     WCH_SetWindowStatus(true);
@@ -135,6 +142,7 @@ void WCH_pi() {
 }
 
 void WCH_mode() {
+	WCH_printlog(1,"mode");
     string tmp;
     cin >> tmp;
     if (tmp == "cmd") {
@@ -147,6 +155,7 @@ void WCH_mode() {
 }
 
 void WCH_anti_idle() {
+	WCH_printlog(1,"anti-idle");
     char ch;
     cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
     cin >> ch;
@@ -161,6 +170,7 @@ void WCH_anti_idle() {
 }
 
 void WCH_trans() {
+	WCH_printlog(1,"trans");
     string info;
     getline(cin, info);
     info = "START /B TRANS.EXE -i \"" + info + "\"";
@@ -180,6 +190,7 @@ void WCH_unknown() {
 }
 
 void WCH_ow() {
+	WCH_printlog(1,"ow");
     try {
         int len;
         DWORD unused;
@@ -206,6 +217,7 @@ void WCH_ow() {
 }
 
 void WCH_help() {
+	WCH_printlog(1,"help");
     cout << "Commands:" << endl;
     cout << "add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
     cout << "delete hour {minute} {name} (Delete clock at {hour}:{minute})" << endl;
