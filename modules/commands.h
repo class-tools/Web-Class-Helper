@@ -69,6 +69,7 @@ void WCH_delete() {
 				mm.erase(it);
 				flag = true;
 				WCH_clock_num--;
+				break;
 			}
 		}
 	}
@@ -198,7 +199,6 @@ void WCH_ow() {
 		UTF8ToANSI(file);
 		cout << file << endl;
 		DeleteFile("WCH_STDL.tmp");
-		delete[] file;
 	}
 	catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);

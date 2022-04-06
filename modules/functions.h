@@ -46,6 +46,12 @@ WCH_Time WCH_GetTime() {
 }
 
 void WCH_Init() {
+	if (access("./data", 0) != 0) {
+		CreateDirectory("./data", NULL);
+	}
+	if (access("./logs", 0) != 0) {
+		CreateDirectory("./logs", NULL);
+	}
 	WCH_Time q = WCH_GetTime();
 	char tmp[21];
 	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);

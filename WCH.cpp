@@ -70,7 +70,7 @@ int main() {
 				WCH_trans();
 			} else if (op == "update") {
 				WCH_update();
-			} else {
+			} else if (op != "quit") {
 				WCH_printlog(WCH_LOG_MODE_RC, {"unknown"});
 				WCH_unknown(op);
 			}

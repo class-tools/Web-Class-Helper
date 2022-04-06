@@ -57,7 +57,7 @@ void WCH_printlog(int w, initializer_list <string> other) {
 		printf("%s %s: Using command \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_RW) {
 		printf("%s %s: Using command \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
-		printf("%s %s: %s file ./data/\"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		printf("%s %s: %s file \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
 	fclose(stdout);
 	freopen("CON", "w", stdout);
@@ -66,9 +66,9 @@ void WCH_printlog(int w, initializer_list <string> other) {
 void WCH_ReadData() {
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	WCH_printlog(WCH_LOG_MODE_RW, {"r", NowWeekDay});
 	string FilePath = "./data/" + NowWeekDay + ".dat";
-	fin.open(FilePath);
+	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
+	fin.open(FilePath, ios::binary);
 	if (!fin.is_open()) {
 		return;
 	}
@@ -83,13 +83,18 @@ void WCH_ReadData() {
 }
 
 void WCH_save() {
-	if (WCH_clock_num == 0) {
-		return;
-	}
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	WCH_printlog(WCH_LOG_MODE_RW, {"w", NowWeekDay});
 	string FilePath = "./data/" + NowWeekDay + ".dat";
+	if (WCH_clock_num == 0) {
+		if (access(FilePath.c_str(), 0) != -1) {
+			DeleteFile(FilePath.c_str());
+			WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+		} else {
+			return;
+		}
+	}
+	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 	fout.open(FilePath, ios::binary);
 	fout << WCH_clock_num << endl;
 	for (auto it = mm.begin(); it != mm.end(); it++) {
