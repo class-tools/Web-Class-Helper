@@ -31,6 +31,7 @@ WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 
 void WCH_printlog(int w, initializer_list <string> other) {
+	// Print log.
 	WCH_Time a = WCH_GetTime();
 	string tt[21];
 	char tmp[21];
@@ -65,6 +66,7 @@ void WCH_printlog(int w, initializer_list <string> other) {
 }
 
 void WCH_ReadData() {
+	// Read clock data.
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "./data/" + NowWeekDay + ".dat";
@@ -84,6 +86,7 @@ void WCH_ReadData() {
 }
 
 void WCH_save() {
+	// Save clock data.
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "./data/" + NowWeekDay + ".dat";
@@ -106,6 +109,7 @@ void WCH_save() {
 }
 
 void UTF8ToANSI(char *str) {
+	// Convert UTF-8 to ANSI.
 	int len = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
 	WCHAR *wsz = new WCHAR[len + 1];
 	len = MultiByteToWideChar(CP_UTF8, 0, str, -1, wsz, len);

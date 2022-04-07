@@ -38,14 +38,17 @@ typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
 
 void WCH_hide() {
+	// Hide the window.
 	WCH_SetWindowStatus(false);
 }
 
 void WCH_update() {
+	// Visit the website to update the program.
 	system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 }
 
 void WCH_add() {
+	// Add a new clock.
 	int h = 0;
 	int m = 0;
 	string tname = "NULL";
@@ -59,6 +62,7 @@ void WCH_add() {
 }
 
 void WCH_delete() {
+	// Delete a clock.
 	int h = 0;
 	int m = 0;
 	bool flag = false;
@@ -84,6 +88,7 @@ void WCH_delete() {
 }
 
 void WCH_change() {
+	// Change a clock.
 	int h = 0;
 	int m = 0;
 	bool flag = false;
@@ -107,6 +112,7 @@ void WCH_change() {
 }
 
 void WCH_game() {
+	// Guessing game.
 	srand(time(NULL));
 	int WCH_clock_num = rand() % 10000 + 1;
 	string z = "0";
@@ -132,10 +138,12 @@ void WCH_game() {
 }
 
 void WCH_speedtest() {
+	// Start a speed test with Python program.
 	system("START SPEEDTEST.EXE");
 }
 
 void WCH_pi() {
+	// A sequence of function to make a screenshot.
 	WCH_SetWindowStatus(false);
 	WCH_PutPicture();
 	WCH_SetWindowStatus(true);
@@ -143,6 +151,7 @@ void WCH_pi() {
 }
 
 void WCH_mode() {
+	// Switch command-line mode.
 	string tmp;
 	cin >> tmp;
 	if (tmp == "cmd") {
@@ -155,10 +164,11 @@ void WCH_mode() {
 }
 
 void WCH_anti_idle() {
+	// Enable anti-idle function.
 	char ch;
 	cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
 	cin >> ch;
-	if (ch == 'Y') {
+	if (ch == 'Y' || ch == 'y') {
 		anti_idle = true;
 		WCH_SetWindowStatus(false);
 		Sleep(500);
@@ -169,6 +179,7 @@ void WCH_anti_idle() {
 }
 
 void WCH_trans() {
+	// Translate a string from English / Chinese to Chinese / English.
 	try {
 		string info;
 		cin >> info;
@@ -197,10 +208,12 @@ void WCH_trans() {
 }
 
 void WCH_unknown(string op) {
+	// Make a response to unknown command.
 	cout << op << ": Command not found." << endl;
 }
 
 void WCH_ow() {
+	// Get a random sentence.
 	try {
 		int len;
 		char url[128], *file;
@@ -226,6 +239,7 @@ void WCH_ow() {
 }
 
 void WCH_time() {
+	// Print current time.
 	char tmp[21];
 	WCH_Time q = WCH_GetTime();
 	sprintf(tmp, "%04d/%02d/%02d %02d %02d %02d", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
@@ -233,6 +247,7 @@ void WCH_time() {
 }
 
 void WCH_help() {
+	// Print help information.
 	cout << "Commands:" << endl;
 	cout << "add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
 	cout << "delete hour {minute} {name} (Delete clock at {hour}:{minute})" << endl;

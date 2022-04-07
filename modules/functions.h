@@ -31,6 +31,7 @@ WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 
 WCH_Time WCH_GetTime() {
+	// Get current time and return a WCH_Time object.
 	WCH_Time NowTime;
 	time_t rawtime;
 	struct tm *ptminfo;
@@ -47,6 +48,7 @@ WCH_Time WCH_GetTime() {
 }
 
 void WCH_Init() {
+	// Initialize the whole program.
 	if (access("./data", 0) != 0) {
 		CreateDirectory("./data", NULL);
 	}
@@ -74,6 +76,7 @@ void WCH_Init() {
 }
 
 void WCH_Error(string INFO) {
+	// Error message checker.
 	string tmp;
 	if (INFO == "OOR") {
 		tmp = "Your input code is out of range, please check and try again";
@@ -89,6 +92,7 @@ void WCH_Error(string INFO) {
 }
 
 bool WCH_ShortCutKeyCheck() {
+	// Check if the shortcut key is pressed.
 	int a = GetKeyState(VK_CONTROL);
 	int b = GetKeyState(VK_DOWN);
 	if (a < 0 && b < 0) {
@@ -99,6 +103,7 @@ bool WCH_ShortCutKeyCheck() {
 }
 
 void WCH_check_clock() {
+	// Check if the time equals to the clock. (Another thread)
 	Sleep((60 - WCH_GetTime().Second) * 1000);
 	while (true) {
 		WCH_Time NOW = WCH_GetTime();
@@ -113,19 +118,33 @@ void WCH_check_clock() {
 }
 
 void WCH_CL_Init() {
+	// Initialize the command line.
 	WCH_GetPath(mode, UserName);
 	cin >> op;
+	op = WCH_ToLower(op);
 }
 
 void WCH_PutPicture() {
+	// Press PrintScreen. (Keyboard)
 	keybd_event(VK_SNAPSHOT, 0, 0, 0);
 	keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
 	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl << endl;
 }
 
 void WCH_SaveImg() {
+	// Run image saver Python program.
 	system("START IMG.EXE");
 	Sleep(500);
+}
+
+void WCH_TransStrChar(string str) {
+	// Translate the upper cases in string to lower cases.
+	for (int i = 0; i < (int)str.size(); i++) {
+		if (str[i] >= 'A' && str[i] <= 'Z') {
+			tolower(str[i]);
+		}
+	}
+	return str;
 }
 
 #endif

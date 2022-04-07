@@ -31,6 +31,7 @@ WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 
 string WCH_GetUserName() {
+	// Get current user name and return a string by Windows API.
 	char tmpc[256] = {0};
 	DWORD Size = 256;
 	GetUserName(tmpc, &Size);
@@ -39,6 +40,7 @@ string WCH_GetUserName() {
 }
 
 void WCH_SetWindowStatus(bool flag) {
+	// Set the window status by Windows API.
 	HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
 	if (hwnd) {
 		ShowWindow(hwnd, flag);
@@ -47,11 +49,13 @@ void WCH_SetWindowStatus(bool flag) {
 }
 
 void WCH_SetWindowPos(bool flag) {
+	// Set the window position by Windows API.
 	HWND hwnd = GetActiveWindow();
 	ShowWindow(hwnd, (flag == true ? SW_MAXIMIZE : SW_MINIMIZE));
 }
 
 void WCH_SetTrayStatus(bool flag) {
+	// Set the tray status by Windows API.
 	HWND hwnd = FindWindow("Shell_trayWnd", NULL);
 	if (hwnd) {
 		ShowWindow(hwnd, flag);
@@ -59,6 +63,7 @@ void WCH_SetTrayStatus(bool flag) {
 }
 
 void WCH_GetPath(bool mode, string UserName) {
+	// Get current path by Windows API.
 	char ExeFile[256];
 	_getcwd(ExeFile, 256);
 	if (mode) {
