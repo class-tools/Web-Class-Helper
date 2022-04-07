@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Commands Module Header File 1.1.0
+Web-Class-Helper Commands Module Header File 1.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -32,6 +32,7 @@ extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
+void WCH_Error(string INFO);
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
@@ -168,13 +169,31 @@ void WCH_anti_idle() {
 }
 
 void WCH_trans() {
-	string info;
-	getline(cin, info);
-	info = "START /B TRANS.EXE -i \"" + info + "\"";
-	system(info.c_str());
-	cmd_line = false;
-	Sleep(2000);
-	cmd_line = true;
+	try {
+		string info;
+		cin >> info;
+		int len;
+		char *file;
+		HANDLE hFile;
+		DWORD unused;
+		hFile = CreateFile("WCH_TRANS.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		len = GetFileSize(hFile, 0);
+		file = new char[len + 3];
+		info = "TRANS -i \"" + info + "\" > WCH_TRANS.tmp";
+		system(info.c_str());
+		cmd_line = false;
+		Sleep(2000);
+		ReadFile(hFile, file, len, &unused, 0);
+		file[len] = file[len + 1] = 0;
+		CloseHandle(hFile);
+		UTF8ToANSI(file);
+		cout << file << endl;
+		DeleteFile("WCH_TRANS.tmp");
+	}
+	catch (...) {
+		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
+		return;
+	}
 }
 
 void WCH_unknown(string op) {
@@ -184,9 +203,9 @@ void WCH_unknown(string op) {
 void WCH_ow() {
 	try {
 		int len;
-		DWORD unused;
 		char url[128], *file;
 		HANDLE hFile;
+		DWORD unused;
 		char ss[128] = "https://v1.hitokoto.cn/?encode=text";
 		sprintf(url, ss);
 		URLDownloadToFile(0, url, "WCH_STDL.tmp", 0, 0);

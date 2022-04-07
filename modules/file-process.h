@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper File Process Module Header File 1.1.0
+Web-Class-Helper File Process Module Header File 1.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -28,6 +28,7 @@ extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
+void WCH_Error(string INFO);
 
 void WCH_printlog(int w, initializer_list <string> other) {
 	WCH_Time a = WCH_GetTime();
@@ -112,6 +113,6 @@ void UTF8ToANSI(char *str) {
 	len = WideCharToMultiByte(CP_ACP, 0, wsz, -1, 0, 0, 0, 0);
 	len = WideCharToMultiByte(CP_ACP, 0, wsz, -1, str, len, 0, 0);
 	str[len] = 0;
-	delete[] wsz;
 }
+
 #endif

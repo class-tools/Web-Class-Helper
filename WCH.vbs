@@ -1,4 +1,4 @@
-'Web-Class-Helper After Installing Program Runtime Environment Configuration Module 1.1.0
+'Web-Class-Helper After Installing Program Runtime Environment Configuration Module 1.1.1
 'This source code file is under MIT License.
 'Copyright (c) 2022 Class Tools Develop Team
 'Contributors: jsh-jsh ren-yc
@@ -31,23 +31,5 @@ Else
 End If
 WScript.sleep 50
 WshShell.sendkeys "Y{enter}"
-WScript.sleep 50
-s = "cd """ & CurPath
-If InStr(s, "(") <> 0 Then
-    tmp = s & """{enter}"
-    tmp1 = split(tmp, "(")
-    tmp2 = split(tmp1(1), ")")
-    WshShell.sendkeys tmp1(0)
-    WshShell.sendkeys "{(}"
-    WshShell.sendkeys tmp2(0)
-    WshShell.sendkeys "{)}"
-    WshShell.sendkeys tmp2(1)
-Else
-    WshShell.sendkeys s & """" & "{enter}"
-End If
-WScript.sleep 50
-WshShell.sendkeys "mkdir data{enter}"
-WScript.sleep 50
-WshShell.sendkeys "mkdir logs{enter}"
 WScript.sleep 50
 WshShell.sendkeys "%{F4}"

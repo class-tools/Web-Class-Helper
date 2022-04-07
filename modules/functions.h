@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Function Module Header File 1.1.0
+Web-Class-Helper Function Module Header File 1.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -28,6 +28,7 @@ extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
+void WCH_Error(string INFO);
 
 WCH_Time WCH_GetTime() {
 	WCH_Time NowTime;
@@ -59,6 +60,7 @@ void WCH_Init() {
 	WCH_printlog(WCH_LOG_MODE_ST, {"s"});
 	sprintf(tmp, "Web Class Helper (%s)", WCH_Framework);
 	SetConsoleTitle(tmp);
+	setlocale (LC_ALL, "chs");
 	UserName = WCH_GetUserName();
 	if (q.Month == 1 || q.Month == 2) {
 		q.Month += 12;

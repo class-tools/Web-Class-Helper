@@ -1,10 +1,10 @@
 /*
-Web-Class-Helper Main File 1.1.0
+Web-Class-Helper Main File 1.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#define WCH_VER "1.1.0"
+#define WCH_VER "1.1.1"
 #define WCH_Framework "x64"
 #include "modules/commands.h"
 #include "modules/functions.h"
@@ -24,6 +24,7 @@ extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
+void WCH_Error(string INFO);
 
 int main() {
 	WCH_Init();

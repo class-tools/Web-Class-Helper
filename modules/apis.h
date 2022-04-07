@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper APIs Module Header File 1.1.0
+Web-Class-Helper APIs Module Header File 1.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -28,6 +28,7 @@ extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
+void WCH_Error(string INFO);
 
 string WCH_GetUserName() {
 	char tmpc[256] = {0};

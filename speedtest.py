@@ -1,5 +1,5 @@
 '''
-Web-Class-Helper Speed Testing Module 1.1.0
+Web-Class-Helper Speed Testing Module 1.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
