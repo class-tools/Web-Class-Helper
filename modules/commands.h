@@ -178,35 +178,6 @@ void WCH_anti_idle() {
 	}
 }
 
-void WCH_trans() {
-	// Translate a string from English / Chinese to Chinese / English.
-	try {
-		string info;
-		cin >> info;
-		int len;
-		char *file;
-		HANDLE hFile;
-		DWORD unused;
-		hFile = CreateFile("WCH_TRANS.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-		len = GetFileSize(hFile, 0);
-		file = new char[len + 3];
-		info = "TRANS -i \"" + info + "\" > WCH_TRANS.tmp";
-		system(info.c_str());
-		cmd_line = false;
-		Sleep(2000);
-		ReadFile(hFile, file, len, &unused, 0);
-		file[len] = file[len + 1] = 0;
-		CloseHandle(hFile);
-		UTF8ToANSI(file);
-		cout << file << endl;
-		DeleteFile("WCH_TRANS.tmp");
-	}
-	catch (...) {
-		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
-		return;
-	}
-}
-
 void WCH_unknown(string op) {
 	// Make a response to unknown command.
 	cout << op << ": Command not found." << endl;
@@ -261,7 +232,6 @@ void WCH_help() {
 	cout << "mode {cmd-mode} (Switch command line mode to {cmd-mode} cmd / bash)" << endl;
 	cout << "speedtest (Start a speed test with a GUI window)" << endl;
 	cout << "anti-idle (Enable anti-idle mode)" << endl;
-	cout << "trans {info} (Translate {info} that was input after spaces between Chinese and English)" << endl;
 	cout << "update (Visit the releases page in default browser)" << endl;
 	cout << "quit (Quit this program)" << endl;
 }

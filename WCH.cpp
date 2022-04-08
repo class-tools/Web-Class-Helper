@@ -67,8 +67,6 @@ int main() {
 				WCH_speedtest();
 			} else if (op == "anti-idle") {
 				WCH_anti_idle();
-			} else if (op == "trans") {
-				WCH_trans();
 			} else if (op == "update") {
 				WCH_update();
 			} else if (op != "quit") {

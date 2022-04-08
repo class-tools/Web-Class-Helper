@@ -47,6 +47,16 @@ WCH_Time WCH_GetTime() {
 	return NowTime;
 }
 
+string WCH_TransStrChar(string str) {
+	// Translate the upper cases in string to lower cases.
+	for (int i = 0; i < (int)str.size(); i++) {
+		if (str[i] >= 'A' && str[i] <= 'Z') {
+			tolower(str[i]);
+		}
+	}
+	return str;
+}
+
 void WCH_Init() {
 	// Initialize the whole program.
 	if (access("./data", 0) != 0) {
@@ -62,7 +72,6 @@ void WCH_Init() {
 	WCH_printlog(WCH_LOG_MODE_ST, {"s"});
 	sprintf(tmp, "Web Class Helper (%s)", WCH_Framework);
 	SetConsoleTitle(tmp);
-	setlocale (LC_ALL, "chs");
 	UserName = WCH_GetUserName();
 	if (q.Month == 1 || q.Month == 2) {
 		q.Month += 12;
@@ -121,7 +130,7 @@ void WCH_CL_Init() {
 	// Initialize the command line.
 	WCH_GetPath(mode, UserName);
 	cin >> op;
-	op = WCH_ToLower(op);
+	transform(op.begin(), op.end(), op.begin(), ::tolower);
 }
 
 void WCH_PutPicture() {
@@ -135,16 +144,6 @@ void WCH_SaveImg() {
 	// Run image saver Python program.
 	system("START IMG.EXE");
 	Sleep(500);
-}
-
-void WCH_TransStrChar(string str) {
-	// Translate the upper cases in string to lower cases.
-	for (int i = 0; i < (int)str.size(); i++) {
-		if (str[i] >= 'A' && str[i] <= 'Z') {
-			tolower(str[i]);
-		}
-	}
-	return str;
 }
 
 #endif
