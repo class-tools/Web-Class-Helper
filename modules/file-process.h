@@ -119,4 +119,12 @@ void UTF8ToANSI(char *str) {
 	str[len] = 0;
 }
 
+void WCH_RunSystem(string str) {
+	freopen("WCH_SYSTEM.tmp", "w", stdout);
+	system(str.c_str());
+	freopen("CON", "w", stdout);
+	Sleep(500);
+	DeleteFile("WCH_SYSTEM.tmp");
+}
+
 #endif

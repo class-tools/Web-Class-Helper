@@ -44,7 +44,7 @@ void WCH_hide() {
 
 void WCH_update() {
 	// Visit the website to update the program.
-	system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+	WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 }
 
 void WCH_add() {
@@ -139,7 +139,7 @@ void WCH_game() {
 
 void WCH_speedtest() {
 	// Start a speed test with Python program.
-	system("START SPEEDTEST.EXE");
+	WCH_RunSystem("START SPEEDTEST.EXE");
 }
 
 void WCH_pi() {
@@ -181,6 +181,28 @@ void WCH_anti_idle() {
 void WCH_unknown(string op) {
 	// Make a response to unknown command.
 	cout << op << ": Command not found." << endl;
+}
+
+void WCH_trans() {
+	// Translate string between Chinese / English.
+	try {
+		string info;
+		cin >> info;
+		info = "TRANS -i \"" + info + "\" > WCH_TRANS.tmp";
+		WCH_RunSystem(info);
+		cmd_line = false;
+		Sleep(2000);
+		fin.open("WCH_TRANS.tmp");
+		fin >> info;
+		cout << info << endl;
+		fin.close();
+		DeleteFile("WCH_TRANS.tmp");
+		cmd_line = true;
+	}
+	catch (...) {
+		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
+		return;
+	}
 }
 
 void WCH_ow() {
@@ -231,6 +253,7 @@ void WCH_help() {
 	cout << "pi (Make a screenshot)" << endl;
 	cout << "mode {cmd-mode} (Switch command line mode to {cmd-mode} cmd / bash)" << endl;
 	cout << "speedtest (Start a speed test with a GUI window)" << endl;
+	cout << "trans {info} (Translate a word between English / Chinese)" << endl;
 	cout << "anti-idle (Enable anti-idle mode)" << endl;
 	cout << "update (Visit the releases page in default browser)" << endl;
 	cout << "quit (Quit this program)" << endl;

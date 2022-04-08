@@ -142,7 +142,7 @@ void WCH_PutPicture() {
 
 void WCH_SaveImg() {
 	// Run image saver Python program.
-	system("START IMG.EXE");
+	WCH_RunSystem("START IMG.EXE");
 	Sleep(500);
 }
 
