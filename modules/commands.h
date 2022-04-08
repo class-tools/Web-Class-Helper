@@ -187,13 +187,13 @@ void WCH_trans() {
 	// Translate string between Chinese / English.
 	try {
 		string info;
-		cin >> info;
+		getline(cin, info);
 		info = "TRANS -i \"" + info + "\" > WCH_TRANS.tmp";
 		WCH_RunSystem(info);
 		cmd_line = false;
 		Sleep(2000);
 		fin.open("WCH_TRANS.tmp");
-		fin >> info;
+		getline(fin, info);
 		cout << info << endl;
 		fin.close();
 		DeleteFile("WCH_TRANS.tmp");
@@ -235,7 +235,7 @@ void WCH_time() {
 	// Print current time.
 	char tmp[21];
 	WCH_Time q = WCH_GetTime();
-	sprintf(tmp, "%04d/%02d/%02d %02d %02d %02d", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
+	sprintf(tmp, "%04d/%02d/%02d %02d:%02d:%02d", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
 	cout << tmp << endl;
 }
 
@@ -253,7 +253,7 @@ void WCH_help() {
 	cout << "pi (Make a screenshot)" << endl;
 	cout << "mode {cmd-mode} (Switch command line mode to {cmd-mode} cmd / bash)" << endl;
 	cout << "speedtest (Start a speed test with a GUI window)" << endl;
-	cout << "trans {info} (Translate a word between English / Chinese)" << endl;
+	cout << "trans {info} (Translate a word between English / Chinese) **End with \"#\"**" << endl;
 	cout << "anti-idle (Enable anti-idle mode)" << endl;
 	cout << "update (Visit the releases page in default browser)" << endl;
 	cout << "quit (Quit this program)" << endl;
