@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper APIs Module Header File 1.1.1
+Web-Class-Helper APIs Module Header File 1.1.2
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -9,6 +9,7 @@ Contributors: jsh-jsh ren-yc
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <wininet.h>
+#include <tlhelp32.h>
 #include <conio.h>
 #include <direct.h>
 #include "commands.h"
@@ -18,7 +19,8 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > mm;
+extern multimap <int, pair <int, string> > WCH_clock;
+extern set <string> WCH_task_list;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -37,6 +39,25 @@ string WCH_GetUserName() {
 	GetUserName(tmpc, &Size);
 	string tmps = tmpc;
 	return tmps;
+}
+
+DWORD WCH_GetPID(string name) {
+	// Get PID by process name.
+	DWORD pid;
+	PROCESSENTRY32 entry;
+	entry.dwSize = sizeof(PROCESSENTRY32);
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (Process32First(snapshot, &entry) == TRUE) {
+		while (Process32Next(snapshot, &entry) == TRUE) {
+			if (string(entry.szExeFile) == name) {
+				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
+				pid = GetProcessId(hProcess);
+				CloseHandle(hProcess);
+			}
+		}
+	}
+	CloseHandle(snapshot);
+	return pid;
 }
 
 void WCH_SetWindowStatus(bool flag) {
@@ -78,6 +99,18 @@ void WCH_GetPath(bool mode, string UserName) {
 			}
 		}
 		cout << UserName << "@\\" << tmp << "$ ";
+	}
+}
+
+bool WCH_TaskKill(string name) {
+	// Kill a task by Windows API.
+	HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, WCH_GetPID(name));
+	if (hProcess) {
+		TerminateProcess(hProcess, 0);
+		CloseHandle(hProcess);
+		return true;
+	} else {
+		return false;
 	}
 }
 

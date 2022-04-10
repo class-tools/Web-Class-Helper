@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Commands Module Header File 1.1.1
+Web-Class-Helper Commands Module Header File 1.1.2
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -9,6 +9,7 @@ Contributors: jsh-jsh ren-yc
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <wininet.h>
+#include <tlhelp32.h>
 #include <conio.h>
 #include <direct.h>
 #include "functions.h"
@@ -22,7 +23,8 @@ using namespace std;
 #endif
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > mm;
+extern multimap <int, pair <int, string> > WCH_clock;
+extern set <string> WCH_task_list;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -47,7 +49,7 @@ void WCH_update() {
 	WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 }
 
-void WCH_add() {
+void WCH_add_clock() {
 	// Add a new clock.
 	int h = 0;
 	int m = 0;
@@ -57,11 +59,11 @@ void WCH_add() {
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	} else {
 		WCH_clock_num++;
-		mm.emplace(make_pair(h, make_pair(m, tname)));
+		WCH_clock.emplace(make_pair(h, make_pair(m, tname)));
 	}
 }
 
-void WCH_delete() {
+void WCH_delete_clock() {
 	// Delete a clock.
 	int h = 0;
 	int m = 0;
@@ -69,9 +71,9 @@ void WCH_delete() {
 	string tname = "NULL";
 	try {
 		cin >> h >> m >> tname;
-		for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
+		for (auto it = WCH_clock.equal_range(h).first; it != WCH_clock.equal_range(h).second; it++) {
 			if ((it -> second).first == m && (it -> second).second == tname) {
-				mm.erase(it);
+				WCH_clock.erase(it);
 				flag = true;
 				WCH_clock_num--;
 				break;
@@ -87,7 +89,7 @@ void WCH_delete() {
 	}
 }
 
-void WCH_change() {
+void WCH_change_clock() {
 	// Change a clock.
 	int h = 0;
 	int m = 0;
@@ -95,7 +97,7 @@ void WCH_change() {
 	string tname = "NULL";
 	try {
 		cin >> h >> m >> tname;
-		for (auto it = mm.equal_range(h).first; it != mm.equal_range(h).second; it++) {
+		for (auto it = WCH_clock.equal_range(h).first; it != WCH_clock.equal_range(h).second; it++) {
 			if ((it -> second).first == m) {
 				(it -> second).second = tname;
 				flag = true;
@@ -108,6 +110,56 @@ void WCH_change() {
 	if (!flag) {
 		Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
 		return;
+	}
+}
+
+void WCH_check_clock() {
+	// Clock series command input.
+	string cmd;
+	cin >> cmd;
+	if (cmd == "add") {
+		WCH_add_clock();
+	} else if (cmd == "delete") {
+		WCH_delete_clock();
+	} else if (cmd == "change") {
+		WCH_change_clock();
+	} else {
+		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+	}
+}
+
+void WCH_add_task() {
+	// Add a new task.
+	string task;
+	string tmp;
+	getline(cin, task);
+	tmp = task.substr(1, task.size() - 1);
+	WCH_task_list.insert(tmp);
+}
+
+void WCH_delete_task() {
+	// Delete a task.
+	string task;
+	string tmp;
+	getline(cin, task);
+	tmp = task.substr(1, task.size() - 1);
+	if (WCH_task_list.find(tmp) == WCH_task_list.end()) {
+		WCH_Error(WCH_ERRNO_TASK_OPERATION);
+	} else {
+		WCH_task_list.erase(tmp);
+	}
+}
+
+void WCH_check_task() {
+	// Task series command input.
+	string cmd;
+	cin >> cmd;
+	if (cmd == "add") {
+		WCH_add_task();
+	} else if (cmd == "delete") {
+		WCH_delete_task();
+	} else {
+		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	}
 }
 
@@ -175,6 +227,8 @@ void WCH_anti_idle() {
 		WCH_SetTrayStatus(false);
 		Sleep(500);
 		WCH_SetWindowPos(false);
+		Sleep(500);
+		WCH_check_task_loop();
 	}
 }
 

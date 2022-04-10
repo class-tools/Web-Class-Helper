@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper File Process Module Header File 1.1.1
+Web-Class-Helper File Process Module Header File 1.1.2
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -9,6 +9,7 @@ Contributors: jsh-jsh ren-yc
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <wininet.h>
+#include <tlhelp32.h>
 #include <conio.h>
 #include <direct.h>
 #include "commands.h"
@@ -18,7 +19,8 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > mm;
+extern multimap <int, pair <int, string> > WCH_clock;
+extern set <string> WCH_task_list;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -60,12 +62,14 @@ void WCH_printlog(int w, initializer_list <string> other) {
 	} else if (w == WCH_LOG_MODE_RW) {
 		printf("%s %s: Using command \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
 		printf("%s %s: %s file \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+	} else if (w == WCH_LOG_MODE_KT) {
+		printf("%s %s: %s task \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
 	fclose(stdout);
 	freopen("CON", "w", stdout);
 }
 
-void WCH_ReadData() {
+void WCH_read_clock() {
 	// Read clock data.
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
@@ -80,12 +84,35 @@ void WCH_ReadData() {
 		int H, M;
 		string Tname;
 		fin >> H >> M >> Tname;
-		mm.emplace(make_pair(H, make_pair(M, Tname)));
+		WCH_clock.emplace(make_pair(H, make_pair(M, Tname)));
 	}
 	fin.close();
 }
 
-void WCH_save() {
+void WCH_read_task() {
+	// Read task data.
+	string FilePath = "./data/task.dat";
+	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
+	fin.open(FilePath, ios::binary);
+	if (!fin.is_open()) {
+		return;
+	}
+	int list_size;
+	fin >> list_size;
+	for (int i = 1; i <= list_size; i++) {
+		string TaskName;
+		getline(fin, TaskName);
+		WCH_task_list.insert(TaskName);
+	}
+}
+
+void WCH_read() {
+	// Read data.
+	WCH_read_clock();
+	WCH_read_task();
+}
+
+void WCH_save_clock() {
 	// Save clock data.
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
@@ -101,10 +128,36 @@ void WCH_save() {
 	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 	fout.open(FilePath, ios::binary);
 	fout << WCH_clock_num << endl;
-	for (auto it = mm.begin(); it != mm.end(); it++) {
+	for (auto it = WCH_clock.begin(); it != WCH_clock.end(); it++) {
 		fout << (it -> first) << " " << (it -> second).first << " " << (it -> second).second << endl;
 	}
 	fout.close();
+}
+
+void WCH_save_task() {
+	// Save task list data.
+	string FilePath = "./data/task.dat";
+	if (WCH_task_list.size() == 0) {
+		if (access(FilePath.c_str(), 0) != -1) {
+			DeleteFile(FilePath.c_str());
+			WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+		} else {
+			return;
+		}
+	}
+	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+	fout.open(FilePath, ios::binary);
+	fout << WCH_task_list.size() << endl;
+	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+		fout << (*it) << endl;
+	}
+	fout.close();
+}
+
+void WCH_save() {
+	// Save data.
+	WCH_save_clock();
+	WCH_save_task();
 	WCH_printlog(WCH_LOG_MODE_ST, {"e"});
 }
 

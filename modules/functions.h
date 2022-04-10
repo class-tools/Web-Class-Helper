@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Function Module Header File 1.1.1
+Web-Class-Helper Function Module Header File 1.1.2
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -9,6 +9,7 @@ Contributors: jsh-jsh ren-yc
 #include <bits/stdc++.h>
 #include <windows.h>
 #include <wininet.h>
+#include <tlhelp32.h>
 #include <conio.h>
 #include <direct.h>
 #include "commands.h"
@@ -18,7 +19,8 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > mm;
+extern multimap <int, pair <int, string> > WCH_clock;
+extern set <string> WCH_task_list;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -72,6 +74,7 @@ void WCH_Init() {
 	WCH_printlog(WCH_LOG_MODE_ST, {"s"});
 	sprintf(tmp, "Web Class Helper (%s)", WCH_Framework);
 	SetConsoleTitle(tmp);
+	atexit(WCH_save);
 	UserName = WCH_GetUserName();
 	if (q.Month == 1 || q.Month == 2) {
 		q.Month += 12;
@@ -89,12 +92,12 @@ void WCH_Error(string INFO) {
 	string tmp;
 	if (INFO == "OOR") {
 		tmp = "Your input code is out of range, please check and try again";
-	}
-	if (INFO == "NF") {
+	} else if (INFO == "NF") {
 		tmp = "An network error occurred, please check your network connection and try to update this program";
-	}
-	if (INFO == "CO") {
-		tmp = "Cannot Operate the clock, please try to restart this program";
+	} else if (INFO == "CO") {
+		tmp = "Cannot operate the clock list, please try to restart this program";
+	} else if (INFO == "TO") {
+		tmp = "Cannot operate the task list, please try to restart this program";
 	}
 	cout << tmp << "." << endl;
 	WCH_printlog(WCH_LOG_MODE_ERROR, {tmp});
@@ -111,15 +114,30 @@ bool WCH_ShortCutKeyCheck() {
 	}
 }
 
-void WCH_check_clock() {
+void WCH_check_clock_loop() {
 	// Check if the time equals to the clock. (Another thread)
 	Sleep((60 - WCH_GetTime().Second) * 1000);
 	while (true) {
 		WCH_Time NOW = WCH_GetTime();
-		for (auto it = mm.equal_range(NOW.Hour).first; it != mm.equal_range(NOW.Hour).second; it++) {
+		for (auto it = WCH_clock.equal_range(NOW.Hour).first; it != WCH_clock.equal_range(NOW.Hour).second; it++) {
 			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
 				cout << "\a";
 				MessageBox(NULL, ((it -> second).second).c_str(), "Web Class Helper Clock", MB_OK);
+			}
+		}
+		Sleep(60000);
+	}
+}
+
+void WCH_check_task_loop() {
+	// Check if the running task is in the task list. (Same thread)
+	Sleep((60 - WCH_GetTime().Second) * 1000);
+	while (!anti_idle) {
+		for (set <string>::iterator it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+			if (WCH_TaskKill(*it)) {
+				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Successfully killed"});
+			} else {
+				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Failed to kill"});
 			}
 		}
 		Sleep(60000);
