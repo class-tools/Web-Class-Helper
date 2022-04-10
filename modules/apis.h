@@ -19,8 +19,9 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
+extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -62,7 +63,6 @@ DWORD WCH_GetPID(string name) {
 
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
-	HWND hwnd = FindWindow("ConsoleWindowClass", NULL);
 	if (hwnd) {
 		ShowWindow(hwnd, flag);
 	}
@@ -71,15 +71,14 @@ void WCH_SetWindowStatus(bool flag) {
 
 void WCH_SetWindowPos(bool flag) {
 	// Set the window position by Windows API.
-	HWND hwnd = GetActiveWindow();
 	ShowWindow(hwnd, (flag == true ? SW_MAXIMIZE : SW_MINIMIZE));
 }
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
-	HWND hwnd = FindWindow("Shell_trayWnd", NULL);
+	HWND hwnd1 = FindWindow("Shell_trayWnd", NULL);
 	if (hwnd) {
-		ShowWindow(hwnd, flag);
+		ShowWindow(hwnd1, flag);
 	}
 }
 

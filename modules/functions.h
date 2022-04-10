@@ -19,8 +19,9 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
+extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -67,6 +68,7 @@ void WCH_Init() {
 	if (access("./logs", 0) != 0) {
 		CreateDirectory("./logs", NULL);
 	}
+	hwnd = GetActiveWindow();
 	WCH_Time q = WCH_GetTime();
 	char tmp[21];
 	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);

@@ -23,8 +23,9 @@ using namespace std;
 #endif
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
+extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -241,14 +242,17 @@ void WCH_trans() {
 	// Translate string between Chinese / English.
 	try {
 		string info;
+		string res;
 		getline(cin, info);
-		info = "TRANS -i \"" + info + "\" > WCH_TRANS.tmp";
+		info = "TRANS -i \"" + info.substr(1, info.size() - 1) + "\" > WCH_TRANS.tmp";
 		WCH_RunSystem(info);
 		cmd_line = false;
 		Sleep(2000);
 		fin.open("WCH_TRANS.tmp");
-		getline(fin, info);
-		cout << info << endl;
+		while (fin >> res) {
+			cout << res << " ";
+		}
+		cout << endl;
 		fin.close();
 		DeleteFile("WCH_TRANS.tmp");
 		cmd_line = true;

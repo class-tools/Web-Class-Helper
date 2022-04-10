@@ -14,8 +14,9 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string Weekdayname[7];
-extern multimap <int, pair <int, string> > WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
+extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
@@ -38,6 +39,7 @@ int main() {
 			if (anti_idle == true) {
 				WCH_SetTrayStatus(true);
 				WCH_SetWindowPos(true);
+				anti_idle = false;
 			}
 		}
 		if (cmd_line) {

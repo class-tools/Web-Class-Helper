@@ -45,8 +45,9 @@ struct WCH_Data_Body {
 	int M;
 };
 const string Weekdayname[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-multimap <int, pair <int, string> > WCH_clock;
+multimap <int, pair <int, string>> WCH_clock;
 set <string> WCH_task_list;
+HWND hwnd;
 int WCH_clock_num;
 bool cmd_line = true;
 bool anti_idle = false;
