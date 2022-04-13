@@ -104,7 +104,6 @@ void WCH_check_clock_loop() {
 
 void WCH_check_task_loop() {
 	// Check if the running task is in the task list. (Same thread)
-	Sleep((60 - WCH_GetTime().Second) * 1000);
 	while (anti_idle) {
 		for (set <string>::iterator it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 			if (WCH_TaskKill(*it)) {
@@ -113,7 +112,7 @@ void WCH_check_task_loop() {
 				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Failed to kill"});
 			}
 		}
-		Sleep(60000);
+		Sleep(15000);
 	}
 }
 
