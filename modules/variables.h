@@ -27,6 +27,7 @@ using namespace std;
 #define WCH_LOG_MODE_RC 1
 #define WCH_LOG_MODE_RW 2
 #define WCH_LOG_MODE_KT 3
+#define WCH_LOG_MODE_WD 4
 #define WCH_LOG_STATUS_INFO "[INFO]"
 #define WCH_LOG_STATUS_ERROR "[ERROR]"
 
@@ -51,12 +52,11 @@ HWND hwnd;
 int WCH_clock_num;
 bool cmd_line = true;
 bool anti_idle = false;
-bool mode = false;
 string op;
-string UserName;
 ifstream fin;
 ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
+void WCH_printlog(int w, initializer_list <string> other);
 
 #endif

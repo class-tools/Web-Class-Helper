@@ -25,13 +25,12 @@ extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
-extern bool mode;
 extern string op;
-extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
+void WCH_printlog(int w, initializer_list <string> other);
 
 WCH_Time WCH_GetTime() {
 	// Get current time and return a WCH_Time object.
@@ -118,7 +117,7 @@ void WCH_check_task_loop() {
 
 void WCH_CL_Init() {
 	// Initialize the command line.
-	WCH_GetPath(mode, UserName);
+	cout << ">>> ";
 	cin >> op;
 	transform(op.begin(), op.end(), op.begin(), ::tolower);
 }
@@ -127,7 +126,7 @@ void WCH_PutPicture() {
 	// Press PrintScreen. (Keyboard)
 	keybd_event(VK_SNAPSHOT, 0, 0, 0);
 	keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
-	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl << endl;
+	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl;
 }
 
 void WCH_SaveImg() {
@@ -153,7 +152,6 @@ void WCH_Init() {
 	sprintf(tmp, "Web Class Helper (%s)", WCH_Framework);
 	SetConsoleTitle(tmp);
 	atexit(WCH_save);
-	UserName = WCH_GetUserName();
 	if (q.Month == 1 || q.Month == 2) {
 		q.Month += 12;
 		q.Year--;
@@ -163,7 +161,7 @@ void WCH_Init() {
 	T.detach();
 	cout << "Web Class Helper " << WCH_VER << " (" << WCH_Framework << ")" << endl;
 	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-	cout << "Type 'help' to get help." << endl;
+	cout << "Type \"help\" or \"license\" for more information." << endl;
 	cout << endl;
 }
 

@@ -25,13 +25,12 @@ extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
-extern bool mode;
 extern string op;
-extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
+void WCH_printlog(int w, initializer_list <string> other);
 
 void WCH_printlog(int w, initializer_list <string> other) {
 	// Print log.
@@ -65,6 +64,8 @@ void WCH_printlog(int w, initializer_list <string> other) {
 		printf("%s %s: %s file \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_KT) {
 		printf("%s %s: %s task \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[1].c_str(), tt[0].c_str());
+	} else if (w == WCH_LOG_MODE_WD) {
+		printf("%s %s: \"%s\" argument \"%s\" was set to \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str(), tt[2].c_str());
 	}
 	fclose(stdout);
 	freopen("CON", "w", stdout);

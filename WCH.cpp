@@ -20,13 +20,12 @@ extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
-extern bool mode;
 extern string op;
-extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
+void WCH_printlog(int w, initializer_list <string> other);
 
 int main() {
 	WCH_Init();
@@ -56,8 +55,6 @@ int main() {
 				WCH_time();
 			} else if (op == "pi") {
 				WCH_pi();
-			} else if (op == "mode") {
-				WCH_mode();
 			} else if (op == "speedtest") {
 				WCH_speedtest();
 			} else if (op == "trans") {
@@ -68,6 +65,8 @@ int main() {
 				WCH_check_task();
 			} else if (op == "update") {
 				WCH_update();
+			} else if (op == "license") {
+				WCH_license();
 			} else if (op != "quit") {
 				WCH_printlog(WCH_LOG_MODE_RC, {"unknown"});
 				WCH_unknown(op);
@@ -75,6 +74,5 @@ int main() {
 			cout << endl;
 		}
 	}
-	WCH_save();
 	return 0;
 }

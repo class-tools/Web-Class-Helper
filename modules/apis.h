@@ -25,22 +25,12 @@ extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
-extern bool mode;
 extern string op;
-extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
-
-string WCH_GetUserName() {
-	// Get current user name and return a string by Windows API.
-	char tmpc[256] = {0};
-	DWORD Size = 256;
-	GetUserName(tmpc, &Size);
-	string tmps = tmpc;
-	return tmps;
-}
+void WCH_printlog(int w, initializer_list <string> other);
 
 DWORD WCH_GetPID(string name) {
 	// Get PID by process name.
@@ -65,30 +55,13 @@ void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(hwnd, flag);
 	cmd_line = flag;
+	WCH_printlog(WCH_LOG_MODE_WD, {"CONSOLE", "STATUS", (flag == true ? "SHOW" : "HIDE")});
 }
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindow("Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
-}
-
-void WCH_GetPath(bool mode, string UserName) {
-	// Get current path by Windows API.
-	char ExeFile[256];
-	_getcwd(ExeFile, 256);
-	if (mode) {
-		cout << ExeFile << "> ";
-	} else {
-		string tmp;
-		tmp = ExeFile;
-		tmp.replace(1, 2, "\\");
-		for (long long unsigned int i = 0; i < tmp.size(); i++) {
-			if (isupper(tmp[i])) {
-				tmp[i] = tolower(tmp[i]);
-			}
-		}
-		cout << UserName << "@\\" << tmp << "$ ";
-	}
+	WCH_printlog(WCH_LOG_MODE_WD, {"TRAY", "STATUS", (flag == true ? "SHOW" : "HIDE")});
 }
 
 bool WCH_TaskKill(string name) {

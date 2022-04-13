@@ -29,13 +29,12 @@ extern HWND hwnd;
 extern int WCH_clock_num;
 extern bool cmd_line;
 extern bool anti_idle;
-extern bool mode;
 extern string op;
-extern string UserName;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
+void WCH_printlog(int w, initializer_list <string> other);
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
@@ -48,6 +47,18 @@ void WCH_hide() {
 void WCH_update() {
 	// Visit the website to update the program.
 	WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+}
+
+void WCH_license() {
+	// Print the license.
+	freopen("./LICENSE", "r", stdin);
+	string tmp;
+	for (int i = 1; i <= 21; i++) {
+		getline(cin, tmp);
+		cout << tmp << endl;
+	}
+	fclose(stdin);
+	freopen("CON", "r", stdin);
 }
 
 void WCH_add_clock() {
@@ -203,19 +214,6 @@ void WCH_pi() {
 	WCH_SaveImg();
 }
 
-void WCH_mode() {
-	// Switch command-line mode.
-	string tmp;
-	cin >> tmp;
-	if (tmp == "cmd") {
-		mode = true;
-	} else if (tmp == "bash") {
-		mode = false;
-	} else {
-		cout << "Unknown mode." << endl;
-	}
-}
-
 void WCH_anti_idle() {
 	// Enable anti-idle function.
 	char ch;
@@ -299,20 +297,22 @@ void WCH_time() {
 void WCH_help() {
 	// Print help information.
 	cout << "Commands:" << endl;
-	cout << "add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
-	cout << "delete hour {minute} {name} (Delete clock at {hour}:{minute})" << endl;
-	cout << "change hour {minute} {name} (Change clock at {hour}:{minute})" << endl;
+	cout << "clock add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
+	cout << "clock delete {hour} {minute} {name} (Delete clock at {hour}:{minute})" << endl;
+	cout << "clock change {hour} {minute} {name} (Change clock at {hour}:{minute})" << endl;
+	cout << "task add {process name} (Add task {process name} to kill when enable \"anti-idle\")" << endl;
+	cout << "task delete {process name} (Delete task {process name} to kill when enable \"anti-idle\")" << endl;
 	cout << "help (Get help output)" << endl;
 	cout << "ow (Get a sentence) **From web**" << endl;
 	cout << "hide (Hide the command line window)" << endl;
 	cout << "game (Guessing game)" << endl;
 	cout << "time (Get time at once)" << endl;
-	cout << "pi (Make a screenshot)" << endl;
-	cout << "mode {cmd-mode} (Switch command line mode to {cmd-mode} cmd / bash)" << endl;
+	cout << "pi (Make a screenshot and save in \"Pictures\" folder)" << endl;
 	cout << "speedtest (Start a speed test with a GUI window)" << endl;
-	cout << "trans {info} (Translate a word between English / Chinese) **End with \"#\"**" << endl;
+	cout << "trans {info} (Translate a word between English / Chinese) **From web**" << endl;
 	cout << "anti-idle (Enable anti-idle mode)" << endl;
 	cout << "update (Visit the releases page in default browser)" << endl;
+	cout << "license (Print license information)" << endl;
 	cout << "quit (Quit this program)" << endl;
 }
 

@@ -1,8 +1,10 @@
 .vscode/
+.vs/
 genexe/
 genins/
 data/*.dat
 logs/*.log
+*.tmp
 *.exe
 *.txt
 *.rc
