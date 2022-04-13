@@ -71,15 +71,12 @@ void WCH_SetWindowStatus(bool flag) {
 
 void WCH_SetWindowPos(bool flag) {
 	// Set the window position by Windows API.
-	ShowWindow(hwnd, (flag == true ? SW_MAXIMIZE : SW_MINIMIZE));
+	ShowWindow(hwnd, (flag == true ? SW_SHOW : SW_HIDE));
 }
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
-	HWND hwnd1 = FindWindow("Shell_trayWnd", NULL);
-	if (hwnd) {
-		ShowWindow(hwnd1, flag);
-	}
+	ShowWindow(FindWindow("Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
 }
 
 void WCH_GetPath(bool mode, string UserName) {

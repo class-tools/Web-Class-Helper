@@ -68,7 +68,7 @@ void WCH_Init() {
 	if (access("./logs", 0) != 0) {
 		CreateDirectory("./logs", NULL);
 	}
-	hwnd = GetActiveWindow();
+	hwnd = GetForegroundWindow();
 	WCH_Time q = WCH_GetTime();
 	char tmp[21];
 	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);

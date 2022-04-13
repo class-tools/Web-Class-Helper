@@ -38,7 +38,7 @@ WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
-UDF URLDownloadToFile = (UDF)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
+UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
 
 void WCH_hide() {
 	// Hide the window.
@@ -222,8 +222,8 @@ void WCH_anti_idle() {
 	cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
 	cin >> ch;
 	if (ch == 'Y' || ch == 'y') {
-		anti_idle = true;
 		WCH_SetWindowStatus(false);
+		anti_idle = true;
 		Sleep(500);
 		WCH_SetTrayStatus(false);
 		Sleep(500);
