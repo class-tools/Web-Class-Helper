@@ -227,9 +227,8 @@ void WCH_anti_idle() {
 		Sleep(500);
 		WCH_SetTrayStatus(false);
 		Sleep(500);
-		WCH_SetWindowPos(false);
-		Sleep(500);
-		WCH_check_task_loop();
+		thread T(WCH_check_task_loop);
+		T.detach();
 	}
 }
 

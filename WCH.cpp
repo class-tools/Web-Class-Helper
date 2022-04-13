@@ -31,14 +31,11 @@ void WCH_Error(string INFO);
 int main() {
 	WCH_Init();
 	WCH_read();
-	thread T(WCH_check_clock_loop);
-	T.detach();
 	while (op != "quit") {
 		if (WCH_ShortCutKeyCheck() && !cmd_line) {
 			WCH_SetWindowStatus(true);
 			if (anti_idle == true) {
 				WCH_SetTrayStatus(true);
-				WCH_SetWindowPos(true);
 				anti_idle = false;
 			}
 		}

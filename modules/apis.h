@@ -63,15 +63,8 @@ DWORD WCH_GetPID(string name) {
 
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
-	if (hwnd) {
-		ShowWindow(hwnd, flag);
-	}
+	ShowWindow(hwnd, flag);
 	cmd_line = flag;
-}
-
-void WCH_SetWindowPos(bool flag) {
-	// Set the window position by Windows API.
-	ShowWindow(hwnd, (flag == true ? SW_SHOW : SW_HIDE));
 }
 
 void WCH_SetTrayStatus(bool flag) {

@@ -60,35 +60,6 @@ string WCH_TransStrChar(string str) {
 	return str;
 }
 
-void WCH_Init() {
-	// Initialize the whole program.
-	if (access("./data", 0) != 0) {
-		CreateDirectory("./data", NULL);
-	}
-	if (access("./logs", 0) != 0) {
-		CreateDirectory("./logs", NULL);
-	}
-	hwnd = GetForegroundWindow();
-	WCH_Time q = WCH_GetTime();
-	char tmp[21];
-	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
-	rename("./logs/latest.log", tmp);
-	WCH_printlog(WCH_LOG_MODE_ST, {"s"});
-	sprintf(tmp, "Web Class Helper (%s)", WCH_Framework);
-	SetConsoleTitle(tmp);
-	atexit(WCH_save);
-	UserName = WCH_GetUserName();
-	if (q.Month == 1 || q.Month == 2) {
-		q.Month += 12;
-		q.Year--;
-	}
-	WCH_SetWindowStatus(true);
-	cout << "Web Class Helper " << WCH_VER << " (" << WCH_Framework << ")" << endl;
-	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-	cout << "Type 'help' to get help." << endl;
-	cout << endl;
-}
-
 void WCH_Error(string INFO) {
 	// Error message checker.
 	string tmp;
@@ -134,7 +105,7 @@ void WCH_check_clock_loop() {
 void WCH_check_task_loop() {
 	// Check if the running task is in the task list. (Same thread)
 	Sleep((60 - WCH_GetTime().Second) * 1000);
-	while (!anti_idle) {
+	while (anti_idle) {
 		for (set <string>::iterator it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 			if (WCH_TaskKill(*it)) {
 				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Successfully killed"});
@@ -164,6 +135,37 @@ void WCH_SaveImg() {
 	// Run image saver Python program.
 	WCH_RunSystem("START IMG.EXE");
 	Sleep(500);
+}
+
+void WCH_Init() {
+	// Initialize the whole program.
+	if (access("./data", 0) != 0) {
+		CreateDirectory("./data", NULL);
+	}
+	if (access("./logs", 0) != 0) {
+		CreateDirectory("./logs", NULL);
+	}
+	hwnd = GetForegroundWindow();
+	WCH_Time q = WCH_GetTime();
+	char tmp[21];
+	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
+	rename("./logs/latest.log", tmp);
+	WCH_printlog(WCH_LOG_MODE_ST, {"s"});
+	sprintf(tmp, "Web Class Helper (%s)", WCH_Framework);
+	SetConsoleTitle(tmp);
+	atexit(WCH_save);
+	UserName = WCH_GetUserName();
+	if (q.Month == 1 || q.Month == 2) {
+		q.Month += 12;
+		q.Year--;
+	}
+	WCH_SetWindowStatus(true);
+	thread T(WCH_check_clock_loop);
+	T.detach();
+	cout << "Web Class Helper " << WCH_VER << " (" << WCH_Framework << ")" << endl;
+	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
+	cout << "Type 'help' to get help." << endl;
+	cout << endl;
 }
 
 #endif
