@@ -23,6 +23,8 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_ProcessBarCount;
+extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
 extern string op;
@@ -31,6 +33,7 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+int WCH_GetNumDigits(int n);
 
 void WCH_printlog(int w, initializer_list <string> other) {
 	// Print log.
@@ -60,12 +63,13 @@ void WCH_printlog(int w, initializer_list <string> other) {
 	} else if (w == WCH_LOG_MODE_RC) {
 		printf("%s %s: Using command \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_RW) {
-		printf("%s %s: Using command \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
 		printf("%s %s: %s file \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_KT) {
 		printf("%s %s: %s task \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[1].c_str(), tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_WD) {
 		printf("%s %s: \"%s\" argument \"%s\" was set to \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str(), tt[2].c_str());
+	} else if (w == WCH_LOG_MODE_UPD) {
+		printf("%s %s: %s \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
 	fclose(stdout);
 	freopen("CON", "w", stdout);
@@ -158,9 +162,14 @@ void WCH_save_task() {
 
 void WCH_save() {
 	// Save data.
+	cout << "Saving data..." << endl;
+	WCH_ProcessBarTot = 3;
+	thread T(WCH_ProcessBar);
+	T.detach();
 	WCH_save_clock();
 	WCH_save_task();
 	WCH_printlog(WCH_LOG_MODE_ST, {"e"});
+	Sleep(3000);
 }
 
 void UTF8ToANSI(char *str) {

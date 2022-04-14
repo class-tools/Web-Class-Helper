@@ -23,6 +23,8 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_ProcessBarCount;
+extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
 extern string op;
@@ -31,6 +33,7 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+int WCH_GetNumDigits(int n);
 
 WCH_Time WCH_GetTime() {
 	// Get current time and return a WCH_Time object.
@@ -161,7 +164,7 @@ void WCH_Init() {
 	T.detach();
 	cout << "Web Class Helper " << WCH_VER << " (" << WCH_Framework << ")" << endl;
 	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-	cout << "Type \"help\" or \"license\" for more information." << endl;
+	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 	cout << endl;
 }
 

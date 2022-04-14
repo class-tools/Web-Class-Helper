@@ -18,6 +18,8 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_ProcessBarCount;
+extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
 extern string op;
@@ -26,6 +28,7 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+int WCH_GetNumDigits(int n);
 
 int main() {
 	WCH_Init();

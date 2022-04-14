@@ -28,6 +28,7 @@ using namespace std;
 #define WCH_LOG_MODE_RW 2
 #define WCH_LOG_MODE_KT 3
 #define WCH_LOG_MODE_WD 4
+#define WCH_LOG_MODE_UPD 5
 #define WCH_LOG_STATUS_INFO "[INFO]"
 #define WCH_LOG_STATUS_ERROR "[ERROR]"
 
@@ -50,6 +51,8 @@ multimap <int, pair <int, string>> WCH_clock;
 set <string> WCH_task_list;
 HWND hwnd;
 int WCH_clock_num;
+int WCH_ProcessBarCount;
+int WCH_ProcessBarTot;
 bool cmd_line = true;
 bool anti_idle = false;
 string op;
@@ -58,5 +61,6 @@ ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+int WCH_GetNumDigits(int n);
 
 #endif

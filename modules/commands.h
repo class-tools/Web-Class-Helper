@@ -27,6 +27,8 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_ProcessBarCount;
+extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
 extern string op;
@@ -35,6 +37,7 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+int WCH_GetNumDigits(int n);
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
@@ -46,7 +49,40 @@ void WCH_hide() {
 
 void WCH_update() {
 	// Visit the website to update the program.
-	WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+	try {
+		cout << "Checking update..." << endl;
+		WCH_ProcessBarTot = 5;
+		thread T(WCH_ProcessBar);
+		T.detach();
+		int len;
+		char url[128], *file;
+		string tmp;
+		HANDLE hFile;
+		DWORD unused;
+		char ss[128] = "https://class-tools.gq/update/WCH";
+		sprintf(url, ss);
+		URLDownloadToFile(0, url, "WCH_UPD.tmp", 0, 0);
+		hFile = CreateFile("WCH_UPD.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		len = GetFileSize(hFile, 0);
+		file = new char[len + 3];
+		ReadFile(hFile, file, len, &unused, 0);
+		file[len] = file[len + 1] = 0;
+		CloseHandle(hFile);
+		tmp = file;
+		Sleep(5000);
+		if (tmp != WCH_VER) {
+			WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to", tmp});
+		} else {
+			cout << "Already up to date." << endl;
+			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version is already", tmp});
+		}
+		DeleteFile("WCH_UPD.tmp");
+	}
+	catch (...) {
+		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
+		return;
+	}
 }
 
 void WCH_license() {

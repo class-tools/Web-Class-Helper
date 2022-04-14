@@ -23,6 +23,8 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_ProcessBarCount;
+extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
 extern string op;
@@ -31,6 +33,7 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+int WCH_GetNumDigits(int n);
 
 DWORD WCH_GetPID(string name) {
 	// Get PID by process name.
@@ -74,6 +77,43 @@ bool WCH_TaskKill(string name) {
 	} else {
 		return false;
 	}
+}
+
+int WCH_GetNumDigits(int n) {
+	int cnt = 1;
+	while ((n /= 10) != 0) {
+		cnt++;
+	}
+	return cnt;
+}
+
+void WCH_PrintProcessBar(int n, bool flag) {
+	// Print a process bar.
+	if (flag) {
+		for (int i = 0; i < WCH_ProcessBarCount; i++) {
+			cout << "\b";
+		}
+	}
+	cout << "[";
+	for (int i = 0; i < n; i++) {
+		cout << "=";
+	}
+	for (int i = n; i < 100; i++) {
+		cout << " ";
+	}
+	cout << "] " << n << "%";
+	WCH_ProcessBarCount = 104 + WCH_GetNumDigits(n);
+}
+
+void WCH_ProcessBar() {
+	// Process bar.
+	WCH_PrintProcessBar(0, false);
+	for (int i = WCH_ProcessBarTot; i > 1; i--) {
+		Sleep(1000);
+		WCH_PrintProcessBar(100 / i, true);
+	}
+	WCH_PrintProcessBar(100, true);
+	cout << endl;
 }
 
 #endif
