@@ -239,7 +239,10 @@ void WCH_game() {
 
 void WCH_speedtest() {
 	// Start a speed test with Python program.
-	WCH_RunSystem("START SPEEDTEST.EXE");
+	string tmp = "START SPEEDTEST";
+	tmp += WCH_Framework;
+	tmp += ".EXE";
+	WCH_RunSystem(tmp);
 }
 
 void WCH_pi() {
@@ -275,9 +278,15 @@ void WCH_trans() {
 	// Translate string between Chinese / English.
 	try {
 		string info;
+		string tmp;
 		string res;
 		getline(cin, info);
-		info = "TRANS -i \"" + info.substr(1, info.size() - 1) + "\" > WCH_TRANS.tmp";
+		tmp = info.substr(1, info.size() - 1);
+		info = "TRANS";
+		info += WCH_Framework;
+		info += " -i \"";
+		info += tmp;
+		info += "\" > WCH_TRANS.tmp";
 		WCH_RunSystem(info);
 		cmd_line = false;
 		Sleep(2000);

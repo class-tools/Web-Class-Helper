@@ -22,7 +22,7 @@ try:
         if option in ("-i", "--input"):
             data['i'] = inputdata
     head = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"}
-    response = requests.post.content(url = url, data = data, headers = head)
+    response = requests.post(url = url, data = data, headers = head)
     name = response.json()
     print(name['translateResult'][0][0]['tgt'], end = '')
 except URLError:

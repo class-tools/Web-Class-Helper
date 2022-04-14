@@ -5,7 +5,7 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER "1.1.2"
-#define WCH_Framework "x64"
+#define WCH_Framework "64"
 #include "modules/commands.h"
 #include "modules/functions.h"
 #include "modules/file-process.h"

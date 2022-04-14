@@ -134,7 +134,10 @@ void WCH_PutPicture() {
 
 void WCH_SaveImg() {
 	// Run image saver Python program.
-	WCH_RunSystem("START IMG.EXE");
+	string tmp = "START IMG";
+	tmp += WCH_Framework;
+	tmp += ".EXE";
+	WCH_RunSystem(tmp);
 	Sleep(500);
 }
 
@@ -152,7 +155,7 @@ void WCH_Init() {
 	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
 	rename("./logs/latest.log", tmp);
 	WCH_printlog(WCH_LOG_MODE_ST, {"s"});
-	sprintf(tmp, "Web Class Helper (%s)", WCH_Framework);
+	sprintf(tmp, "Web Class Helper (x%s)", WCH_Framework);
 	SetConsoleTitle(tmp);
 	atexit(WCH_save);
 	if (q.Month == 1 || q.Month == 2) {
@@ -162,7 +165,7 @@ void WCH_Init() {
 	WCH_SetWindowStatus(true);
 	thread T(WCH_check_clock_loop);
 	T.detach();
-	cout << "Web Class Helper " << WCH_VER << " (" << WCH_Framework << ")" << endl;
+	cout << "Web Class Helper " << WCH_VER << " (x" << WCH_Framework << ")" << endl;
 	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
 	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 	cout << endl;
