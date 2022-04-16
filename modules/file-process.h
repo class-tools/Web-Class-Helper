@@ -23,10 +23,12 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
+extern bool isend;
 extern string op;
 extern ifstream fin;
 extern ofstream fout;
@@ -40,6 +42,7 @@ void WCH_printlog(int w, initializer_list <string> other) {
 	WCH_Time a = WCH_GetTime();
 	string tt[21];
 	char tmp[21];
+	char tmps[256];
 	int pos = 0;
 	sprintf(tmp, "[%02d:%02d:%02d]", a.Hour, a.Minute, a.Second);
 	for (auto it = other.begin(); it != other.end(); it++) {
@@ -55,22 +58,23 @@ void WCH_printlog(int w, initializer_list <string> other) {
 			tt[pos++] = (*it);
 		}
 	}
-	freopen("./logs/latest.log", "a", stdout);
 	if (w == WCH_LOG_MODE_ST) {
-		printf("%s %s: %s Web-Class-Helper.\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
+		sprintf(tmps, "%s %s: %s \"Web-Class-Helper (x%s)\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_ERROR) {
-		printf("%s %s: %s.\n", tmp, WCH_LOG_STATUS_ERROR, tt[0].c_str());
+		sprintf(tmps, "%s %s: %s.\n", tmp, WCH_LOG_STATUS_ERROR, tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_RC) {
-		printf("%s %s: Using command \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
+		sprintf(tmps, "%s %s: Using command \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_RW) {
-		printf("%s %s: %s file \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		sprintf(tmps, "%s %s: %s file \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_KT) {
-		printf("%s %s: %s task \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[1].c_str(), tt[0].c_str());
+		sprintf(tmps, "%s %s: %s task \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[1].c_str(), tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_WD) {
-		printf("%s %s: \"%s\" argument \"%s\" was set to \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str(), tt[2].c_str());
+		sprintf(tmps, "%s %s: \"%s\" argument \"%s\" was set to \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str(), tt[2].c_str());
 	} else if (w == WCH_LOG_MODE_UPD) {
-		printf("%s %s: %s \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		sprintf(tmps, "%s %s: %s \"%s\".\n", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
+	freopen("./logs/latest.log", "a", stdout);
+	printf("%s", tmps);
 	fclose(stdout);
 	freopen("CON", "w", stdout);
 }
@@ -91,6 +95,7 @@ void WCH_read_clock() {
 		string Tname;
 		fin >> H >> M >> Tname;
 		WCH_clock.emplace(make_pair(H, make_pair(M, Tname)));
+		WCH_clock_num++;
 	}
 	fin.close();
 }
@@ -99,7 +104,7 @@ void WCH_read_task() {
 	// Read task data.
 	string FilePath = "./data/task.dat";
 	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
-	fin.open(FilePath, ios::binary);
+	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
 	}
@@ -109,6 +114,7 @@ void WCH_read_task() {
 		string TaskName;
 		getline(fin, TaskName);
 		WCH_task_list.insert(TaskName);
+		WCH_task_num++;
 	}
 }
 
@@ -123,16 +129,13 @@ void WCH_save_clock() {
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = Weekdayname[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "./data/" + NowWeekDay + ".dat";
-	if (WCH_clock_num == 0) {
-		if (access(FilePath.c_str(), 0) != -1) {
-			DeleteFile(FilePath.c_str());
-			WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
-		} else {
-			return;
-		}
+	if (WCH_clock_num == 0 && access(FilePath.substr(2, FilePath.size() - 1).c_str(), 0) != -1) {
+		DeleteFile(FilePath.c_str());
+		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+		return;
 	}
 	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
-	fout.open(FilePath, ios::binary);
+	fout.open(FilePath);
 	fout << WCH_clock_num << endl;
 	for (auto it = WCH_clock.begin(); it != WCH_clock.end(); it++) {
 		fout << (it -> first) << " " << (it -> second).first << " " << (it -> second).second << endl;
@@ -143,17 +146,14 @@ void WCH_save_clock() {
 void WCH_save_task() {
 	// Save task list data.
 	string FilePath = "./data/task.dat";
-	if (WCH_task_list.size() == 0) {
-		if (access(FilePath.c_str(), 0) != -1) {
-			DeleteFile(FilePath.c_str());
-			WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
-		} else {
-			return;
-		}
+	if (WCH_task_num == 0 && access(FilePath.substr(2, FilePath.size() - 1).c_str(), 0) != -1) {
+		DeleteFile(FilePath.c_str());
+		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+		return;
 	}
 	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 	fout.open(FilePath, ios::binary);
-	fout << WCH_task_list.size() << endl;
+	fout << WCH_task_num << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 		fout << (*it) << endl;
 	}
@@ -162,14 +162,15 @@ void WCH_save_task() {
 
 void WCH_save() {
 	// Save data.
+	isend = true;
 	cout << "Saving data..." << endl;
-	WCH_ProcessBarTot = 3;
-	thread T(WCH_ProcessBar);
-	T.detach();
+	WCH_ProcessBarTot = WCH_clock_num + WCH_task_num;
 	WCH_save_clock();
 	WCH_save_task();
-	WCH_printlog(WCH_LOG_MODE_ST, {"e"});
-	Sleep(3000);
+	WCH_printlog(WCH_LOG_MODE_ST, {"e", WCH_Framework});
+	thread T(WCH_ProcessBar);
+	T.detach();
+	Sleep(WCH_ProcessBarTot * 1000);
 }
 
 void UTF8ToANSI(char *str) {

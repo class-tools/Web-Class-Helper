@@ -23,10 +23,12 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
+extern bool isend;
 extern string op;
 extern ifstream fin;
 extern ofstream fout;
@@ -65,6 +67,12 @@ void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindow("Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
 	WCH_printlog(WCH_LOG_MODE_WD, {"TRAY", "STATUS", (flag == true ? "SHOW" : "HIDE")});
+}
+
+void WCH_SetWindowSize(int mode, HWND hWnd) {
+	// Set the window size by Windows API.
+	ShowWindow(hWnd, mode);
+	WCH_printlog(WCH_LOG_MODE_WD, {"CURWND", "SIZE", (mode == SW_MAXIMIZE ? "MAXIMIZE" : "NORMAL")});
 }
 
 bool WCH_TaskKill(string name) {
@@ -108,7 +116,7 @@ void WCH_PrintProcessBar(int n, bool flag) {
 void WCH_ProcessBar() {
 	// Process bar.
 	WCH_PrintProcessBar(0, false);
-	for (int i = WCH_ProcessBarTot; i > 1; i--) {
+	for (int i = WCH_ProcessBarTot; i > 1 && !isend; i--) {
 		Sleep(1000);
 		WCH_PrintProcessBar(100 / i, true);
 	}

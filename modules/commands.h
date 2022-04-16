@@ -27,10 +27,12 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
+extern bool isend;
 extern string op;
 extern ifstream fin;
 extern ofstream fout;
@@ -183,6 +185,7 @@ void WCH_add_task() {
 	getline(cin, task);
 	tmp = task.substr(1, task.size() - 1);
 	WCH_task_list.insert(tmp);
+	WCH_task_num++;
 }
 
 void WCH_delete_task() {
@@ -195,6 +198,7 @@ void WCH_delete_task() {
 		WCH_Error(WCH_ERRNO_TASK_OPERATION);
 	} else {
 		WCH_task_list.erase(tmp);
+		WCH_task_num--;
 	}
 }
 
@@ -261,6 +265,8 @@ void WCH_anti_idle() {
 	if (ch == 'Y' || ch == 'y') {
 		WCH_SetWindowStatus(false);
 		anti_idle = true;
+		Sleep(500);
+		WCH_SetWindowSize(SW_MAXIMIZE, GetActiveWindow());
 		Sleep(500);
 		WCH_SetTrayStatus(false);
 		Sleep(500);
@@ -354,7 +360,7 @@ void WCH_help() {
 	cout << "time (Get time at once)" << endl;
 	cout << "pi (Make a screenshot and save in \"Pictures\" folder)" << endl;
 	cout << "speedtest (Start a speed test with a GUI window)" << endl;
-	cout << "trans {info} (Translate a word between English / Chinese) **From web**" << endl;
+	cout << "trans {info} (Translate a sentence between English / Chinese) **From web**" << endl;
 	cout << "anti-idle (Enable anti-idle mode)" << endl;
 	cout << "update (Visit the releases page in default browser)" << endl;
 	cout << "license (Print license information)" << endl;

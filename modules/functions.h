@@ -23,10 +23,12 @@ extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
 extern HWND hwnd;
 extern int WCH_clock_num;
+extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool cmd_line;
 extern bool anti_idle;
+extern bool isend;
 extern string op;
 extern ifstream fin;
 extern ofstream fout;
@@ -65,13 +67,13 @@ string WCH_TransStrChar(string str) {
 void WCH_Error(string INFO) {
 	// Error message checker.
 	string tmp;
-	if (INFO == "OOR") {
+	if (INFO == WCH_ERRNO_OUT_OF_RANGE) {
 		tmp = "Your input code is out of range, please check and try again";
-	} else if (INFO == "NF") {
+	} else if (INFO == WCH_ERRNO_NETWORK_FAILURE) {
 		tmp = "An network error occurred, please check your network connection and try to update this program";
-	} else if (INFO == "CO") {
+	} else if (INFO == WCH_ERRNO_CLOCK_OPERATION) {
 		tmp = "Cannot operate the clock list, please try to restart this program";
-	} else if (INFO == "TO") {
+	} else if (INFO == WCH_ERRNO_TASK_OPERATION) {
 		tmp = "Cannot operate the task list, please try to restart this program";
 	}
 	cout << tmp << "." << endl;
@@ -92,7 +94,7 @@ bool WCH_ShortCutKeyCheck() {
 void WCH_check_clock_loop() {
 	// Check if the time equals to the clock. (Another thread)
 	Sleep((60 - WCH_GetTime().Second) * 1000);
-	while (true) {
+	while (!isend) {
 		WCH_Time NOW = WCH_GetTime();
 		for (auto it = WCH_clock.equal_range(NOW.Hour).first; it != WCH_clock.equal_range(NOW.Hour).second; it++) {
 			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
@@ -106,7 +108,7 @@ void WCH_check_clock_loop() {
 
 void WCH_check_task_loop() {
 	// Check if the running task is in the task list. (Same thread)
-	while (anti_idle) {
+	while (anti_idle && !isend) {
 		for (set <string>::iterator it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 			if (WCH_TaskKill(*it)) {
 				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Successfully killed"});
@@ -154,7 +156,7 @@ void WCH_Init() {
 	char tmp[21];
 	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
 	rename("./logs/latest.log", tmp);
-	WCH_printlog(WCH_LOG_MODE_ST, {"s"});
+	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_Framework});
 	sprintf(tmp, "Web Class Helper (x%s)", WCH_Framework);
 	SetConsoleTitle(tmp);
 	atexit(WCH_save);
