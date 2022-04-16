@@ -74,7 +74,7 @@ void WCH_update() {
 		Sleep(5000);
 		if (tmp != WCH_VER) {
 			WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
-			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to", tmp});
+			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", tmp});
 		} else {
 			cout << "Already up to date." << endl;
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version is already", tmp});
@@ -167,6 +167,7 @@ void WCH_check_clock() {
 	// Clock series command input.
 	string cmd;
 	cin >> cmd;
+	WCH_printlog(WCH_LOG_MODE_RC, {cmd});
 	if (cmd == "add") {
 		WCH_add_clock();
 	} else if (cmd == "delete") {
@@ -206,6 +207,7 @@ void WCH_check_task() {
 	// Task series command input.
 	string cmd;
 	cin >> cmd;
+	WCH_printlog(WCH_LOG_MODE_RC, {cmd});
 	if (cmd == "add") {
 		WCH_add_task();
 	} else if (cmd == "delete") {
