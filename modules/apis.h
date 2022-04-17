@@ -18,24 +18,33 @@ Contributors: jsh-jsh ren-yc
 #include "variables.h"
 using namespace std;
 
-extern const string Weekdayname[7];
+extern const string WCH_WDName[7];
 extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
-extern HWND hwnd;
+extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
-extern bool cmd_line;
-extern bool anti_idle;
-extern bool isend;
-extern string op;
+extern bool WCH_cmd_line;
+extern bool WCH_anti_idle;
+extern bool WCH_program_end;
+extern bool WCH_wait_cmd;
+extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
 int WCH_GetNumDigits(int n);
+
+void WCH_RunSystem(string str) {
+	freopen("WCH_SYSTEM.tmp", "w", stdout);
+	system(str.c_str());
+	freopen("CON", "w", stdout);
+	Sleep(500);
+	DeleteFile("WCH_SYSTEM.tmp");
+}
 
 DWORD WCH_GetPID(string name) {
 	// Get PID by process name.
@@ -58,8 +67,8 @@ DWORD WCH_GetPID(string name) {
 
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
-	ShowWindow(hwnd, flag);
-	cmd_line = flag;
+	ShowWindow(WCH_hWnd, flag);
+	WCH_cmd_line = flag;
 	WCH_printlog(WCH_LOG_MODE_WD, {"CONSOLE", "STATUS", (flag == true ? "SHOW" : "HIDE")});
 }
 
@@ -116,12 +125,66 @@ void WCH_PrintProcessBar(int n, bool flag) {
 void WCH_ProcessBar() {
 	// Process bar.
 	WCH_PrintProcessBar(0, false);
-	for (int i = WCH_ProcessBarTot; i > 1 && !isend; i--) {
+	for (int i = WCH_ProcessBarTot; i > 1 && !WCH_program_end; i--) {
 		Sleep(1000);
 		WCH_PrintProcessBar(100 / i, true);
 	}
 	WCH_PrintProcessBar(100, true);
 	cout << endl;
+}
+
+void WCH_signalHandler() {
+	// Signal handler.
+	signal(SIGABRT, [](int signum) {
+		string tmp = "ERROR";
+		tmp += WCH_Framework;
+		tmp += ".EXE";
+		WCH_cmd_line = false;
+		WCH_program_end = true;
+		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program aborted)"});
+		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Program aborted\"");
+		exit(signum);
+	});
+	signal(SIGFPE, [](int signum) {
+		string tmp = "ERROR";
+		tmp += WCH_Framework;
+		tmp += ".EXE";
+		WCH_cmd_line = false;
+		WCH_program_end = true;
+		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
+		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Operation overflow\"");
+		exit(signum);
+	});
+	signal(SIGILL, [](int signum) {
+		string tmp = "ERROR";
+		tmp += WCH_Framework;
+		tmp += ".EXE";
+		WCH_cmd_line = false;
+		WCH_program_end = true;
+		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
+		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Illegal instruction\"");
+		exit(signum);
+	});
+	signal(SIGSEGV, [](int signum) {
+		string tmp = "ERROR";
+		tmp += WCH_Framework;
+		tmp += ".EXE";
+		WCH_cmd_line = false;
+		WCH_program_end = true;
+		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
+		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Access to illegal memory\"");
+		exit(signum);
+	});
+	signal(SIGINT, [](int signum) {
+		string tmp = "ERROR";
+		tmp += WCH_Framework;
+		tmp += ".EXE";
+		WCH_cmd_line = false;
+		WCH_program_end = true;
+		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
+		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Program interrupted\"");
+		exit(signum);
+	});
 }
 
 #endif

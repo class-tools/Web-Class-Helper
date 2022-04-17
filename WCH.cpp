@@ -13,18 +13,19 @@ Contributors: jsh-jsh ren-yc
 #include "modules/variables.h"
 using namespace std;
 
-extern const string Weekdayname[7];
+extern const string WCH_WDName[7];
 extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
-extern HWND hwnd;
+extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
-extern bool cmd_line;
-extern bool anti_idle;
-extern bool isend;
-extern string op;
+extern bool WCH_cmd_line;
+extern bool WCH_anti_idle;
+extern bool WCH_program_end;
+extern bool WCH_wait_cmd;
+extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
@@ -35,47 +36,49 @@ int WCH_GetNumDigits(int n);
 int main() {
 	WCH_Init();
 	WCH_read();
-	while (op != "quit") {
-		if (WCH_ShortCutKeyCheck() && !cmd_line) {
+	while (WCH_command != "quit") {
+		if (WCH_ShortCutKeyCheck() && !WCH_cmd_line) {
 			WCH_SetWindowStatus(true);
-			if (anti_idle == true) {
+			if (WCH_anti_idle == true) {
 				WCH_SetTrayStatus(true);
 				WCH_SetWindowSize(SW_NORMAL, GetActiveWindow());
-				anti_idle = false;
+				WCH_anti_idle = false;
 			}
 		}
-		if (cmd_line) {
+		if (WCH_cmd_line) {
 			WCH_CL_Init();
-			WCH_printlog(WCH_LOG_MODE_RC, {op});
-			if (op == "clock") {
+			WCH_printlog(WCH_LOG_MODE_RC, {WCH_command});
+			if (WCH_command == "clock") {
 				WCH_check_clock();
-			} else if (op == "help") {
+			} else if (WCH_command == "help") {
 				WCH_help();
-			} else if (op == "ow") {
+			} else if (WCH_command == "ow") {
 				WCH_ow();
-			} else if (op == "hide") {
+			} else if (WCH_command == "hide") {
 				WCH_hide();
-			} else if (op == "game") {
+			} else if (WCH_command == "game") {
 				WCH_game();
-			} else if (op == "time") {
+			} else if (WCH_command == "time") {
 				WCH_time();
-			} else if (op == "pi") {
+			} else if (WCH_command == "pi") {
 				WCH_pi();
-			} else if (op == "speedtest") {
+			} else if (WCH_command == "speedtest") {
 				WCH_speedtest();
-			} else if (op == "trans") {
+			} else if (WCH_command == "trans") {
 				WCH_trans();
-			} else if (op == "anti-idle") {
-				WCH_anti_idle();
-			} else if (op == "task") {
+			} else if (WCH_command == "anti-idle") {
+				WCH_anti_idle_func();
+			} else if (WCH_command == "task") {
 				WCH_check_task();
-			} else if (op == "update") {
+			} else if (WCH_command == "update") {
 				WCH_update();
-			} else if (op == "license") {
+			} else if (WCH_command == "license") {
 				WCH_license();
-			} else if (op != "quit") {
-				WCH_printlog(WCH_LOG_MODE_RC, {"unknown"});
-				WCH_unknown(op);
+			} else if (WCH_command != "quit") {
+				if (WCH_cmd_line) {
+					WCH_printlog(WCH_LOG_MODE_RC, {"unknown"});
+					WCH_unknown(WCH_command);
+				}
 			}
 			cout << endl;
 		}

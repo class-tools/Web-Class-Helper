@@ -18,18 +18,19 @@ Contributors: jsh-jsh ren-yc
 #include "variables.h"
 using namespace std;
 
-extern const string Weekdayname[7];
+extern const string WCH_WDName[7];
 extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
-extern HWND hwnd;
+extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
-extern bool cmd_line;
-extern bool anti_idle;
-extern bool isend;
-extern string op;
+extern bool WCH_cmd_line;
+extern bool WCH_anti_idle;
+extern bool WCH_program_end;
+extern bool WCH_wait_cmd;
+extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
@@ -94,12 +95,12 @@ bool WCH_ShortCutKeyCheck() {
 void WCH_check_clock_loop() {
 	// Check if the time equals to the clock. (Another thread)
 	Sleep((60 - WCH_GetTime().Second) * 1000);
-	while (!isend) {
+	while (!WCH_program_end) {
 		WCH_Time NOW = WCH_GetTime();
 		for (auto it = WCH_clock.equal_range(NOW.Hour).first; it != WCH_clock.equal_range(NOW.Hour).second; it++) {
 			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
 				cout << "\a";
-				MessageBox(NULL, ((it -> second).second).c_str(), "Web Class Helper Clock", MB_OK);
+				MessageBox(NULL, ((it -> second).second).c_str(), "WCH Clock", MB_OK);
 			}
 		}
 		Sleep(60000);
@@ -108,7 +109,7 @@ void WCH_check_clock_loop() {
 
 void WCH_check_task_loop() {
 	// Check if the running task is in the task list. (Same thread)
-	while (anti_idle && !isend) {
+	while (WCH_anti_idle && !WCH_program_end) {
 		for (set <string>::iterator it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 			if (WCH_TaskKill(*it)) {
 				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Successfully killed"});
@@ -122,9 +123,11 @@ void WCH_check_task_loop() {
 
 void WCH_CL_Init() {
 	// Initialize the command line.
+	WCH_wait_cmd = true;
 	cout << ">>> ";
-	cin >> op;
-	transform(op.begin(), op.end(), op.begin(), ::tolower);
+	cin >> WCH_command;
+	transform(WCH_command.begin(), WCH_command.end(), WCH_command.begin(), ::tolower);
+	WCH_wait_cmd = false;
 }
 
 void WCH_PutPicture() {
@@ -136,7 +139,7 @@ void WCH_PutPicture() {
 
 void WCH_SaveImg() {
 	// Run image saver Python program.
-	string tmp = "START IMG";
+	string tmp = "IMG";
 	tmp += WCH_Framework;
 	tmp += ".EXE";
 	WCH_RunSystem(tmp);
@@ -145,21 +148,22 @@ void WCH_SaveImg() {
 
 void WCH_Init() {
 	// Initialize the whole program.
-	if (access("./data", 0) != 0) {
-		CreateDirectory("./data", NULL);
+	if (access("data", 0) != 0) {
+		CreateDirectory("data", NULL);
 	}
-	if (access("./logs", 0) != 0) {
-		CreateDirectory("./logs", NULL);
+	if (access("logs", 0) != 0) {
+		CreateDirectory("logs", NULL);
 	}
-	hwnd = GetForegroundWindow();
+	WCH_hWnd = GetForegroundWindow();
 	WCH_Time q = WCH_GetTime();
 	char tmp[21];
-	sprintf(tmp, "./logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
-	rename("./logs/latest.log", tmp);
+	sprintf(tmp, "logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
+	rename("logs/latest.log", tmp);
 	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_Framework});
 	sprintf(tmp, "Web Class Helper (x%s)", WCH_Framework);
 	SetConsoleTitle(tmp);
 	atexit(WCH_save);
+	WCH_signalHandler();
 	if (q.Month == 1 || q.Month == 2) {
 		q.Month += 12;
 		q.Year--;

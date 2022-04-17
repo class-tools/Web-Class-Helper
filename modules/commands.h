@@ -22,18 +22,19 @@ using namespace std;
 #undef URLDownloadToFile
 #endif
 
-extern const string Weekdayname[7];
+extern const string WCH_WDName[7];
 extern multimap <int, pair <int, string>> WCH_clock;
 extern set <string> WCH_task_list;
-extern HWND hwnd;
+extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
-extern bool cmd_line;
-extern bool anti_idle;
-extern bool isend;
-extern string op;
+extern bool WCH_cmd_line;
+extern bool WCH_anti_idle;
+extern bool WCH_program_end;
+extern bool WCH_wait_cmd;
+extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
 WCH_Time WCH_GetTime();
@@ -89,7 +90,7 @@ void WCH_update() {
 
 void WCH_license() {
 	// Print the license.
-	freopen("./LICENSE", "r", stdin);
+	freopen("LICENSE", "r", stdin);
 	string tmp;
 	for (int i = 1; i <= 21; i++) {
 		getline(cin, tmp);
@@ -245,7 +246,7 @@ void WCH_game() {
 
 void WCH_speedtest() {
 	// Start a speed test with Python program.
-	string tmp = "START SPEEDTEST";
+	string tmp = "SPEEDTEST";
 	tmp += WCH_Framework;
 	tmp += ".EXE";
 	WCH_RunSystem(tmp);
@@ -259,14 +260,14 @@ void WCH_pi() {
 	WCH_SaveImg();
 }
 
-void WCH_anti_idle() {
+void WCH_anti_idle_func() {
 	// Enable anti-idle function.
 	char ch;
 	cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
 	cin >> ch;
 	if (ch == 'Y' || ch == 'y') {
 		WCH_SetWindowStatus(false);
-		anti_idle = true;
+		WCH_anti_idle = true;
 		Sleep(500);
 		WCH_SetWindowSize(SW_MAXIMIZE, GetActiveWindow());
 		Sleep(500);
@@ -277,9 +278,9 @@ void WCH_anti_idle() {
 	}
 }
 
-void WCH_unknown(string op) {
+void WCH_unknown(string WCH_command) {
 	// Make a response to unknown command.
-	cout << op << ": Command not found." << endl;
+	cout << WCH_command << ": Command not found." << endl;
 }
 
 void WCH_trans() {
@@ -296,7 +297,7 @@ void WCH_trans() {
 		info += tmp;
 		info += "\" > WCH_TRANS.tmp";
 		WCH_RunSystem(info);
-		cmd_line = false;
+		WCH_cmd_line = false;
 		Sleep(2000);
 		fin.open("WCH_TRANS.tmp");
 		while (fin >> res) {
@@ -305,7 +306,7 @@ void WCH_trans() {
 		cout << endl;
 		fin.close();
 		DeleteFile("WCH_TRANS.tmp");
-		cmd_line = true;
+		WCH_cmd_line = true;
 	}
 	catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
