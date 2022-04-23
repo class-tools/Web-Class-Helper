@@ -14,11 +14,13 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern multimap <int, pair <int, string>> WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
+extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
+extern int WCH_work_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool WCH_cmd_line;
@@ -31,6 +33,8 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+void WCH_read();
+void WCH_save();
 int WCH_GetNumDigits(int n);
 
 int main() {
@@ -47,9 +51,13 @@ int main() {
 		}
 		if (WCH_cmd_line) {
 			WCH_CL_Init();
-			WCH_printlog(WCH_LOG_MODE_RC, {WCH_command});
+			WCH_printlog(WCH_LOG_MODE_RC, {"command", WCH_command});
 			if (WCH_command == "clock") {
 				WCH_check_clock();
+			} else if (WCH_command == "task") {
+				WCH_check_task();
+			} else if (WCH_command == "work") {
+				WCH_check_work();
 			} else if (WCH_command == "help") {
 				WCH_help();
 			} else if (WCH_command == "ow") {
@@ -68,15 +76,13 @@ int main() {
 				WCH_trans();
 			} else if (WCH_command == "anti-idle") {
 				WCH_anti_idle_func();
-			} else if (WCH_command == "task") {
-				WCH_check_task();
 			} else if (WCH_command == "update") {
 				WCH_update();
 			} else if (WCH_command == "license") {
 				WCH_license();
 			} else if (WCH_command != "quit") {
 				if (WCH_cmd_line) {
-					WCH_printlog(WCH_LOG_MODE_RC, {"unknown"});
+					WCH_printlog(WCH_LOG_MODE_RC, {"command", "unknown"});
 					WCH_unknown(WCH_command);
 				}
 			}

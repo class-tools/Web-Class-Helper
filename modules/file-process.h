@@ -19,11 +19,13 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern multimap <int, pair <int, string>> WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
+extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
+extern int WCH_work_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool WCH_cmd_line;
@@ -36,6 +38,8 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+void WCH_read();
+void WCH_save();
 int WCH_GetNumDigits(int n);
 
 void WCH_printlog(int w, initializer_list <string> other) {
@@ -64,7 +68,7 @@ void WCH_printlog(int w, initializer_list <string> other) {
 	} else if (w == WCH_LOG_MODE_ERROR) {
 		sprintf(tmps, "%s %s: %s.", tmp, WCH_LOG_STATUS_ERROR, tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_RC) {
-		sprintf(tmps, "%s %s: Using command \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str());
+		sprintf(tmps, "%s %s: Using %s \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_RW) {
 		sprintf(tmps, "%s %s: %s file \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_KT) {
@@ -75,7 +79,7 @@ void WCH_printlog(int w, initializer_list <string> other) {
 		sprintf(tmps, "%s %s: %s \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
 	freopen("logs/latest.log", "a", stdout);
-	printf("%s\n", tmps);
+	cout << tmps << endl;
 	fclose(stdout);
 	freopen("CON", "w", stdout);
 }
@@ -86,7 +90,7 @@ void WCH_read_clock() {
 	string NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "data/" + NowWeekDay + ".dat";
 	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
-	fin.open(FilePath, ios::binary);
+	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
 	}
@@ -95,8 +99,7 @@ void WCH_read_clock() {
 		int H, M;
 		string Tname;
 		fin >> H >> M >> Tname;
-		WCH_clock.emplace(make_pair(H, make_pair(M, Tname)));
-		WCH_clock_num++;
+		WCH_clock_list.emplace(make_pair(H, make_pair(M, Tname)));
 	}
 	fin.close();
 }
@@ -109,14 +112,13 @@ void WCH_read_task() {
 	if (!fin.is_open()) {
 		return;
 	}
-	int list_size;
-	fin >> list_size;
-	for (int i = 1; i <= list_size; i++) {
+	fin >> WCH_task_num;
+	for (int i = 1; i <= WCH_task_num; i++) {
 		string TaskName;
-		getline(fin, TaskName);
+		fin >> TaskName;
 		WCH_task_list.insert(TaskName);
-		WCH_task_num++;
 	}
+	fin.close();
 }
 
 void WCH_read() {
@@ -130,16 +132,20 @@ void WCH_save_clock() {
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "data/" + NowWeekDay + ".dat";
-	if (WCH_clock_num == 0 && access(FilePath.substr(2, FilePath.size() - 1).c_str(), 0) != -1) {
-		DeleteFile(FilePath.c_str());
+	if (WCH_clock_num == 0) {
+		if (access(FilePath.c_str(), 0) != -1) {
+			DeleteFile(FilePath.c_str());
+		}
 		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
 	}
 	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 	fout.open(FilePath);
 	fout << WCH_clock_num << endl;
-	for (auto it = WCH_clock.begin(); it != WCH_clock.end(); it++) {
-		fout << (it -> first) << " " << (it -> second).first << " " << (it -> second).second << endl;
+	for (int i = 0; i <= 24; i++) {
+		for (auto it = WCH_clock_list.equal_range(i).first; it != WCH_clock_list.equal_range(i).second; it++) {
+			fout << i << " " << (it -> second).first << " " << (it -> second).second << endl;
+		}
 	}
 	fout.close();
 }
@@ -147,8 +153,10 @@ void WCH_save_clock() {
 void WCH_save_task() {
 	// Save task list data.
 	string FilePath = "data/task.dat";
-	if (WCH_task_num == 0 && access(FilePath.substr(2, FilePath.size() - 1).c_str(), 0) != -1) {
-		DeleteFile(FilePath.c_str());
+	if (WCH_task_num == 0) {
+		if (access(FilePath.c_str(), 0) != -1) {
+			DeleteFile(FilePath.c_str());
+		}
 		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
 	}
@@ -156,7 +164,7 @@ void WCH_save_task() {
 	fout.open(FilePath, ios::binary);
 	fout << WCH_task_num << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-		fout << (*it) << endl;
+		fout << *it << endl;
 	}
 	fout.close();
 }
@@ -164,16 +172,27 @@ void WCH_save_task() {
 void WCH_save() {
 	// Save data.
 	WCH_program_end = true;
-	if (WCH_wait_cmd) {
-		cout << endl;
-	}
+	WCH_cmd_line = false;
 	cout << "Saving data..." << endl;
 	WCH_ProcessBarTot = WCH_clock_num + WCH_task_num;
 	WCH_save_clock();
 	WCH_save_task();
 	WCH_printlog(WCH_LOG_MODE_ST, {"e", WCH_Framework});
+	Sleep(1000);
 	thread T(WCH_ProcessBar);
 	T.detach();
+	if (access("WCH_SYSTEM.tmp", 0) != -1) {
+		DeleteFile("WCH_SYSTEM.tmp");
+	}
+	if (access("WCH_UPD.tmp", 0) != -1) {
+		DeleteFile("WCH_SYSTEM.tmp");
+	}
+	if (access("WCH_TRANS.tmp", 0) != -1) {
+		DeleteFile("WCH_SYSTEM.tmp");
+	}
+	if (access("WCH_STDL.tmp", 0) != -1) {
+		DeleteFile("WCH_SYSTEM.tmp");
+	}
 	Sleep(WCH_ProcessBarTot * 1000);
 }
 

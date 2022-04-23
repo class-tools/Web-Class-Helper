@@ -19,11 +19,13 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern multimap <int, pair <int, string>> WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
+extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
+extern int WCH_work_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool WCH_cmd_line;
@@ -36,6 +38,8 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+void WCH_read();
+void WCH_save();
 int WCH_GetNumDigits(int n);
 
 WCH_Time WCH_GetTime() {
@@ -76,6 +80,8 @@ void WCH_Error(string INFO) {
 		tmp = "Cannot operate the clock list, please try to restart this program";
 	} else if (INFO == WCH_ERRNO_TASK_OPERATION) {
 		tmp = "Cannot operate the task list, please try to restart this program";
+	} else if (INFO == WCH_ERRNO_WORK_OPERATION) {
+		tmp = "Cannot operate the work list, please try to restart this program";
 	}
 	cout << tmp << "." << endl;
 	WCH_printlog(WCH_LOG_MODE_ERROR, {tmp});
@@ -97,7 +103,7 @@ void WCH_check_clock_loop() {
 	Sleep((60 - WCH_GetTime().Second) * 1000);
 	while (!WCH_program_end) {
 		WCH_Time NOW = WCH_GetTime();
-		for (auto it = WCH_clock.equal_range(NOW.Hour).first; it != WCH_clock.equal_range(NOW.Hour).second; it++) {
+		for (auto it = WCH_clock_list.equal_range(NOW.Hour).first; it != WCH_clock_list.equal_range(NOW.Hour).second; it++) {
 			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
 				cout << "\a";
 				MessageBox(NULL, ((it -> second).second).c_str(), "WCH Clock", MB_OK);
@@ -108,9 +114,9 @@ void WCH_check_clock_loop() {
 }
 
 void WCH_check_task_loop() {
-	// Check if the running task is in the task list. (Same thread)
+	// Check if the running task is in the task list. (Another thread)
 	while (WCH_anti_idle && !WCH_program_end) {
-		for (set <string>::iterator it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 			if (WCH_TaskKill(*it)) {
 				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Successfully killed"});
 			} else {
@@ -159,8 +165,8 @@ void WCH_Init() {
 	char tmp[21];
 	sprintf(tmp, "logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
 	rename("logs/latest.log", tmp);
-	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_Framework});
-	sprintf(tmp, "Web Class Helper (x%s)", WCH_Framework);
+	WCH_printlog(WCH_LOG_MODE_ST, {"s", (WCH_Framework == "64" ? "64" : "86")});
+	sprintf(tmp, "Web Class Helper (x%s)", (WCH_Framework == "64" ? "64" : "86"));
 	SetConsoleTitle(tmp);
 	atexit(WCH_save);
 	WCH_signalHandler();
@@ -171,7 +177,7 @@ void WCH_Init() {
 	WCH_SetWindowStatus(true);
 	thread T(WCH_check_clock_loop);
 	T.detach();
-	cout << "Web Class Helper " << WCH_VER << " (x" << WCH_Framework << ")" << endl;
+	cout << "Web Class Helper " << WCH_VER << " (x" << (WCH_Framework == "64" ? "64" : "86") << ")" << endl;
 	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
 	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 	cout << endl;

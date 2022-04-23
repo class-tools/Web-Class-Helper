@@ -19,11 +19,13 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern multimap <int, pair <int, string>> WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
+extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
+extern int WCH_work_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool WCH_cmd_line;
@@ -36,9 +38,12 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+void WCH_read();
+void WCH_save();
 int WCH_GetNumDigits(int n);
 
 void WCH_RunSystem(string str) {
+	// Run system command.
 	freopen("WCH_SYSTEM.tmp", "w", stdout);
 	system(str.c_str());
 	freopen("CON", "w", stdout);
@@ -135,14 +140,17 @@ void WCH_ProcessBar() {
 
 void WCH_signalHandler() {
 	// Signal handler.
-	signal(SIGABRT, [](int signum) {
+	signal(SIGINT, [](int signum) {
 		string tmp = "ERROR";
 		tmp += WCH_Framework;
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
-		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program aborted)"});
-		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Program aborted\"");
+		cout << endl;
+		WCH_save();
+		Sleep(100);
+		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
+		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Program interrupted\"");
 		exit(signum);
 	});
 	signal(SIGFPE, [](int signum) {
@@ -151,6 +159,9 @@ void WCH_signalHandler() {
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
+		cout << endl;
+		WCH_save();
+		Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
 		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Operation overflow\"");
 		exit(signum);
@@ -161,6 +172,9 @@ void WCH_signalHandler() {
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
+		cout << endl;
+		WCH_save();
+		Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
 		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Illegal instruction\"");
 		exit(signum);
@@ -171,18 +185,11 @@ void WCH_signalHandler() {
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
+		cout << endl;
+		WCH_save();
+		Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
 		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Access to illegal memory\"");
-		exit(signum);
-	});
-	signal(SIGINT, [](int signum) {
-		string tmp = "ERROR";
-		tmp += WCH_Framework;
-		tmp += ".EXE";
-		WCH_cmd_line = false;
-		WCH_program_end = true;
-		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
-		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Program interrupted\"");
 		exit(signum);
 	});
 }

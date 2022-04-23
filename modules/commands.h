@@ -23,11 +23,13 @@ using namespace std;
 #endif
 
 extern const string WCH_WDName[7];
-extern multimap <int, pair <int, string>> WCH_clock;
+extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
+extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
+extern int WCH_work_num;
 extern int WCH_ProcessBarCount;
 extern int WCH_ProcessBarTot;
 extern bool WCH_cmd_line;
@@ -40,6 +42,8 @@ extern ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+void WCH_read();
+void WCH_save();
 int WCH_GetNumDigits(int n);
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
@@ -110,7 +114,7 @@ void WCH_add_clock() {
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	} else {
 		WCH_clock_num++;
-		WCH_clock.emplace(make_pair(h, make_pair(m, tname)));
+		WCH_clock_list.emplace(make_pair(h, make_pair(m, tname)));
 	}
 }
 
@@ -122,9 +126,9 @@ void WCH_delete_clock() {
 	string tname = "NULL";
 	try {
 		cin >> h >> m >> tname;
-		for (auto it = WCH_clock.equal_range(h).first; it != WCH_clock.equal_range(h).second; it++) {
+		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
 			if ((it -> second).first == m && (it -> second).second == tname) {
-				WCH_clock.erase(it);
+				WCH_clock_list.erase(it);
 				flag = true;
 				WCH_clock_num--;
 				break;
@@ -148,7 +152,7 @@ void WCH_change_clock() {
 	string tname = "NULL";
 	try {
 		cin >> h >> m >> tname;
-		for (auto it = WCH_clock.equal_range(h).first; it != WCH_clock.equal_range(h).second; it++) {
+		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
 			if ((it -> second).first == m) {
 				(it -> second).second = tname;
 				flag = true;
@@ -164,17 +168,54 @@ void WCH_change_clock() {
 	}
 }
 
+void WCH_list_clock() {
+	// List all tasks.
+	int MAXH = -1;
+	int MAXM = -1;
+	int MAXT = -1;
+	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+		MAXH = max(MAXH, WCH_GetNumDigits(it -> first));
+		MAXM = max(MAXM, WCH_GetNumDigits((it -> second).first));
+		MAXT = max(MAXT, (int)((it -> second).second).size());
+	}
+	if (MAXH == -1 && MAXM == -1 && MAXT == -1) {
+		return;
+	}
+	MAXH = max(MAXH, 4);
+	MAXM = max(MAXM, 6);
+	cout << setw(MAXH) << "Hour" << " | " << setw(MAXM) << "Minute" << " | " << setw(MAXT) << "Name" << endl;
+	while (MAXH--) {
+		cout << "-";
+	}
+	cout << " | ";
+	while (MAXM--) {
+		cout << "-";
+	}
+	cout << " | ";
+	while (MAXT--) {
+		cout << "-";
+	}
+	cout << endl;
+	for (int i = 0; i <= 24; i++) {
+		for (auto it = WCH_clock_list.equal_range(i).first; it != WCH_clock_list.equal_range(i).second; it++) {
+			cout << setw(MAXH) << i << " | " << setw(MAXM) << (it -> second).first << " | " << setw(MAXT) << (it -> second).second << endl;
+		}
+	}
+}
+
 void WCH_check_clock() {
 	// Clock series command input.
 	string cmd;
 	cin >> cmd;
-	WCH_printlog(WCH_LOG_MODE_RC, {cmd});
+	WCH_printlog(WCH_LOG_MODE_RC, {"sub command", cmd});
 	if (cmd == "add") {
 		WCH_add_clock();
 	} else if (cmd == "delete") {
 		WCH_delete_clock();
 	} else if (cmd == "change") {
 		WCH_change_clock();
+	} else if (cmd == "list") {
+		WCH_list_clock();
 	} else {
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	}
@@ -183,24 +224,39 @@ void WCH_check_clock() {
 void WCH_add_task() {
 	// Add a new task.
 	string task;
-	string tmp;
-	getline(cin, task);
-	tmp = task.substr(1, task.size() - 1);
-	WCH_task_list.insert(tmp);
+	cin >> task;
+	WCH_task_list.insert(task);
 	WCH_task_num++;
 }
 
 void WCH_delete_task() {
 	// Delete a task.
 	string task;
-	string tmp;
-	getline(cin, task);
-	tmp = task.substr(1, task.size() - 1);
-	if (WCH_task_list.find(tmp) == WCH_task_list.end()) {
+	cin >> task;
+	if (WCH_task_list.find(task) == WCH_task_list.end()) {
 		WCH_Error(WCH_ERRNO_TASK_OPERATION);
 	} else {
-		WCH_task_list.erase(tmp);
+		WCH_task_list.erase(task);
 		WCH_task_num--;
+	}
+}
+
+void WCH_list_task() {
+	// List all tasks.
+	int MAX = -1;
+	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+		MAX = max(MAX, (int)(*it).size());
+	}
+	if (MAX == -1) {
+		return;
+	}
+	cout << setw(MAX) << "Process Name" << endl;
+	while (MAX--) {
+		cout << "-";
+	}
+	cout << endl;
+	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+		cout << *it << endl;
 	}
 }
 
@@ -208,11 +264,68 @@ void WCH_check_task() {
 	// Task series command input.
 	string cmd;
 	cin >> cmd;
-	WCH_printlog(WCH_LOG_MODE_RC, {cmd});
+	WCH_printlog(WCH_LOG_MODE_RC, {"sub command", cmd});
 	if (cmd == "add") {
 		WCH_add_task();
 	} else if (cmd == "delete") {
 		WCH_delete_task();
+	} else if (cmd == "list") {
+		WCH_list_task();
+	} else {
+		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+	}
+}
+
+void WCH_add_work() {
+	// Add a new work.
+	string work;
+	cin >> work;
+	WCH_work_list.insert(work);
+	WCH_work_num++;
+}
+
+void WCH_done_work() {
+	// Delete a work.
+	string work;
+	cin >> work;
+	if (WCH_work_list.find(work) == WCH_work_list.end()) {
+		WCH_Error(WCH_ERRNO_WORK_OPERATION);
+	} else {
+		WCH_work_list.erase(work);
+		WCH_work_num--;
+	}
+}
+
+void WCH_list_work() {
+	// List all works.
+	int MAX = -1;
+	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
+		MAX = max(MAX, (int)(*it).size());
+	}
+	if (MAX == -1) {
+		return;
+	}
+	cout << setw(MAX) << "Name" << endl;
+	while (MAX--) {
+		cout << "-";
+	}
+	cout << endl;
+	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
+		cout << *it << endl;
+	}
+}
+
+void WCH_check_work() {
+	// Work series command input.
+	string cmd;
+	cin >> cmd;
+	WCH_printlog(WCH_LOG_MODE_RC, {"sub command", cmd});
+	if (cmd == "add") {
+		WCH_add_work();
+	} else if (cmd == "done") {
+		WCH_done_work();
+	} else if (cmd == "list") {
+		WCH_list_work();
 	} else {
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	}
@@ -300,10 +413,8 @@ void WCH_trans() {
 		WCH_cmd_line = false;
 		Sleep(2000);
 		fin.open("WCH_TRANS.tmp");
-		while (fin >> res) {
-			cout << res << " ";
-		}
-		cout << endl;
+		getline(fin, res);
+		cout << res << endl;
 		fin.close();
 		DeleteFile("WCH_TRANS.tmp");
 		WCH_cmd_line = true;
@@ -354,8 +465,13 @@ void WCH_help() {
 	cout << "clock add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
 	cout << "clock delete {hour} {minute} {name} (Delete clock at {hour}:{minute})" << endl;
 	cout << "clock change {hour} {minute} {name} (Change clock at {hour}:{minute})" << endl;
+	cout << "clock list (List all clocks)" << endl;
 	cout << "task add {process name} (Add task {process name} to kill when enable \"anti-idle\")" << endl;
 	cout << "task delete {process name} (Delete task {process name} to kill when enable \"anti-idle\")" << endl;
+	cout << "task list (List all tasks)" << endl;
+	cout << "work add {name} (Add {name} to work plan)" << endl;
+	cout << "work done {name} (Done work plan item {name})" << endl;
+	cout << "work list (List all items in work plan)" << endl;
 	cout << "help (Get help output)" << endl;
 	cout << "ow (Get a sentence) **From web**" << endl;
 	cout << "hide (Hide the command line window)" << endl;

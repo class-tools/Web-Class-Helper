@@ -22,6 +22,7 @@ using namespace std;
 #define WCH_ERRNO_NETWORK_FAILURE "NF"
 #define WCH_ERRNO_CLOCK_OPERATION "CO"
 #define WCH_ERRNO_TASK_OPERATION "TO"
+#define WCH_ERRNO_WORK_OPERATION "WO"
 #define WCH_LOG_MODE_ST -1
 #define WCH_LOG_MODE_ERROR 0
 #define WCH_LOG_MODE_RC 1
@@ -47,11 +48,13 @@ struct WCH_Data_Body {
 	int M;
 };
 const string WCH_WDName[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-multimap <int, pair <int, string>> WCH_clock;
+multimap <int, pair <int, string>> WCH_clock_list;
 set <string> WCH_task_list;
+set <string> WCH_work_list;
 HWND WCH_hWnd;
 int WCH_clock_num;
 int WCH_task_num;
+int WCH_work_num;
 int WCH_ProcessBarCount;
 int WCH_ProcessBarTot;
 bool WCH_cmd_line = true;
@@ -64,6 +67,8 @@ ofstream fout;
 WCH_Time WCH_GetTime();
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
+void WCH_read();
+void WCH_save();
 int WCH_GetNumDigits(int n);
 
 #endif
