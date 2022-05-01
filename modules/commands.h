@@ -39,7 +39,10 @@ extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
+extern wifstream wfin;
+extern wofstream wfout;
 WCH_Time WCH_GetTime();
+void WCH_Sleep(int _ms);
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
 void WCH_read();
@@ -76,7 +79,7 @@ void WCH_update() {
 		file[len] = file[len + 1] = 0;
 		CloseHandle(hFile);
 		tmp = file;
-		Sleep(5000);
+		WCH_Sleep(5000);
 		if (tmp != WCH_VER) {
 			WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", tmp});
@@ -85,8 +88,7 @@ void WCH_update() {
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version is already", tmp});
 		}
 		DeleteFile("WCH_UPD.tmp");
-	}
-	catch (...) {
+	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
 		return;
 	}
@@ -134,8 +136,7 @@ void WCH_delete_clock() {
 				break;
 			}
 		}
-	}
-	catch (...) {
+	} catch (...) {
 		goto Error;
 	}
 	if (!flag) {
@@ -158,8 +159,7 @@ void WCH_change_clock() {
 				flag = true;
 			}
 		}
-	}
-	catch (...) {
+	} catch (...) {
 		goto Error;
 	}
 	if (!flag) {
@@ -348,8 +348,7 @@ void WCH_game() {
 				cout << "The answer is bigger." << endl;
 			}
 		}
-	}
-	catch (...) {
+	} catch (...) {
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 		return;
 	}
@@ -381,19 +380,21 @@ void WCH_anti_idle_func() {
 	if (ch == 'Y' || ch == 'y') {
 		WCH_SetWindowStatus(false);
 		WCH_anti_idle = true;
-		Sleep(500);
+		WCH_Sleep(500);
 		WCH_SetWindowSize(SW_MAXIMIZE, GetActiveWindow());
-		Sleep(500);
+		WCH_Sleep(500);
 		WCH_SetTrayStatus(false);
-		Sleep(500);
+		WCH_Sleep(500);
 		thread T(WCH_check_task_loop);
 		T.detach();
 	}
 }
 
-void WCH_unknown(string WCH_command) {
+void WCH_unknown(string _command1) {
 	// Make a response to unknown command.
-	cout << WCH_command << ": Command not found." << endl;
+	string _command2;
+	getline(cin, _command2);
+	cout << _command1 + _command2 << ": Command not found." << endl;
 }
 
 void WCH_trans() {
@@ -401,7 +402,7 @@ void WCH_trans() {
 	try {
 		string info;
 		string tmp;
-		string res;
+		wstring res;
 		getline(cin, info);
 		tmp = info.substr(1, info.size() - 1);
 		info = "TRANS";
@@ -411,15 +412,14 @@ void WCH_trans() {
 		info += "\" > WCH_TRANS.tmp";
 		WCH_RunSystem(info);
 		WCH_cmd_line = false;
-		Sleep(2000);
-		fin.open("WCH_TRANS.tmp");
-		getline(fin, res);
-		cout << res << endl;
-		fin.close();
+		WCH_Sleep(1000);
+		wfin.open("WCH_TRANS.tmp");
+		getline(wfin, res);
+		wcout << res << endl;
+		wfin.close();
 		DeleteFile("WCH_TRANS.tmp");
 		WCH_cmd_line = true;
-	}
-	catch (...) {
+	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
 		return;
 	}
@@ -428,24 +428,14 @@ void WCH_trans() {
 void WCH_ow() {
 	// Get a random sentence.
 	try {
-		int len;
-		char url[128], *file;
-		HANDLE hFile;
-		DWORD unused;
-		char ss[128] = "https://v1.hitokoto.cn/?encode=text";
-		sprintf(url, ss);
-		URLDownloadToFile(0, url, "WCH_STDL.tmp", 0, 0);
-		hFile = CreateFile("WCH_STDL.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-		len = GetFileSize(hFile, 0);
-		file = new char[len + 3];
-		ReadFile(hFile, file, len, &unused, 0);
-		file[len] = file[len + 1] = 0;
-		CloseHandle(hFile);
-		UTF8ToANSI(file);
-		cout << file << endl;
+		URLDownloadToFile(0, "https://v1.hitokoto.cn/?encode=text", "WCH_STDL.tmp", 0, 0);
+		wfin.open("WCH_STDL.tmp");
+		wstring file;
+		getline(wfin, file);
+		wcout << file << endl;
+		wfin.close();
 		DeleteFile("WCH_STDL.tmp");
-	}
-	catch (...) {
+	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
 		return;
 	}

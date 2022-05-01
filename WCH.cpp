@@ -6,6 +6,7 @@ Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER "1.1.2"
 #define WCH_Framework "64"
+#define WCH_DisplayFramework "64"
 #include "modules/commands.h"
 #include "modules/functions.h"
 #include "modules/file-process.h"
@@ -30,7 +31,10 @@ extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
+extern wifstream wfin;
+extern wofstream wfout;
 WCH_Time WCH_GetTime();
+void WCH_Sleep(int _ms);
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
 void WCH_read();

@@ -35,7 +35,10 @@ extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
+extern wifstream wfin;
+extern wofstream wfout;
 WCH_Time WCH_GetTime();
+void WCH_Sleep(int _ms);
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
 void WCH_read();
@@ -178,7 +181,7 @@ void WCH_save() {
 	WCH_save_clock();
 	WCH_save_task();
 	WCH_printlog(WCH_LOG_MODE_ST, {"e", WCH_Framework});
-	Sleep(1000);
+	WCH_Sleep(1000);
 	thread T(WCH_ProcessBar);
 	T.detach();
 	if (access("WCH_SYSTEM.tmp", 0) != -1) {
@@ -193,7 +196,7 @@ void WCH_save() {
 	if (access("WCH_STDL.tmp", 0) != -1) {
 		DeleteFile("WCH_SYSTEM.tmp");
 	}
-	Sleep(WCH_ProcessBarTot * 1000);
+	WCH_Sleep(WCH_ProcessBarTot * 1000);
 }
 
 void UTF8ToANSI(char *str) {

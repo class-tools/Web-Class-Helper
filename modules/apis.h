@@ -35,20 +35,35 @@ extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
+extern wifstream wfin;
+extern wofstream wfout;
 WCH_Time WCH_GetTime();
+void WCH_Sleep(int _ms);
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
 
+void WCH_Sleep(int _ms) {
+	// Sleep.
+	while (_ms > 0 && !WCH_program_end) {
+		Sleep(100);
+		_ms -= 100;
+	}
+}
+
 void WCH_RunSystem(string str) {
 	// Run system command.
 	freopen("WCH_SYSTEM.tmp", "w", stdout);
 	system(str.c_str());
 	freopen("CON", "w", stdout);
-	Sleep(500);
+	WCH_Sleep(500);
 	DeleteFile("WCH_SYSTEM.tmp");
+}
+
+void WCH_PrintColor(WORD _mode) {
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _mode);
 }
 
 DWORD WCH_GetPID(string name) {
@@ -101,40 +116,50 @@ bool WCH_TaskKill(string name) {
 	}
 }
 
-int WCH_GetNumDigits(int n) {
-	int cnt = 1;
-	while ((n /= 10) != 0) {
-		cnt++;
+int WCH_GetNumDigits(int _n) {
+	int _cnt = 1;
+	while ((_n /= 10) != 0) {
+		_cnt++;
 	}
-	return cnt;
+	return _cnt;
 }
 
-void WCH_PrintProcessBar(int n, bool flag) {
+void WCH_PrintProcessBar(int _sur, int _n, bool _flag) {
 	// Print a process bar.
-	if (flag) {
+	char _ETAStr[9];
+	sprintf(_ETAStr, "%02d:%02d:%02d", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
+	if (_flag) {
 		for (int i = 0; i < WCH_ProcessBarCount; i++) {
 			cout << "\b";
 		}
 	}
-	cout << "[";
-	for (int i = 0; i < n; i++) {
-		cout << "=";
+	WCH_PrintColor(0x0A);
+	for (int i = 0; i < _n / 2; i++) {
+		wcout << L"━";
 	}
-	for (int i = n; i < 100; i++) {
-		cout << " ";
+	WCH_PrintColor(0x0C);
+	for (int i = _n / 2; i < 50; i++) {
+		wcout << L"━";
 	}
-	cout << "] " << n << "%";
-	WCH_ProcessBarCount = 104 + WCH_GetNumDigits(n);
+	WCH_PrintColor(0x02);
+	cout << " " << _n << "%";
+	WCH_PrintColor(0x07);
+	cout << " ETA ";
+	WCH_PrintColor(0x09);
+	cout << _ETAStr;
+	WCH_PrintColor(0x07);
+	WCH_ProcessBarCount = 65 + WCH_GetNumDigits(_n);
 }
 
 void WCH_ProcessBar() {
 	// Process bar.
-	WCH_PrintProcessBar(0, false);
+	WCH_PrintProcessBar(WCH_ProcessBarTot, 0, false);
 	for (int i = WCH_ProcessBarTot; i > 1 && !WCH_program_end; i--) {
-		Sleep(1000);
-		WCH_PrintProcessBar(100 / i, true);
+		WCH_Sleep(1000);
+		WCH_PrintProcessBar(i, 100 / i, true);
 	}
-	WCH_PrintProcessBar(100, true);
+	WCH_Sleep(1000);
+	WCH_PrintProcessBar(0, 100, true);
 	cout << endl;
 }
 
@@ -148,7 +173,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		cout << endl;
 		WCH_save();
-		Sleep(100);
+		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
 		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Program interrupted\"");
 		exit(signum);
@@ -161,7 +186,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		cout << endl;
 		WCH_save();
-		Sleep(100);
+		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
 		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Operation overflow\"");
 		exit(signum);
@@ -174,7 +199,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		cout << endl;
 		WCH_save();
-		Sleep(100);
+		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
 		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Illegal instruction\"");
 		exit(signum);
@@ -187,7 +212,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		cout << endl;
 		WCH_save();
-		Sleep(100);
+		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
 		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Access to illegal memory\"");
 		exit(signum);

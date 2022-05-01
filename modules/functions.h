@@ -35,7 +35,10 @@ extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern ifstream fin;
 extern ofstream fout;
+extern wifstream wfin;
+extern wofstream wfout;
 WCH_Time WCH_GetTime();
+void WCH_Sleep(int _ms);
 void WCH_Error(string INFO);
 void WCH_printlog(int w, initializer_list <string> other);
 void WCH_read();
@@ -100,7 +103,7 @@ bool WCH_ShortCutKeyCheck() {
 
 void WCH_check_clock_loop() {
 	// Check if the time equals to the clock. (Another thread)
-	Sleep((60 - WCH_GetTime().Second) * 1000);
+	WCH_Sleep((60 - WCH_GetTime().Second) * 1000);
 	while (!WCH_program_end) {
 		WCH_Time NOW = WCH_GetTime();
 		for (auto it = WCH_clock_list.equal_range(NOW.Hour).first; it != WCH_clock_list.equal_range(NOW.Hour).second; it++) {
@@ -109,7 +112,7 @@ void WCH_check_clock_loop() {
 				MessageBox(NULL, ((it -> second).second).c_str(), "WCH Clock", MB_OK);
 			}
 		}
-		Sleep(60000);
+		WCH_Sleep(60000);
 	}
 }
 
@@ -123,7 +126,7 @@ void WCH_check_task_loop() {
 				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Failed to kill"});
 			}
 		}
-		Sleep(15000);
+		WCH_Sleep(15000);
 	}
 }
 
@@ -149,7 +152,7 @@ void WCH_SaveImg() {
 	tmp += WCH_Framework;
 	tmp += ".EXE";
 	WCH_RunSystem(tmp);
-	Sleep(500);
+	WCH_Sleep(500);
 }
 
 void WCH_Init() {
@@ -165,9 +168,10 @@ void WCH_Init() {
 	char tmp[21];
 	sprintf(tmp, "logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
 	rename("logs/latest.log", tmp);
-	WCH_printlog(WCH_LOG_MODE_ST, {"s", (WCH_Framework == "64" ? "64" : "86")});
-	sprintf(tmp, "Web Class Helper (x%s)", (WCH_Framework == "64" ? "64" : "86"));
+	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_DisplayFramework});
+	sprintf(tmp, "Web Class Helper (x%s)", WCH_DisplayFramework);
 	SetConsoleTitle(tmp);
+	setlocale(LC_ALL, "chs");
 	atexit(WCH_save);
 	WCH_signalHandler();
 	if (q.Month == 1 || q.Month == 2) {
@@ -177,7 +181,7 @@ void WCH_Init() {
 	WCH_SetWindowStatus(true);
 	thread T(WCH_check_clock_loop);
 	T.detach();
-	cout << "Web Class Helper " << WCH_VER << " (x" << (WCH_Framework == "64" ? "64" : "86") << ")" << endl;
+	cout << "Web Class Helper " << WCH_VER << " (x" << WCH_DisplayFramework << ")" << endl;
 	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
 	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 	cout << endl;
