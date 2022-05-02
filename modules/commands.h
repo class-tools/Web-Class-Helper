@@ -64,28 +64,18 @@ void WCH_update() {
 		WCH_ProcessBarTot = 5;
 		thread T(WCH_ProcessBar);
 		T.detach();
-		int len;
-		char url[128], *file;
-		string tmp;
-		HANDLE hFile;
-		DWORD unused;
-		char ss[128] = "https://class-tools.gq/update/WCH";
-		sprintf(url, ss);
-		URLDownloadToFile(0, url, "WCH_UPD.tmp", 0, 0);
-		hFile = CreateFile("WCH_UPD.tmp", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-		len = GetFileSize(hFile, 0);
-		file = new char[len + 3];
-		ReadFile(hFile, file, len, &unused, 0);
-		file[len] = file[len + 1] = 0;
-		CloseHandle(hFile);
-		tmp = file;
+		URLDownloadToFile(0, "https://class-tools.gq/update/WCH", "WCH_UPD.tmp", 0, 0);
+		string res;
+		fin.open("WCH_UPD.tmp");
+		getline(fin, res);
+		fin.close();
 		WCH_Sleep(5000);
-		if (tmp != WCH_VER) {
+		if (res != WCH_VER) {
 			WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
-			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", tmp});
+			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", res});
 		} else {
 			cout << "Already up to date." << endl;
-			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version is already", tmp});
+			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version is already", res});
 		}
 		DeleteFile("WCH_UPD.tmp");
 	} catch (...) {
@@ -429,12 +419,15 @@ void WCH_ow() {
 	// Get a random sentence.
 	try {
 		URLDownloadToFile(0, "https://v1.hitokoto.cn/?encode=text", "WCH_STDL.tmp", 0, 0);
-		wfin.open("WCH_STDL.tmp");
-		wstring file;
-		getline(wfin, file);
-		wcout << file << endl;
-		wfin.close();
+		WCH_cmd_line = false;
+		Sleep(1000);
+		fin.open("WCH_STDL.tmp");
+		string res;
+		getline(fin, res);
+		cout << UTF8ToANSI(res) << endl;
+		fin.close();
 		DeleteFile("WCH_STDL.tmp");
+		WCH_cmd_line = true;
 	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
 		return;

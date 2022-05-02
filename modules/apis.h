@@ -116,6 +116,21 @@ bool WCH_TaskKill(string name) {
 	}
 }
 
+string UTF8ToANSI(string strUTF8) {
+	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
+	WCHAR *wszBuffer = new WCHAR[nLen + 1];
+	nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, wszBuffer, nLen);
+	wszBuffer[nLen] = 0;
+	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, NULL, 0, NULL, 0);
+	CHAR *szBuffer = new CHAR[nLen + 1];
+	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
+	szBuffer[nLen] = 0;
+	strUTF8 = szBuffer;
+	delete[] szBuffer;
+	delete[] wszBuffer;
+	return strUTF8;
+}
+
 int WCH_GetNumDigits(int _n) {
 	int _cnt = 1;
 	while ((_n /= 10) != 0) {

@@ -199,29 +199,4 @@ void WCH_save() {
 	WCH_Sleep(WCH_ProcessBarTot * 1000);
 }
 
-void UTF8ToANSI(char *str) {
-	// Convert UTF-8 to ANSI.
-	int len = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
-	WCHAR *wsz = new WCHAR[len + 1];
-	len = MultiByteToWideChar(CP_UTF8, 0, str, -1, wsz, len);
-	wsz[len] = 0;
-	len = WideCharToMultiByte(CP_ACP, 0, wsz, -1, 0, 0, 0, 0);
-	len = WideCharToMultiByte(CP_ACP, 0, wsz, -1, str, len, 0, 0);
-	str[len] = 0;
-}
-
-string UTF8ToGB(const char* str) {
-	string result;
-	WCHAR *strSrc;
-	LPSTR szRes;
-	int i = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
-	strSrc = new WCHAR[i + 1];
-	MultiByteToWideChar(CP_UTF8, 0, str, -1, strSrc, i);
-	i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);
-	szRes = new CHAR[i + 1];
-	WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);
-	result = szRes;
-	return result;
-}
-
 #endif
