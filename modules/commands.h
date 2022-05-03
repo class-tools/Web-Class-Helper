@@ -69,7 +69,7 @@ void WCH_update() {
 		fin.open("WCH_UPD.tmp");
 		getline(fin, res);
 		fin.close();
-		WCH_Sleep(5000);
+		WCH_Sleep(5500);
 		if (res != WCH_VER) {
 			WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", res});
@@ -86,14 +86,13 @@ void WCH_update() {
 
 void WCH_license() {
 	// Print the license.
-	freopen("LICENSE", "r", stdin);
+	fin.open("LICENSE", ios::in);
 	string tmp;
 	for (int i = 1; i <= 21; i++) {
-		getline(cin, tmp);
+		getline(fin, tmp);
 		cout << tmp << endl;
 	}
-	fclose(stdin);
-	freopen("CON", "r", stdin);
+	fin.close();
 }
 
 void WCH_add_clock() {
@@ -392,7 +391,7 @@ void WCH_trans() {
 	try {
 		string info;
 		string tmp;
-		wstring res;
+		string res;
 		getline(cin, info);
 		tmp = info.substr(1, info.size() - 1);
 		info = "TRANS";
@@ -401,12 +400,12 @@ void WCH_trans() {
 		info += tmp;
 		info += "\" > WCH_TRANS.tmp";
 		WCH_RunSystem(info);
-		WCH_cmd_line = false;
 		WCH_Sleep(1000);
-		wfin.open("WCH_TRANS.tmp");
-		getline(wfin, res);
-		wcout << res << endl;
-		wfin.close();
+		WCH_cmd_line = false;
+		fin.open("WCH_TRANS.tmp");
+		getline(fin, res);
+		cout << res << endl;
+		fin.close();
 		DeleteFile("WCH_TRANS.tmp");
 		WCH_cmd_line = true;
 	} catch (...) {
@@ -419,8 +418,8 @@ void WCH_ow() {
 	// Get a random sentence.
 	try {
 		URLDownloadToFile(0, "https://v1.hitokoto.cn/?encode=text", "WCH_STDL.tmp", 0, 0);
+		WCH_Sleep(1000);
 		WCH_cmd_line = false;
-		Sleep(1000);
 		fin.open("WCH_STDL.tmp");
 		string res;
 		getline(fin, res);

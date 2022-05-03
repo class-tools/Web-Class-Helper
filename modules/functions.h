@@ -171,7 +171,6 @@ void WCH_Init() {
 	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_DisplayFramework});
 	sprintf(tmp, "Web Class Helper (x%s)", WCH_DisplayFramework);
 	SetConsoleTitle(tmp);
-	setlocale(LC_ALL, "chs");
 	atexit(WCH_save);
 	WCH_signalHandler();
 	if (q.Month == 1 || q.Month == 2) {

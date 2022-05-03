@@ -81,10 +81,9 @@ void WCH_printlog(int w, initializer_list <string> other) {
 	} else if (w == WCH_LOG_MODE_UPD) {
 		sprintf(tmps, "%s %s: %s \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
-	freopen("logs/latest.log", "a", stdout);
-	cout << tmps << endl;
-	fclose(stdout);
-	freopen("CON", "w", stdout);
+	fout.open("logs/latest.log", ios::app | ios::out);
+	fout << tmps << endl;
+	fout.close();
 }
 
 void WCH_read_clock() {

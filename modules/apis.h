@@ -150,11 +150,11 @@ void WCH_PrintProcessBar(int _sur, int _n, bool _flag) {
 	}
 	WCH_PrintColor(0x0A);
 	for (int i = 0; i < _n / 2; i++) {
-		wcout << L"━";
+		cout << UTF8ToANSI("━");
 	}
 	WCH_PrintColor(0x0C);
 	for (int i = _n / 2; i < 50; i++) {
-		wcout << L"━";
+		cout << UTF8ToANSI("━");
 	}
 	WCH_PrintColor(0x02);
 	cout << " " << _n << "%";
