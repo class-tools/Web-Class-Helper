@@ -53,17 +53,16 @@ void WCH_Sleep(int _ms) {
 	}
 }
 
-void WCH_RunSystem(string str) {
-	// Run system command.
-	freopen("WCH_SYSTEM.tmp", "w", stdout);
-	system(str.c_str());
-	freopen("CON", "w", stdout);
-	WCH_Sleep(500);
-	DeleteFile("WCH_SYSTEM.tmp");
-}
-
 void WCH_PrintColor(WORD _mode) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _mode);
+}
+
+void WCH_PrintChar(int _times, char _c) {
+	// Print space.
+	while (_times > 0 && !WCH_program_end) {
+		_times--;
+		cout << _c;
+	}
 }
 
 DWORD WCH_GetPID(string name) {
@@ -190,7 +189,7 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
-		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Program interrupted\"");
+		system((tmp + " " + to_string(signum) + " \"Program interrupted\"").c_str());
 		exit(signum);
 	});
 	signal(SIGFPE, [](int signum) {
@@ -203,7 +202,7 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
-		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Operation overflow\"");
+		system((tmp + " " + to_string(signum) + " \"Operation overflow\"").c_str());
 		exit(signum);
 	});
 	signal(SIGILL, [](int signum) {
@@ -216,7 +215,7 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
-		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Illegal instruction\"");
+		system((tmp + " " + to_string(signum) + " \"Illegal instruction\"").c_str());
 		exit(signum);
 	});
 	signal(SIGSEGV, [](int signum) {
@@ -229,7 +228,7 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
-		WCH_RunSystem(tmp + " " + to_string(signum) + " \"Access to illegal memory\"");
+		system((tmp + " " + to_string(signum) + " \"Access to illegal memory\"").c_str());
 		exit(signum);
 	});
 }

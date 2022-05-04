@@ -151,7 +151,7 @@ void WCH_SaveImg() {
 	string tmp = "IMG";
 	tmp += WCH_Framework;
 	tmp += ".EXE";
-	WCH_RunSystem(tmp);
+	system(tmp.c_str());
 	WCH_Sleep(500);
 }
 

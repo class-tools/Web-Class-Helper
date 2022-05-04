@@ -64,14 +64,20 @@ void WCH_update() {
 		WCH_ProcessBarTot = 5;
 		thread T(WCH_ProcessBar);
 		T.detach();
-		URLDownloadToFile(0, "https://class-tools.gq/update/WCH", "WCH_UPD.tmp", 0, 0);
+		string url = "https://class-tools.gq/update/WCH?";
+		srand(time(NULL));
+		url += to_string(rand());
+		URLDownloadToFile(0, url.c_str(), "WCH_UPD.tmp", 0, 0);
 		string res;
 		fin.open("WCH_UPD.tmp");
 		getline(fin, res);
 		fin.close();
 		WCH_Sleep(5500);
+		if (res == "") {
+			throw runtime_error(WCH_ERRNO_NETWORK_FAILURE);
+		}
 		if (res != WCH_VER) {
-			WCH_RunSystem("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+			system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", res});
 		} else {
 			cout << "Already up to date." << endl;
@@ -86,7 +92,7 @@ void WCH_update() {
 
 void WCH_license() {
 	// Print the license.
-	fin.open("LICENSE", ios::in);
+	fin.open("LICENSE");
 	string tmp;
 	for (int i = 1; i <= 21; i++) {
 		getline(fin, tmp);
@@ -99,13 +105,20 @@ void WCH_add_clock() {
 	// Add a new clock.
 	int h = 0;
 	int m = 0;
-	string tname = "NULL";
-	cin >> h >> m >> tname;
-	if (h > 24 || m >= 60 || h < 1 || m < 0) {
+	string Tname = "NULL";
+	bool flag = false;
+	cin >> h >> m >> Tname;
+	for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
+		if ((it -> second).first == m) {
+			flag = true;
+			break;
+		}
+	}
+	if (h > 24 || m >= 60 || h < 1 || m < 0 || flag) {
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	} else {
 		WCH_clock_num++;
-		WCH_clock_list.emplace(make_pair(h, make_pair(m, tname)));
+		WCH_clock_list.emplace(make_pair(h, make_pair(m, Tname)));
 	}
 }
 
@@ -114,11 +127,11 @@ void WCH_delete_clock() {
 	int h = 0;
 	int m = 0;
 	bool flag = false;
-	string tname = "NULL";
+	string Tname = "NULL";
 	try {
-		cin >> h >> m >> tname;
+		cin >> h >> m >> Tname;
 		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
-			if ((it -> second).first == m && (it -> second).second == tname) {
+			if ((it -> second).first == m && (it -> second).second == Tname) {
 				WCH_clock_list.erase(it);
 				flag = true;
 				WCH_clock_num--;
@@ -139,12 +152,12 @@ void WCH_change_clock() {
 	int h = 0;
 	int m = 0;
 	bool flag = false;
-	string tname = "NULL";
+	string Tname = "NULL";
 	try {
-		cin >> h >> m >> tname;
+		cin >> h >> m >> Tname;
 		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
 			if ((it -> second).first == m) {
-				(it -> second).second = tname;
+				(it -> second).second = Tname;
 				flag = true;
 			}
 		}
@@ -172,22 +185,27 @@ void WCH_list_clock() {
 	}
 	MAXH = max(MAXH, 4);
 	MAXM = max(MAXM, 6);
-	cout << setw(MAXH) << "Hour" << " | " << setw(MAXM) << "Minute" << " | " << setw(MAXT) << "Name" << endl;
-	while (MAXH--) {
-		cout << "-";
-	}
+	MAXT = max(MAXT, 4);
+	cout << "Hour";
+	WCH_PrintChar(MAXH - 4, ' ');
+	cout << " | Minute";
+	WCH_PrintChar(MAXM - 6, ' ');
+	cout << " | Name";
+	WCH_PrintChar(MAXT - 4, ' ');
+	cout << endl;
+	WCH_PrintChar(MAXH, '-');
 	cout << " | ";
-	while (MAXM--) {
-		cout << "-";
-	}
+	WCH_PrintChar(MAXM, '-');
 	cout << " | ";
-	while (MAXT--) {
-		cout << "-";
-	}
+	WCH_PrintChar(MAXT, '-');
 	cout << endl;
 	for (int i = 0; i <= 24; i++) {
 		for (auto it = WCH_clock_list.equal_range(i).first; it != WCH_clock_list.equal_range(i).second; it++) {
-			cout << setw(MAXH) << i << " | " << setw(MAXM) << (it -> second).first << " | " << setw(MAXT) << (it -> second).second << endl;
+			cout << i;
+			WCH_PrintChar(MAXH - WCH_GetNumDigits(i), ' ');
+			cout << " | " << (it -> second).first;
+			WCH_PrintChar(MAXM - WCH_GetNumDigits((it -> second).first), ' ');
+			cout << " | " << (it -> second).second << endl;
 		}
 	}
 }
@@ -206,6 +224,8 @@ void WCH_check_clock() {
 	} else if (cmd == "list") {
 		WCH_list_clock();
 	} else {
+		string tmp;
+		getline(cin, tmp);
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	}
 }
@@ -239,10 +259,9 @@ void WCH_list_task() {
 	if (MAX == -1) {
 		return;
 	}
-	cout << setw(MAX) << "Process Name" << endl;
-	while (MAX--) {
-		cout << "-";
-	}
+	MAX = max(MAX, 12);
+	cout << "Process Name" << endl;
+	WCH_PrintChar(MAX, '-');
 	cout << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 		cout << *it << endl;
@@ -261,6 +280,8 @@ void WCH_check_task() {
 	} else if (cmd == "list") {
 		WCH_list_task();
 	} else {
+		string tmp;
+		getline(cin, tmp);
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	}
 }
@@ -294,10 +315,9 @@ void WCH_list_work() {
 	if (MAX == -1) {
 		return;
 	}
-	cout << setw(MAX) << "Name" << endl;
-	while (MAX--) {
-		cout << "-";
-	}
+	MAX = max(MAX, 4);
+	cout << "Name" << endl;
+	WCH_PrintChar(MAX, '-');
 	cout << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
 		cout << *it << endl;
@@ -316,6 +336,8 @@ void WCH_check_work() {
 	} else if (cmd == "list") {
 		WCH_list_work();
 	} else {
+		string tmp;
+		getline(cin, tmp);
 		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
 	}
 }
@@ -350,7 +372,7 @@ void WCH_speedtest() {
 	string tmp = "SPEEDTEST";
 	tmp += WCH_Framework;
 	tmp += ".EXE";
-	WCH_RunSystem(tmp);
+	system(tmp.c_str());
 }
 
 void WCH_pi() {
@@ -399,7 +421,7 @@ void WCH_trans() {
 		info += " -i \"";
 		info += tmp;
 		info += "\" > WCH_TRANS.tmp";
-		WCH_RunSystem(info);
+		system(info.c_str());
 		WCH_Sleep(1000);
 		WCH_cmd_line = false;
 		fin.open("WCH_TRANS.tmp");

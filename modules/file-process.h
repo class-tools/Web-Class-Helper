@@ -81,7 +81,7 @@ void WCH_printlog(int w, initializer_list <string> other) {
 	} else if (w == WCH_LOG_MODE_UPD) {
 		sprintf(tmps, "%s %s: %s \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
-	fout.open("logs/latest.log", ios::app | ios::out);
+	fout.open("logs/latest.log", ios::app);
 	fout << tmps << endl;
 	fout.close();
 }
@@ -123,10 +123,28 @@ void WCH_read_task() {
 	fin.close();
 }
 
+void WCH_read_work() {
+	// Read work data.
+	string FilePath = "data/work.dat";
+	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
+	fin.open(FilePath);
+	if (!fin.is_open()) {
+		return;
+	}
+	fin >> WCH_work_num;
+	for (int i = 1; i <= WCH_work_num; i++) {
+		string WorkName;
+		fin >> WorkName;
+		WCH_work_list.insert(WorkName);
+	}
+	fin.close();
+}
+
 void WCH_read() {
 	// Read data.
 	WCH_read_clock();
 	WCH_read_task();
+	WCH_read_work();
 }
 
 void WCH_save_clock() {
@@ -163,9 +181,28 @@ void WCH_save_task() {
 		return;
 	}
 	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
-	fout.open(FilePath, ios::binary);
+	fout.open(FilePath);
 	fout << WCH_task_num << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+		fout << *it << endl;
+	}
+	fout.close();
+}
+
+void WCH_save_work() {
+	// Save task list data.
+	string FilePath = "data/work.dat";
+	if (WCH_work_num == 0) {
+		if (access(FilePath.c_str(), 0) != -1) {
+			DeleteFile(FilePath.c_str());
+		}
+		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+		return;
+	}
+	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+	fout.open(FilePath);
+	fout << WCH_work_num << endl;
+	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
 		fout << *it << endl;
 	}
 	fout.close();
@@ -179,6 +216,7 @@ void WCH_save() {
 	WCH_ProcessBarTot = WCH_clock_num + WCH_task_num;
 	WCH_save_clock();
 	WCH_save_task();
+	WCH_save_work();
 	WCH_printlog(WCH_LOG_MODE_ST, {"e", WCH_Framework});
 	WCH_Sleep(1000);
 	thread T(WCH_ProcessBar);
