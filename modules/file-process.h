@@ -26,8 +26,8 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
-extern int WCH_ProcessBarCount;
-extern int WCH_ProcessBarTot;
+extern int WCH_ProgressBarCount;
+extern int WCH_ProgressBarTot;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -142,9 +142,17 @@ void WCH_read_work() {
 
 void WCH_read() {
 	// Read data.
+	WCH_cmd_line = false;
+	cout << "Reading data..." << endl;
 	WCH_read_clock();
 	WCH_read_task();
 	WCH_read_work();
+	WCH_ProgressBarTot = 5;
+	thread T(WCH_ProgressBar);
+	T.detach();
+	WCH_Sleep(5500);
+	WCH_cmd_line = true;
+	system("cls");
 }
 
 void WCH_save_clock() {
@@ -212,15 +220,19 @@ void WCH_save() {
 	// Save data.
 	WCH_program_end = true;
 	WCH_cmd_line = false;
-	cout << "Saving data..." << endl;
-	WCH_ProcessBarTot = WCH_clock_num + WCH_task_num;
+	if (WCH_clock_num != 0 && WCH_task_num != 0 && WCH_work_num != 0) {
+		cout << "Saving data..." << endl;
+		WCH_ProgressBarTot = WCH_clock_num + WCH_task_num;
+	}
 	WCH_save_clock();
 	WCH_save_task();
 	WCH_save_work();
 	WCH_printlog(WCH_LOG_MODE_ST, {"e", WCH_Framework});
 	WCH_Sleep(1000);
-	thread T(WCH_ProcessBar);
-	T.detach();
+	if (WCH_clock_num != 0 && WCH_task_num != 0 && WCH_work_num != 0) {
+		thread T(WCH_ProgressBar);
+		T.detach();
+	}
 	if (access("WCH_SYSTEM.tmp", 0) != -1) {
 		DeleteFile("WCH_SYSTEM.tmp");
 	}
@@ -233,7 +245,7 @@ void WCH_save() {
 	if (access("WCH_STDL.tmp", 0) != -1) {
 		DeleteFile("WCH_SYSTEM.tmp");
 	}
-	WCH_Sleep(WCH_ProcessBarTot * 1000);
+	WCH_Sleep(WCH_ProgressBarTot * 1000);
 }
 
 #endif

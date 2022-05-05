@@ -30,8 +30,8 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
-extern int WCH_ProcessBarCount;
-extern int WCH_ProcessBarTot;
+extern int WCH_ProgressBarCount;
+extern int WCH_ProgressBarTot;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -61,8 +61,8 @@ void WCH_update() {
 	// Visit the website to update the program.
 	try {
 		cout << "Checking update..." << endl;
-		WCH_ProcessBarTot = 5;
-		thread T(WCH_ProcessBar);
+		WCH_ProgressBarTot = 5;
+		thread T(WCH_ProgressBar);
 		T.detach();
 		string url = "https://class-tools.gq/update/WCH?";
 		srand(time(NULL));

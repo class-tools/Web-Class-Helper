@@ -26,8 +26,8 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
-extern int WCH_ProcessBarCount;
-extern int WCH_ProcessBarTot;
+extern int WCH_ProgressBarCount;
+extern int WCH_ProgressBarTot;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -138,12 +138,12 @@ int WCH_GetNumDigits(int _n) {
 	return _cnt;
 }
 
-void WCH_PrintProcessBar(int _sur, int _n, bool _flag) {
-	// Print a process bar.
+void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
+	// Print a progress bar.
 	char _ETAStr[9];
 	sprintf(_ETAStr, "%02d:%02d:%02d", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
 	if (_flag) {
-		for (int i = 0; i < WCH_ProcessBarCount; i++) {
+		for (int i = 0; i < WCH_ProgressBarCount; i++) {
 			cout << "\b";
 		}
 	}
@@ -162,18 +162,18 @@ void WCH_PrintProcessBar(int _sur, int _n, bool _flag) {
 	WCH_PrintColor(0x09);
 	cout << _ETAStr;
 	WCH_PrintColor(0x07);
-	WCH_ProcessBarCount = 65 + WCH_GetNumDigits(_n);
+	WCH_ProgressBarCount = 65 + WCH_GetNumDigits(_n);
 }
 
-void WCH_ProcessBar() {
-	// Process bar.
-	WCH_PrintProcessBar(WCH_ProcessBarTot, 0, false);
-	for (int i = WCH_ProcessBarTot; i > 1 && !WCH_program_end; i--) {
+void WCH_ProgressBar() {
+	// Progress bar.
+	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
+	for (int i = WCH_ProgressBarTot; i > 1 && !WCH_program_end; i--) {
 		WCH_Sleep(1000);
-		WCH_PrintProcessBar(i, 100 / i, true);
+		WCH_PrintProgressBar(i, 100 / i, true);
 	}
 	WCH_Sleep(1000);
-	WCH_PrintProcessBar(0, 100, true);
+	WCH_PrintProgressBar(0, 100, true);
 	cout << endl;
 }
 
@@ -185,6 +185,7 @@ void WCH_signalHandler() {
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
+		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
@@ -198,6 +199,7 @@ void WCH_signalHandler() {
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
+		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
@@ -211,6 +213,7 @@ void WCH_signalHandler() {
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
+		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
@@ -224,6 +227,7 @@ void WCH_signalHandler() {
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
+		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);

@@ -26,8 +26,8 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
-extern int WCH_ProcessBarCount;
-extern int WCH_ProcessBarTot;
+extern int WCH_ProgressBarCount;
+extern int WCH_ProgressBarTot;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -178,6 +178,7 @@ void WCH_Init() {
 		q.Year--;
 	}
 	WCH_SetWindowStatus(true);
+	WCH_read();
 	thread T(WCH_check_clock_loop);
 	T.detach();
 	cout << "Web Class Helper " << WCH_VER << " (x" << WCH_DisplayFramework << ")" << endl;

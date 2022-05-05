@@ -10,7 +10,9 @@ Description:
 
 Screenshot (If any):
 
-Terminal Output (If any):
+Terminal Output (If needed):
+
+Log File:
 
 Program Version:
 

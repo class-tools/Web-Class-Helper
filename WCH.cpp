@@ -22,8 +22,8 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
-extern int WCH_ProcessBarCount;
-extern int WCH_ProcessBarTot;
+extern int WCH_ProgressBarCount;
+extern int WCH_ProgressBarTot;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -43,7 +43,6 @@ int WCH_GetNumDigits(int n);
 
 int main() {
 	WCH_Init();
-	WCH_read();
 	while (WCH_command != "quit") {
 		if (WCH_ShortCutKeyCheck() && !WCH_cmd_line) {
 			WCH_SetWindowStatus(true);
