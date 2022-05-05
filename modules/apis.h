@@ -12,6 +12,7 @@ Contributors: jsh-jsh ren-yc
 #include <tlhelp32.h>
 #include <conio.h>
 #include <direct.h>
+#include <VersionHelpers.h>
 #include "commands.h"
 #include "functions.h"
 #include "file-process.h"
@@ -140,6 +141,7 @@ int WCH_GetNumDigits(int _n) {
 
 void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 	// Print a progress bar.
+	string _OutChar = IsWindows10OrGreater() ? UTF8ToANSI("━") : "-";
 	char _ETAStr[9];
 	sprintf(_ETAStr, "%02d:%02d:%02d", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
 	if (_flag) {
@@ -149,11 +151,11 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 	}
 	WCH_PrintColor(0x0A);
 	for (int i = 0; i < _n / 2; i++) {
-		cout << UTF8ToANSI("━");
+		cout << _OutChar;
 	}
 	WCH_PrintColor(0x0C);
 	for (int i = _n / 2; i < 50; i++) {
-		cout << UTF8ToANSI("━");
+		cout << _OutChar;
 	}
 	WCH_PrintColor(0x02);
 	cout << " " << _n << "%";

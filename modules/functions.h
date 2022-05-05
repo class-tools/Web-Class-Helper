@@ -12,6 +12,7 @@ Contributors: jsh-jsh ren-yc
 #include <tlhelp32.h>
 #include <conio.h>
 #include <direct.h>
+#include <VersionHelpers.h>
 #include "commands.h"
 #include "file-process.h"
 #include "apis.h"
