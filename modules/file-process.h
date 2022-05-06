@@ -34,6 +34,7 @@ extern bool WCH_anti_idle;
 extern bool WCH_program_end;
 extern bool WCH_wait_cmd;
 extern string WCH_command;
+extern string WCH_ProgressBarStr;
 extern ifstream fin;
 extern ofstream fout;
 extern wifstream wfin;
@@ -148,10 +149,10 @@ void WCH_read() {
 	WCH_read_clock();
 	WCH_read_task();
 	WCH_read_work();
-	WCH_ProgressBarTot = 5;
+	WCH_ProgressBarTot = 3;
 	thread T(WCH_ProgressBar);
 	T.detach();
-	WCH_Sleep(5500);
+	WCH_Sleep(3500);
 	WCH_cmd_line = true;
 	system("cls");
 }

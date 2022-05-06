@@ -34,6 +34,7 @@ extern bool WCH_anti_idle;
 extern bool WCH_program_end;
 extern bool WCH_wait_cmd;
 extern string WCH_command;
+extern string WCH_ProgressBarStr;
 extern ifstream fin;
 extern ofstream fout;
 extern wifstream wfin;
@@ -156,36 +157,64 @@ void WCH_SaveImg() {
 	WCH_Sleep(500);
 }
 
-void WCH_Init() {
-	// Initialize the whole program.
+void WCH_Init_Dir() {
+	// Initialization for directory.
 	if (access("data", 0) != 0) {
 		CreateDirectory("data", NULL);
 	}
 	if (access("logs", 0) != 0) {
 		CreateDirectory("logs", NULL);
 	}
+}
+
+void WCH_Init_Var() {
+	// Initialization for varible.
 	WCH_hWnd = GetForegroundWindow();
-	WCH_Time q = WCH_GetTime();
+	WCH_ProgressBarStr = IsWindows10OrGreater() ? UTF8ToANSI("━") : "-";
+}
+
+void WCH_Init_Log() {
+	// Initialization for log.
 	char tmp[21];
+	WCH_Time q = WCH_GetTime();
 	sprintf(tmp, "logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
 	rename("logs/latest.log", tmp);
-	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_DisplayFramework});
+}
+
+void WCH_Init_Win() {
+	// Initialization for window.
+	char tmp[21];
 	sprintf(tmp, "Web Class Helper (x%s)", WCH_DisplayFramework);
 	SetConsoleTitle(tmp);
+}
+
+void WCH_Init_Bind() {
+	// Initialization for bind.
+	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_DisplayFramework});
 	atexit(WCH_save);
 	WCH_signalHandler();
-	if (q.Month == 1 || q.Month == 2) {
-		q.Month += 12;
-		q.Year--;
-	}
 	WCH_SetWindowStatus(true);
-	WCH_read();
-	thread T(WCH_check_clock_loop);
-	T.detach();
+}
+
+void WCH_Init_Out() {
+	// Initialization for output.
 	cout << "Web Class Helper " << WCH_VER << " (x" << WCH_DisplayFramework << ")" << endl;
 	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
 	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 	cout << endl;
+}
+
+void WCH_Init() {
+	// Initialize the whole program.
+	WCH_Init_Dir();
+	WCH_Init_Var();
+	WCH_Init_Log();
+	WCH_Init_Win();
+	WCH_Init_Bind();
+	WCH_read();
+	thread T(WCH_check_clock_loop);
+	T.detach();
+	WCH_Init_Out();
 }
 
 #endif

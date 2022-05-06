@@ -38,6 +38,7 @@ extern bool WCH_anti_idle;
 extern bool WCH_program_end;
 extern bool WCH_wait_cmd;
 extern string WCH_command;
+extern string WCH_ProgressBarStr;
 extern ifstream fin;
 extern ofstream fout;
 extern wifstream wfin;

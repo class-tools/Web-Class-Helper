@@ -63,6 +63,7 @@ bool WCH_anti_idle;
 bool WCH_program_end;
 bool WCH_wait_cmd;
 string WCH_command;
+string WCH_ProgressBarStr;
 ifstream fin;
 ofstream fout;
 wifstream wfin;
