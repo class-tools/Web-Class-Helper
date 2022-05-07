@@ -7,6 +7,8 @@ Contributors: jsh-jsh ren-yc
 #ifndef COMMANDS_H
 #define COMMANDS_H
 #include <bits/stdc++.h>
+#include <io.h>
+#include <thread>
 #include <windows.h>
 #include <wininet.h>
 #include <tlhelp32.h>
@@ -52,7 +54,7 @@ void WCH_save();
 int WCH_GetNumDigits(int n);
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
-UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary("urlmon.dll"), "URLDownloadToFileA");
+UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary(L"urlmon.dll"), "URLDownloadToFileA");
 
 void WCH_hide() {
 	// Hide the window.
@@ -67,7 +69,7 @@ void WCH_update() {
 		thread T(WCH_ProgressBar);
 		T.detach();
 		string url = "https://class-tools.gq/update/WCH?";
-		srand(time(NULL));
+		srand((unsigned)time(NULL));
 		url += to_string(rand());
 		URLDownloadToFile(0, url.c_str(), "WCH_UPD.tmp", 0, 0);
 		string res;
@@ -85,7 +87,7 @@ void WCH_update() {
 			cout << "Already up to date." << endl;
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version is already", res});
 		}
-		DeleteFile("WCH_UPD.tmp");
+		DeleteFile(L"WCH_UPD.tmp");
 	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
 		return;
@@ -117,7 +119,7 @@ void WCH_add_clock() {
 		}
 	}
 	if (h > 24 || m >= 60 || h < 1 || m < 0 || flag) {
-		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+		WCH_Error(WCH_ERRNO_UNCORRECT);
 	} else {
 		WCH_clock_num++;
 		WCH_clock_list.emplace(make_pair(h, make_pair(m, Tname)));
@@ -228,7 +230,7 @@ void WCH_check_clock() {
 	} else {
 		string tmp;
 		getline(cin, tmp);
-		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+		WCH_Error(WCH_ERRNO_UNCORRECT);
 	}
 }
 
@@ -284,7 +286,7 @@ void WCH_check_task() {
 	} else {
 		string tmp;
 		getline(cin, tmp);
-		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+		WCH_Error(WCH_ERRNO_UNCORRECT);
 	}
 }
 
@@ -340,13 +342,13 @@ void WCH_check_work() {
 	} else {
 		string tmp;
 		getline(cin, tmp);
-		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+		WCH_Error(WCH_ERRNO_UNCORRECT);
 	}
 }
 
 void WCH_game() {
 	// Guessing game.
-	srand(time(NULL));
+	srand((unsigned)time(NULL));
 	int WCH_clock_num = rand() % 10000 + 1;
 	string z = "0";
 	try {
@@ -362,7 +364,7 @@ void WCH_game() {
 			}
 		}
 	} catch (...) {
-		WCH_Error(WCH_ERRNO_OUT_OF_RANGE);
+		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
 	cout << "The number is " << WCH_clock_num << ". You WIN!" << endl;
@@ -372,7 +374,7 @@ void WCH_game() {
 void WCH_speedtest() {
 	// Start a speed test with Python program.
 	string tmp = "SPEEDTEST";
-	tmp += WCH_Framework;
+	tmp += to_string(WCH_Framework);
 	tmp += ".EXE";
 	system(tmp.c_str());
 }
@@ -419,7 +421,7 @@ void WCH_trans() {
 		getline(cin, info);
 		tmp = info.substr(1, info.size() - 1);
 		info = "TRANS";
-		info += WCH_Framework;
+		info += to_string(WCH_Framework);
 		info += " -i \"";
 		info += tmp;
 		info += "\" > WCH_TRANS.tmp";
@@ -430,7 +432,7 @@ void WCH_trans() {
 		getline(fin, res);
 		cout << res << endl;
 		fin.close();
-		DeleteFile("WCH_TRANS.tmp");
+		DeleteFile(L"WCH_TRANS.tmp");
 		WCH_cmd_line = true;
 	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
@@ -449,7 +451,7 @@ void WCH_ow() {
 		getline(fin, res);
 		cout << UTF8ToANSI(res) << endl;
 		fin.close();
-		DeleteFile("WCH_STDL.tmp");
+		DeleteFile(L"WCH_STDL.tmp");
 		WCH_cmd_line = true;
 	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
@@ -459,10 +461,8 @@ void WCH_ow() {
 
 void WCH_time() {
 	// Print current time.
-	char tmp[21];
 	WCH_Time q = WCH_GetTime();
-	sprintf(tmp, "%04d/%02d/%02d %02d:%02d:%02d", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
-	cout << tmp << endl;
+	cout << format("{:04}/{:02}/{:02} {:02}:{:02}:{:02}", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second) << endl;
 }
 
 void WCH_help() {

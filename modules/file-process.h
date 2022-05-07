@@ -7,6 +7,8 @@ Contributors: jsh-jsh ren-yc
 #ifndef FILE_PROCESS_H
 #define FILE_PROCESS_H
 #include <bits/stdc++.h>
+#include <io.h>
+#include <thread>
 #include <windows.h>
 #include <wininet.h>
 #include <tlhelp32.h>
@@ -49,39 +51,38 @@ int WCH_GetNumDigits(int n);
 
 void WCH_printlog(int w, initializer_list <string> other) {
 	// Print log.
-	WCH_Time a = WCH_GetTime();
+	WCH_Time now = WCH_GetTime();
+	string tmp = format("[{:02}:{:02}:{:02}]", now.Hour, now.Minute, now.Second);
+	string tmps = "";
 	string tt[21];
-	char tmp[21];
-	char tmps[256];
 	int pos = 0;
-	sprintf(tmp, "[%02d:%02d:%02d]", a.Hour, a.Minute, a.Second);
 	for (auto it = other.begin(); it != other.end(); it++) {
-		if ((*it) == "r") {
+		if (*it == "r") {
 			tt[pos++] = "Reading";
-		} else if ((*it) == "w") {
+		} else if (*it == "w") {
 			tt[pos++] = "Writing";
-		} else if ((*it) == "s") {
+		} else if (*it == "s") {
 			tt[pos++] = "Starting";
-		} else if ((*it) == "e") {
+		} else if (*it == "e") {
 			tt[pos++] = "Exiting";
 		} else {
-			tt[pos++] = (*it);
+			tt[pos++] = *it;
 		}
 	}
 	if (w == WCH_LOG_MODE_ST) {
-		sprintf(tmps, "%s %s: %s \"Web-Class-Helper (x%s)\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		tmps = format("{} {}: {} \"Web-Class-Helper (x{})\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_ERROR) {
-		sprintf(tmps, "%s %s: %s.", tmp, WCH_LOG_STATUS_ERROR, tt[0].c_str());
+		tmps = format("{} {}: {}.", tmp, WCH_LOG_STATUS_ERROR, tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_RC) {
-		sprintf(tmps, "%s %s: Using %s \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		tmps = format("{} {}: Using {} \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_RW) {
-		sprintf(tmps, "%s %s: %s file \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		tmps = format("{} {}: {} file \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_KT) {
-		sprintf(tmps, "%s %s: %s task \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[1].c_str(), tt[0].c_str());
+		tmps = format("{} {}: {} task \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_WD) {
-		sprintf(tmps, "%s %s: \"%s\" argument \"%s\" was set to \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str(), tt[2].c_str());
+		tmps = format("{} {}: \"{}\" argument \"{}\" was set to \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str(), tt[2].c_str());
 	} else if (w == WCH_LOG_MODE_UPD) {
-		sprintf(tmps, "%s %s: %s \"%s\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		tmps = format("{} {}: {} \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	}
 	fout.open("logs/latest.log", ios::app);
 	fout << tmps << endl;
@@ -163,8 +164,8 @@ void WCH_save_clock() {
 	string NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "data/" + NowWeekDay + ".dat";
 	if (WCH_clock_num == 0) {
-		if (access(FilePath.c_str(), 0) != -1) {
-			DeleteFile(FilePath.c_str());
+		if (_access(FilePath.c_str(), 0) != -1) {
+			DeleteFileA(FilePath.c_str());
 		}
 		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
@@ -184,8 +185,8 @@ void WCH_save_task() {
 	// Save task list data.
 	string FilePath = "data/task.dat";
 	if (WCH_task_num == 0) {
-		if (access(FilePath.c_str(), 0) != -1) {
-			DeleteFile(FilePath.c_str());
+		if (_access(FilePath.c_str(), 0) != -1) {
+			DeleteFileA(FilePath.c_str());
 		}
 		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
@@ -203,8 +204,8 @@ void WCH_save_work() {
 	// Save task list data.
 	string FilePath = "data/work.dat";
 	if (WCH_work_num == 0) {
-		if (access(FilePath.c_str(), 0) != -1) {
-			DeleteFile(FilePath.c_str());
+		if (_access(FilePath.c_str(), 0) != -1) {
+			DeleteFileA(FilePath.c_str());
 		}
 		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
@@ -229,23 +230,23 @@ void WCH_save() {
 	WCH_save_clock();
 	WCH_save_task();
 	WCH_save_work();
-	WCH_printlog(WCH_LOG_MODE_ST, {"e", WCH_Framework});
+	WCH_printlog(WCH_LOG_MODE_ST, {"e", to_string(WCH_DisplayFramework)});
 	WCH_Sleep(1000);
 	if (WCH_clock_num != 0 && WCH_task_num != 0 && WCH_work_num != 0) {
 		thread T(WCH_ProgressBar);
 		T.detach();
 	}
-	if (access("WCH_SYSTEM.tmp", 0) != -1) {
-		DeleteFile("WCH_SYSTEM.tmp");
+	if (_access("WCH_SYSTEM.tmp", 0) != -1) {
+		DeleteFile(L"WCH_SYSTEM.tmp");
 	}
-	if (access("WCH_UPD.tmp", 0) != -1) {
-		DeleteFile("WCH_SYSTEM.tmp");
+	if (_access("WCH_UPD.tmp", 0) != -1) {
+		DeleteFile(L"WCH_SYSTEM.tmp");
 	}
-	if (access("WCH_TRANS.tmp", 0) != -1) {
-		DeleteFile("WCH_SYSTEM.tmp");
+	if (_access("WCH_TRANS.tmp", 0) != -1) {
+		DeleteFile(L"WCH_SYSTEM.tmp");
 	}
-	if (access("WCH_STDL.tmp", 0) != -1) {
-		DeleteFile("WCH_SYSTEM.tmp");
+	if (_access("WCH_STDL.tmp", 0) != -1) {
+		DeleteFile(L"WCH_SYSTEM.tmp");
 	}
 	WCH_Sleep(WCH_ProgressBarTot * 1000);
 }

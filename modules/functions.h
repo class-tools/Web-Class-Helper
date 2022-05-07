@@ -7,6 +7,8 @@ Contributors: jsh-jsh ren-yc
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 #include <bits/stdc++.h>
+#include <io.h>
+#include <thread>
 #include <windows.h>
 #include <wininet.h>
 #include <tlhelp32.h>
@@ -68,7 +70,7 @@ string WCH_TransStrChar(string str) {
 	// Translate the upper cases in string to lower cases.
 	for (int i = 0; i < (int)str.size(); i++) {
 		if (str[i] >= 'A' && str[i] <= 'Z') {
-			tolower(str[i]);
+			str[i] = tolower(str[i]);
 		}
 	}
 	return str;
@@ -77,8 +79,8 @@ string WCH_TransStrChar(string str) {
 void WCH_Error(string INFO) {
 	// Error message checker.
 	string tmp;
-	if (INFO == WCH_ERRNO_OUT_OF_RANGE) {
-		tmp = "Your input code is out of range, please check and try again";
+	if (INFO == WCH_ERRNO_UNCORRECT) {
+		tmp = "Your input code is uncorrect, please check and try again";
 	} else if (INFO == WCH_ERRNO_NETWORK_FAILURE) {
 		tmp = "An network error occurred, please check your network connection and try to update this program";
 	} else if (INFO == WCH_ERRNO_CLOCK_OPERATION) {
@@ -111,7 +113,7 @@ void WCH_check_clock_loop() {
 		for (auto it = WCH_clock_list.equal_range(NOW.Hour).first; it != WCH_clock_list.equal_range(NOW.Hour).second; it++) {
 			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
 				cout << "\a";
-				MessageBox(NULL, ((it -> second).second).c_str(), "WCH Clock", MB_OK);
+				MessageBoxA(NULL, ((it -> second).second).c_str(), "WCH Clock", MB_OK);
 			}
 		}
 		WCH_Sleep(60000);
@@ -151,7 +153,7 @@ void WCH_PutPicture() {
 void WCH_SaveImg() {
 	// Run image saver Python program.
 	string tmp = "IMG";
-	tmp += WCH_Framework;
+	tmp += to_string(WCH_Framework);
 	tmp += ".EXE";
 	system(tmp.c_str());
 	WCH_Sleep(500);
@@ -159,11 +161,11 @@ void WCH_SaveImg() {
 
 void WCH_Init_Dir() {
 	// Initialization for directory.
-	if (access("data", 0) != 0) {
-		CreateDirectory("data", NULL);
+	if (_access("data", 0) != 0) {
+		CreateDirectory(L"data", NULL);
 	}
-	if (access("logs", 0) != 0) {
-		CreateDirectory("logs", NULL);
+	if (_access("logs", 0) != 0) {
+		CreateDirectory(L"logs", NULL);
 	}
 }
 
@@ -173,24 +175,20 @@ void WCH_Init_Var() {
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? UTF8ToANSI("━") : "-";
 }
 
-void WCH_Init_Log() {
+bool WCH_Init_Log() {
 	// Initialization for log.
-	char tmp[21];
-	WCH_Time q = WCH_GetTime();
-	sprintf(tmp, "logs/%04d%02d%02d%02d%02d%02d.log", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second);
-	rename("logs/latest.log", tmp);
+	WCH_Time now = WCH_GetTime();
+	return rename("logs/latest.log", format("logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
 }
 
 void WCH_Init_Win() {
 	// Initialization for window.
-	char tmp[21];
-	sprintf(tmp, "Web Class Helper (x%s)", WCH_DisplayFramework);
-	SetConsoleTitle(tmp);
+	SetConsoleTitleA(format("Web Class Helper (x{})", to_string(WCH_DisplayFramework)).c_str());
 }
 
 void WCH_Init_Bind() {
 	// Initialization for bind.
-	WCH_printlog(WCH_LOG_MODE_ST, {"s", WCH_DisplayFramework});
+	WCH_printlog(WCH_LOG_MODE_ST, {"s", to_string(WCH_DisplayFramework)});
 	atexit(WCH_save);
 	WCH_signalHandler();
 	WCH_SetWindowStatus(true);
@@ -198,7 +196,7 @@ void WCH_Init_Bind() {
 
 void WCH_Init_Out() {
 	// Initialization for output.
-	cout << "Web Class Helper " << WCH_VER << " (x" << WCH_DisplayFramework << ")" << endl;
+	cout << "Web Class Helper " << WCH_VER << " (x" << to_string(WCH_DisplayFramework) << ")" << endl;
 	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
 	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 	cout << endl;
@@ -208,7 +206,9 @@ void WCH_Init() {
 	// Initialize the whole program.
 	WCH_Init_Dir();
 	WCH_Init_Var();
-	WCH_Init_Log();
+	if (WCH_Init_Log()) {
+		raise(SIGABRT);
+	}
 	WCH_Init_Win();
 	WCH_Init_Bind();
 	WCH_read();

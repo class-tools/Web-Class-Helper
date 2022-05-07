@@ -7,6 +7,8 @@ Contributors: jsh-jsh ren-yc
 #ifndef APIS_H
 #define APIS_H
 #include <bits/stdc++.h>
+#include <io.h>
+#include <thread>
 #include <windows.h>
 #include <wininet.h>
 #include <tlhelp32.h>
@@ -67,15 +69,37 @@ void WCH_PrintChar(int _times, char _c) {
 	}
 }
 
+wstring StrToWstr(string str) {
+	wstring result;
+	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), NULL, 0);
+	TCHAR *buffer = new TCHAR[len + 1];
+	MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), buffer, len);
+	buffer[len] = '\0';
+	result.append(buffer);
+	delete[] buffer;
+	return result;
+}
+
+string WstrToStr(wstring wstr) {
+	string result;
+	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
+	char* buffer = new char[len + 1];
+	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), buffer, len, NULL, NULL);
+	buffer[len] = '\0';
+	result.append(buffer);
+	delete[] buffer;
+	return result;
+}
+
 DWORD WCH_GetPID(string name) {
 	// Get PID by process name.
-	DWORD pid;
+	DWORD pid = 0;
 	PROCESSENTRY32 entry;
 	entry.dwSize = sizeof(PROCESSENTRY32);
 	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	if (Process32First(snapshot, &entry) == TRUE) {
 		while (Process32Next(snapshot, &entry) == TRUE) {
-			if (string(entry.szExeFile) == name) {
+			if (WstrToStr(entry.szExeFile) == name) {
 				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
 				pid = GetProcessId(hProcess);
 				CloseHandle(hProcess);
@@ -95,7 +119,7 @@ void WCH_SetWindowStatus(bool flag) {
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
-	ShowWindow(FindWindow("Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
+	ShowWindow(FindWindow(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
 	WCH_printlog(WCH_LOG_MODE_WD, {"TRAY", "STATUS", (flag == true ? "SHOW" : "HIDE")});
 }
 
@@ -142,8 +166,7 @@ int WCH_GetNumDigits(int _n) {
 
 void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 	// Print a progress bar.
-	char _ETAStr[9];
-	sprintf(_ETAStr, "%02d:%02d:%02d", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
+	string _ETAStr = format("{:02}:{:02}:{:02}", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
 	if (_flag) {
 		for (int i = 0; i < WCH_ProgressBarCount; i++) {
 			cout << "\b";
@@ -183,7 +206,7 @@ void WCH_signalHandler() {
 	// Signal handler.
 	signal(SIGINT, [](int signum) {
 		string tmp = "ERROR";
-		tmp += WCH_Framework;
+		tmp += to_string(WCH_Framework);
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
@@ -197,7 +220,7 @@ void WCH_signalHandler() {
 	});
 	signal(SIGFPE, [](int signum) {
 		string tmp = "ERROR";
-		tmp += WCH_Framework;
+		tmp += to_string(WCH_Framework);
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
@@ -211,7 +234,7 @@ void WCH_signalHandler() {
 	});
 	signal(SIGILL, [](int signum) {
 		string tmp = "ERROR";
-		tmp += WCH_Framework;
+		tmp += to_string(WCH_Framework);
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
@@ -225,7 +248,7 @@ void WCH_signalHandler() {
 	});
 	signal(SIGSEGV, [](int signum) {
 		string tmp = "ERROR";
-		tmp += WCH_Framework;
+		tmp += to_string(WCH_Framework);
 		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;

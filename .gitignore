@@ -1,3 +1,6 @@
+x64/
+Debug/
+Release/
 .vscode/
 .vs/
 genexe/
@@ -9,3 +12,4 @@ logs/*.log
 *.txt
 *.rc
 *.o
+CppProperties.json
