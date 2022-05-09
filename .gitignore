@@ -10,7 +10,6 @@ logs/*.log
 *.tmp
 *.exe
 *.txt
-*.rc
 *.o
 *.aps
 CppProperties.json

@@ -1,0 +1,32 @@
+/*
+Web Class Helper Resource File 2.0.0
+This source code file isn't under any license.
+Generator: Visual Studio 2022
+*/
+#include "resource.h"
+#define APSTUDIO_READONLY_SYMBOLS
+#include "winres.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+#ifdef APSTUDIO_INVOKED
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+#endif
+IDI_ICON1 ICON "WCH.ico"
+#endif
+#ifndef APSTUDIO_INVOKED
+#endif
