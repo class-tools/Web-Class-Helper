@@ -1,10 +1,10 @@
 /*
-Web-Class-Helper Main File 1.1.2
+Web Class Helper Main File 2.0.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#define WCH_VER "1.1.2"
+#define WCH_VER "2.0.0"
 #include "modules/commands.h"
 #include "modules/functions.h"
 #include "modules/file-process.h"

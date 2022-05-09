@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper File Process Module Header File 1.1.2
+Web Class Helper File Process Module Header File 2.0.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -70,7 +70,7 @@ void WCH_printlog(int w, initializer_list <string> other) {
 		}
 	}
 	if (w == WCH_LOG_MODE_ST) {
-		tmps = format("{} {}: {} \"Web-Class-Helper (x{})\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
+		tmps = format("{} {}: {} \"Web Class Helper (x{})\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_ERROR) {
 		tmps = format("{} {}: {}.", tmp, WCH_LOG_STATUS_ERROR, tt[0].c_str());
 	} else if (w == WCH_LOG_MODE_RC) {

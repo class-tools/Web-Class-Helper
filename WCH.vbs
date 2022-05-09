@@ -1,4 +1,4 @@
-'Web-Class-Helper Post Install Program Runtime Environment Configuration Module 1.1.2
+'Web Class Helper Post Install Program Runtime Environment Configuration Module 2.0.0
 'This source code file is under MIT License.
 'Copyright (c) 2022 Class Tools Develop Team
 'Contributors: jsh-jsh ren-yc

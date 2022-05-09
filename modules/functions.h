@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Function Module Header File 1.1.2
+Web Class Helper Function Module Header File 2.0.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -175,10 +175,10 @@ void WCH_Init_Var() {
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? UTF8ToANSI("━") : "-";
 }
 
-bool WCH_Init_Log() {
+void WCH_Init_Log() {
 	// Initialization for log.
 	WCH_Time now = WCH_GetTime();
-	return rename("logs/latest.log", format("logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
+	rename("logs/latest.log", format("logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
 }
 
 void WCH_Init_Win() {
@@ -206,9 +206,7 @@ void WCH_Init() {
 	// Initialize the whole program.
 	WCH_Init_Dir();
 	WCH_Init_Var();
-	if (WCH_Init_Log()) {
-		raise(SIGABRT);
-	}
+	WCH_Init_Log();
 	WCH_Init_Win();
 	WCH_Init_Bind();
 	WCH_read();

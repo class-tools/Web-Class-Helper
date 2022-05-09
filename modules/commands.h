@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Commands Module Header File 1.1.2
+Web Class Helper Commands Module Header File 2.0.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -76,16 +76,16 @@ void WCH_update() {
 		fin.open("WCH_UPD.tmp");
 		getline(fin, res);
 		fin.close();
-		WCH_Sleep(5500);
+		WCH_Sleep(5000);
 		if (res == "") {
 			throw runtime_error(WCH_ERRNO_NETWORK_FAILURE);
 		}
-		if (res != WCH_VER) {
-			system("start https://github.com/class-tools/Web-Class-Helper/releases/latest/");
+		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER), WCH_GetVersion(res))) {
+			system("start https://github.com/class-tools/Web Class Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", res});
 		} else {
 			cout << "Already up to date." << endl;
-			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version is already", res});
+			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version equals or is greater than", res});
 		}
 		DeleteFile(L"WCH_UPD.tmp");
 	} catch (...) {

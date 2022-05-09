@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper APIs Module Header File 1.1.2
+Web Class Helper APIs Module Header File 2.0.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -154,6 +154,43 @@ string UTF8ToANSI(string strUTF8) {
 	delete[] szBuffer;
 	delete[] wszBuffer;
 	return strUTF8;
+}
+
+bool WCH_CheckVersion(const WCH_Version _Fir, const WCH_Version _Sec) {
+	if (_Fir.X < _Sec.X) {
+		return true;
+	} else if (_Fir.X > _Sec.X) {
+		return false;
+	} else {
+		if (_Fir.Y < _Sec.Y) {
+			return true;
+		} else if (_Fir.Y > _Sec.Y) {
+			return false;
+		} else {
+			if (_Fir.Z < _Sec.Z) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+}
+
+WCH_Version WCH_GetVersion(string _in) {
+	// Get version from string.
+	WCH_Version _res;
+	int _pos = (int)_in.find(".");
+	if (_pos != string::npos) {
+		_res.X = stoi(_in.substr(0, _pos));
+		_in = _in.substr(_pos + 1);
+	}
+	_pos = (int)_in.find(".");
+	if (_pos != string::npos) {
+		_res.Y = stoi(_in.substr(0, _pos));
+		_in = _in.substr(_pos + 1);
+	}
+	_res.Z = (int)stoi(_in);
+	return _res;
 }
 
 int WCH_GetNumDigits(int _n) {

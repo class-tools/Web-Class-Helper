@@ -20,13 +20,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="modules\file-process.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="modules\apis.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="modules\commands.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\file-process.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="modules\functions.h">
@@ -35,5 +35,18 @@
     <ClInclude Include="modules\variables.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="WCH.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="WCH.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

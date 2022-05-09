@@ -1,5 +1,5 @@
 /*
-Web-Class-Helper Commands Module Header File 1.1.2
+Web Class Helper Commands Module Header File 2.0.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -49,6 +49,11 @@ struct WCH_Time {
 struct WCH_Data_Body {
 	int H {};
 	int M {};
+};
+struct WCH_Version {
+	int X {};
+	int Y {};
+	int Z {};
 };
 const string WCH_WDName[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 multimap <int, pair <int, string>> WCH_clock_list;

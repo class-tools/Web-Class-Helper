@@ -5,7 +5,7 @@
 <h1 align="center">- 网课助手 -</h1>
 
 <p align="center">
-<img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
+<img src="https://img.shields.io/github/v/release/class-tools/Web Class Helper.svg?logo=iCloud">
 <img src="https://img.shields.io/badge/support-Windows-blue?logo=Windows">
 </p>
 
@@ -19,4 +19,4 @@
 | :---: | :---: |
 | ![](https://shields.io/badge/Coding-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) | ![](https://shields.io/badge/Coding-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) |
 
-**更多信息请至 [Wiki](https://github.com/class-tools/Web-Class-Helper/wiki)**。
+**更多信息请至 [Wiki](https://github.com/class-tools/Web Class Helper/wiki)**。
