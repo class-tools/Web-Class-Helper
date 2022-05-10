@@ -5,8 +5,8 @@
 <h1 align="center">- 网课助手 -</h1>
 
 <p align="center">
-<img src="https://img.shields.io/github/v/release/class-tools/Web Class Helper.svg?logo=iCloud">
-<img src="https://img.shields.io/badge/support-Windows-blue?logo=Windows">
+<img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
+<img src="https://img.shields.io/badge/support-Windows%208%20+-blue?logo=Windows">
 </p>
 
 一个在网课期间实用的命令行小工具。

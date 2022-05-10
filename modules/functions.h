@@ -127,9 +127,9 @@ void WCH_check_task_loop() {
 	while (WCH_anti_idle && !WCH_program_end) {
 		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 			if (WCH_TaskKill(*it)) {
-				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Successfully killed"});
+				WCH_printlog(WCH_LOG_MODE_KT, {"Successfully killed", *it});
 			} else {
-				WCH_printlog(WCH_LOG_MODE_KT, {*it, "Failed to kill"});
+				WCH_printlog(WCH_LOG_MODE_KT, {"Failed to kill", *it});
 			}
 		}
 		WCH_Sleep(15000);

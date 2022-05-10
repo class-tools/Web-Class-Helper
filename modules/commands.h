@@ -94,7 +94,7 @@ void WCH_update() {
 			system("start https://github.com/class-tools/Web Class Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", res});
 		} else {
-			cout << "Already up to date." << endl;
+			cout << "Program version equals or is greater than latest released version." << endl;
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version equals or is greater than", res});
 		}
 		DeleteFile(L"WCH_UPD.tmp");
@@ -295,7 +295,7 @@ void WCH_delete_task() {
 
 void WCH_list_task() {
 	// List all tasks.
-	if ((int)WCH_command_list.size() != 1) {
+	if ((int)WCH_command_list.size() != 2) {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
@@ -338,7 +338,7 @@ void WCH_add_work() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
-	string work = WCH_command.substr(10, WCH_command.size() - 1);
+	string work = WCH_command.substr(9, WCH_command.size() - 1);
 	if (WCH_work_list.find(work) != WCH_work_list.end()) {
 		WCH_Error(WCH_ERRNO_WORK_OPERATION);
 	} else {
@@ -353,7 +353,7 @@ void WCH_done_work() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
-	string work = WCH_command.substr(10, WCH_command.size() - 1);
+	string work = WCH_command.substr(9, WCH_command.size() - 1);
 	if (WCH_work_list.find(work) == WCH_work_list.end()) {
 		WCH_Error(WCH_ERRNO_WORK_OPERATION);
 	} else {
@@ -364,7 +364,7 @@ void WCH_done_work() {
 
 void WCH_list_work() {
 	// List all works.
-	if ((int)WCH_command_list.size() != 1) {
+	if ((int)WCH_command_list.size() != 2) {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
