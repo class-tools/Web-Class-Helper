@@ -22,6 +22,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
+extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
@@ -31,6 +32,7 @@ extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
+extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -100,10 +102,14 @@ void WCH_read_clock() {
 		return;
 	}
 	fin >> WCH_clock_num;
+	fin.ignore();
 	for (int i = 1; i <= WCH_clock_num; i++) {
-		int H, M;
-		string Tname;
-		fin >> H >> M >> Tname;
+		string tmp1;
+		getline(fin, tmp1);
+		vector <string> tmp2 = WCH_split(tmp1);
+		int H = stoi(tmp2[0]);
+		int M = stoi(tmp2[1]);
+		string Tname = tmp1.substr((int)tmp2[2].size() + (int)tmp2[3].size(), tmp1.size() - 1);
 		WCH_clock_list.emplace(make_pair(H, make_pair(M, Tname)));
 	}
 	fin.close();
@@ -118,9 +124,10 @@ void WCH_read_task() {
 		return;
 	}
 	fin >> WCH_task_num;
+	fin.ignore();
 	for (int i = 1; i <= WCH_task_num; i++) {
 		string TaskName;
-		fin >> TaskName;
+		getline(fin, TaskName);
 		WCH_task_list.insert(TaskName);
 	}
 	fin.close();
@@ -135,9 +142,10 @@ void WCH_read_work() {
 		return;
 	}
 	fin >> WCH_work_num;
+	fin.ignore();
 	for (int i = 1; i <= WCH_work_num; i++) {
 		string WorkName;
-		fin >> WorkName;
+		getline(fin, WorkName);
 		WCH_work_list.insert(WorkName);
 	}
 	fin.close();

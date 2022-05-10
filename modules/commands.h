@@ -26,6 +26,7 @@ using namespace std;
 #endif
 
 extern const string WCH_WDName[7];
+extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
@@ -35,6 +36,7 @@ extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
+extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -58,11 +60,19 @@ UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary(L"urlmon.dll"), "U
 
 void WCH_hide() {
 	// Hide the window.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	WCH_SetWindowStatus(false);
 }
 
 void WCH_update() {
 	// Visit the website to update the program.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	try {
 		cout << "Checking update..." << endl;
 		WCH_ProgressBarTot = 5;
@@ -96,6 +106,10 @@ void WCH_update() {
 
 void WCH_license() {
 	// Print the license.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	fin.open("LICENSE");
 	string tmp;
 	for (int i = 1; i <= 21; i++) {
@@ -107,33 +121,44 @@ void WCH_license() {
 
 void WCH_add_clock() {
 	// Add a new clock.
-	int h = 0;
-	int m = 0;
-	string Tname = "NULL";
-	bool flag = false;
-	cin >> h >> m >> Tname;
-	for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
-		if ((it -> second).first == m) {
-			flag = true;
-			break;
+	try {
+		int h = stoi(WCH_command_list[2]);
+		int m = stoi(WCH_command_list[3]);
+		string Tname = WCH_command.substr(12 + (int)WCH_command_list[2].size() + (int)WCH_command_list[3].size(), WCH_command.size() - 1);
+		if ((int)WCH_command_list.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
+			WCH_Error(WCH_ERRNO_UNCORRECT);
+			return;
+		} else {
+			bool flag = false;
+			for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
+				if ((it -> second).first == m) {
+					flag = true;
+					break;
+				}
+			}
+			if (!flag) {
+				WCH_clock_num++;
+				WCH_clock_list.emplace(make_pair(h, make_pair(m, Tname)));
+			} else {
+				WCH_Error(WCH_ERRNO_UNCORRECT);
+			}
 		}
-	}
-	if (h > 24 || m >= 60 || h < 1 || m < 0 || flag) {
+	} catch (...) {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
-	} else {
-		WCH_clock_num++;
-		WCH_clock_list.emplace(make_pair(h, make_pair(m, Tname)));
 	}
 }
 
 void WCH_delete_clock() {
 	// Delete a clock.
-	int h = 0;
-	int m = 0;
-	bool flag = false;
-	string Tname = "NULL";
+	if ((int)WCH_command_list.size() < 5) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	try {
-		cin >> h >> m >> Tname;
+		int h = stoi(WCH_command_list[2]);
+		int m = stoi(WCH_command_list[3]);
+		string Tname = WCH_command.substr(15 + (int)WCH_command_list[2].size() + (int)WCH_command_list[3].size(), WCH_command.size() - 1);
+		bool flag = false;
 		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
 			if ((it -> second).first == m && (it -> second).second == Tname) {
 				WCH_clock_list.erase(it);
@@ -142,40 +167,45 @@ void WCH_delete_clock() {
 				break;
 			}
 		}
+		if (!flag) {
+			WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
+		}
 	} catch (...) {
-		goto Error;
-	}
-	if (!flag) {
-		Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
-		return;
+		WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
 	}
 }
 
 void WCH_change_clock() {
 	// Change a clock.
-	int h = 0;
-	int m = 0;
-	bool flag = false;
-	string Tname = "NULL";
+	if ((int)WCH_command_list.size() < 5) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	try {
-		cin >> h >> m >> Tname;
+		int h = stoi(WCH_command_list[2]);
+		int m = stoi(WCH_command_list[3]);
+		string Tname = WCH_command.substr(15 + (int)WCH_command_list[2].size() + (int)WCH_command_list[3].size(), WCH_command.size() - 1);
+		bool flag = false;
 		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
 			if ((it -> second).first == m) {
 				(it -> second).second = Tname;
 				flag = true;
 			}
 		}
+		if (!flag) {
+			WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
+		}
 	} catch (...) {
-		goto Error;
-	}
-	if (!flag) {
-		Error: WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
-		return;
+		WCH_Error(WCH_ERRNO_CLOCK_OPERATION);
 	}
 }
 
 void WCH_list_clock() {
 	// List all tasks.
+	if ((int)WCH_command_list.size() != 2) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	int MAXH = -1;
 	int MAXM = -1;
 	int MAXT = -1;
@@ -216,36 +246,45 @@ void WCH_list_clock() {
 
 void WCH_check_clock() {
 	// Clock series command input.
-	string cmd;
-	cin >> cmd;
-	WCH_printlog(WCH_LOG_MODE_RC, {"sub command", cmd});
-	if (cmd == "add") {
+	if (WCH_command_list.size() == 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	if (WCH_command_list[1] == "add") {
 		WCH_add_clock();
-	} else if (cmd == "delete") {
+	} else if (WCH_command_list[1] == "delete") {
 		WCH_delete_clock();
-	} else if (cmd == "change") {
+	} else if (WCH_command_list[1] == "change") {
 		WCH_change_clock();
-	} else if (cmd == "list") {
+	} else if (WCH_command_list[1] == "list") {
 		WCH_list_clock();
 	} else {
-		string tmp;
-		getline(cin, tmp);
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 	}
 }
 
 void WCH_add_task() {
 	// Add a new task.
-	string task;
-	cin >> task;
-	WCH_task_list.insert(task);
-	WCH_task_num++;
+	if ((int)WCH_command_list.size() < 3) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	string task = WCH_command.substr(9, WCH_command.size() - 1);
+	if (WCH_task_list.find(task) != WCH_task_list.end()) {
+		WCH_Error(WCH_ERRNO_WORK_OPERATION);
+	} else {
+		WCH_task_list.insert(task);
+		WCH_task_num++;
+	}
 }
 
 void WCH_delete_task() {
 	// Delete a task.
-	string task;
-	cin >> task;
+	if ((int)WCH_command_list.size() < 3) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	string task = WCH_command.substr(12, WCH_command.size() - 1);
 	if (WCH_task_list.find(task) == WCH_task_list.end()) {
 		WCH_Error(WCH_ERRNO_TASK_OPERATION);
 	} else {
@@ -256,6 +295,10 @@ void WCH_delete_task() {
 
 void WCH_list_task() {
 	// List all tasks.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	int MAX = -1;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 		MAX = max(MAX, (int)(*it).size());
@@ -274,34 +317,43 @@ void WCH_list_task() {
 
 void WCH_check_task() {
 	// Task series command input.
-	string cmd;
-	cin >> cmd;
-	WCH_printlog(WCH_LOG_MODE_RC, {"sub command", cmd});
-	if (cmd == "add") {
+	if ((int)WCH_command_list.size() == 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	if (WCH_command_list[1] == "add") {
 		WCH_add_task();
-	} else if (cmd == "delete") {
+	} else if (WCH_command_list[1] == "delete") {
 		WCH_delete_task();
-	} else if (cmd == "list") {
+	} else if (WCH_command_list[1] == "list") {
 		WCH_list_task();
 	} else {
-		string tmp;
-		getline(cin, tmp);
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 	}
 }
 
 void WCH_add_work() {
 	// Add a new work.
-	string work;
-	cin >> work;
-	WCH_work_list.insert(work);
-	WCH_work_num++;
+	if ((int)WCH_command_list.size() < 3) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	string work = WCH_command.substr(10, WCH_command.size() - 1);
+	if (WCH_work_list.find(work) != WCH_work_list.end()) {
+		WCH_Error(WCH_ERRNO_WORK_OPERATION);
+	} else {
+		WCH_work_list.insert(work);
+		WCH_work_num++;
+	}
 }
 
 void WCH_done_work() {
 	// Delete a work.
-	string work;
-	cin >> work;
+	if ((int)WCH_command_list.size() < 3) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	string work = WCH_command.substr(10, WCH_command.size() - 1);
 	if (WCH_work_list.find(work) == WCH_work_list.end()) {
 		WCH_Error(WCH_ERRNO_WORK_OPERATION);
 	} else {
@@ -312,6 +364,10 @@ void WCH_done_work() {
 
 void WCH_list_work() {
 	// List all works.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	int MAX = -1;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
 		MAX = max(MAX, (int)(*it).size());
@@ -330,24 +386,27 @@ void WCH_list_work() {
 
 void WCH_check_work() {
 	// Work series command input.
-	string cmd;
-	cin >> cmd;
-	WCH_printlog(WCH_LOG_MODE_RC, {"sub command", cmd});
-	if (cmd == "add") {
+	if (WCH_command_list.size() == 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	if (WCH_command_list[1] == "add") {
 		WCH_add_work();
-	} else if (cmd == "done") {
+	} else if (WCH_command_list[1] == "done") {
 		WCH_done_work();
-	} else if (cmd == "list") {
+	} else if (WCH_command_list[1] == "list") {
 		WCH_list_work();
 	} else {
-		string tmp;
-		getline(cin, tmp);
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 	}
 }
 
 void WCH_game() {
 	// Guessing game.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	srand((unsigned)time(NULL));
 	int WCH_clock_num = rand() % 10000 + 1;
 	string z = "0";
@@ -373,6 +432,10 @@ void WCH_game() {
 
 void WCH_speedtest() {
 	// Start a speed test with Python program.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	string tmp = "SPEEDTEST";
 	tmp += to_string(WCH_Framework);
 	tmp += ".EXE";
@@ -381,6 +444,10 @@ void WCH_speedtest() {
 
 void WCH_pi() {
 	// A sequence of function to make a screenshot.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	WCH_SetWindowStatus(false);
 	WCH_PutPicture();
 	WCH_SetWindowStatus(true);
@@ -389,6 +456,10 @@ void WCH_pi() {
 
 void WCH_anti_idle_func() {
 	// Enable anti-idle function.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	char ch;
 	cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
 	cin >> ch;
@@ -405,25 +476,24 @@ void WCH_anti_idle_func() {
 	}
 }
 
-void WCH_unknown(string _command1) {
+void WCH_unknown() {
 	// Make a response to unknown command.
-	string _command2;
-	getline(cin, _command2);
-	cout << _command1 + _command2 << ": Command not found." << endl;
+	cout << WCH_command << ": Command not found." << endl;
 }
 
 void WCH_trans() {
 	// Translate string between Chinese / English.
+	if ((int)WCH_command_list.size() == 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	try {
 		string info;
-		string tmp;
 		string res;
-		getline(cin, info);
-		tmp = info.substr(1, info.size() - 1);
 		info = "TRANS";
 		info += to_string(WCH_Framework);
 		info += " -i \"";
-		info += tmp;
+		info += WCH_command.substr(5, WCH_command.size() - 1);
 		info += "\" > WCH_TRANS.tmp";
 		system(info.c_str());
 		WCH_Sleep(1000);
@@ -442,6 +512,10 @@ void WCH_trans() {
 
 void WCH_ow() {
 	// Get a random sentence.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	try {
 		URLDownloadToFile(0, "https://v1.hitokoto.cn/?encode=text", "WCH_STDL.tmp", 0, 0);
 		WCH_Sleep(1000);
@@ -461,12 +535,20 @@ void WCH_ow() {
 
 void WCH_time() {
 	// Print current time.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	WCH_Time q = WCH_GetTime();
 	cout << format("{:04}/{:02}/{:02} {:02}:{:02}:{:02}", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second) << endl;
 }
 
 void WCH_help() {
 	// Print help information.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	cout << "Commands:" << endl;
 	cout << "clock add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
 	cout << "clock delete {hour} {minute} {name} (Delete clock at {hour}:{minute})" << endl;

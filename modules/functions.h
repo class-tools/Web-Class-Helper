@@ -22,6 +22,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
+extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
@@ -31,6 +32,7 @@ extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
+extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -134,12 +136,27 @@ void WCH_check_task_loop() {
 	}
 }
 
+void WCH_safety_input_loop() {
+	// Check if the program input causes error.
+	while (!WCH_program_end) {
+		if (WCH_InputTimes >= 2) {
+			raise(SIGINT);
+		}
+		WCH_InputTimes = 0;
+		WCH_Sleep(500);
+	}
+}
+
 void WCH_CL_Init() {
 	// Initialize the command line.
 	WCH_wait_cmd = true;
 	cout << ">>> ";
-	cin >> WCH_command;
-	transform(WCH_command.begin(), WCH_command.end(), WCH_command.begin(), ::tolower);
+	getline(cin, WCH_command);
+	if (cin.eof()) {
+		raise(SIGINT);
+	}
+	WCH_command_list = WCH_split(WCH_command);
+	WCH_InputTimes++;
 	WCH_wait_cmd = false;
 }
 
@@ -175,10 +192,14 @@ void WCH_Init_Var() {
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? UTF8ToANSI("━") : "-";
 }
 
-void WCH_Init_Log() {
+int WCH_Init_Log() {
 	// Initialization for log.
 	WCH_Time now = WCH_GetTime();
-	rename("logs/latest.log", format("logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
+	if (_access("logs/latest.log", 0) != -1) {
+		return rename("logs/latest.log", format("logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
+	} else {
+		return 0;
+	}
 }
 
 void WCH_Init_Win() {
@@ -206,12 +227,16 @@ void WCH_Init() {
 	// Initialize the whole program.
 	WCH_Init_Dir();
 	WCH_Init_Var();
-	WCH_Init_Log();
+	if (WCH_Init_Log() == -1) {
+		raise(SIGABRT);
+	}
 	WCH_Init_Win();
 	WCH_Init_Bind();
 	WCH_read();
-	thread T(WCH_check_clock_loop);
-	T.detach();
+	thread T1(WCH_check_clock_loop);
+	T1.detach();
+	thread T2(WCH_safety_input_loop);
+	T2.detach();
 	WCH_Init_Out();
 }
 

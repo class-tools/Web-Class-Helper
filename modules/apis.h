@@ -22,6 +22,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
+extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
@@ -31,6 +32,7 @@ extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
+extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
@@ -67,6 +69,16 @@ void WCH_PrintChar(int _times, char _c) {
 		_times--;
 		cout << _c;
 	}
+}
+
+vector <string> WCH_split(const string &_in) {
+	vector <string> _res;
+	string _tmp;
+	stringstream _ss(_in);
+	while (getline(_ss, _tmp, ' ')) {
+		_res.push_back(_tmp);
+	}
+	return _res;
 }
 
 wstring StrToWstr(string str) {

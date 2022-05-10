@@ -56,6 +56,7 @@ struct WCH_Version {
 	int Z {};
 };
 const string WCH_WDName[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+vector <string> WCH_command_list;
 multimap <int, pair <int, string>> WCH_clock_list;
 set <string> WCH_task_list;
 set <string> WCH_work_list;
@@ -65,6 +66,7 @@ int WCH_task_num;
 int WCH_work_num;
 int WCH_ProgressBarCount;
 int WCH_ProgressBarTot;
+int WCH_InputTimes;
 bool WCH_cmd_line = true;
 bool WCH_anti_idle;
 bool WCH_program_end;
