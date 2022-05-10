@@ -170,6 +170,7 @@
     <ClInclude Include="modules\commands.h" />
     <ClInclude Include="modules\file-process.h" />
     <ClInclude Include="modules\functions.h" />
+    <ClInclude Include="modules\init.h" />
     <ClInclude Include="modules\variables.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

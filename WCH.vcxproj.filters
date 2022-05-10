@@ -32,6 +32,9 @@
     <ClInclude Include="modules\functions.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="modules\init.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="modules\variables.h">
       <Filter>头文件</Filter>
     </ClInclude>

@@ -15,13 +15,15 @@ Contributors: jsh-jsh ren-yc
 #include <conio.h>
 #include <direct.h>
 #include <VersionHelpers.h>
-#include "commands.h"
 #include "file-process.h"
+#include "init.h"
+#include "commands.h"
 #include "apis.h"
 #include "variables.h"
 using namespace std;
 
 extern const string WCH_WDName[7];
+extern map <string, function <void>> WCH_command_support;
 extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
@@ -158,86 +160,6 @@ void WCH_CL_Init() {
 	WCH_command_list = WCH_split(WCH_command);
 	WCH_InputTimes++;
 	WCH_wait_cmd = false;
-}
-
-void WCH_PutPicture() {
-	// Press PrintScreen. (Keyboard)
-	keybd_event(VK_SNAPSHOT, 0, 0, 0);
-	keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
-	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl;
-}
-
-void WCH_SaveImg() {
-	// Run image saver Python program.
-	string tmp = "IMG";
-	tmp += to_string(WCH_Framework);
-	tmp += ".EXE";
-	system(tmp.c_str());
-	WCH_Sleep(500);
-}
-
-void WCH_Init_Dir() {
-	// Initialization for directory.
-	if (_access("data", 0) != 0) {
-		CreateDirectory(L"data", NULL);
-	}
-	if (_access("logs", 0) != 0) {
-		CreateDirectory(L"logs", NULL);
-	}
-}
-
-void WCH_Init_Var() {
-	// Initialization for varible.
-	WCH_hWnd = GetForegroundWindow();
-	WCH_ProgressBarStr = IsWindows10OrGreater() ? UTF8ToANSI("━") : "-";
-}
-
-int WCH_Init_Log() {
-	// Initialization for log.
-	WCH_Time now = WCH_GetTime();
-	if (_access("logs/latest.log", 0) != -1) {
-		return rename("logs/latest.log", format("logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
-	} else {
-		return 0;
-	}
-}
-
-void WCH_Init_Win() {
-	// Initialization for window.
-	SetConsoleTitleA(format("Web Class Helper (x{})", to_string(WCH_DisplayFramework)).c_str());
-}
-
-void WCH_Init_Bind() {
-	// Initialization for bind.
-	WCH_printlog(WCH_LOG_MODE_ST, {"s", to_string(WCH_DisplayFramework)});
-	atexit(WCH_save);
-	WCH_signalHandler();
-	WCH_SetWindowStatus(true);
-}
-
-void WCH_Init_Out() {
-	// Initialization for output.
-	cout << "Web Class Helper " << WCH_VER << " (x" << to_string(WCH_DisplayFramework) << ")" << endl;
-	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
-	cout << endl;
-}
-
-void WCH_Init() {
-	// Initialize the whole program.
-	WCH_Init_Dir();
-	WCH_Init_Var();
-	if (WCH_Init_Log() == -1) {
-		raise(SIGABRT);
-	}
-	WCH_Init_Win();
-	WCH_Init_Bind();
-	WCH_read();
-	thread T1(WCH_check_clock_loop);
-	T1.detach();
-	thread T2(WCH_safety_input_loop);
-	T2.detach();
-	WCH_Init_Out();
 }
 
 #endif

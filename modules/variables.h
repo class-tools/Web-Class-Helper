@@ -15,9 +15,10 @@ Contributors: jsh-jsh ren-yc
 #include <conio.h>
 #include <direct.h>
 #include <VersionHelpers.h>
+#include "file-process.h"
+#include "init.h"
 #include "commands.h"
 #include "functions.h"
-#include "file-process.h"
 #include "apis.h"
 using namespace std;
 
@@ -56,6 +57,7 @@ struct WCH_Version {
 	int Z {};
 };
 const string WCH_WDName[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+map <string, function <void>> WCH_command_support;
 vector <string> WCH_command_list;
 multimap <int, pair <int, string>> WCH_clock_list;
 set <string> WCH_task_list;

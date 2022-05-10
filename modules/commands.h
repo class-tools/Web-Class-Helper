@@ -15,8 +15,9 @@ Contributors: jsh-jsh ren-yc
 #include <conio.h>
 #include <direct.h>
 #include <VersionHelpers.h>
-#include "functions.h"
 #include "file-process.h"
+#include "init.h"
+#include "functions.h"
 #include "apis.h"
 #include "variables.h"
 using namespace std;
@@ -26,6 +27,7 @@ using namespace std;
 #endif
 
 extern const string WCH_WDName[7];
+extern map <string, function <void>> WCH_command_support;
 extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
@@ -353,7 +355,7 @@ void WCH_done_work() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
-	string work = WCH_command.substr(9, WCH_command.size() - 1);
+	string work = WCH_command.substr(10, WCH_command.size() - 1);
 	if (WCH_work_list.find(work) == WCH_work_list.end()) {
 		WCH_Error(WCH_ERRNO_WORK_OPERATION);
 	} else {
@@ -474,11 +476,6 @@ void WCH_anti_idle_func() {
 		thread T(WCH_check_task_loop);
 		T.detach();
 	}
-}
-
-void WCH_unknown() {
-	// Make a response to unknown command.
-	cout << WCH_command << ": Command not found." << endl;
 }
 
 void WCH_trans() {

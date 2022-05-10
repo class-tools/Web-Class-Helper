@@ -15,13 +15,15 @@ Contributors: jsh-jsh ren-yc
 #include <conio.h>
 #include <direct.h>
 #include <VersionHelpers.h>
+#include "file-process.h"
+#include "init.h"
 #include "commands.h"
 #include "functions.h"
-#include "file-process.h"
 #include "variables.h"
 using namespace std;
 
 extern const string WCH_WDName[7];
+extern map <string, function <void>> WCH_command_support;
 extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
@@ -139,6 +141,22 @@ void WCH_SetWindowSize(int mode, HWND hWnd) {
 	// Set the window size by Windows API.
 	ShowWindow(hWnd, mode);
 	WCH_printlog(WCH_LOG_MODE_WD, {"CURWND", "SIZE", (mode == SW_MAXIMIZE ? "MAXIMIZE" : "NORMAL")});
+}
+
+void WCH_PutPicture() {
+	// Press PrintScreen. (Keyboard)
+	keybd_event(VK_SNAPSHOT, 0, 0, 0);
+	keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
+	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl;
+}
+
+void WCH_SaveImg() {
+	// Run image saver Python program.
+	string tmp = "IMG";
+	tmp += to_string(WCH_Framework);
+	tmp += ".EXE";
+	system(tmp.c_str());
+	WCH_Sleep(500);
 }
 
 bool WCH_TaskKill(string name) {
