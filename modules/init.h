@@ -23,7 +23,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern map <string, function <void>> WCH_command_support;
+extern map <string, function <void ()>> WCH_command_support;
 extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
@@ -94,20 +94,20 @@ void WCH_Init_Bind() {
 
 void WCH_Init_Cmd() {
 	// Initialization for command support list.
-	WCH_command_support.insert(pair <string, function <void>> ("clock", WCH_check_clock));
-	WCH_command_support.insert(pair <string, function <void>> ("task", WCH_check_task));
-	WCH_command_support.insert(pair <string, function <void>> ("work", WCH_check_work));
-	WCH_command_support.insert(pair <string, function <void>> ("help", WCH_help));
-	WCH_command_support.insert(pair <string, function <void>> ("ow", WCH_ow));
-	WCH_command_support.insert(pair <string, function <void>> ("hide", WCH_hide));
-	WCH_command_support.insert(pair <string, function <void>> ("game", WCH_game));
-	WCH_command_support.insert(pair <string, function <void>> ("time", WCH_time));
-	WCH_command_support.insert(pair <string, function <void>> ("pi", WCH_pi));
-	WCH_command_support.insert(pair <string, function <void>> ("speedtest", WCH_speedtest));
-	WCH_command_support.insert(pair <string, function <void>> ("trans", WCH_trans));
-	WCH_command_support.insert(pair <string, function <void>> ("anti-idle", WCH_anti_idle_func));
-	WCH_command_support.insert(pair <string, function <void>> ("update", WCH_update));
-	WCH_command_support.insert(pair <string, function <void>> ("license", WCH_license));
+	WCH_command_support.insert(pair <string, function <void ()>> ("clock", WCH_check_clock));
+	WCH_command_support.insert(pair <string, function <void ()>> ("task", WCH_check_task));
+	WCH_command_support.insert(pair <string, function <void ()>> ("work", WCH_check_work));
+	WCH_command_support.insert(pair <string, function <void ()>> ("help", WCH_help));
+	WCH_command_support.insert(pair <string, function <void ()>> ("ow", WCH_ow));
+	WCH_command_support.insert(pair <string, function <void ()>> ("hide", WCH_hide));
+	WCH_command_support.insert(pair <string, function <void ()>> ("game", WCH_game));
+	WCH_command_support.insert(pair <string, function <void ()>> ("time", WCH_time));
+	WCH_command_support.insert(pair <string, function <void ()>> ("pi", WCH_pi));
+	WCH_command_support.insert(pair <string, function <void ()>> ("speedtest", WCH_speedtest));
+	WCH_command_support.insert(pair <string, function <void ()>> ("trans", WCH_trans));
+	WCH_command_support.insert(pair <string, function <void ()>> ("anti-idle", WCH_anti_idle_func));
+	WCH_command_support.insert(pair <string, function <void ()>> ("update", WCH_update));
+	WCH_command_support.insert(pair <string, function <void ()>> ("license", WCH_license));
 }
 
 void WCH_Init_Out() {

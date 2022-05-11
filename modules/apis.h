@@ -23,7 +23,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern map <string, function <void>> WCH_command_support;
+extern map <string, function <void ()>> WCH_command_support;
 extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
@@ -235,9 +235,7 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 	// Print a progress bar.
 	string _ETAStr = format("{:02}:{:02}:{:02}", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
 	if (_flag) {
-		for (int i = 0; i < WCH_ProgressBarCount; i++) {
-			cout << "\b";
-		}
+		WCH_PrintChar(WCH_ProgressBarCount, '\b');
 	}
 	WCH_PrintColor(0x0A);
 	for (int i = 0; i < _n / 2; i++) {
@@ -282,7 +280,23 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
+		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program interrupted\"").c_str());
+		exit(signum);
+	});
+	signal(SIGABRT, [](int signum) {
+		string tmp = "ERROR";
+		tmp += to_string(WCH_Framework);
+		tmp += ".EXE";
+		WCH_cmd_line = false;
+		WCH_program_end = true;
+		WCH_PrintColor(0x07);
+		cout << endl;
+		WCH_save();
+		WCH_Sleep(100);
+		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program aborted)"});
+		WCH_SetWindowStatus(false);
+		system((tmp + " " + to_string(signum) + " \"Program aborted\"").c_str());
 		exit(signum);
 	});
 	signal(SIGFPE, [](int signum) {
@@ -296,6 +310,7 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
+		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Operation overflow\"").c_str());
 		exit(signum);
 	});
@@ -310,6 +325,7 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
+		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Illegal instruction\"").c_str());
 		exit(signum);
 	});
@@ -324,6 +340,7 @@ void WCH_signalHandler() {
 		WCH_save();
 		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
+		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Access to illegal memory\"").c_str());
 		exit(signum);
 	});

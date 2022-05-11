@@ -23,7 +23,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern map <string, function <void>> WCH_command_support;
+extern map <string, function <void ()>> WCH_command_support;
 extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
@@ -121,20 +121,6 @@ void WCH_check_clock_loop() {
 			}
 		}
 		WCH_Sleep(60000);
-	}
-}
-
-void WCH_check_task_loop() {
-	// Check if the running task is in the task list. (Another thread)
-	while (WCH_anti_idle && !WCH_program_end) {
-		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-			if (WCH_TaskKill(*it)) {
-				WCH_printlog(WCH_LOG_MODE_KT, {"Successfully killed", *it});
-			} else {
-				WCH_printlog(WCH_LOG_MODE_KT, {"Failed to kill", *it});
-			}
-		}
-		WCH_Sleep(15000);
 	}
 }
 

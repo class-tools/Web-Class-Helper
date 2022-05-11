@@ -14,7 +14,7 @@ Contributors: jsh-jsh ren-yc
 using namespace std;
 
 extern const string WCH_WDName[7];
-extern map <string, function <void>> WCH_command_support;
+extern map <string, function <void ()>> WCH_command_support;
 extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
@@ -65,7 +65,7 @@ int main() {
 				WCH_printlog(WCH_LOG_MODE_RC, {"command", WCH_command});
 				WCH_command_support.find(WCH_command_list[0]) -> second();
 			} else {
-				if (WCH_command == "quit") {
+				if (WCH_command_list[0] == "quit") {
 					if ((int)WCH_command_list.size() != 1) {
 						WCH_Error(WCH_ERRNO_UNCORRECT);
 					} else {
@@ -76,40 +76,6 @@ int main() {
 					WCH_Error(WCH_ERRNO_UNCORRECT);
 				}
 			}
-			// if (WCH_command_list[0] == "clock") {
-			// 	WCH_check_clock();
-			// } else if (WCH_command_list[0] == "task") {
-			// 	WCH_check_task();
-			// } else if (WCH_command_list[0] == "work") {
-			// 	WCH_check_work();
-			// } else if (WCH_command_list[0] == "help") {
-			// 	WCH_help();
-			// } else if (WCH_command_list[0] == "ow") {
-			// 	WCH_ow();
-			// } else if (WCH_command_list[0] == "hide") {
-			// 	WCH_hide();
-			// } else if (WCH_command_list[0] == "game") {
-			// 	WCH_game();
-			// } else if (WCH_command_list[0] == "time") {
-			// 	WCH_time();
-			// } else if (WCH_command_list[0] == "pi") {
-			// 	WCH_pi();
-			// } else if (WCH_command_list[0] == "speedtest") {
-			// 	WCH_speedtest();
-			// } else if (WCH_command_list[0] == "trans") {
-			// 	WCH_trans();
-			// } else if (WCH_command_list[0] == "anti-idle") {
-			// 	WCH_anti_idle_func();
-			// } else if (WCH_command_list[0] == "update") {
-			// 	WCH_update();
-			// } else if (WCH_command_list[0] == "license") {
-			// 	WCH_license();
-			// } else if (WCH_command_list[0] != "quit") {
-			// 	if (WCH_cmd_line) {
-			// 		WCH_printlog(WCH_LOG_MODE_RC, {"unknown command", WCH_command});
-			// 		WCH_unknown();
-			// 	}
-			// }
 			cout << endl;
 		}
 	}
