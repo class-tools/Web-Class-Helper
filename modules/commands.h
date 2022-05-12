@@ -414,16 +414,29 @@ void WCH_game() {
 	}
 	srand((unsigned)time(NULL));
 	int WCH_clock_num = rand() % 10000 + 1;
+	bool flag = true;
 	string z = "0";
+	vector <string> zv;
+	zv.push_back("0");
 	try {
-		while (stoi(z) != WCH_clock_num) {
+		while (stoi(zv[0]) != WCH_clock_num) {
 			BEGIN: cout << "Please input your number (1 ~ 10000): ";
-			cin >> z;
-			if (z[0] == '-' || z[0] == '0' || (z.size() > 5 && z != "10000")) {
+			getline(cin, z);
+			zv = WCH_split(z);
+			if ((int)zv.size() != 1) {
+				if ((int)zv.size() > 1) {
+					cout << "Number out of range." << endl;
+					zv.clear();
+					zv.push_back("0");
+				} else {
+					flag = false;
+					goto END;
+				}
+			} else if (zv[0][0] == '-' || zv[0][0] == '0' || (zv[0].size() >= 5 && zv[0] != "10000")) {
 				cout << "Number out of range." << endl;
-			} else if (stoi(z) > WCH_clock_num) {
+			} else if (stoi(zv[0]) > WCH_clock_num) {
 				cout << "The answer is smaller." << endl;
-			} else if (stoi(z) < WCH_clock_num) {
+			} else if (stoi(zv[0]) < WCH_clock_num) {
 				cout << "The answer is bigger." << endl;
 			}
 		}
@@ -431,8 +444,10 @@ void WCH_game() {
 		cout << "Number out of range." << endl;
 		goto BEGIN;
 	}
-	cout << "The number is " << WCH_clock_num << ". You WIN!" << endl;
-	cin.ignore();
+	END: cout << "The number is " << WCH_clock_num << "." << endl;
+	if (flag) {
+		cout << " You WIN!" << endl;
+	}
 	return;
 }
 

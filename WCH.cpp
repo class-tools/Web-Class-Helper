@@ -56,11 +56,7 @@ int main() {
 			}
 		}
 		if (WCH_cmd_line) {
-			BEGIN: WCH_CL_Init();
-			if ((int)WCH_command_list.size() == 0) {
-				cout << endl;
-				goto BEGIN;
-			}
+			WCH_CL_Init();
 			if (WCH_command_support.find(WCH_command_list[0]) != WCH_command_support.end()) {
 				WCH_printlog(WCH_LOG_MODE_RC, {"command", WCH_command});
 				WCH_command_support.find(WCH_command_list[0]) -> second();
