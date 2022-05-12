@@ -252,6 +252,7 @@ void WCH_check_clock() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
+	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
 	if (WCH_command_list[1] == "add") {
 		WCH_add_clock();
 	} else if (WCH_command_list[1] == "delete") {
@@ -323,6 +324,7 @@ void WCH_check_task() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
+	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
 	if (WCH_command_list[1] == "add") {
 		WCH_add_task();
 	} else if (WCH_command_list[1] == "delete") {
@@ -392,6 +394,7 @@ void WCH_check_work() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
+	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
 	if (WCH_command_list[1] == "add") {
 		WCH_add_work();
 	} else if (WCH_command_list[1] == "done") {
@@ -414,7 +417,7 @@ void WCH_game() {
 	string z = "0";
 	try {
 		while (stoi(z) != WCH_clock_num) {
-			cout << "Please input your number (1 ~ 10000): ";
+			BEGIN: cout << "Please input your number (1 ~ 10000): ";
 			cin >> z;
 			if (z[0] == '-' || z[0] == '0' || (z.size() > 5 && z != "10000")) {
 				cout << "Number out of range." << endl;
@@ -425,10 +428,11 @@ void WCH_game() {
 			}
 		}
 	} catch (...) {
-		WCH_Error(WCH_ERRNO_UNCORRECT);
-		return;
+		cout << "Number out of range." << endl;
+		goto BEGIN;
 	}
 	cout << "The number is " << WCH_clock_num << ". You WIN!" << endl;
+	cin.ignore();
 	return;
 }
 
@@ -556,33 +560,48 @@ void WCH_time() {
 
 void WCH_help() {
 	// Print help information.
-	if ((int)WCH_command_list.size() != 1) {
-		WCH_Error(WCH_ERRNO_UNCORRECT);
-		return;
+	if ((int)WCH_command_list.size() == 1) {
+		cout << "If you want to get the full information of a command, please input \"HELP {command name}\"." << endl;
+		cout << "clock add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
+		cout << "clock delete {hour} {minute} {name} (Delete clock at {hour}:{minute})" << endl;
+		cout << "clock change {hour} {minute} {name} (Change clock at {hour}:{minute})" << endl;
+		cout << "clock list (List all clocks)" << endl;
+		cout << "task add {process name} (Add task {process name} to kill when enable \"anti-idle\")" << endl;
+		cout << "task delete {process name} (Delete task {process name} to kill when enable \"anti-idle\")" << endl;
+		cout << "task list (List all tasks)" << endl;
+		cout << "work add {name} (Add {name} to work plan)" << endl;
+		cout << "work done {name} (Done work plan item {name})" << endl;
+		cout << "work list (List all items in work plan)" << endl;
+		cout << "help (Get help output)" << endl;
+		cout << "ow (Get a sentence) **From web**" << endl;
+		cout << "hide (Hide the command line window)" << endl;
+		cout << "game (Guessing game)" << endl;
+		cout << "time (Get time at once)" << endl;
+		cout << "pi (Make a screenshot and save in \"Pictures\" folder)" << endl;
+		cout << "speedtest (Start a speed test with a GUI window)" << endl;
+		cout << "trans {info} (Translate a sentence between English / Chinese) **From web**" << endl;
+		cout << "anti-idle (Enable anti-idle mode)" << endl;
+		cout << "update (Visit the releases page in default browser)" << endl;
+		cout << "license (Print license information)" << endl;
+		cout << "quit (Quit this program)" << endl;
+	} else {
+		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
+		if ((int)WCH_command_list.size() == 2 && _access(("help/" + WCH_command_list[1]).c_str(), 0) != -1) {
+			int _lines;
+			string _res;
+			fin.open(("help/" + WCH_command_list[1]).c_str());
+			fin >> _lines;
+			fin.ignore();
+			while (_lines--) {
+				getline(fin, _res);
+				cout << _res << endl;
+			}
+			fin.close();
+		} else {
+			WCH_Error(WCH_ERRNO_UNCORRECT);
+			return;
+		}
 	}
-	cout << "Commands:" << endl;
-	cout << "clock add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
-	cout << "clock delete {hour} {minute} {name} (Delete clock at {hour}:{minute})" << endl;
-	cout << "clock change {hour} {minute} {name} (Change clock at {hour}:{minute})" << endl;
-	cout << "clock list (List all clocks)" << endl;
-	cout << "task add {process name} (Add task {process name} to kill when enable \"anti-idle\")" << endl;
-	cout << "task delete {process name} (Delete task {process name} to kill when enable \"anti-idle\")" << endl;
-	cout << "task list (List all tasks)" << endl;
-	cout << "work add {name} (Add {name} to work plan)" << endl;
-	cout << "work done {name} (Done work plan item {name})" << endl;
-	cout << "work list (List all items in work plan)" << endl;
-	cout << "help (Get help output)" << endl;
-	cout << "ow (Get a sentence) **From web**" << endl;
-	cout << "hide (Hide the command line window)" << endl;
-	cout << "game (Guessing game)" << endl;
-	cout << "time (Get time at once)" << endl;
-	cout << "pi (Make a screenshot and save in \"Pictures\" folder)" << endl;
-	cout << "speedtest (Start a speed test with a GUI window)" << endl;
-	cout << "trans {info} (Translate a sentence between English / Chinese) **From web**" << endl;
-	cout << "anti-idle (Enable anti-idle mode)" << endl;
-	cout << "update (Visit the releases page in default browser)" << endl;
-	cout << "license (Print license information)" << endl;
-	cout << "quit (Quit this program)" << endl;
 }
 
 #endif

@@ -19,4 +19,4 @@ A practical command line gadget during web class.
 | :---: | :---: |
 | ![](https://shields.io/badge/Coding-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) | ![](https://shields.io/badge/Coding-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) |
 
-**For more information, please go to [Wiki](https://github.com/class-tools/Web Class Helper/wiki)**.
+**For more information, please go to [Wiki](https://github.com/class-tools/Web-Class-Helper/wiki)**.

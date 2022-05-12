@@ -1,0 +1,17 @@
+16
+Modify task list.
+
+Usage:
+
+TASK ADD [process name]
+TASK DELETE [process name]
+
+All the things after the space behind "ADD" / "DELETE" will be read in.
+
+Please do not use double quotation mark like:
+
+TASK ADD "explorer 1.exe"
+
+This is correct:
+
+TASK ADD explorer 1.exe

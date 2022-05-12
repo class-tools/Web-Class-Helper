@@ -1,0 +1,16 @@
+15
+Get Chinese-English translate result.
+
+Usage:
+
+TRANS [info]
+
+All the things after the space behind "TRANS" will be read in.
+
+Please do not use double quotation mark like:
+
+TRANS "Hello world!"
+
+This is correct:
+
+TRANS Hello world!

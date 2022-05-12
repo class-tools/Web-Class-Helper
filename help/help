@@ -1,0 +1,15 @@
+14
+Print help information.
+
+Usage:
+
+HELP
+HELP [command name]
+
+Command name is just a work, not full command like this.
+
+HELP CLOCK ADD 1 1 something
+
+This is correct:
+
+HELP CLOCK

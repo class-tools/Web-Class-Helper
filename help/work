@@ -1,0 +1,17 @@
+16
+Modify work list.
+
+Usage:
+
+WORK ADD [name]
+WORK DONE [name]
+
+All the things after the space behind "ADD" / "DONE" will be read in.
+
+Please do not use double quotation mark like:
+
+TASK ADD "Do something"
+
+This is correct:
+
+TASK ADD Do something

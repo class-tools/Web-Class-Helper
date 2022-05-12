@@ -1,0 +1,16 @@
+15
+Modify clock list.
+
+Usage:
+
+CLOCK ADD [hour] [minute] [name]
+CLOCK CHANGE [hour] [minute] [name (new)]
+CLOCK DELETE [hour] [minute] [name]
+
+You can add a zero in front of [hour] / [minute] if it is less than 10.
+
+These two commands are same:
+
+CLOCK ADD 1 1 something
+
+CLOCK ADD 01 01 something

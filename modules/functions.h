@@ -144,6 +144,7 @@ void WCH_CL_Init() {
 		raise(SIGINT);
 	}
 	WCH_command_list = WCH_split(WCH_command);
+	transform(WCH_command_list[0].begin(), WCH_command_list[0].end(), WCH_command_list[0].begin(), ::tolower);
 	WCH_InputTimes++;
 	WCH_wait_cmd = false;
 }
