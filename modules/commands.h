@@ -273,6 +273,7 @@ void WCH_add_task() {
 		return;
 	}
 	string task = WCH_command.substr(9, WCH_command.size() - 1);
+	transform(task.begin(), task.end(), task.begin(), ::tolower);
 	if (WCH_task_list.find(task) != WCH_task_list.end()) {
 		WCH_Error(WCH_ERRNO_WORK_OPERATION);
 	} else {
@@ -288,6 +289,7 @@ void WCH_delete_task() {
 		return;
 	}
 	string task = WCH_command.substr(12, WCH_command.size() - 1);
+	transform(task.begin(), task.end(), task.begin(), ::tolower);
 	if (WCH_task_list.find(task) == WCH_task_list.end()) {
 		WCH_Error(WCH_ERRNO_TASK_OPERATION);
 	} else {
@@ -444,11 +446,11 @@ void WCH_game() {
 		cout << "Number out of range." << endl;
 		goto BEGIN;
 	}
-	END: cout << "The number is " << WCH_clock_num << "." << endl;
+	END: cout << "The number is " << WCH_clock_num << ".";
 	if (flag) {
-		cout << " You WIN!" << endl;
+		cout << " You WIN!";
 	}
-	return;
+	cout << endl;
 }
 
 void WCH_speedtest() {
@@ -495,10 +497,10 @@ void WCH_anti_idle_func() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
-	char ch;
+	string ch;
 	cout << "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
-	cin >> ch;
-	if (ch == 'Y' || ch == 'y') {
+	getline(cin, ch);
+	if (ch == "Y" || ch == "y") {
 		WCH_SetWindowStatus(false);
 		WCH_anti_idle = true;
 		WCH_Sleep(500);

@@ -49,10 +49,11 @@ int main() {
 	while (WCH_command != "quit") {
 		if (WCH_ShortCutKeyCheck() && !WCH_cmd_line) {
 			WCH_SetWindowStatus(true);
-			if (WCH_anti_idle == true) {
+			if (WCH_anti_idle) {
 				WCH_SetTrayStatus(true);
 				WCH_SetWindowSize(SW_NORMAL, GetActiveWindow());
 				WCH_anti_idle = false;
+				continue;
 			}
 		}
 		if (WCH_cmd_line) {
