@@ -83,19 +83,28 @@ string WCH_TransStrChar(string str) {
 void WCH_Error(string INFO) {
 	// Error message checker.
 	string tmp;
+	string mode;
 	if (INFO == WCH_ERRNO_UNCORRECT) {
 		tmp = "Your input code is uncorrect, please check and try again";
+		mode = WCH_LOG_STATUS_WARN;
 	} else if (INFO == WCH_ERRNO_NETWORK_FAILURE) {
 		tmp = "An network error occurred, please check your network connection and try to update this program";
+		mode = WCH_LOG_STATUS_ERROR;
+	} else if (INFO == WCH_ERRNO_FILE_NOT_FOUND) {
+		tmp = "File processing failed. Please try reinstalling this program";
+		mode = WCH_LOG_STATUS_ERROR;
 	} else if (INFO == WCH_ERRNO_CLOCK_OPERATION) {
 		tmp = "Cannot operate the clock list, please try to restart this program";
+		mode = WCH_LOG_STATUS_ERROR;
 	} else if (INFO == WCH_ERRNO_TASK_OPERATION) {
 		tmp = "Cannot operate the task list, please try to restart this program";
+		mode = WCH_LOG_STATUS_ERROR;
 	} else if (INFO == WCH_ERRNO_WORK_OPERATION) {
 		tmp = "Cannot operate the work list, please try to restart this program";
+		mode = WCH_LOG_STATUS_ERROR;
 	}
 	cout << tmp << "." << endl;
-	WCH_printlog(WCH_LOG_MODE_ERROR, {tmp});
+	WCH_printlog(WCH_LOG_MODE_INFO, {mode, tmp});
 }
 
 bool WCH_ShortCutKeyCheck() {

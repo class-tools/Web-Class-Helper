@@ -113,10 +113,13 @@ void WCH_license() {
 		return;
 	}
 	fin.open("LICENSE");
-	string tmp;
-	for (int i = 1; i <= 21; i++) {
-		getline(fin, tmp);
-		cout << tmp << endl;
+	if (!fin.is_open()) {
+		WCH_Error(WCH_ERRNO_FILE_NOT_FOUND);
+		return;
+	}
+	string _res;
+	while (getline(fin, _res)) {
+		cout << _res << endl;
 	}
 	fin.close();
 }
@@ -603,19 +606,19 @@ void WCH_help() {
 		cout << "quit (Quit this program)" << endl;
 	} else {
 		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-		if ((int)WCH_command_list.size() == 2 && _access(("help/" + WCH_command_list[1]).c_str(), 0) != -1) {
-			int _lines;
+		if ((int)WCH_command_list.size() == 2 && _access(("resources/help/" + WCH_command_list[1] + ".dat").c_str(), 0) != -1) {
 			string _res;
-			fin.open(("help/" + WCH_command_list[1]).c_str());
-			fin >> _lines;
-			fin.ignore();
-			while (_lines--) {
-				getline(fin, _res);
+			fin.open(("resources/help/" + WCH_command_list[1] + ".dat").c_str());
+			while (getline(fin, _res)) {
 				cout << _res << endl;
 			}
 			fin.close();
 		} else {
-			WCH_Error(WCH_ERRNO_UNCORRECT);
+			if (WCH_command_support.find(WCH_command_list[1]) != WCH_command_support.end()) {
+				WCH_Error(WCH_ERRNO_FILE_NOT_FOUND);
+			} else {
+				WCH_Error(WCH_ERRNO_UNCORRECT);
+			}
 			return;
 		}
 	}

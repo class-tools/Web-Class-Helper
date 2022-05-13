@@ -75,8 +75,8 @@ void WCH_printlog(int w, initializer_list <string> other) {
 	}
 	if (w == WCH_LOG_MODE_ST) {
 		tmps = format("{} {}: {} \"Web Class Helper (x{})\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
-	} else if (w == WCH_LOG_MODE_ERROR) {
-		tmps = format("{} {}: {}.", tmp, WCH_LOG_STATUS_ERROR, tt[0].c_str());
+	} else if (w == WCH_LOG_MODE_INFO) {
+		tmps = format("{} {}: {}.", tmp, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_RC) {
 		tmps = format("{} {}: Using {} \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
 	} else if (w == WCH_LOG_MODE_RW) {

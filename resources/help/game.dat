@@ -1,8 +1,7 @@
-7
-Get current time.
+Start a guessing game.
 
 Usage:
 
-TIME
+GAME
 
 This command has no parameters.

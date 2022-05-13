@@ -279,7 +279,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
+		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program interrupted\"").c_str());
 		exit(signum);
@@ -294,7 +294,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Program aborted)"});
+		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Program aborted)"});
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program aborted\"").c_str());
 		exit(signum);
@@ -309,7 +309,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
+		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Operation overflow\"").c_str());
 		exit(signum);
@@ -324,7 +324,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
+		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Illegal instruction\"").c_str());
 		exit(signum);
@@ -339,7 +339,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_ERROR, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
+		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Access to illegal memory\"").c_str());
 		exit(signum);
