@@ -6,9 +6,102 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef COMMANDS_H
 #define COMMANDS_H
-#include <bits/stdc++.h>
-#include <io.h>
+#include <cassert>
+#include <cctype>
+#include <cerrno>
+#include <cfloat>
+#include <ciso646>
+#include <climits>
+#include <clocale>
+#include <cmath>
+#include <csetjmp>
+#include <csignal>
+#include <cstdarg>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <cwchar>
+#include <cwctype>
+#include <ccomplex>
+#include <cfenv>
+#include <cinttypes>
+#include <cstdalign>
+#include <cstdbool>
+#include <cstdint>
+#include <ctgmath>
+#include <cuchar>
+#include <algorithm>
+#include <bitset>
+#include <complex>
+#include <deque>
+#include <exception>
+#include <fstream>
+#include <functional>
+#include <iomanip>
+#include <ios>
+#include <iosfwd>
+#include <iostream>
+#include <istream>
+#include <iterator>
+#include <limits>
+#include <list>
+#include <locale>
+#include <map>
+#include <memory>
+#include <new>
+#include <numeric>
+#include <ostream>
+#include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <stdexcept>
+#include <streambuf>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <valarray>
+#include <vector>
+#include <array>
+#include <atomic>
+#include <chrono>
+#include <codecvt>
+#include <condition_variable>
+#include <forward_list>
+#include <future>
+#include <initializer_list>
+#include <mutex>
+#include <random>
+#include <ratio>
+#include <regex>
+#include <scoped_allocator>
+#include <system_error>
 #include <thread>
+#include <tuple>
+#include <typeindex>
+#include <type_traits>
+#include <unordered_map>
+#include <unordered_set>
+#include <shared_mutex>
+#include <any>
+#include <charconv>
+#include <filesystem>
+#include <optional>
+#include <memory_resource>
+#include <string_view>
+#include <variant>
+#include <bit>
+#include <compare>
+#include <concepts>
+#include <coroutine>
+#include <numbers>
+#include <ranges>
+#include <span>
+#include <stop_token>
+#include <version>
+#include <io.h>
 #include <windows.h>
 #include <wininet.h>
 #include <tlhelp32.h>
@@ -60,6 +153,16 @@ int WCH_GetNumDigits(int n);
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary(L"urlmon.dll"), "URLDownloadToFileA");
 
+void WCH_quit() {
+	// Quit.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	WCH_program_end = true;
+	exit(0);
+}
+
 void WCH_hide() {
 	// Hide the window.
 	if ((int)WCH_command_list.size() != 1) {
@@ -67,6 +170,16 @@ void WCH_hide() {
 		return;
 	}
 	WCH_SetWindowStatus(false);
+}
+
+void WCH_wiki() {
+	// Visit the wiki page.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	cout << "Jumping to wiki page..." << endl;
+	system("start resources/website/wiki.url");
 }
 
 void WCH_update() {
@@ -93,7 +206,8 @@ void WCH_update() {
 			throw runtime_error(WCH_ERRNO_NETWORK_FAILURE);
 		}
 		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER), WCH_GetVersion(res))) {
-			system("start https://github.com/class-tools/Web Class Helper/releases/latest/");
+			cout << "Program version is less than latest released version, jumping to releases page..." << endl;
+			system("start resources/website/releases.url");
 			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", res});
 		} else {
 			cout << "Program version equals or is greater than latest released version." << endl;
@@ -205,6 +319,16 @@ void WCH_change_clock() {
 	}
 }
 
+void WCH_clear_clock() {
+	// Clear clock list.
+	if ((int)WCH_command_list.size() != 2) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	WCH_clock_list.clear();
+	WCH_clock_num = 0;
+}
+
 void WCH_list_clock() {
 	// List all tasks.
 	if ((int)WCH_command_list.size() != 2) {
@@ -260,6 +384,8 @@ void WCH_check_clock() {
 		WCH_add_clock();
 	} else if (WCH_command_list[1] == "delete") {
 		WCH_delete_clock();
+	} else if (WCH_command_list[1] == "clear") {
+		WCH_clear_clock();
 	} else if (WCH_command_list[1] == "change") {
 		WCH_change_clock();
 	} else if (WCH_command_list[1] == "list") {
@@ -301,6 +427,16 @@ void WCH_delete_task() {
 	}
 }
 
+void WCH_clear_task() {
+	// Clear task list.
+	if ((int)WCH_command_list.size() != 2) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	WCH_task_list.clear();
+	WCH_task_num = 0;
+}
+
 void WCH_list_task() {
 	// List all tasks.
 	if ((int)WCH_command_list.size() != 2) {
@@ -334,6 +470,8 @@ void WCH_check_task() {
 		WCH_add_task();
 	} else if (WCH_command_list[1] == "delete") {
 		WCH_delete_task();
+	} else if (WCH_command_list[1] == "clear") {
+		WCH_clear_task();
 	} else if (WCH_command_list[1] == "list") {
 		WCH_list_task();
 	} else {
@@ -356,7 +494,7 @@ void WCH_add_work() {
 	}
 }
 
-void WCH_done_work() {
+void WCH_delete_work() {
 	// Delete a work.
 	if ((int)WCH_command_list.size() < 3) {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
@@ -369,6 +507,16 @@ void WCH_done_work() {
 		WCH_work_list.erase(work);
 		WCH_work_num--;
 	}
+}
+
+void WCH_clear_work() {
+	// Clear work list.
+	if ((int)WCH_command_list.size() != 2) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	WCH_work_list.clear();
+	WCH_work_num = 0;
 }
 
 void WCH_list_work() {
@@ -402,8 +550,10 @@ void WCH_check_work() {
 	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
 	if (WCH_command_list[1] == "add") {
 		WCH_add_work();
-	} else if (WCH_command_list[1] == "done") {
-		WCH_done_work();
+	} else if (WCH_command_list[1] == "delete") {
+		WCH_delete_work();
+	} else if (WCH_command_list[1] == "clear") {
+		WCH_clear_work();
 	} else if (WCH_command_list[1] == "list") {
 		WCH_list_work();
 	} else {
@@ -603,6 +753,7 @@ void WCH_help() {
 		cout << "anti-idle (Enable anti-idle mode)" << endl;
 		cout << "update (Visit the releases page in default browser)" << endl;
 		cout << "license (Print license information)" << endl;
+		cout << "wiki (Jump to program wiki page in default browser)" << endl;
 		cout << "quit (Quit this program)" << endl;
 	} else {
 		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);

@@ -46,7 +46,7 @@ int WCH_GetNumDigits(int n);
 
 int main() {
 	WCH_Init();
-	while (WCH_command != "quit") {
+	while (true) {
 		if (WCH_ShortCutKeyCheck() && !WCH_cmd_line) {
 			WCH_SetWindowStatus(true);
 			if (WCH_anti_idle) {
@@ -62,16 +62,8 @@ int main() {
 				WCH_printlog(WCH_LOG_MODE_RC, {"command", WCH_command});
 				WCH_command_support.find(WCH_command_list[0]) -> second();
 			} else {
-				if (WCH_command_list[0] == "quit") {
-					if ((int)WCH_command_list.size() != 1) {
-						WCH_Error(WCH_ERRNO_UNCORRECT);
-					} else {
-						break;
-					}
-				} else {
-					WCH_printlog(WCH_LOG_MODE_RC, {"unknown command", WCH_command});
-					WCH_Error(WCH_ERRNO_UNCORRECT);
-				}
+				WCH_printlog(WCH_LOG_MODE_RC, {"unknown command", WCH_command});
+				WCH_Error(WCH_ERRNO_UNCORRECT);
 			}
 			cout << endl;
 		}

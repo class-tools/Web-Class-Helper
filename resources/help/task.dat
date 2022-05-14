@@ -4,6 +4,9 @@ Usage:
 
 TASK ADD [process name]
 TASK DELETE [process name]
+TASK CLEAR
+
+"TASK CLEAR" has no parameters.
 
 All the things after the space behind "ADD" / "DELETE" will be read in.
 

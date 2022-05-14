@@ -5,6 +5,9 @@ Usage:
 CLOCK ADD [hour] [minute] [name]
 CLOCK CHANGE [hour] [minute] [name (new)]
 CLOCK DELETE [hour] [minute] [name]
+CLOCK CLEAR
+
+"CLOCK CLEAR" has no parameters.
 
 You can add a zero in front of [hour] / [minute] if it is less than 10.
 
