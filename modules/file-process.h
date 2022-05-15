@@ -6,108 +6,6 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef FILE_PROCESS_H
 #define FILE_PROCESS_H
-#include <cassert>
-#include <cctype>
-#include <cerrno>
-#include <cfloat>
-#include <ciso646>
-#include <climits>
-#include <clocale>
-#include <cmath>
-#include <csetjmp>
-#include <csignal>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cwchar>
-#include <cwctype>
-#include <ccomplex>
-#include <cfenv>
-#include <cinttypes>
-#include <cstdalign>
-#include <cstdbool>
-#include <cstdint>
-#include <ctgmath>
-#include <cuchar>
-#include <algorithm>
-#include <bitset>
-#include <complex>
-#include <deque>
-#include <exception>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <locale>
-#include <map>
-#include <memory>
-#include <new>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <typeinfo>
-#include <utility>
-#include <valarray>
-#include <vector>
-#include <array>
-#include <atomic>
-#include <chrono>
-#include <codecvt>
-#include <condition_variable>
-#include <forward_list>
-#include <future>
-#include <initializer_list>
-#include <mutex>
-#include <random>
-#include <ratio>
-#include <regex>
-#include <scoped_allocator>
-#include <system_error>
-#include <thread>
-#include <tuple>
-#include <typeindex>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <shared_mutex>
-#include <any>
-#include <charconv>
-#include <filesystem>
-#include <optional>
-#include <memory_resource>
-#include <string_view>
-#include <variant>
-#include <bit>
-#include <compare>
-#include <concepts>
-#include <coroutine>
-#include <numbers>
-#include <ranges>
-#include <span>
-#include <stop_token>
-#include <version>
-#include <io.h>
-#include <windows.h>
-#include <wininet.h>
-#include <tlhelp32.h>
-#include <conio.h>
-#include <direct.h>
-#include <VersionHelpers.h>
 #include "init.h"
 #include "commands.h"
 #include "functions.h"
@@ -140,49 +38,17 @@ extern wifstream wfin;
 extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(string INFO);
-void WCH_printlog(int w, initializer_list <string> other);
+void WCH_Error(int _in);
+void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
 
-void WCH_printlog(int w, initializer_list <string> other) {
+void WCH_printlog(string _mode, string _info) {
 	// Print log.
 	WCH_Time now = WCH_GetTime();
-	string tmp = format("[{:02}:{:02}:{:02}]", now.Hour, now.Minute, now.Second);
-	string tmps = "";
-	string tt[21];
-	int pos = 0;
-	for (auto it = other.begin(); it != other.end(); it++) {
-		if (*it == "r") {
-			tt[pos++] = "Reading";
-		} else if (*it == "w") {
-			tt[pos++] = "Writing";
-		} else if (*it == "s") {
-			tt[pos++] = "Starting";
-		} else if (*it == "e") {
-			tt[pos++] = "Exiting";
-		} else {
-			tt[pos++] = *it;
-		}
-	}
-	if (w == WCH_LOG_MODE_ST) {
-		tmps = format("{} {}: {} \"Web Class Helper (x{})\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
-	} else if (w == WCH_LOG_MODE_INFO) {
-		tmps = format("{} {}: {}.", tmp, tt[0].c_str(), tt[1].c_str());
-	} else if (w == WCH_LOG_MODE_RC) {
-		tmps = format("{} {}: Using {} \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
-	} else if (w == WCH_LOG_MODE_RW) {
-		tmps = format("{} {}: {} file \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
-	} else if (w == WCH_LOG_MODE_KT) {
-		tmps = format("{} {}: {} task \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
-	} else if (w == WCH_LOG_MODE_WD) {
-		tmps = format("{} {}: \"{}\" argument \"{}\" was set to \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str(), tt[2].c_str());
-	} else if (w == WCH_LOG_MODE_UPD) {
-		tmps = format("{} {}: {} \"{}\".", tmp, WCH_LOG_STATUS_INFO, tt[0].c_str(), tt[1].c_str());
-	}
 	fout.open("logs/latest.log", ios::app);
-	fout << tmps << endl;
+	fout << format("[{:02}:{:02}:{:02}] {}: {}.", now.Hour, now.Minute, now.Second, _mode, _info) << endl;
 	fout.close();
 }
 
@@ -191,7 +57,7 @@ void WCH_read_clock() {
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "data/" + NowWeekDay + ".dat";
-	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
@@ -213,7 +79,7 @@ void WCH_read_clock() {
 void WCH_read_task() {
 	// Read task data.
 	string FilePath = "data/task.dat";
-	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
@@ -231,7 +97,7 @@ void WCH_read_task() {
 void WCH_read_work() {
 	// Read work data.
 	string FilePath = "data/work.dat";
-	WCH_printlog(WCH_LOG_MODE_RW, {"r", FilePath});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
@@ -268,12 +134,12 @@ void WCH_save_clock() {
 	string FilePath = "data/" + NowWeekDay + ".dat";
 	if (WCH_clock_num == 0) {
 		if (_access(FilePath.c_str(), 0) != -1) {
+			WCH_printlog(WCH_LOG_STATUS_INFO, "Deleting file \"" + FilePath + "\"");
 			DeleteFileA(FilePath.c_str());
 		}
-		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
 	}
-	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Writing file \"" + FilePath + "\"");
 	fout.open(FilePath);
 	fout << WCH_clock_num << endl;
 	for (int i = 0; i <= 24; i++) {
@@ -289,12 +155,12 @@ void WCH_save_task() {
 	string FilePath = "data/task.dat";
 	if (WCH_task_num == 0) {
 		if (_access(FilePath.c_str(), 0) != -1) {
+			WCH_printlog(WCH_LOG_STATUS_INFO, "Deleting file \"" + FilePath + "\"");
 			DeleteFileA(FilePath.c_str());
 		}
-		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
 	}
-	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Writing file \"" + FilePath + "\"");
 	fout.open(FilePath);
 	fout << WCH_task_num << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
@@ -308,12 +174,12 @@ void WCH_save_work() {
 	string FilePath = "data/work.dat";
 	if (WCH_work_num == 0) {
 		if (_access(FilePath.c_str(), 0) != -1) {
+			WCH_printlog(WCH_LOG_STATUS_INFO, "Deleting file \"" + FilePath + "\"");
 			DeleteFileA(FilePath.c_str());
 		}
-		WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
 		return;
 	}
-	WCH_printlog(WCH_LOG_MODE_RW, {"w", FilePath});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Writing file \"" + FilePath + "\"");
 	fout.open(FilePath);
 	fout << WCH_work_num << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
@@ -333,7 +199,7 @@ void WCH_save() {
 	WCH_save_clock();
 	WCH_save_task();
 	WCH_save_work();
-	WCH_printlog(WCH_LOG_MODE_ST, {"e", to_string(WCH_DisplayFramework)});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Exiting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
 	WCH_Sleep(1000);
 	if (WCH_clock_num != 0 && WCH_task_num != 0 && WCH_work_num != 0) {
 		thread T(WCH_ProgressBar);

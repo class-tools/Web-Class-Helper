@@ -6,108 +6,6 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
-#include <cassert>
-#include <cctype>
-#include <cerrno>
-#include <cfloat>
-#include <ciso646>
-#include <climits>
-#include <clocale>
-#include <cmath>
-#include <csetjmp>
-#include <csignal>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cwchar>
-#include <cwctype>
-#include <ccomplex>
-#include <cfenv>
-#include <cinttypes>
-#include <cstdalign>
-#include <cstdbool>
-#include <cstdint>
-#include <ctgmath>
-#include <cuchar>
-#include <algorithm>
-#include <bitset>
-#include <complex>
-#include <deque>
-#include <exception>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <locale>
-#include <map>
-#include <memory>
-#include <new>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <typeinfo>
-#include <utility>
-#include <valarray>
-#include <vector>
-#include <array>
-#include <atomic>
-#include <chrono>
-#include <codecvt>
-#include <condition_variable>
-#include <forward_list>
-#include <future>
-#include <initializer_list>
-#include <mutex>
-#include <random>
-#include <ratio>
-#include <regex>
-#include <scoped_allocator>
-#include <system_error>
-#include <thread>
-#include <tuple>
-#include <typeindex>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <shared_mutex>
-#include <any>
-#include <charconv>
-#include <filesystem>
-#include <optional>
-#include <memory_resource>
-#include <string_view>
-#include <variant>
-#include <bit>
-#include <compare>
-#include <concepts>
-#include <coroutine>
-#include <numbers>
-#include <ranges>
-#include <span>
-#include <stop_token>
-#include <version>
-#include <io.h>
-#include <windows.h>
-#include <wininet.h>
-#include <tlhelp32.h>
-#include <conio.h>
-#include <direct.h>
-#include <VersionHelpers.h>
 #include "file-process.h"
 #include "init.h"
 #include "commands.h"
@@ -140,8 +38,8 @@ extern wifstream wfin;
 extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(string INFO);
-void WCH_printlog(int w, initializer_list <string> other);
+void WCH_Error(int _in);
+void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
@@ -167,37 +65,37 @@ string WCH_TransStrChar(string str) {
 	// Translate the upper cases in string to lower cases.
 	for (int i = 0; i < (int)str.size(); i++) {
 		if (str[i] >= 'A' && str[i] <= 'Z') {
-			str[i] = tolower(str[i]);
+			str[i] = (char)tolower(str[i]);
 		}
 	}
 	return str;
 }
 
-void WCH_Error(string INFO) {
+void WCH_Error(int _in) {
 	// Error message checker.
-	string tmp;
-	string mode;
-	if (INFO == WCH_ERRNO_UNCORRECT) {
-		tmp = "Your input code is uncorrect, please check and try again";
-		mode = WCH_LOG_STATUS_WARN;
-	} else if (INFO == WCH_ERRNO_NETWORK_FAILURE) {
-		tmp = "An network error occurred, please check your network connection and try to update this program";
-		mode = WCH_LOG_STATUS_ERROR;
-	} else if (INFO == WCH_ERRNO_FILE_NOT_FOUND) {
-		tmp = "File processing failed. Please try reinstalling this program";
-		mode = WCH_LOG_STATUS_ERROR;
-	} else if (INFO == WCH_ERRNO_CLOCK_OPERATION) {
-		tmp = "Cannot operate the clock list, please try to restart this program";
-		mode = WCH_LOG_STATUS_ERROR;
-	} else if (INFO == WCH_ERRNO_TASK_OPERATION) {
-		tmp = "Cannot operate the task list, please try to restart this program";
-		mode = WCH_LOG_STATUS_ERROR;
-	} else if (INFO == WCH_ERRNO_WORK_OPERATION) {
-		tmp = "Cannot operate the work list, please try to restart this program";
-		mode = WCH_LOG_STATUS_ERROR;
+	string _info;
+	string _mode;
+	if (_in == WCH_ERRNO_UNCORRECT) {
+		_info = "Your input code is uncorrect, please check and try again";
+		_mode = WCH_LOG_STATUS_WARN;
+	} else if (_in == WCH_ERRNO_NETWORK_FAILURE) {
+		_info = "An network error occurred, please check your network connection and try to update this program";
+		_mode = WCH_LOG_STATUS_WARN;
+	} else if (_in == WCH_ERRNO_FILE_NOT_FOUND) {
+		_info = "File processing failed. Please try reinstalling this program";
+		_mode = WCH_LOG_STATUS_ERROR;
+	} else if (_in == WCH_ERRNO_CLOCK_OPERATION) {
+		_info = "Cannot operate the clock list, please try to restart this program";
+		_mode = WCH_LOG_STATUS_ERROR;
+	} else if (_in == WCH_ERRNO_TASK_OPERATION) {
+		_info = "Cannot operate the task list, please try to restart this program";
+		_mode = WCH_LOG_STATUS_ERROR;
+	} else if (_in == WCH_ERRNO_WORK_OPERATION) {
+		_info = "Cannot operate the work list, please try to restart this program";
+		_mode = WCH_LOG_STATUS_ERROR;
 	}
-	cout << tmp << "." << endl;
-	WCH_printlog(WCH_LOG_MODE_INFO, {mode, tmp});
+	cout << _info << "." << endl;
+	WCH_printlog(_mode, _info);
 }
 
 bool WCH_ShortCutKeyCheck() {

@@ -115,19 +115,12 @@ Contributors: jsh-jsh ren-yc
 #include "apis.h"
 using namespace std;
 
-#define WCH_ERRNO_UNCORRECT "OOR"
-#define WCH_ERRNO_NETWORK_FAILURE "NF"
-#define WCH_ERRNO_FILE_NOT_FOUND "FNF"
-#define WCH_ERRNO_CLOCK_OPERATION "CO"
-#define WCH_ERRNO_TASK_OPERATION "TO"
-#define WCH_ERRNO_WORK_OPERATION "WO"
-#define WCH_LOG_MODE_ST -1
-#define WCH_LOG_MODE_INFO 0
-#define WCH_LOG_MODE_RC 1
-#define WCH_LOG_MODE_RW 2
-#define WCH_LOG_MODE_KT 3
-#define WCH_LOG_MODE_WD 4
-#define WCH_LOG_MODE_UPD 5
+#define WCH_ERRNO_UNCORRECT 0
+#define WCH_ERRNO_NETWORK_FAILURE 1
+#define WCH_ERRNO_FILE_NOT_FOUND 2
+#define WCH_ERRNO_CLOCK_OPERATION 3
+#define WCH_ERRNO_TASK_OPERATION 4
+#define WCH_ERRNO_WORK_OPERATION 5
 #define WCH_LOG_STATUS_INFO "[INFO]"
 #define WCH_LOG_STATUS_WARN "[WARN]"
 #define WCH_LOG_STATUS_ERROR "[ERROR]"
@@ -176,8 +169,8 @@ wifstream wfin;
 wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(string INFO);
-void WCH_printlog(int w, initializer_list <string> other);
+void WCH_Error(int _in);
+void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);

@@ -6,118 +6,12 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef COMMANDS_H
 #define COMMANDS_H
-#include <cassert>
-#include <cctype>
-#include <cerrno>
-#include <cfloat>
-#include <ciso646>
-#include <climits>
-#include <clocale>
-#include <cmath>
-#include <csetjmp>
-#include <csignal>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cwchar>
-#include <cwctype>
-#include <ccomplex>
-#include <cfenv>
-#include <cinttypes>
-#include <cstdalign>
-#include <cstdbool>
-#include <cstdint>
-#include <ctgmath>
-#include <cuchar>
-#include <algorithm>
-#include <bitset>
-#include <complex>
-#include <deque>
-#include <exception>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <locale>
-#include <map>
-#include <memory>
-#include <new>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <typeinfo>
-#include <utility>
-#include <valarray>
-#include <vector>
-#include <array>
-#include <atomic>
-#include <chrono>
-#include <codecvt>
-#include <condition_variable>
-#include <forward_list>
-#include <future>
-#include <initializer_list>
-#include <mutex>
-#include <random>
-#include <ratio>
-#include <regex>
-#include <scoped_allocator>
-#include <system_error>
-#include <thread>
-#include <tuple>
-#include <typeindex>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <shared_mutex>
-#include <any>
-#include <charconv>
-#include <filesystem>
-#include <optional>
-#include <memory_resource>
-#include <string_view>
-#include <variant>
-#include <bit>
-#include <compare>
-#include <concepts>
-#include <coroutine>
-#include <numbers>
-#include <ranges>
-#include <span>
-#include <stop_token>
-#include <version>
-#include <io.h>
-#include <windows.h>
-#include <wininet.h>
-#include <tlhelp32.h>
-#include <conio.h>
-#include <direct.h>
-#include <VersionHelpers.h>
 #include "file-process.h"
 #include "init.h"
 #include "functions.h"
 #include "apis.h"
 #include "variables.h"
 using namespace std;
-
-#ifdef URLDownloadToFile
-#undef URLDownloadToFile
-#endif
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -144,11 +38,15 @@ extern wifstream wfin;
 extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(string INFO);
-void WCH_printlog(int w, initializer_list <string> other);
+void WCH_Error(int _in);
+void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
+
+#ifdef URLDownloadToFile
+#undef URLDownloadToFile
+#endif
 
 typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
 UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary(L"urlmon.dll"), "URLDownloadToFileA");
@@ -203,15 +101,15 @@ void WCH_update() {
 		fin.close();
 		WCH_Sleep(5000);
 		if (res == "") {
-			throw runtime_error(WCH_ERRNO_NETWORK_FAILURE);
+			throw runtime_error("WCH_ERRNO_NETWORK_FAILURE: \"Check Update\"");
 		}
 		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER), WCH_GetVersion(res))) {
 			cout << "Program version is less than latest released version, jumping to releases page..." << endl;
 			system("start resources/website/releases.url");
-			WCH_printlog(WCH_LOG_MODE_UPD, {"Updating to version", res});
+			WCH_printlog(WCH_LOG_STATUS_INFO, "Updating to version \"" + res + "\"");
 		} else {
 			cout << "Program version equals or is greater than latest released version." << endl;
-			WCH_printlog(WCH_LOG_MODE_UPD, {"Program version equals or is greater than", res});
+			WCH_printlog(WCH_LOG_STATUS_INFO, "Program version equals or is greater than \"" + res + "\"");
 		}
 		DeleteFile(L"WCH_UPD.tmp");
 	} catch (...) {
@@ -568,13 +466,13 @@ void WCH_game() {
 		return;
 	}
 	srand((unsigned)time(NULL));
-	int WCH_clock_num = rand() % 10000 + 1;
+	int ans = rand() % 10000 + 1;
 	bool flag = true;
 	string z = "0";
 	vector <string> zv;
 	zv.push_back("0");
 	try {
-		while (stoi(zv[0]) != WCH_clock_num) {
+		while (stoi(zv[0]) != ans) {
 			BEGIN: cout << "Please input your number (1 ~ 10000): ";
 			getline(cin, z);
 			zv = WCH_split(z);
@@ -589,9 +487,9 @@ void WCH_game() {
 				}
 			} else if (zv[0][0] == '-' || zv[0][0] == '0' || (zv[0].size() >= 5 && zv[0] != "10000")) {
 				cout << "Number out of range." << endl;
-			} else if (stoi(zv[0]) > WCH_clock_num) {
+			} else if (stoi(zv[0]) > ans) {
 				cout << "The answer is smaller." << endl;
-			} else if (stoi(zv[0]) < WCH_clock_num) {
+			} else if (stoi(zv[0]) < ans) {
 				cout << "The answer is bigger." << endl;
 			}
 		}
@@ -599,7 +497,7 @@ void WCH_game() {
 		cout << "Number out of range." << endl;
 		goto BEGIN;
 	}
-	END: cout << "The number is " << WCH_clock_num << ".";
+	END: cout << "The number is " << ans << ".";
 	if (flag) {
 		cout << " You WIN!";
 	}
@@ -628,6 +526,7 @@ void WCH_pi() {
 	WCH_PutPicture();
 	WCH_SetWindowStatus(true);
 	WCH_SaveImg();
+	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl;
 }
 
 void WCH_check_task_loop() {
@@ -635,9 +534,9 @@ void WCH_check_task_loop() {
 	while (WCH_anti_idle && !WCH_program_end) {
 		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 			if (WCH_TaskKill(*it)) {
-				WCH_printlog(WCH_LOG_MODE_KT, {"Successfully killed", *it});
+				WCH_printlog(WCH_LOG_STATUS_INFO, "Successfully killed \"" + *it + "\"");
 			} else {
-				WCH_printlog(WCH_LOG_MODE_KT, {"Failed to kill", *it});
+				WCH_printlog(WCH_LOG_STATUS_INFO, "Failed to kill \"" + *it + "\"");
 			}
 		}
 		WCH_Sleep(15000);
@@ -683,11 +582,15 @@ void WCH_trans() {
 		system(info.c_str());
 		WCH_Sleep(1000);
 		WCH_cmd_line = false;
-		fin.open("WCH_TRANS.tmp");
-		getline(fin, res);
-		cout << res << endl;
-		fin.close();
-		DeleteFile(L"WCH_TRANS.tmp");
+		if (_access("WCH_TRANS.tmp", 0) != -1) {
+			fin.open("WCH_TRANS.tmp");
+			getline(fin, res);
+			cout << res << endl;
+			fin.close();
+			DeleteFile(L"WCH_TRANS.tmp");
+		} else {
+			throw runtime_error("WCH_ERRNO_NETWORK_FAILURE: \"Youdao Translation\"");
+		}
 		WCH_cmd_line = true;
 	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
@@ -705,12 +608,16 @@ void WCH_ow() {
 		URLDownloadToFile(0, "https://v1.hitokoto.cn/?encode=text", "WCH_STDL.tmp", 0, 0);
 		WCH_Sleep(1000);
 		WCH_cmd_line = false;
-		fin.open("WCH_STDL.tmp");
-		string res;
-		getline(fin, res);
-		cout << UTF8ToANSI(res) << endl;
-		fin.close();
-		DeleteFile(L"WCH_STDL.tmp");
+		if (_access("WCH_STDL.tmp", 0) != -1) {
+			fin.open("WCH_STDL.tmp");
+			string res;
+			getline(fin, res);
+			cout << UTF8ToANSI(res) << endl;
+			fin.close();
+			DeleteFile(L"WCH_STDL.tmp");
+		} else {
+			throw runtime_error("WCH_ERRNO_NETWORK_FAILURE: \"Random Sentence\"");
+		}
 		WCH_cmd_line = true;
 	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
@@ -731,30 +638,16 @@ void WCH_time() {
 void WCH_help() {
 	// Print help information.
 	if ((int)WCH_command_list.size() == 1) {
-		cout << "If you want to get the full information of a command, please input \"HELP {command name}\"." << endl;
-		cout << "clock add {hour} {minute} {name} (Add clock at {hour}:{minute})" << endl;
-		cout << "clock delete {hour} {minute} {name} (Delete clock at {hour}:{minute})" << endl;
-		cout << "clock change {hour} {minute} {name} (Change clock at {hour}:{minute})" << endl;
-		cout << "clock list (List all clocks)" << endl;
-		cout << "task add {process name} (Add task {process name} to kill when enable \"anti-idle\")" << endl;
-		cout << "task delete {process name} (Delete task {process name} to kill when enable \"anti-idle\")" << endl;
-		cout << "task list (List all tasks)" << endl;
-		cout << "work add {name} (Add {name} to work plan)" << endl;
-		cout << "work done {name} (Done work plan item {name})" << endl;
-		cout << "work list (List all items in work plan)" << endl;
-		cout << "help (Get help output)" << endl;
-		cout << "ow (Get a sentence) **From web**" << endl;
-		cout << "hide (Hide the command line window)" << endl;
-		cout << "game (Guessing game)" << endl;
-		cout << "time (Get time at once)" << endl;
-		cout << "pi (Make a screenshot and save in \"Pictures\" folder)" << endl;
-		cout << "speedtest (Start a speed test with a GUI window)" << endl;
-		cout << "trans {info} (Translate a sentence between English / Chinese) **From web**" << endl;
-		cout << "anti-idle (Enable anti-idle mode)" << endl;
-		cout << "update (Visit the releases page in default browser)" << endl;
-		cout << "license (Print license information)" << endl;
-		cout << "wiki (Jump to program wiki page in default browser)" << endl;
-		cout << "quit (Quit this program)" << endl;
+		if (_access("resources/help/index.dat", 0) != -1) {
+			string _res;
+			fin.open("resources/help/index.dat");
+			while (getline(fin, _res)) {
+				cout << _res << endl;
+			}
+			fin.close();
+		} else {
+			WCH_Error(WCH_ERRNO_FILE_NOT_FOUND);
+		}
 	} else {
 		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
 		if ((int)WCH_command_list.size() == 2 && _access(("resources/help/" + WCH_command_list[1] + ".dat").c_str(), 0) != -1) {

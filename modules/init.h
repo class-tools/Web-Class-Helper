@@ -6,108 +6,6 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef INIT_H
 #define INIT_H
-#include <cassert>
-#include <cctype>
-#include <cerrno>
-#include <cfloat>
-#include <ciso646>
-#include <climits>
-#include <clocale>
-#include <cmath>
-#include <csetjmp>
-#include <csignal>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cwchar>
-#include <cwctype>
-#include <ccomplex>
-#include <cfenv>
-#include <cinttypes>
-#include <cstdalign>
-#include <cstdbool>
-#include <cstdint>
-#include <ctgmath>
-#include <cuchar>
-#include <algorithm>
-#include <bitset>
-#include <complex>
-#include <deque>
-#include <exception>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <locale>
-#include <map>
-#include <memory>
-#include <new>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <typeinfo>
-#include <utility>
-#include <valarray>
-#include <vector>
-#include <array>
-#include <atomic>
-#include <chrono>
-#include <codecvt>
-#include <condition_variable>
-#include <forward_list>
-#include <future>
-#include <initializer_list>
-#include <mutex>
-#include <random>
-#include <ratio>
-#include <regex>
-#include <scoped_allocator>
-#include <system_error>
-#include <thread>
-#include <tuple>
-#include <typeindex>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <shared_mutex>
-#include <any>
-#include <charconv>
-#include <filesystem>
-#include <optional>
-#include <memory_resource>
-#include <string_view>
-#include <variant>
-#include <bit>
-#include <compare>
-#include <concepts>
-#include <coroutine>
-#include <numbers>
-#include <ranges>
-#include <span>
-#include <stop_token>
-#include <version>
-#include <io.h>
-#include <windows.h>
-#include <wininet.h>
-#include <tlhelp32.h>
-#include <conio.h>
-#include <direct.h>
-#include <VersionHelpers.h>
 #include "functions.h"
 #include "file-process.h"
 #include "commands.h"
@@ -140,8 +38,8 @@ extern wifstream wfin;
 extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(string INFO);
-void WCH_printlog(int w, initializer_list <string> other);
+void WCH_Error(int _in);
+void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
@@ -174,12 +72,12 @@ int WCH_Init_Log() {
 
 void WCH_Init_Win() {
 	// Initialization for window.
-	SetConsoleTitleA(format("Web Class Helper (x{})", to_string(WCH_DisplayFramework)).c_str());
+	SetConsoleTitleA(("Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")").c_str());
 }
 
 void WCH_Init_Bind() {
 	// Initialization for bind.
-	WCH_printlog(WCH_LOG_MODE_ST, {"s", to_string(WCH_DisplayFramework)});
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Starting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
 	atexit(WCH_save);
 	WCH_signalHandler();
 	WCH_SetWindowStatus(true);
@@ -187,22 +85,22 @@ void WCH_Init_Bind() {
 
 void WCH_Init_Cmd() {
 	// Initialization for command support list.
-	WCH_command_support.insert(pair <string, function <void ()>> ("clock", WCH_check_clock));
-	WCH_command_support.insert(pair <string, function <void ()>> ("task", WCH_check_task));
-	WCH_command_support.insert(pair <string, function <void ()>> ("work", WCH_check_work));
-	WCH_command_support.insert(pair <string, function <void ()>> ("help", WCH_help));
-	WCH_command_support.insert(pair <string, function <void ()>> ("ow", WCH_ow));
-	WCH_command_support.insert(pair <string, function <void ()>> ("hide", WCH_hide));
-	WCH_command_support.insert(pair <string, function <void ()>> ("game", WCH_game));
-	WCH_command_support.insert(pair <string, function <void ()>> ("time", WCH_time));
-	WCH_command_support.insert(pair <string, function <void ()>> ("pi", WCH_pi));
-	WCH_command_support.insert(pair <string, function <void ()>> ("speedtest", WCH_speedtest));
-	WCH_command_support.insert(pair <string, function <void ()>> ("trans", WCH_trans));
-	WCH_command_support.insert(pair <string, function <void ()>> ("anti-idle", WCH_anti_idle_func));
-	WCH_command_support.insert(pair <string, function <void ()>> ("update", WCH_update));
-	WCH_command_support.insert(pair <string, function <void ()>> ("wiki", WCH_wiki));
-	WCH_command_support.insert(pair <string, function <void ()>> ("license", WCH_license));
-	WCH_command_support.insert(pair <string, function <void ()>> ("quit", WCH_quit));
+	WCH_command_support.insert(make_pair("clock", WCH_check_clock));
+	WCH_command_support.insert(make_pair("task", WCH_check_task));
+	WCH_command_support.insert(make_pair("work", WCH_check_work));
+	WCH_command_support.insert(make_pair("help", WCH_help));
+	WCH_command_support.insert(make_pair("ow", WCH_ow));
+	WCH_command_support.insert(make_pair("hide", WCH_hide));
+	WCH_command_support.insert(make_pair("game", WCH_game));
+	WCH_command_support.insert(make_pair("time", WCH_time));
+	WCH_command_support.insert(make_pair("pi", WCH_pi));
+	WCH_command_support.insert(make_pair("speedtest", WCH_speedtest));
+	WCH_command_support.insert(make_pair("trans", WCH_trans));
+	WCH_command_support.insert(make_pair("anti-idle", WCH_anti_idle_func));
+	WCH_command_support.insert(make_pair("update", WCH_update));
+	WCH_command_support.insert(make_pair("wiki", WCH_wiki));
+	WCH_command_support.insert(make_pair("license", WCH_license));
+	WCH_command_support.insert(make_pair("quit", WCH_quit));
 }
 
 void WCH_Init_Out() {

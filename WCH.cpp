@@ -38,8 +38,8 @@ extern wifstream wfin;
 extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(string INFO);
-void WCH_printlog(int w, initializer_list <string> other);
+void WCH_Error(int _in);
+void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
@@ -59,10 +59,10 @@ int main() {
 		if (WCH_cmd_line) {
 			WCH_CL_Init();
 			if (WCH_command_support.find(WCH_command_list[0]) != WCH_command_support.end()) {
-				WCH_printlog(WCH_LOG_MODE_RC, {"command", WCH_command});
+				WCH_printlog(WCH_LOG_STATUS_INFO, "Using command \"" + WCH_command + "\"");
 				WCH_command_support.find(WCH_command_list[0]) -> second();
 			} else {
-				WCH_printlog(WCH_LOG_MODE_RC, {"unknown command", WCH_command});
+				WCH_printlog(WCH_LOG_STATUS_INFO, "Using unknown command \"" + WCH_command + "\"");
 				WCH_Error(WCH_ERRNO_UNCORRECT);
 			}
 			cout << endl;

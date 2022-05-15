@@ -1,0 +1,27 @@
+If you want to get the full information of a command, please input "HELP {command name}".
+clock add {hour} {minute} {name} (Add clock at {hour}:{minute})
+clock delete {hour} {minute} {name} (Delete clock at {hour}:{minute})
+clock change {hour} {minute} {name} (Change clock at {hour}:{minute})
+clock list (List all clocks)
+clock clear (Clear clock list)
+task add {process name} (Add task {process name} to kill when enable "anti-idle")
+task delete {process name} (Delete task {process name} to kill when enable "anti-idle")
+task list (List all tasks)
+task clear (Clear task list)
+work add {name} (Add {name} to work plan)
+work done {name} (Done work plan item {name})
+work list (List all items in work plan)
+work clear (Clear work list)
+help (Get help output)
+ow (Get a sentence) **Need Internet**
+hide (Hide the command line window)
+game (Guessing game)
+time (Get time at once)
+pi (Make a screenshot and save in "Pictures" folder)
+speedtest (Start a speed test with a GUI window) **Need Internet**
+trans {info} (Translate a sentence between English / Chinese) **Need Internet**
+anti-idle (Enable anti-idle mode)
+update (Visit the releases page in default browser) **Need Internet**
+wiki (Jump to program wiki page in default browser) **Need Internet**
+license (Print license information)
+quit (Quit this program)

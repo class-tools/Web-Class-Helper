@@ -6,108 +6,6 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef APIS_H
 #define APIS_H
-#include <cassert>
-#include <cctype>
-#include <cerrno>
-#include <cfloat>
-#include <ciso646>
-#include <climits>
-#include <clocale>
-#include <cmath>
-#include <csetjmp>
-#include <csignal>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cwchar>
-#include <cwctype>
-#include <ccomplex>
-#include <cfenv>
-#include <cinttypes>
-#include <cstdalign>
-#include <cstdbool>
-#include <cstdint>
-#include <ctgmath>
-#include <cuchar>
-#include <algorithm>
-#include <bitset>
-#include <complex>
-#include <deque>
-#include <exception>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <locale>
-#include <map>
-#include <memory>
-#include <new>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <typeinfo>
-#include <utility>
-#include <valarray>
-#include <vector>
-#include <array>
-#include <atomic>
-#include <chrono>
-#include <codecvt>
-#include <condition_variable>
-#include <forward_list>
-#include <future>
-#include <initializer_list>
-#include <mutex>
-#include <random>
-#include <ratio>
-#include <regex>
-#include <scoped_allocator>
-#include <system_error>
-#include <thread>
-#include <tuple>
-#include <typeindex>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <shared_mutex>
-#include <any>
-#include <charconv>
-#include <filesystem>
-#include <optional>
-#include <memory_resource>
-#include <string_view>
-#include <variant>
-#include <bit>
-#include <compare>
-#include <concepts>
-#include <coroutine>
-#include <numbers>
-#include <ranges>
-#include <span>
-#include <stop_token>
-#include <version>
-#include <io.h>
-#include <windows.h>
-#include <wininet.h>
-#include <tlhelp32.h>
-#include <conio.h>
-#include <direct.h>
-#include <VersionHelpers.h>
 #include "file-process.h"
 #include "init.h"
 #include "commands.h"
@@ -140,8 +38,8 @@ extern wifstream wfin;
 extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(string INFO);
-void WCH_printlog(int w, initializer_list <string> other);
+void WCH_Error(int _in);
+void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
@@ -221,26 +119,26 @@ void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_hWnd, flag);
 	WCH_cmd_line = flag;
-	WCH_printlog(WCH_LOG_MODE_WD, {"CONSOLE", "STATUS", (flag == true ? "SHOW" : "HIDE")});
+	WCH_printlog(WCH_LOG_STATUS_INFO, format("\"CONSOLE\" argument \"STATUS\" was set to {}", (flag == true ? "\"SHOW\"" : "\"HIDE\"")));
 }
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindow(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
-	WCH_printlog(WCH_LOG_MODE_WD, {"TRAY", "STATUS", (flag == true ? "SHOW" : "HIDE")});
+	WCH_printlog(WCH_LOG_STATUS_INFO, format("\"TRAY\" argument \"STATUS\" was set to {}", (flag == true ? "\"SHOW\"" : "\"HIDE\"")));
 }
 
 void WCH_SetWindowSize(int mode, HWND hWnd) {
 	// Set the window size by Windows API.
 	ShowWindow(hWnd, mode);
-	WCH_printlog(WCH_LOG_MODE_WD, {"CURWND", "SIZE", (mode == SW_MAXIMIZE ? "MAXIMIZE" : "NORMAL")});
+	WCH_printlog(WCH_LOG_STATUS_INFO, format("\"CURWND\" argument \"SIZE\" was set to {}", (mode == SW_MAXIMIZE ? "\"MAXIMIZE\"" : "\"NORMAL\"")));
 }
 
 void WCH_PutPicture() {
 	// Press PrintScreen. (Keyboard)
 	keybd_event(VK_SNAPSHOT, 0, 0, 0);
 	keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
-	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl;
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Copying screenshot to clipboard");
 }
 
 void WCH_SaveImg() {
@@ -248,6 +146,7 @@ void WCH_SaveImg() {
 	string tmp = "IMG";
 	tmp += to_string(WCH_Framework);
 	tmp += ".EXE";
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving the screenshot to \"Pictures\" folder");
 	system(tmp.c_str());
 	WCH_Sleep(500);
 }
@@ -372,7 +271,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Program interrupted)"});
+		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program interrupted)");
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program interrupted\"").c_str());
 		exit(signum);
@@ -387,7 +286,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Program aborted)"});
+		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program aborted)");
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program aborted\"").c_str());
 		exit(signum);
@@ -402,7 +301,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Operation overflow)"});
+		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Operation overflow)");
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Operation overflow\"").c_str());
 		exit(signum);
@@ -417,7 +316,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Illegal instruction)"});
+		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Illegal instruction)");
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Illegal instruction\"").c_str());
 		exit(signum);
@@ -432,7 +331,7 @@ void WCH_signalHandler() {
 		cout << endl;
 		WCH_save();
 		WCH_Sleep(100);
-		WCH_printlog(WCH_LOG_MODE_INFO, {"Signal " + to_string(signum) + " detected (Access to illegal memory)"});
+		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Access to illegal memory)");
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Access to illegal memory\"").c_str());
 		exit(signum);
