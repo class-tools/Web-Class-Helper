@@ -6,7 +6,7 @@ TRANS [info]
 
 All the things after the space behind "TRANS" will be read in.
 
-Please do not use double quotation mark like:
+Please do not use double quotation mark like this:
 
 TRANS "Hello world!"
 

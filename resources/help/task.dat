@@ -10,7 +10,7 @@ TASK CLEAR
 
 All the things after the space behind "ADD" / "DELETE" will be read in.
 
-Please do not use double quotation mark like:
+Please do not use double quotation mark like this:
 
 TASK ADD "explorer 1.exe"
 
