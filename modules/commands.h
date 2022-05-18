@@ -138,6 +138,10 @@ void WCH_license() {
 
 void WCH_add_clock() {
 	// Add a new clock.
+	if ((int)WCH_command_list.size() < 5) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
 	try {
 		int h = stoi(WCH_command_list[2]);
 		int m = stoi(WCH_command_list[3]);
