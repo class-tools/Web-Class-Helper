@@ -527,9 +527,13 @@ void WCH_pi() {
 		return;
 	}
 	WCH_SetWindowStatus(false);
+	WCH_Sleep(500);
 	WCH_PutPicture();
+	WCH_Sleep(500);
 	WCH_SetWindowStatus(true);
+	WCH_Sleep(500);
 	WCH_SaveImg();
+	WCH_Sleep(500);
 	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl;
 }
 

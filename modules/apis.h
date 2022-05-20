@@ -148,7 +148,6 @@ void WCH_SaveImg() {
 	tmp += ".EXE";
 	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving the screenshot to \"Pictures\" folder");
 	system(tmp.c_str());
-	WCH_Sleep(500);
 }
 
 bool WCH_TaskKill(string name) {
@@ -249,10 +248,11 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 
 void WCH_ProgressBar() {
 	// Progress bar.
+	int _pro = 100 / WCH_ProgressBarTot;
 	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
-	for (int i = WCH_ProgressBarTot; i > 1 && !WCH_program_end; i--) {
+	for (int i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end; i--) {
 		WCH_Sleep(1000);
-		WCH_PrintProgressBar(i, 100 / i, true);
+		WCH_PrintProgressBar(i, (WCH_ProgressBarTot - i) * _pro, true);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
