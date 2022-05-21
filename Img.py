@@ -1,5 +1,5 @@
 '''
-Web Class Helper Image Grabbing Module 2.0.0
+Web Class Helper Image Grabbing Module 2.0.1-alpha.2
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc hjl2011
@@ -13,6 +13,9 @@ import datetime as dt
 f = open('data/pi-save.dat','r')
 
 pi_savepath = str(f.read())
+pispLen = int(len(pi_savepath))
+if pi_savepath[pispLen - 1] == '/' or pi_savepath[pispLen - 1] == '/' :
+    pi_savepath = pi_savepath[:-1]
 
 if pi_savepath == "" or not(p.exists(pi_savepath)) :
     print("Path does not exist.\nPlease modify the value in data/pi-save.dat .")
