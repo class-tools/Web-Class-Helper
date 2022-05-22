@@ -150,4 +150,19 @@ void WCH_CL_Init() {
 	WCH_wait_cmd = false;
 }
 
+int WCH_rand(int x, int y) {
+    // get a rand number from[x,y]
+    // (default have already use "srand")
+    return (long long)rand() % (y - x + 1) + x;
+}
+
+string WCH_print_space(int x) {
+    // output a quantity of spaces
+    string str = "";
+    for (int i = 1; i <= x; i++) {
+        str.push_back(' ');
+    }
+    return str;
+}
+
 #endif
