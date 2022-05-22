@@ -1,5 +1,5 @@
 /*
-Web Class Helper Commands Module Header File 2.0.0
+Web Class Helper Variables Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -113,7 +113,30 @@ Contributors: jsh-jsh ren-yc
 #include "commands.h"
 #include "functions.h"
 #include "apis.h"
-using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
+using std::format;
+using std::getline;
+using std::to_string;
+using std::to_wstring;
+using std::string;
+using std::wstring;
+using std::ifstream;
+using std::ofstream;
+using std::map;
+using std::set;
+using std::vector;
+using std::multimap;
+using std::function;
+using std::pair;
+using std::stringstream;
+using std::thread;
+using std::runtime_error;
+using std::ios;
+using std::make_pair;
+using std::equal_range;
+#pragma comment(lib, "urlmon.lib")
 
 #define WCH_ERRNO_UNCORRECT 0
 #define WCH_ERRNO_NETWORK_FAILURE 1
@@ -165,8 +188,6 @@ string WCH_command;
 string WCH_ProgressBarStr;
 ifstream fin;
 ofstream fout;
-wifstream wfin;
-wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_Error(int _in);

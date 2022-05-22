@@ -1,5 +1,5 @@
 /*
-Web Class Helper APIs Module Header File 2.0.0
+Web Class Helper APIs Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -11,7 +11,6 @@ Contributors: jsh-jsh ren-yc
 #include "commands.h"
 #include "functions.h"
 #include "variables.h"
-using namespace std;
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -34,8 +33,6 @@ extern string WCH_command;
 extern string WCH_ProgressBarStr;
 extern ifstream fin;
 extern ofstream fout;
-extern wifstream wfin;
-extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
@@ -43,6 +40,50 @@ void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
+
+#include <gdiplus.h>
+#pragma comment(lib, "gdiplus.lib")
+class GdiplusWrapper {
+public:
+	GdiplusWrapper() {
+		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+	}
+	~GdiplusWrapper() {
+		Gdiplus::GdiplusShutdown(gdiplusToken);
+	}
+	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
+		UINT num = 0;
+		UINT size = 0;
+		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+		Gdiplus::GetImageEncodersSize(&num, &size);
+		if (size == 0) {
+			return -1;
+		}
+		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+		if (pImageCodecInfo == NULL) {
+			return -1;
+		}
+		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+		for (UINT j = 0; j < num; j++) {
+			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
+				*pClsid = pImageCodecInfo[j].Clsid;
+				free(pImageCodecInfo);
+				return j;
+			}
+		}
+		free(pImageCodecInfo);
+		return -1;
+	}
+	void SaveImage(HBITMAP hBitmap, const WCHAR* filename, const WCHAR* format) {
+		CLSID pngClsid;
+		Gdiplus::Bitmap bitmap(hBitmap, NULL);
+		GetEncoderClsid(format, &pngClsid);
+		bitmap.Save(filename, &pngClsid);
+	}
+private:
+	ULONG_PTR gdiplusToken;
+};
 
 void WCH_Sleep(int _ms) {
 	// Sleep.
@@ -142,12 +183,28 @@ void WCH_PutPicture() {
 }
 
 void WCH_SaveImg() {
-	// Run image saver Python program.
-	string tmp = "IMG";
-	tmp += to_string(WCH_Framework);
-	tmp += ".EXE";
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving the screenshot to \"Pictures\" folder");
-	system(tmp.c_str());
+	// Save screenshot to file.
+	WCHAR cUserNameBuffer[256] = {0};
+	DWORD dwUserNameSize = 256;
+	GetUserNameW(cUserNameBuffer, &dwUserNameSize);
+	WCH_Time now = WCH_GetTime();
+	wstring SavePath = format(L"C:\\Users\\{}\\Pictures\\{:04}{:02}{:02}{:02}{:02}{:02}.jpg", cUserNameBuffer, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+	HDC hdcScreen = ::GetDC(NULL);
+	int nBitPerPixel = GetDeviceCaps(hdcScreen, BITSPIXEL);
+	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * 1.5);
+	int nHeight = (int)round(GetDeviceCaps(hdcScreen, VERTRES) * 1.5);
+	HDC hMemDC;
+	HBITMAP hBitmap, hOldBitmap;
+	hMemDC = CreateCompatibleDC(hdcScreen);
+	hBitmap = CreateCompatibleBitmap(hdcScreen, nWidth, nHeight);
+	hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
+	BitBlt(hMemDC, 0, 0, nWidth, nHeight, hdcScreen, 0, 0, SRCCOPY);
+	GdiplusWrapper gdiplus;
+	gdiplus.SaveImage(hBitmap, SavePath.c_str(), L"image/jpeg");
+	DeleteDC(hdcScreen);
+	DeleteDC(hMemDC);
+	DeleteObject(hBitmap);
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving image to " + WstrToStr(SavePath));
 }
 
 bool WCH_TaskKill(string name) {

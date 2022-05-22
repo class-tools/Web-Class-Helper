@@ -1,17 +1,16 @@
 /*
-Web Class Helper Main File 2.0.0
+Web Class Helper Main File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#define WCH_VER "2.0.0"
+#define WCH_VER "2.0.1"
 #include "modules/file-process.h"
 #include "modules/init.h"
 #include "modules/commands.h"
 #include "modules/functions.h"
 #include "modules/apis.h"
 #include "modules/variables.h"
-using namespace std;
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -34,8 +33,6 @@ extern string WCH_command;
 extern string WCH_ProgressBarStr;
 extern ifstream fin;
 extern ofstream fout;
-extern wifstream wfin;
-extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_Error(int _in);

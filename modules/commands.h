@@ -1,5 +1,5 @@
 /*
-Web Class Helper Commands Module Header File 2.0.0
+Web Class Helper Commands Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -11,7 +11,6 @@ Contributors: jsh-jsh ren-yc
 #include "functions.h"
 #include "apis.h"
 #include "variables.h"
-using namespace std;
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -34,8 +33,6 @@ extern string WCH_command;
 extern string WCH_ProgressBarStr;
 extern ifstream fin;
 extern ofstream fout;
-extern wifstream wfin;
-extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
@@ -43,13 +40,6 @@ void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
-
-#ifdef URLDownloadToFile
-#undef URLDownloadToFile
-#endif
-
-typedef int(__stdcall *UDF)(LPVOID, LPCSTR, LPCSTR, DWORD, LPVOID);
-UDF URLDownloadToFile = (UDF)(int*)GetProcAddress(LoadLibrary(L"urlmon.dll"), "URLDownloadToFileA");
 
 void WCH_quit() {
 	// Quit.
@@ -91,10 +81,10 @@ void WCH_update() {
 		WCH_ProgressBarTot = 5;
 		thread T(WCH_ProgressBar);
 		T.detach();
-		string url = "https://class-tools.gq/update/WCH?";
+		wstring url = L"https://class-tools.gq/update/WCH?";
 		srand((unsigned)time(NULL));
-		url += to_string(rand());
-		URLDownloadToFile(0, url.c_str(), "WCH_UPD.tmp", 0, 0);
+		url += to_wstring(rand());
+		URLDownloadToFileW(0, url.c_str(), L"WCH_UPD.tmp", 0, 0);
 		string res;
 		fin.open("WCH_UPD.tmp");
 		getline(fin, res);
@@ -529,11 +519,9 @@ void WCH_pi() {
 	WCH_SetWindowStatus(false);
 	WCH_Sleep(500);
 	WCH_PutPicture();
-	WCH_Sleep(500);
-	WCH_SetWindowStatus(true);
-	WCH_Sleep(500);
 	WCH_SaveImg();
 	WCH_Sleep(500);
+	WCH_SetWindowStatus(true);
 	cout << "The picture is in the clipboard and be saved in your Pictures folder." << endl;
 }
 
@@ -613,7 +601,7 @@ void WCH_ow() {
 		return;
 	}
 	try {
-		URLDownloadToFile(0, "https://v1.hitokoto.cn/?encode=text", "WCH_STDL.tmp", 0, 0);
+		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", L"WCH_STDL.tmp", 0, 0);
 		WCH_Sleep(1000);
 		WCH_cmd_line = false;
 		if (_access("WCH_STDL.tmp", 0) != -1) {
