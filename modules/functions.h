@@ -2,7 +2,7 @@
 Web Class Helper Functions Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc
+Contributors: jsh-jsh ren-yc Daijianghao
 */
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
