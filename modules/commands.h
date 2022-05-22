@@ -42,10 +42,10 @@ void WCH_save();
 int WCH_GetNumDigits(int n);
 
 void WCH_clear() {
-	// Clear Screen.
+	// Clear console information.
 	if ((int)WCH_command_list.size() != 1) {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
-		return ;
+		return;
 	}
 	system("cls");
 }
