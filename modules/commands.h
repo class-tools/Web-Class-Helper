@@ -2,7 +2,7 @@
 Web Class Helper Commands Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc hjl2011
+Contributors: jsh-jsh ren-yc hjl2011 Daijianghao
 */
 #ifndef COMMANDS_H
 #define COMMANDS_H
