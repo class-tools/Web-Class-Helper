@@ -676,6 +676,7 @@ void WCH_help() {
 }
 
 void init_fate() {
+    // Init the sentenses of the fate
     chg_lucky[0].fir = "万事皆凶";
     chg_lucky[0].sec = "";
     chg_lucky[1].fir = "写作文";
@@ -803,6 +804,7 @@ void init_fate() {
 }
 
 void WCH_calcu_fate() {
+    // Get daily fate
     init_fate();
     int fate, lucky, unluc;
     fin.open("data/fate.dat");
