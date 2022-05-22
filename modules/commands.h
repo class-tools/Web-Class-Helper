@@ -11,6 +11,8 @@ Contributors: jsh-jsh ren-yc hjl2011 Daijianghao
 #include "functions.h"
 #include "apis.h"
 #include "variables.h"
+#define fir first
+#define sec second
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()> > WCH_command_support;
