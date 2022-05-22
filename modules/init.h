@@ -2,7 +2,7 @@
 Web Class Helper Initialization Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc
+Contributors: jsh-jsh ren-yc hjl2011
 */
 #ifndef INIT_H
 #define INIT_H
@@ -98,6 +98,7 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair("wiki", WCH_wiki));
 	WCH_command_support.insert(make_pair("license", WCH_license));
 	WCH_command_support.insert(make_pair("quit", WCH_quit));
+	WCH_command_support.insert(make_pair("clear", WCH_clear));
 }
 
 void WCH_Init_Out() {
