@@ -2,7 +2,7 @@
 Web Class Helper Commands Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc
+Contributors: jsh-jsh ren-yc hjl2011
 */
 #ifndef COMMANDS_H
 #define COMMANDS_H
@@ -40,6 +40,15 @@ void WCH_printlog(string _mode, string _info);
 void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
+
+void WCH_clear() {
+	// Clear console information.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	system("cls");
+}
 
 void WCH_quit() {
 	// Quit.
