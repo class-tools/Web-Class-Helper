@@ -1,10 +1,10 @@
 ---
-name: New Recommendations
+name: Feature Request
 about: New Recommendations for this program.
 labels: enhancement
+title: EHC ${Your title}
+assignees: ""
 ---
-
-[comment]: <> (Please set the title to "REC ${Your Title}".)
 
 Description:
 

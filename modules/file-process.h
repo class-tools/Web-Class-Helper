@@ -67,7 +67,7 @@ void WCH_read_clock() {
 		vector <string> tmp2 = WCH_split(tmp1);
 		int H = stoi(tmp2[0]);
 		int M = stoi(tmp2[1]);
-		string Tname = tmp1.substr((int)tmp2[2].size() + (int)tmp2[3].size(), tmp1.size() - 1);
+		string Tname = tmp1.substr((int)tmp2[0].size() + (int)tmp2[1].size() + 2, tmp1.size() - 1);
 		WCH_clock_list.emplace(make_pair(H, make_pair(M, Tname)));
 	}
 	fin.close();

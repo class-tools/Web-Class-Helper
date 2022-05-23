@@ -2,9 +2,9 @@
 name: Bug Report
 about: Bug report template Issues.
 labels: bug
+title: BUG ${Your title}
+assignees: ""
 ---
-
-[comment]: <> (Please set the title to "BUG ${Your Title}".)
 
 Description:
 
@@ -12,8 +12,14 @@ Screenshot (If any):
 
 Terminal Output (If needed):
 
+```plain
+```
+
 Log File:
 
-Program Version:
+```plain
+```
 
-Operating System Version:
+Program Version: ``
+
+Operating System Version: ``
