@@ -54,11 +54,11 @@ void WCH_read_clock() {
 	WCH_Time q = WCH_GetTime();
 	string NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	string FilePath = "data/" + NowWeekDay + ".dat";
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
 	}
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin >> WCH_clock_num;
 	fin.ignore();
 	for (int i = 1; i <= WCH_clock_num; i++) {
@@ -76,11 +76,11 @@ void WCH_read_clock() {
 void WCH_read_task() {
 	// Read task data.
 	string FilePath = "data/task.dat";
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
 	}
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin >> WCH_task_num;
 	fin.ignore();
 	for (int i = 1; i <= WCH_task_num; i++) {
@@ -94,11 +94,11 @@ void WCH_read_task() {
 void WCH_read_work() {
 	// Read work data.
 	string FilePath = "data/work.dat";
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		return;
 	}
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Reading file \"" + FilePath + "\"");
 	fin >> WCH_work_num;
 	fin.ignore();
 	for (int i = 1; i <= WCH_work_num; i++) {

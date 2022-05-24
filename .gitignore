@@ -11,5 +11,5 @@ logs/*.log
 *.exe
 *.txt
 *.o
-*.aps
+*.APS
 CppProperties.json

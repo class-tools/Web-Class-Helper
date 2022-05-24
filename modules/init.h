@@ -59,22 +59,22 @@ void WCH_Init_Var() {
 
 int WCH_Init_Log() {
 	// Initialization for log.
+	int returnVal = 0;
 	WCH_Time now = WCH_GetTime();
-	if (_access("logs/latest.log", 0) != -1) {
-		return rename("logs/latest.log", format("logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
-	} else {
-		return 0;
+	if (_waccess(L"logs/latest.log", 0) != -1) {
+		returnVal = _wrename(L"logs/latest.log", format(L"logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
 	}
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Starting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
+	return returnVal;
 }
 
 void WCH_Init_Win() {
 	// Initialization for window.
-	SetConsoleTitleA(("Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")").c_str());
+	SetConsoleTitleW((L"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")").c_str());
 }
 
 void WCH_Init_Bind() {
 	// Initialization for bind.
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Starting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
 	atexit(WCH_save);
 	WCH_signalHandler();
 	WCH_SetWindowStatus(true);

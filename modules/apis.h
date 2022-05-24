@@ -137,25 +137,6 @@ string WstrToStr(wstring wstr) {
 	return result;
 }
 
-DWORD WCH_GetPID(string name) {
-	// Get PID by process name.
-	DWORD pid = 0;
-	PROCESSENTRY32 entry {};
-	entry.dwSize = sizeof(PROCESSENTRY32);
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if (Process32First(snapshot, &entry) == TRUE) {
-		while (Process32Next(snapshot, &entry) == TRUE) {
-			if (WstrToStr(entry.szExeFile) == name) {
-				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
-				pid = GetProcessId(hProcess);
-				CloseHandle(hProcess);
-			}
-		}
-	}
-	CloseHandle(snapshot);
-	return pid;
-}
-
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_hWnd, flag);
@@ -207,15 +188,39 @@ void WCH_SaveImg() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving image to " + WstrToStr(SavePath));
 }
 
+DWORD WCH_GetPID(string name) {
+	// Get PID by process name.
+	DWORD pid = 0;
+	PROCESSENTRY32 entry {};
+	entry.dwSize = sizeof(PROCESSENTRY32);
+	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (Process32First(snapshot, &entry) == TRUE) {
+		while (Process32Next(snapshot, &entry) == TRUE) {
+			if (WstrToStr(entry.szExeFile) == name) {
+				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
+				pid = GetProcessId(hProcess);
+				CloseHandle(hProcess);
+			}
+		}
+	}
+	CloseHandle(snapshot);
+	return pid;
+}
+
 bool WCH_TaskKill(string name) {
 	// Kill a task by Windows API.
-	HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, WCH_GetPID(name));
-	if (hProcess) {
-		TerminateProcess(hProcess, 0);
-		CloseHandle(hProcess);
-		return true;
-	} else {
+	DWORD pidProcess = WCH_GetPID(name);
+	if (pidProcess == 0) {
 		return false;
+	} else {
+		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pidProcess);
+		if (hProcess) {
+			TerminateProcess(hProcess, 0);
+			CloseHandle(hProcess);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 

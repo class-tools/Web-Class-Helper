@@ -544,7 +544,7 @@ void WCH_check_task_loop() {
 				WCH_printlog(WCH_LOG_STATUS_INFO, "Failed to kill \"" + *it + "\"");
 			}
 		}
-		WCH_Sleep(15000);
+		WCH_Sleep(3000);
 	}
 }
 

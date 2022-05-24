@@ -18,7 +18,9 @@ int main(int argc, char* argv[]) {
 		string errormsg = argv[2];
 		ShowWindow(GetConsoleWindow(), SW_HIDE);
 		cout << "\a";
-		MessageBox(NULL, ("Oops! An error occured.\nPlease inform our developers with the error message by sending an E-mail to ldfx_ryc@163.com.\nError message: " + errorcode + " " + errormsg).c_str(), "WCH ERROR", MB_ICONERROR | MB_OK);
+		if (MessageBoxA(NULL, ("Oops! An error occurred.\nPlease inform our developers with the error message by open a new Issue in our GitHub Repository.\nError message: " + errorcode + " " + errormsg + "\nWould you like to visit the Issues page now?").c_str(), "WCH ERROR", MB_ICONERROR | MB_YESNO) == 6) {
+			system("start resources/website/issues.url");
+		}
 	}
 	return 0;
 }
