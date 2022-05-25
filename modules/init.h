@@ -73,11 +73,11 @@ void WCH_Init_Win() {
 	SetConsoleTitleW((L"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")").c_str());
 }
 
-void WCH_Init_Bind() {
+BOOL WCH_Init_Bind() {
 	// Initialization for bind.
 	atexit(WCH_save);
 	WCH_signalHandler();
-	WCH_SetWindowStatus(true);
+	return !SetConsoleCtrlHandler(WCH_CtrlHandler, TRUE);
 }
 
 void WCH_Init_Cmd() {
@@ -117,9 +117,12 @@ void WCH_Init() {
 		raise(SIGABRT);
 	}
 	WCH_Init_Win();
-	WCH_Init_Bind();
+	if (WCH_Init_Bind()) {
+		raise(SIGABRT);
+	}
 	WCH_Init_Cmd();
 	WCH_read();
+	WCH_SetWindowStatus(true);
 	thread T1(WCH_check_clock_loop);
 	T1.detach();
 	thread T2(WCH_safety_input_loop);

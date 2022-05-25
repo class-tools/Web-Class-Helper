@@ -149,6 +149,7 @@ using std::equal_range;
 #define WCH_ERRNO_TASK_OPERATION 4
 #define WCH_ERRNO_WORK_OPERATION 5
 #define WCH_LOG_STATUS_INFO "[INFO]"
+#define WCH_LOG_STATUS_DEBUG "[DEBUG]"
 #define WCH_LOG_STATUS_WARN "[WARN]"
 #define WCH_LOG_STATUS_ERROR "[ERROR]"
 

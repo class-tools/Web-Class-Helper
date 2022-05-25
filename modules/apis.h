@@ -108,6 +108,9 @@ vector <string> WCH_split(const string &_in) {
 	string _tmp;
 	stringstream _ss(_in);
 	while (getline(_ss, _tmp, ' ')) {
+		#ifdef _DEBUG
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "Split result \"" + _tmp + "\"");
+		#endif
 		_res.push_back(_tmp);
 	}
 	return _res;
@@ -197,6 +200,9 @@ DWORD WCH_GetPID(string name) {
 			if (WstrToStr(entry.szExeFile) == name) {
 				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
 				pid = GetProcessId(hProcess);
+				#ifdef _DEBUG
+				WCH_printlog(WCH_LOG_STATUS_DEBUG, "PID of \"" + name + "\" is " + to_string(pid));
+				#endif
 				CloseHandle(hProcess);
 			}
 		}
@@ -319,6 +325,47 @@ void WCH_ProgressBar() {
 	cout << endl;
 }
 
+BOOL WINAPI WCH_CtrlHandler(DWORD fdwCtrlType) {
+	switch (fdwCtrlType) {
+	case CTRL_C_EVENT:
+		#ifdef _DEBUG
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_C_EVENT triggered");
+		#endif
+		exit(0);
+		return TRUE;
+	case CTRL_CLOSE_EVENT:
+		#ifdef _DEBUG
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_CLOSE_EVENT triggered");
+		#endif
+		exit(0);
+		return TRUE;
+	case CTRL_BREAK_EVENT:
+		#ifdef _DEBUG
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_BREAK_EVENT triggered");
+		#endif
+		exit(0);
+		return FALSE;
+	case CTRL_LOGOFF_EVENT:
+		#ifdef _DEBUG
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_LOGOFF_EVENT triggered");
+		#endif
+		exit(0);
+		return FALSE;
+	case CTRL_SHUTDOWN_EVENT:
+		#ifdef _DEBUG
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_SHUTDOWN_EVENT triggered");
+		#endif
+		exit(0);
+		return FALSE;
+	default:
+		#ifdef _DEBUG
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_DEFAULT_EVENT triggered");
+		#endif
+		exit(0);
+		return FALSE;
+	}
+}
+
 void WCH_signalHandler() {
 	// Signal handler.
 	signal(SIGINT, [](int signum) {
@@ -329,9 +376,9 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
-		WCH_save();
-		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program interrupted)");
+		WCH_Sleep(100);
+		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program interrupted\"").c_str());
 		exit(signum);
@@ -344,9 +391,9 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
-		WCH_save();
-		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program aborted)");
+		WCH_Sleep(100);
+		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program aborted\"").c_str());
 		exit(signum);
@@ -359,9 +406,9 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
-		WCH_save();
-		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Operation overflow)");
+		WCH_Sleep(100);
+		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Operation overflow\"").c_str());
 		exit(signum);
@@ -374,9 +421,9 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
-		WCH_save();
-		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Illegal instruction)");
+		WCH_Sleep(100);
+		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Illegal instruction\"").c_str());
 		exit(signum);
@@ -389,9 +436,9 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
-		WCH_save();
-		WCH_Sleep(100);
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Access to illegal memory)");
+		WCH_Sleep(100);
+		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Access to illegal memory\"").c_str());
 		exit(signum);
