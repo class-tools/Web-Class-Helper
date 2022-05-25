@@ -41,6 +41,18 @@ void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
 
+void WCH_clear() {
+	// Clear console information.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	system("cls");
+	cout << "Web Class Helper " << WCH_VER << " (x" << to_string(WCH_DisplayFramework) << ")" << endl;
+	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
+	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
+}
+
 void WCH_quit() {
 	// Quit.
 	if ((int)WCH_command_list.size() != 1) {
@@ -662,19 +674,6 @@ void WCH_help() {
 			return;
 		}
 	}
-}
-void WCH_Init_Out();
-
-void WCH_clear() {
-	// Clear console information.
-	if ((int)WCH_command_list.size() != 1) {
-		WCH_Error(WCH_ERRNO_UNCORRECT);
-		return;
-	}
-	system("cls");
-	cout << "Web Class Helper " << WCH_VER << " (x" << to_string(WCH_DisplayFramework) << ")" << endl;
-	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 }
 
 #endif
