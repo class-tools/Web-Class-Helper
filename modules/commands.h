@@ -48,6 +48,9 @@ void WCH_clear() {
 		return;
 	}
 	system("cls");
+	cout << "Web Class Helper " << WCH_VER << " (x" << to_string(WCH_DisplayFramework) << ")" << endl;
+	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
+	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
 }
 
 void WCH_quit() {
