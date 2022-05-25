@@ -108,11 +108,16 @@ Contributors: jsh-jsh ren-yc
 #include <conio.h>
 #include <direct.h>
 #include <VersionHelpers.h>
+#include <gdiplus.h>
 #include "file-process.h"
 #include "init.h"
 #include "commands.h"
 #include "functions.h"
 #include "apis.h"
+
+#pragma comment(lib, "gdiplus.lib")
+#pragma comment(lib, "urlmon.lib")
+
 using std::cin;
 using std::cout;
 using std::endl;
@@ -136,7 +141,6 @@ using std::runtime_error;
 using std::ios;
 using std::make_pair;
 using std::equal_range;
-#pragma comment(lib, "urlmon.lib")
 
 #define WCH_ERRNO_UNCORRECT 0
 #define WCH_ERRNO_NETWORK_FAILURE 1

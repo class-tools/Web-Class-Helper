@@ -41,8 +41,6 @@ void WCH_read();
 void WCH_save();
 int WCH_GetNumDigits(int n);
 
-#include <gdiplus.h>
-#pragma comment(lib, "gdiplus.lib")
 class GdiplusWrapper {
 public:
 	GdiplusWrapper() {
