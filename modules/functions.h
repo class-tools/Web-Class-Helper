@@ -90,6 +90,9 @@ void WCH_Error(int _in) {
 	} else if (_in == WCH_ERRNO_WORK_OPERATION) {
 		_info = "Cannot operate the work list, please try to restart this program";
 		_mode = WCH_LOG_STATUS_ERROR;
+	} else if (_in == WCH_ERROR_DPI_GET_FAILED) {
+		_info = "Cannot get the DPI, please try to restart this program";
+		_mode = WCH_LOG_STATUS_ERROR;
 	}
 	cout << _info << "." << endl;
 	WCH_printlog(_mode, _info);

@@ -172,9 +172,28 @@ void WCH_SaveImg() {
 	WCH_Time now = WCH_GetTime();
 	wstring SavePath = format(L"C:\\Users\\{}\\Pictures\\{:04}{:02}{:02}{:02}{:02}{:02}.jpg", cUserNameBuffer, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 	HDC hdcScreen = ::GetDC(NULL);
+	int oDpi = GetDpiForWindow(GetDesktopWindow());
+	double dDpi = 0;
+	switch (oDpi) {
+	case 96:
+		dDpi = 1;
+		break;
+	case 120:
+		dDpi = 1.25;
+		break;
+	case 144:
+		dDpi = 1.5;
+		break;
+	case 192:
+		dDpi = 2;
+		break;
+	default:
+		WCH_Error(WCH_ERROR_DPI_GET_FAILED);
+		break;
+	}
 	int nBitPerPixel = GetDeviceCaps(hdcScreen, BITSPIXEL);
-	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * 1.5);
-	int nHeight = (int)round(GetDeviceCaps(hdcScreen, VERTRES) * 1.5);
+	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * dDpi);
+	int nHeight = (int)round(GetDeviceCaps(hdcScreen, VERTRES) * dDpi);
 	HDC hMemDC;
 	HBITMAP hBitmap, hOldBitmap;
 	hMemDC = CreateCompatibleDC(hdcScreen);
@@ -186,46 +205,13 @@ void WCH_SaveImg() {
 	DeleteDC(hdcScreen);
 	DeleteDC(hMemDC);
 	DeleteObject(hBitmap);
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving image to " + WstrToStr(SavePath));
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving image to \"" + WstrToStr(SavePath) + "\"");
 }
 
-DWORD WCH_GetPID(string name) {
-	// Get PID by process name.
-	DWORD pid = 0;
-	PROCESSENTRY32 entry {};
-	entry.dwSize = sizeof(PROCESSENTRY32);
-	HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if (Process32First(snapshot, &entry) == TRUE) {
-		while (Process32Next(snapshot, &entry) == TRUE) {
-			if (WstrToStr(entry.szExeFile) == name) {
-				HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, entry.th32ProcessID);
-				pid = GetProcessId(hProcess);
-				#ifdef _DEBUG
-				WCH_printlog(WCH_LOG_STATUS_DEBUG, "PID of \"" + name + "\" is " + to_string(pid));
-				#endif
-				CloseHandle(hProcess);
-			}
-		}
-	}
-	CloseHandle(snapshot);
-	return pid;
-}
-
-bool WCH_TaskKill(string name) {
-	// Kill a task by Windows API.
-	DWORD pidProcess = WCH_GetPID(name);
-	if (pidProcess == 0) {
-		return false;
-	} else {
-		HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pidProcess);
-		if (hProcess) {
-			TerminateProcess(hProcess, 0);
-			CloseHandle(hProcess);
-			return true;
-		} else {
-			return false;
-		}
-	}
+BOOL WCH_TaskKill(string name) {
+	// Kill a task by system command.
+	system(("TASKKILL /F /IM " + name + " > WCH_SYSTEM.tmp").c_str());
+	return DeleteFileW(L"WCH_SYSTEM.tmp");
 }
 
 string UTF8ToANSI(string strUTF8) {
@@ -329,40 +315,46 @@ BOOL WINAPI WCH_CtrlHandler(DWORD fdwCtrlType) {
 	switch (fdwCtrlType) {
 	case CTRL_C_EVENT:
 		#ifdef _DEBUG
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_C_EVENT triggered");
+		WCH_Sleep(500);
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_C_EVENT\" triggered");
 		#endif
 		exit(0);
 		return TRUE;
 	case CTRL_CLOSE_EVENT:
 		#ifdef _DEBUG
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_CLOSE_EVENT triggered");
+		WCH_Sleep(500);
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_CLOSE_EVENT\" triggered");
 		#endif
 		exit(0);
 		return TRUE;
 	case CTRL_BREAK_EVENT:
 		#ifdef _DEBUG
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_BREAK_EVENT triggered");
+		WCH_Sleep(500);
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_BREAK_EVENT\" triggered");
 		#endif
 		exit(0);
-		return FALSE;
+		return TRUE;
 	case CTRL_LOGOFF_EVENT:
 		#ifdef _DEBUG
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_LOGOFF_EVENT triggered");
+		WCH_Sleep(500);
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_LOGOFF_EVENT\" triggered");
 		#endif
 		exit(0);
-		return FALSE;
+		return TRUE;
 	case CTRL_SHUTDOWN_EVENT:
 		#ifdef _DEBUG
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_SHUTDOWN_EVENT triggered");
+		WCH_Sleep(500);
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_SHUTDOWN_EVENT\" triggered");
 		#endif
 		exit(0);
-		return FALSE;
+		return TRUE;
 	default:
 		#ifdef _DEBUG
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "CTRL_DEFAULT_EVENT triggered");
+		WCH_Sleep(500);
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_DEFAULT_EVENT\" triggered");
 		#endif
 		exit(0);
-		return FALSE;
+		return TRUE;
 	}
 }
 
@@ -377,7 +369,6 @@ void WCH_signalHandler() {
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program interrupted)");
-		WCH_Sleep(100);
 		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program interrupted\"").c_str());
@@ -392,7 +383,6 @@ void WCH_signalHandler() {
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program aborted)");
-		WCH_Sleep(100);
 		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Program aborted\"").c_str());
@@ -407,7 +397,6 @@ void WCH_signalHandler() {
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Operation overflow)");
-		WCH_Sleep(100);
 		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Operation overflow\"").c_str());
@@ -422,7 +411,6 @@ void WCH_signalHandler() {
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Illegal instruction)");
-		WCH_Sleep(100);
 		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Illegal instruction\"").c_str());
@@ -437,7 +425,6 @@ void WCH_signalHandler() {
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Access to illegal memory)");
-		WCH_Sleep(100);
 		WCH_save();
 		WCH_SetWindowStatus(false);
 		system((tmp + " " + to_string(signum) + " \"Access to illegal memory\"").c_str());

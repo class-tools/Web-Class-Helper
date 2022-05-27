@@ -113,7 +113,7 @@ void WCH_update() {
 			cout << "Program version equals or is greater than latest released version." << endl;
 			WCH_printlog(WCH_LOG_STATUS_INFO, "Program version equals or is greater than \"" + res + "\"");
 		}
-		DeleteFile(L"WCH_UPD.tmp");
+		DeleteFileW(L"WCH_UPD.tmp");
 	} catch (...) {
 		WCH_Error(WCH_ERRNO_NETWORK_FAILURE);
 		return;
@@ -541,7 +541,7 @@ void WCH_check_task_loop() {
 	// Check if the running task is in the task list. (Another thread)
 	while (WCH_anti_idle && !WCH_program_end) {
 		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-			if (WCH_TaskKill(*it)) {
+			if (WCH_TaskKill(*it) == TRUE) {
 				WCH_printlog(WCH_LOG_STATUS_INFO, "Successfully killed \"" + *it + "\"");
 			} else {
 				WCH_printlog(WCH_LOG_STATUS_INFO, "Failed to kill \"" + *it + "\"");
@@ -595,7 +595,7 @@ void WCH_trans() {
 			getline(fin, res);
 			cout << res << endl;
 			fin.close();
-			DeleteFile(L"WCH_TRANS.tmp");
+			DeleteFileW(L"WCH_TRANS.tmp");
 		} else {
 			throw runtime_error("WCH_ERRNO_NETWORK_FAILURE: \"Youdao Translation\"");
 		}
@@ -622,7 +622,7 @@ void WCH_ow() {
 			getline(fin, res);
 			cout << UTF8ToANSI(res) << endl;
 			fin.close();
-			DeleteFile(L"WCH_STDL.tmp");
+			DeleteFileW(L"WCH_STDL.tmp");
 		} else {
 			throw runtime_error("WCH_ERRNO_NETWORK_FAILURE: \"Random Sentence\"");
 		}

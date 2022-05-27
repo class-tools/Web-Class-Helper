@@ -132,7 +132,7 @@ void WCH_save_clock() {
 	if (WCH_clock_num == 0) {
 		if (_access(FilePath.c_str(), 0) != -1) {
 			WCH_printlog(WCH_LOG_STATUS_INFO, "Deleting file \"" + FilePath + "\"");
-			DeleteFileA(FilePath.c_str());
+			DeleteFileW(StrToWstr(FilePath).c_str());
 		}
 		return;
 	}
@@ -153,7 +153,7 @@ void WCH_save_task() {
 	if (WCH_task_num == 0) {
 		if (_access(FilePath.c_str(), 0) != -1) {
 			WCH_printlog(WCH_LOG_STATUS_INFO, "Deleting file \"" + FilePath + "\"");
-			DeleteFileA(FilePath.c_str());
+			DeleteFileW(StrToWstr(FilePath).c_str());
 		}
 		return;
 	}
@@ -172,7 +172,7 @@ void WCH_save_work() {
 	if (WCH_work_num == 0) {
 		if (_access(FilePath.c_str(), 0) != -1) {
 			WCH_printlog(WCH_LOG_STATUS_INFO, "Deleting file \"" + FilePath + "\"");
-			DeleteFileA(FilePath.c_str());
+			DeleteFileW(StrToWstr(FilePath).c_str());
 		}
 		return;
 	}
@@ -203,16 +203,16 @@ void WCH_save() {
 		T.detach();
 	}
 	if (_access("WCH_SYSTEM.tmp", 0) != -1) {
-		DeleteFile(L"WCH_SYSTEM.tmp");
+		DeleteFileW(L"WCH_SYSTEM.tmp");
 	}
 	if (_access("WCH_UPD.tmp", 0) != -1) {
-		DeleteFile(L"WCH_SYSTEM.tmp");
+		DeleteFileW(L"WCH_SYSTEM.tmp");
 	}
 	if (_access("WCH_TRANS.tmp", 0) != -1) {
-		DeleteFile(L"WCH_SYSTEM.tmp");
+		DeleteFileW(L"WCH_SYSTEM.tmp");
 	}
 	if (_access("WCH_STDL.tmp", 0) != -1) {
-		DeleteFile(L"WCH_SYSTEM.tmp");
+		DeleteFileW(L"WCH_SYSTEM.tmp");
 	}
 	WCH_Sleep(WCH_ProgressBarTot * 1000);
 }
