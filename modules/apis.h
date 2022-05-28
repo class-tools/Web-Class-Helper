@@ -117,13 +117,17 @@ vector <string> WCH_split(const string &_in) {
 		_res.push_back(_tmp);
 	}
 	#ifdef _DEBUG
-	if (_res.size() != 0) {
-		string _debug = "Splited result: \"" + _res[0] + "\", ";
-		for (int i = 1; i < (int)_res.size() - 1; i++) {
-			_debug += "\"" + _res[i] + "\", ";
+	if ((int)_res.size() != 0) {
+		if ((int)_res.size() != 1) {
+			string _debug = "Splited result: \"" + _res[0] + "\", ";
+			for (int i = 1; i < (int)_res.size() - 1; i++) {
+				_debug += "\"" + _res[i] + "\", ";
+			}
+			_debug += "\"" + _res[(int)_res.size() - 1] + "\"";
+			WCH_printlog(WCH_LOG_STATUS_DEBUG, _debug);
+		} else {
+			WCH_printlog(WCH_LOG_STATUS_DEBUG, "Splited result: \"" + _res[0] + "\"");
 		}
-		_debug += "\"" + _res[(int)_res.size() - 1] + "\"";
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, _debug);
 	}
 	#endif
 	return _res;
@@ -221,17 +225,37 @@ void WCH_SaveImg() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, "Saving image to \"" + WstrToStr(SavePath) + "\"");
 }
 
-BOOL WCH_TaskKill(string name) {
-	// Kill a task by system command.
-	system(("TASKKILL /F /IM " + name + " > WCH_SYSTEM.tmp").c_str());
-	return DeleteFileW(L"WCH_SYSTEM.tmp");
-}
-
 void WCH_CheckAndDeleteFile(wstring _filename) {
 	// Delete a file if it exists.
 	if (_waccess(_filename.c_str(), 0) != -1) {
 		DeleteFileW(_filename.c_str());
 	}
+}
+
+bool WCH_FileIsBlank(wstring _filename) {
+	// Check if a file is blank.
+	if (_waccess(_filename.c_str(), 0) != -1) {
+		fin.open(_filename, ios::in);
+		string _line;
+		while (getline(fin, _line)) {
+			if ((int)_line.size() != 0) {
+				fin.close();
+				return false;
+			}
+		}
+		fin.close();
+		return true;
+	}
+	return false;
+}
+
+bool WCH_TaskKill(string name) {
+	// Kill a task by system command.
+	system(("TASKKILL /F /IM " + name + " > WCH_SYSTEM_NORMAL.tmp 2> WCH_SYSTEM_ERROR.tmp").c_str());
+	bool _res = (!WCH_FileIsBlank(L"WCH_SYSTEM_NORMAL.tmp") && WCH_FileIsBlank(L"WCH_SYSTEM_ERROR.tmp"));
+	DeleteFileW(L"WCH_SYSTEM_NORMAL.tmp");
+	DeleteFileW(L"WCH_SYSTEM_ERROR.tmp");
+	return _res;
 }
 
 string UTF8ToANSI(string strUTF8) {

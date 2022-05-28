@@ -65,7 +65,8 @@ void WCH_quit() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, "Exiting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
 	WCH_cmd_line = false;
 	WCH_program_end = true;
-	WCH_CheckAndDeleteFile(L"WCH_SYSTEM.tmp");
+	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_NORMAL.tmp");
+	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_ERROR.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_UPD.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_TRANS.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_STDL.tmp");
@@ -560,7 +561,7 @@ void WCH_check_task_loop() {
 	// Check if the running task is in the task list. (Another thread)
 	while (WCH_anti_idle && !WCH_program_end) {
 		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-			if (WCH_TaskKill(*it) == TRUE) {
+			if (WCH_TaskKill(*it)) {
 				WCH_printlog(WCH_LOG_STATUS_INFO, "Successfully killed \"" + *it + "\"");
 			} else {
 				WCH_printlog(WCH_LOG_STATUS_INFO, "Failed to kill \"" + *it + "\"");
