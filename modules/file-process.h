@@ -22,6 +22,9 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
+extern int WCH_clock_change;
+extern int WCH_task_change;
+extern int WCH_work_change;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
@@ -38,7 +41,7 @@ void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
-void WCH_save();
+bool WCH_save_func();
 int WCH_GetNumDigits(int n);
 
 void WCH_printlog(string _mode, string _info) {
@@ -185,36 +188,23 @@ void WCH_save_work() {
 	fout.close();
 }
 
-void WCH_save() {
-	// Save data.
-	WCH_program_end = true;
-	WCH_cmd_line = false;
-	if (WCH_clock_num != 0 && WCH_task_num != 0 && WCH_work_num != 0) {
+bool WCH_save_func() {
+	// Save data. (Function)
+	bool NeedSave = (WCH_clock_change != 0 || WCH_task_change != 0 || WCH_work_change != 0);
+	if (NeedSave) {
 		cout << "Saving data..." << endl;
-		WCH_ProgressBarTot = WCH_clock_num + WCH_task_num;
+		WCH_ProgressBarTot = WCH_clock_change + WCH_task_change + WCH_work_change;
 	}
 	WCH_save_clock();
 	WCH_save_task();
 	WCH_save_work();
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Exiting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
-	WCH_Sleep(1000);
-	if (WCH_clock_num != 0 && WCH_task_num != 0 && WCH_work_num != 0) {
+	if (NeedSave) {
 		thread T(WCH_ProgressBar);
 		T.detach();
+		WCH_Sleep(WCH_ProgressBarTot * 1000);
+		WCH_Sleep(1000);
 	}
-	if (_access("WCH_SYSTEM.tmp", 0) != -1) {
-		DeleteFileW(L"WCH_SYSTEM.tmp");
-	}
-	if (_access("WCH_UPD.tmp", 0) != -1) {
-		DeleteFileW(L"WCH_SYSTEM.tmp");
-	}
-	if (_access("WCH_TRANS.tmp", 0) != -1) {
-		DeleteFileW(L"WCH_SYSTEM.tmp");
-	}
-	if (_access("WCH_STDL.tmp", 0) != -1) {
-		DeleteFileW(L"WCH_SYSTEM.tmp");
-	}
-	WCH_Sleep(WCH_ProgressBarTot * 1000);
+	return NeedSave;
 }
 
 #endif

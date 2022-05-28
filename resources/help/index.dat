@@ -25,4 +25,5 @@ UPDATE (Check update for this program) **Need Internet**
 WIKI (Jump to program wiki page in default browser) **Need Internet**
 LICENSE (Print license information)
 CLEAR (Clear console window information)
-QUIT (Quit this program)
+SAVE (Save changes on data)
+QUIT (Quit this program without saving data)

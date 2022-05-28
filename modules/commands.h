@@ -22,6 +22,9 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
+extern int WCH_clock_change;
+extern int WCH_task_change;
+extern int WCH_work_change;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
@@ -38,7 +41,7 @@ void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
-void WCH_save();
+bool WCH_save_func();
 int WCH_GetNumDigits(int n);
 
 void WCH_clear() {
@@ -59,7 +62,13 @@ void WCH_quit() {
 		WCH_Error(WCH_ERRNO_UNCORRECT);
 		return;
 	}
+	WCH_printlog(WCH_LOG_STATUS_INFO, "Exiting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
+	WCH_cmd_line = false;
 	WCH_program_end = true;
+	WCH_CheckAndDeleteFile(L"WCH_SYSTEM.tmp");
+	WCH_CheckAndDeleteFile(L"WCH_UPD.tmp");
+	WCH_CheckAndDeleteFile(L"WCH_TRANS.tmp");
+	WCH_CheckAndDeleteFile(L"WCH_STDL.tmp");
 	exit(0);
 }
 
@@ -161,6 +170,7 @@ void WCH_add_clock() {
 			}
 			if (!flag) {
 				WCH_clock_num++;
+				WCH_clock_change++;
 				WCH_clock_list.emplace(make_pair(h, make_pair(m, Tname)));
 			} else {
 				WCH_Error(WCH_ERRNO_UNCORRECT);
@@ -187,6 +197,7 @@ void WCH_delete_clock() {
 				WCH_clock_list.erase(it);
 				flag = true;
 				WCH_clock_num--;
+				WCH_clock_change++;
 				break;
 			}
 		}
@@ -213,6 +224,7 @@ void WCH_change_clock() {
 			if ((it -> second).first == m) {
 				(it -> second).second = Tname;
 				flag = true;
+				WCH_clock_change++;
 			}
 		}
 		if (!flag) {
@@ -231,6 +243,7 @@ void WCH_clear_clock() {
 	}
 	WCH_clock_list.clear();
 	WCH_clock_num = 0;
+	WCH_clock_change++;
 }
 
 void WCH_list_clock() {
@@ -312,6 +325,7 @@ void WCH_add_task() {
 	} else {
 		WCH_task_list.insert(task);
 		WCH_task_num++;
+		WCH_task_change++;
 	}
 }
 
@@ -328,6 +342,7 @@ void WCH_delete_task() {
 	} else {
 		WCH_task_list.erase(task);
 		WCH_task_num--;
+		WCH_task_change++;
 	}
 }
 
@@ -339,6 +354,7 @@ void WCH_clear_task() {
 	}
 	WCH_task_list.clear();
 	WCH_task_num = 0;
+	WCH_task_change++;
 }
 
 void WCH_list_task() {
@@ -395,6 +411,7 @@ void WCH_add_work() {
 	} else {
 		WCH_work_list.insert(work);
 		WCH_work_num++;
+		WCH_work_change++;
 	}
 }
 
@@ -410,6 +427,7 @@ void WCH_delete_work() {
 	} else {
 		WCH_work_list.erase(work);
 		WCH_work_num--;
+		WCH_work_change++;
 	}
 }
 
@@ -421,6 +439,7 @@ void WCH_clear_work() {
 	}
 	WCH_work_list.clear();
 	WCH_work_num = 0;
+	WCH_work_change++;
 }
 
 void WCH_list_work() {
@@ -673,6 +692,19 @@ void WCH_help() {
 			}
 			return;
 		}
+	}
+}
+
+void WCH_save_cmd() {
+	// Save data. (Command)
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_Error(WCH_ERRNO_UNCORRECT);
+		return;
+	}
+	if (WCH_save_func()) {
+		cout << "Successfully saved all data." << endl;
+	} else {
+		cout << "No data to save." << endl;
 	}
 }
 

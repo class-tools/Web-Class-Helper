@@ -22,6 +22,9 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
+extern int WCH_clock_change;
+extern int WCH_task_change;
+extern int WCH_work_change;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
@@ -38,7 +41,7 @@ void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
-void WCH_save();
+bool WCH_save_func();
 int WCH_GetNumDigits(int n);
 
 class GdiplusWrapper {
@@ -104,15 +107,25 @@ void WCH_PrintChar(int _times, char _c) {
 }
 
 vector <string> WCH_split(const string &_in) {
+	#ifdef _DEBUG
+	WCH_printlog(WCH_LOG_STATUS_DEBUG, "Spliting string: \"" + _in + "\"");
+	#endif
 	vector <string> _res;
 	string _tmp;
 	stringstream _ss(_in);
 	while (getline(_ss, _tmp, ' ')) {
-		#ifdef _DEBUG
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "Split result \"" + _tmp + "\"");
-		#endif
 		_res.push_back(_tmp);
 	}
+	#ifdef _DEBUG
+	if (_res.size() != 0) {
+		string _debug = "Splited result: \"" + _res[0] + "\", ";
+		for (int i = 1; i < (int)_res.size() - 1; i++) {
+			_debug += "\"" + _res[i] + "\", ";
+		}
+		_debug += "\"" + _res[(int)_res.size() - 1] + "\"";
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, _debug);
+	}
+	#endif
 	return _res;
 }
 
@@ -214,6 +227,13 @@ BOOL WCH_TaskKill(string name) {
 	return DeleteFileW(L"WCH_SYSTEM.tmp");
 }
 
+void WCH_CheckAndDeleteFile(wstring _filename) {
+	// Delete a file if it exists.
+	if (_waccess(_filename.c_str(), 0) != -1) {
+		DeleteFileW(_filename.c_str());
+	}
+}
+
 string UTF8ToANSI(string strUTF8) {
 	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
 	WCHAR *wszBuffer = new WCHAR[nLen + 1];
@@ -311,123 +331,67 @@ void WCH_ProgressBar() {
 	cout << endl;
 }
 
-BOOL WINAPI WCH_CtrlHandler(DWORD fdwCtrlType) {
-	switch (fdwCtrlType) {
-	case CTRL_C_EVENT:
-		#ifdef _DEBUG
-		WCH_Sleep(500);
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_C_EVENT\" triggered");
-		#endif
-		exit(0);
-		return TRUE;
-	case CTRL_CLOSE_EVENT:
-		#ifdef _DEBUG
-		WCH_Sleep(500);
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_CLOSE_EVENT\" triggered");
-		#endif
-		exit(0);
-		return TRUE;
-	case CTRL_BREAK_EVENT:
-		#ifdef _DEBUG
-		WCH_Sleep(500);
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_BREAK_EVENT\" triggered");
-		#endif
-		exit(0);
-		return TRUE;
-	case CTRL_LOGOFF_EVENT:
-		#ifdef _DEBUG
-		WCH_Sleep(500);
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_LOGOFF_EVENT\" triggered");
-		#endif
-		exit(0);
-		return TRUE;
-	case CTRL_SHUTDOWN_EVENT:
-		#ifdef _DEBUG
-		WCH_Sleep(500);
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_SHUTDOWN_EVENT\" triggered");
-		#endif
-		exit(0);
-		return TRUE;
-	default:
-		#ifdef _DEBUG
-		WCH_Sleep(500);
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, "\"CTRL_DEFAULT_EVENT\" triggered");
-		#endif
-		exit(0);
-		return TRUE;
+void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
+	cout << "\a";
+	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by open a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == 6) {
+		system("start resources/website/issues.url");
 	}
 }
 
 void WCH_signalHandler() {
 	// Signal handler.
 	signal(SIGINT, [](int signum) {
-		string tmp = "ERROR";
-		tmp += to_string(WCH_Framework);
-		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
-		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program interrupted)");
-		WCH_save();
+		WCH_printlog(WCH_LOG_STATUS_WARN, "Signal " + to_string(signum) + " detected (Program interrupted)");
+		Sleep(500);
 		WCH_SetWindowStatus(false);
-		system((tmp + " " + to_string(signum) + " \"Program interrupted\"").c_str());
 		exit(signum);
 	});
 	signal(SIGABRT, [](int signum) {
-		string tmp = "ERROR";
-		tmp += to_string(WCH_Framework);
-		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program aborted)");
-		WCH_save();
+		Sleep(500);
 		WCH_SetWindowStatus(false);
-		system((tmp + " " + to_string(signum) + " \"Program aborted\"").c_str());
+		WCH_ShowBugMessagebox(signum, L"Program aborted");
 		exit(signum);
 	});
 	signal(SIGFPE, [](int signum) {
-		string tmp = "ERROR";
-		tmp += to_string(WCH_Framework);
-		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Operation overflow)");
-		WCH_save();
+		Sleep(500);
 		WCH_SetWindowStatus(false);
-		system((tmp + " " + to_string(signum) + " \"Operation overflow\"").c_str());
+		WCH_ShowBugMessagebox(signum, L"Operation overflow");
 		exit(signum);
 	});
 	signal(SIGILL, [](int signum) {
-		string tmp = "ERROR";
-		tmp += to_string(WCH_Framework);
-		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Illegal instruction)");
-		WCH_save();
+		Sleep(500);
 		WCH_SetWindowStatus(false);
-		system((tmp + " " + to_string(signum) + " \"Illegal instruction\"").c_str());
+		WCH_ShowBugMessagebox(signum, L"Illegal instruction");
 		exit(signum);
 	});
 	signal(SIGSEGV, [](int signum) {
-		string tmp = "ERROR";
-		tmp += to_string(WCH_Framework);
-		tmp += ".EXE";
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
 		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Access to illegal memory)");
-		WCH_save();
+		Sleep(500);
 		WCH_SetWindowStatus(false);
-		system((tmp + " " + to_string(signum) + " \"Access to illegal memory\"").c_str());
+		WCH_ShowBugMessagebox(signum, L"Access to illegal memory");
 		exit(signum);
 	});
 }

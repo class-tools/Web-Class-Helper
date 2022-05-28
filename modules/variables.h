@@ -183,6 +183,9 @@ HWND WCH_hWnd;
 int WCH_clock_num;
 int WCH_task_num;
 int WCH_work_num;
+int WCH_clock_change;
+int WCH_task_change;
+int WCH_work_change;
 int WCH_ProgressBarCount;
 int WCH_ProgressBarTot;
 int WCH_InputTimes;
@@ -199,7 +202,7 @@ void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
-void WCH_save();
+bool WCH_save_func();
 int WCH_GetNumDigits(int n);
 
 #endif

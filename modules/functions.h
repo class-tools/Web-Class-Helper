@@ -22,6 +22,9 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
+extern int WCH_clock_change;
+extern int WCH_task_change;
+extern int WCH_work_change;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
@@ -38,7 +41,7 @@ void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
-void WCH_save();
+bool WCH_save_func();
 int WCH_GetNumDigits(int n);
 
 WCH_Time WCH_GetTime() {

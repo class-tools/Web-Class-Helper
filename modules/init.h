@@ -22,6 +22,9 @@ extern HWND WCH_hWnd;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
+extern int WCH_clock_change;
+extern int WCH_task_change;
+extern int WCH_work_change;
 extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
@@ -38,16 +41,16 @@ void WCH_Sleep(int _ms);
 void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
-void WCH_save();
+bool WCH_save_func();
 int WCH_GetNumDigits(int n);
 
 void WCH_Init_Dir() {
 	// Initialization for directory.
-	if (_access("data", 0) != 0) {
-		CreateDirectory(L"data", NULL);
+	if (_waccess(L"data", 0) != 0) {
+		CreateDirectoryW(L"data", NULL);
 	}
-	if (_access("logs", 0) != 0) {
-		CreateDirectory(L"logs", NULL);
+	if (_waccess(L"logs", 0) != 0) {
+		CreateDirectoryW(L"logs", NULL);
 	}
 }
 
@@ -65,7 +68,7 @@ int WCH_Init_Log() {
 		returnVal = _wrename(L"logs/latest.log", format(L"logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
 	}
 	WCH_printlog(WCH_LOG_STATUS_INFO, "Starting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
-	return returnVal;
+	return returnVal == -1;
 }
 
 void WCH_Init_Win() {
@@ -73,11 +76,9 @@ void WCH_Init_Win() {
 	SetConsoleTitleW((L"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")").c_str());
 }
 
-BOOL WCH_Init_Bind() {
+void WCH_Init_Bind() {
 	// Initialization for bind.
-	atexit(WCH_save);
 	WCH_signalHandler();
-	return !SetConsoleCtrlHandler(WCH_CtrlHandler, TRUE);
 }
 
 void WCH_Init_Cmd() {
@@ -97,8 +98,9 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair("update", WCH_update));
 	WCH_command_support.insert(make_pair("wiki", WCH_wiki));
 	WCH_command_support.insert(make_pair("license", WCH_license));
-	WCH_command_support.insert(make_pair("quit", WCH_quit));
 	WCH_command_support.insert(make_pair("clear", WCH_clear));
+	WCH_command_support.insert(make_pair("save", WCH_save_cmd));
+	WCH_command_support.insert(make_pair("quit", WCH_quit));
 }
 
 void WCH_Init_Out() {
@@ -113,13 +115,11 @@ void WCH_Init() {
 	// Initialize the whole program.
 	WCH_Init_Dir();
 	WCH_Init_Var();
-	if (WCH_Init_Log() == -1) {
+	if (WCH_Init_Log()) {
 		raise(SIGABRT);
 	}
 	WCH_Init_Win();
-	if (WCH_Init_Bind()) {
-		raise(SIGABRT);
-	}
+	WCH_Init_Bind();
 	WCH_Init_Cmd();
 	WCH_read();
 	WCH_SetWindowStatus(true);
