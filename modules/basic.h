@@ -1,11 +1,11 @@
 /*
-Web Class Helper Variables Module Header File 2.0.1
+Web Class Helper Basic Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#ifndef VARIABLES_H
-#define VARIABLES_H
+#ifndef BASIC_H
+#define BASIC_H
 #include <cassert>
 #include <cctype>
 #include <cerrno>

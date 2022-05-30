@@ -10,7 +10,7 @@ Contributors: jsh-jsh ren-yc
 #include "modules/commands.h"
 #include "modules/functions.h"
 #include "modules/apis.h"
-#include "modules/variables.h"
+#include "modules/basic.h"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -51,7 +51,6 @@ int main() {
 			WCH_SetWindowStatus(true);
 			if (WCH_anti_idle) {
 				WCH_SetTrayStatus(true);
-				WCH_SetWindowSize(SW_NORMAL, GetActiveWindow());
 				WCH_anti_idle = false;
 				continue;
 			}

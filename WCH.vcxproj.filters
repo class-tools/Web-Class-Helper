@@ -35,7 +35,7 @@
     <ClInclude Include="modules\init.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="modules\variables.h">
+    <ClInclude Include="modules\basic.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">

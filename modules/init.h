@@ -10,7 +10,7 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "file-process.h"
 #include "commands.h"
 #include "apis.h"
-#include "variables.h"
+#include "basic.h"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;

@@ -10,7 +10,7 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "init.h"
 #include "functions.h"
 #include "apis.h"
-#include "variables.h"
+#include "basic.h"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -583,8 +583,6 @@ void WCH_anti_idle_func() {
 	if (ch == "Y" || ch == "y") {
 		WCH_SetWindowStatus(false);
 		WCH_anti_idle = true;
-		WCH_Sleep(500);
-		WCH_SetWindowSize(SW_MAXIMIZE, GetActiveWindow());
 		WCH_Sleep(500);
 		WCH_SetTrayStatus(false);
 		WCH_Sleep(500);

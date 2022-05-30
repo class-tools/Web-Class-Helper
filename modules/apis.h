@@ -10,7 +10,7 @@ Contributors: jsh-jsh ren-yc
 #include "init.h"
 #include "commands.h"
 #include "functions.h"
-#include "variables.h"
+#include "basic.h"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -164,14 +164,8 @@ void WCH_SetWindowStatus(bool flag) {
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
-	ShowWindow(FindWindow(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
+	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
 	WCH_printlog(WCH_LOG_STATUS_INFO, format("\"TRAY\" argument \"STATUS\" was set to {}", (flag == true ? "\"SHOW\"" : "\"HIDE\"")));
-}
-
-void WCH_SetWindowSize(int mode, HWND hWnd) {
-	// Set the window size by Windows API.
-	ShowWindow(hWnd, mode);
-	WCH_printlog(WCH_LOG_STATUS_INFO, format("\"CURWND\" argument \"SIZE\" was set to {}", (mode == SW_MAXIMIZE ? "\"MAXIMIZE\"" : "\"NORMAL\"")));
 }
 
 void WCH_PutPicture() {
@@ -369,9 +363,10 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		cout << endl;
-		WCH_printlog(WCH_LOG_STATUS_WARN, "Signal " + to_string(signum) + " detected (Program interrupted)");
+		WCH_printlog(WCH_LOG_STATUS_ERROR, "Signal " + to_string(signum) + " detected (Program interrupted)");
 		Sleep(500);
 		WCH_SetWindowStatus(false);
+		WCH_ShowBugMessagebox(signum, L"Program interrupted");
 		exit(signum);
 	});
 	signal(SIGABRT, [](int signum) {
