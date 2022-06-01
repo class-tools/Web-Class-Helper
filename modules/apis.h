@@ -19,6 +19,8 @@ extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
+extern MyNotify *Myn;
+extern CTrayIcon *MyC;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -31,7 +33,6 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
-extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern string WCH_ProgressBarStr;
 extern ifstream fin;
@@ -42,49 +43,33 @@ void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
 bool WCH_save_func();
-int WCH_GetNumDigits(int n);
+int WCH_GetNumDigits(int _n);
 
-class GdiplusWrapper {
-public:
-	GdiplusWrapper() {
-		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-	}
-	~GdiplusWrapper() {
-		Gdiplus::GdiplusShutdown(gdiplusToken);
-	}
-	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
-		UINT num = 0;
-		UINT size = 0;
-		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
-		Gdiplus::GetImageEncodersSize(&num, &size);
-		if (size == 0) {
-			return -1;
-		}
-		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
-		if (pImageCodecInfo == NULL) {
-			return -1;
-		}
-		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
-		for (UINT j = 0; j < num; j++) {
-			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
-				*pClsid = pImageCodecInfo[j].Clsid;
-				free(pImageCodecInfo);
-				return j;
-			}
-		}
-		free(pImageCodecInfo);
-		return -1;
-	}
-	void SaveImage(HBITMAP hBitmap, const WCHAR* filename, const WCHAR* format) {
-		CLSID pngClsid;
-		Gdiplus::Bitmap bitmap(hBitmap, NULL);
-		GetEncoderClsid(format, &pngClsid);
-		bitmap.Save(filename, &pngClsid);
-	}
-private:
-	ULONG_PTR gdiplusToken;
-};
+BOOL CTrayIcon::CreateTray(HWND hWnd, HICON hIcon, UINT uCallbackMessage, LPCTSTR szTitle) {
+	m_Notify.cbSize = sizeof(NOTIFYICONDATAW);
+	m_Notify.hIcon = hIcon;
+	m_Notify.hWnd = hWnd;
+	m_Notify.uCallbackMessage = uCallbackMessage;
+	m_Notify.uVersion = NOTIFYICON_VERSION;
+	m_Notify.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+	m_Notify.uID = 1;
+	wcscpy_s(m_Notify.szTip, szTitle);
+	return Shell_NotifyIconW(NIM_ADD, &m_Notify);
+}
+
+BOOL CTrayIcon::ChangeTray(LPCTSTR msg, LPCTSTR title, UINT uTimeout) {
+	m_Notify.uFlags = NIF_INFO;
+	m_Notify.dwInfoFlags = NIIF_NONE;
+	m_Notify.szInfoTitle;
+	m_Notify.uTimeout = uTimeout;
+	wcscpy_s(m_Notify.szInfo, msg);
+	wcscpy_s(m_Notify.szInfoTitle, title);
+	return Shell_NotifyIconW(NIM_MODIFY, &m_Notify);
+}
+
+BOOL CTrayIcon::DeleteTray() {
+	return Shell_NotifyIconW(NIM_DELETE, &m_Notify);
+}
 
 void WCH_Sleep(int _ms) {
 	// Sleep.
@@ -166,6 +151,17 @@ void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
 	WCH_printlog(WCH_LOG_STATUS_INFO, format("\"TRAY\" argument \"STATUS\" was set to {}", (flag == true ? "\"SHOW\"" : "\"HIDE\"")));
+}
+
+void WCH_SetTrayIconMenu(HWND hWnd) {
+	POINT pt;
+	GetCursorPos(&pt);
+	HMENU hMenu = CreatePopupMenu();
+	AppendMenuW(hMenu, MF_STRING, WCH_IDM_SHOWHIDE, L"显示 / 隐藏");
+	AppendMenuW(hMenu, MF_SEPARATOR, 0, NULL);
+	AppendMenuW(hMenu, MF_STRING, WCH_IDM_EXIT, L"退出程序");
+	AppendMenuW(hMenu, MF_SEPARATOR, 0, NULL);
+	TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, NULL, hWnd, NULL);
 }
 
 void WCH_PutPicture() {
@@ -349,9 +345,71 @@ void WCH_ProgressBar() {
 	cout << endl;
 }
 
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	#ifdef _DEBUG
+	WCH_printlog(WCH_LOG_STATUS_DEBUG, "Starting \"WndProc()\"");
+	#endif
+	switch (message) {
+		case 1025:
+			switch (lParam) {
+				case WM_LBUTTONDOWN:
+					WCH_SetWindowStatus(true);
+					break;
+				case WM_RBUTTONDOWN:
+					WCH_SetTrayIconMenu(hWnd);
+					break;
+			}
+			break;
+		case WM_COMMAND:
+			switch (LOWORD(wParam)) {
+				case WCH_IDM_SHOWHIDE:
+					WCH_SetWindowStatus(!WCH_cmd_line);
+					break;
+				case WCH_IDM_EXIT:
+					exit(0);
+					break;
+				default:
+					return DefWindowProcW(hWnd, message, wParam, lParam);
+					break;
+			}
+		case WM_PAINT: {
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+			EndPaint(hWnd, &ps);
+			break;
+		}
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+		default:
+			return DefWindowProcW(hWnd, message, wParam, lParam);
+	}
+	return 0;
+}
+
+ATOM WCH_RegisterClass(HINSTANCE hInstance, WCHAR* szWindowClass) {
+	#ifdef _DEBUG
+	WCH_printlog(WCH_LOG_STATUS_DEBUG, "Registering class");
+	#endif
+	WNDCLASSEXW wcex;
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = WndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = hInstance;
+	wcex.hIcon = LoadIconW(hInstance, MAKEINTRESOURCEW(IDI_WCH));
+	wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_WCH);
+	wcex.lpszClassName = szWindowClass;
+	wcex.hIconSm = LoadIconW(wcex.hInstance, MAKEINTRESOURCEW(IDI_SMALL));
+	return RegisterClassExW(&wcex);
+}
+
 void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
 	cout << "\a";
-	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by open a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == 6) {
+	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by open a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
 		system("start resources/website/issues.url");
 	}
 }

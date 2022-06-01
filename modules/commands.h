@@ -19,6 +19,8 @@ extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
+extern MyNotify *Myn;
+extern CTrayIcon *MyC;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -31,7 +33,6 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
-extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern string WCH_ProgressBarStr;
 extern ifstream fin;
@@ -42,7 +43,7 @@ void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
 bool WCH_save_func();
-int WCH_GetNumDigits(int n);
+int WCH_GetNumDigits(int _n);
 
 void WCH_clear() {
 	// Clear console information.

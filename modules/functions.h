@@ -19,6 +19,8 @@ extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
 extern HWND WCH_hWnd;
+extern MyNotify *Myn;
+extern CTrayIcon *MyC;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -31,7 +33,6 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
-extern bool WCH_wait_cmd;
 extern string WCH_command;
 extern string WCH_ProgressBarStr;
 extern ifstream fin;
@@ -42,7 +43,7 @@ void WCH_Error(int _in);
 void WCH_printlog(string _mode, string _info);
 void WCH_read();
 bool WCH_save_func();
-int WCH_GetNumDigits(int n);
+int WCH_GetNumDigits(int _n);
 
 WCH_Time WCH_GetTime() {
 	// Get current time and return a WCH_Time object.
@@ -138,9 +139,51 @@ void WCH_safety_input_loop() {
 	}
 }
 
+void WCH_message_loop() {
+	// Message loop.
+	WCHAR szWindowClass[100];
+	MSG msg;
+	HINSTANCE hInstance = GetModuleHandleW(NULL);
+	HACCEL hAccelTable = LoadAcceleratorsW(hInstance, MAKEINTRESOURCEW(IDI_WCH));
+	LoadStringW(hInstance, IDC_WCH, szWindowClass, 100);
+	WCH_RegisterClass(hInstance, szWindowClass);
+	PeekMessageW(&msg, nullptr, 0, 0, PM_NOREMOVE);
+	Myn = new MyNotify(msg.hwnd);
+	MyC = new CTrayIcon();
+	MyC -> CreateTray(msg.hwnd, LoadIconW(NULL, IDI_ERROR), WCH_IDM_OPENPIC, L"Web Class Helper");
+	RegisterHotKey(NULL, 121, MOD_CONTROL, VK_DOWN);
+	while (GetMessageW(&msg, nullptr, 0, 0)) {
+		if (msg.message == WM_HOTKEY) {
+			switch (msg.wParam) {
+				case 121:
+					if (WCH_anti_idle) {
+						WCH_anti_idle = false;
+						WCH_SetWindowStatus(true);
+					} else {
+						if (WCH_cmd_line) {
+							cout << endl;
+							WCH_SetWindowStatus(false);
+						} else {
+							WCH_SetWindowStatus(true);
+						}
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		if (!TranslateAcceleratorW(msg.hwnd, hAccelTable, &msg)) {
+			#ifdef _DEBUG
+			WCH_printlog(WCH_LOG_STATUS_DEBUG, "Message: Found accelerator");
+			#endif
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+		}
+	}
+}
+
 void WCH_CL_Init() {
 	// Initialize the command line.
-	WCH_wait_cmd = true;
 	BEGIN: cout << ">>> ";
 	getline(cin, WCH_command);
 	if (cin.eof()) {
@@ -148,12 +191,11 @@ void WCH_CL_Init() {
 	}
 	WCH_command_list = WCH_split(WCH_command);
 	if ((int)WCH_command_list.size() == 0) {
-		cout << endl;
+		cout << endl << endl;
 		goto BEGIN;
 	}
 	transform(WCH_command_list[0].begin(), WCH_command_list[0].end(), WCH_command_list[0].begin(), ::tolower);
 	WCH_InputTimes++;
-	WCH_wait_cmd = false;
 }
 
 #endif

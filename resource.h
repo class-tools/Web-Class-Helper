@@ -3,7 +3,9 @@ Web Class Helper Resource Control Header File 2.0.1
 This source code file isn't under any license.
 Generator: Visual Studio 2022
 */
-#define IDI_ICON1 101
+#define IDI_WCH 101
+#define IDC_WCH 102
+#define IDI_SMALL 103
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE 101
