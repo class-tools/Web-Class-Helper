@@ -6,11 +6,11 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef APIS_H
 #define APIS_H
-#include "file-process.h"
-#include "init.h"
-#include "commands.h"
-#include "functions.h"
-#include "basic.h"
+#include "file-process.hpp"
+#include "init.hpp"
+#include "commands.hpp"
+#include "functions.hpp"
+#include "basic.hpp"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
@@ -145,21 +145,21 @@ void WCH_SaveImg() {
 	int oDpi = GetDpiForWindow(GetDesktopWindow());
 	double dDpi = 0;
 	switch (oDpi) {
-	case 96:
-		dDpi = 1;
-		break;
-	case 120:
-		dDpi = 1.25;
-		break;
-	case 144:
-		dDpi = 1.5;
-		break;
-	case 192:
-		dDpi = 2;
-		break;
-	default:
-		WCH_Error(WCH_ERROR_DPI_GET_FAILED);
-		break;
+		case 96:
+			dDpi = 1;
+			break;
+		case 120:
+			dDpi = 1.25;
+			break;
+		case 144:
+			dDpi = 1.5;
+			break;
+		case 192:
+			dDpi = 2;
+			break;
+		default:
+			WCH_Error(WCH_ERROR_DPI_GET_FAILED);
+			break;
 	}
 	int nBitPerPixel = GetDeviceCaps(hdcScreen, BITSPIXEL);
 	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * dDpi);
@@ -322,7 +322,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			nid.uID = 0;
 			nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 			nid.uCallbackMessage = WM_USER;
-			nid.hIcon = (HICON)LoadImageW(NULL, L"WCHS.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
+			nid.hIcon = (HICON)LoadImageW(NULL, L"WCH.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 			wcscpy(nid.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &nid);
 			WCH_hMenu = CreatePopupMenu();

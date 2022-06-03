@@ -6,11 +6,11 @@ Contributors: jsh-jsh ren-yc hjl2011
 */
 #ifndef INIT_H
 #define INIT_H
-#include "functions.h"
-#include "file-process.h"
-#include "commands.h"
-#include "apis.h"
-#include "basic.h"
+#include "functions.hpp"
+#include "file-process.hpp"
+#include "commands.hpp"
+#include "apis.hpp"
+#include "basic.hpp"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;

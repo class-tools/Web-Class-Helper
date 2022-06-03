@@ -109,11 +109,11 @@ Contributors: jsh-jsh ren-yc
 #include <direct.h>
 #include <VersionHelpers.h>
 #include <gdiplus.h>
-#include "file-process.h"
-#include "init.h"
-#include "commands.h"
-#include "functions.h"
-#include "apis.h"
+#include "file-process.hpp"
+#include "init.hpp"
+#include "commands.hpp"
+#include "functions.hpp"
+#include "apis.hpp"
 
 #pragma comment (lib, "winmm.lib")
 #pragma comment (lib, "gdiplus.lib")

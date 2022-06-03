@@ -20,25 +20,25 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="modules\apis.h">
+    <ClInclude Include="modules\apis.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="modules\commands.h">
+    <ClInclude Include="modules\commands.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="modules\file-process.h">
+    <ClInclude Include="modules\file-process.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="modules\functions.h">
+    <ClInclude Include="modules\functions.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="modules\init.h">
+    <ClInclude Include="modules\init.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="modules\basic.h">
+    <ClInclude Include="modules\basic.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="resource.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -48,7 +48,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="WCHL.ico">
+    <Image Include="WCH.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

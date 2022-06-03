@@ -6,11 +6,11 @@ Contributors: jsh-jsh ren-yc
 */
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
-#include "file-process.h"
-#include "init.h"
-#include "commands.h"
-#include "apis.h"
-#include "basic.h"
+#include "file-process.hpp"
+#include "init.hpp"
+#include "commands.hpp"
+#include "apis.hpp"
+#include "basic.hpp"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;

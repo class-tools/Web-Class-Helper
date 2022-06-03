@@ -5,13 +5,13 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER "2.0.1"
-#include "resource.h"
-#include "modules/file-process.h"
-#include "modules/init.h"
-#include "modules/commands.h"
-#include "modules/functions.h"
-#include "modules/apis.h"
-#include "modules/basic.h"
+#include "resource.hpp"
+#include "modules/file-process.hpp"
+#include "modules/init.hpp"
+#include "modules/commands.hpp"
+#include "modules/functions.hpp"
+#include "modules/apis.hpp"
+#include "modules/basic.hpp"
 
 extern const string WCH_WDName[7];
 extern map <string, function <void ()>> WCH_command_support;
