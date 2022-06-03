@@ -178,7 +178,7 @@
     <ResourceCompile Include="WCH.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="WCH.ico" />
+    <Image Include="WCHL.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

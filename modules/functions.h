@@ -18,9 +18,9 @@ extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
+extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
-extern MyNotify *Myn;
-extern CTrayIcon *MyC;
+extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -141,44 +141,29 @@ void WCH_safety_input_loop() {
 
 void WCH_message_loop() {
 	// Message loop.
-	WCHAR szWindowClass[100];
-	MSG msg;
-	HINSTANCE hInstance = GetModuleHandleW(NULL);
-	HACCEL hAccelTable = LoadAcceleratorsW(hInstance, MAKEINTRESOURCEW(IDI_WCH));
-	LoadStringW(hInstance, IDC_WCH, szWindowClass, 100);
-	WCH_RegisterClass(hInstance, szWindowClass);
-	PeekMessageW(&msg, nullptr, 0, 0, PM_NOREMOVE);
-	Myn = new MyNotify(msg.hwnd);
-	MyC = new CTrayIcon();
-	MyC -> CreateTray(msg.hwnd, LoadIconW(NULL, IDI_ERROR), WCH_IDM_OPENPIC, L"Web Class Helper");
-	RegisterHotKey(NULL, 121, MOD_CONTROL, VK_DOWN);
-	while (GetMessageW(&msg, nullptr, 0, 0)) {
-		if (msg.message == WM_HOTKEY) {
-			switch (msg.wParam) {
-				case 121:
-					if (WCH_anti_idle) {
-						WCH_anti_idle = false;
-						WCH_SetWindowStatus(true);
-					} else {
-						if (WCH_cmd_line) {
-							cout << endl;
-							WCH_SetWindowStatus(false);
-						} else {
-							WCH_SetWindowStatus(true);
-						}
-					}
-					break;
-				default:
-					break;
-			}
-		}
-		if (!TranslateAcceleratorW(msg.hwnd, hAccelTable, &msg)) {
-			#ifdef _DEBUG
-			WCH_printlog(WCH_LOG_STATUS_DEBUG, "Message: Found accelerator");
-			#endif
-			TranslateMessage(&msg);
-			DispatchMessageW(&msg);
-		}
+	HWND hwnd {};
+	MSG msg {};
+	WNDCLASS wndclass {};
+	wndclass.style = CS_HREDRAW | CS_VREDRAW;
+	wndclass.lpfnWndProc = WndProc;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = NULL;
+	wndclass.hIcon = LoadIconW(NULL, IDI_APPLICATION);
+	wndclass.hCursor = LoadCursorW(NULL, IDC_ARROW);
+	wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = WCH_window_title.c_str();
+	if (!RegisterClassW(&wndclass)) {
+		MessageBoxW(NULL, L"This program requires Windows NT!", WCH_window_title.c_str(), MB_ICONERROR);
+		exit(0);
+	}
+	hwnd = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
+	ShowWindow(hwnd, SW_HIDE);
+	UpdateWindow(hwnd);
+	while (GetMessageW(&msg, NULL, 0, 0)) {
+		TranslateMessage(&msg);
+		DispatchMessageW(&msg);
 	}
 }
 

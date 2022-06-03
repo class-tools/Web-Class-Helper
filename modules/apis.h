@@ -18,9 +18,9 @@ extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
+extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
-extern MyNotify *Myn;
-extern CTrayIcon *MyC;
+extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -44,32 +44,6 @@ void WCH_printlog(string _mode, string _info);
 void WCH_read();
 bool WCH_save_func();
 int WCH_GetNumDigits(int _n);
-
-BOOL CTrayIcon::CreateTray(HWND hWnd, HICON hIcon, UINT uCallbackMessage, LPCTSTR szTitle) {
-	m_Notify.cbSize = sizeof(NOTIFYICONDATAW);
-	m_Notify.hIcon = hIcon;
-	m_Notify.hWnd = hWnd;
-	m_Notify.uCallbackMessage = uCallbackMessage;
-	m_Notify.uVersion = NOTIFYICON_VERSION;
-	m_Notify.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
-	m_Notify.uID = 1;
-	wcscpy_s(m_Notify.szTip, szTitle);
-	return Shell_NotifyIconW(NIM_ADD, &m_Notify);
-}
-
-BOOL CTrayIcon::ChangeTray(LPCTSTR msg, LPCTSTR title, UINT uTimeout) {
-	m_Notify.uFlags = NIF_INFO;
-	m_Notify.dwInfoFlags = NIIF_NONE;
-	m_Notify.szInfoTitle;
-	m_Notify.uTimeout = uTimeout;
-	wcscpy_s(m_Notify.szInfo, msg);
-	wcscpy_s(m_Notify.szInfoTitle, title);
-	return Shell_NotifyIconW(NIM_MODIFY, &m_Notify);
-}
-
-BOOL CTrayIcon::DeleteTray() {
-	return Shell_NotifyIconW(NIM_DELETE, &m_Notify);
-}
 
 void WCH_Sleep(int _ms) {
 	// Sleep.
@@ -151,17 +125,6 @@ void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
 	WCH_printlog(WCH_LOG_STATUS_INFO, format("\"TRAY\" argument \"STATUS\" was set to {}", (flag == true ? "\"SHOW\"" : "\"HIDE\"")));
-}
-
-void WCH_SetTrayIconMenu(HWND hWnd) {
-	POINT pt;
-	GetCursorPos(&pt);
-	HMENU hMenu = CreatePopupMenu();
-	AppendMenuW(hMenu, MF_STRING, WCH_IDM_SHOWHIDE, L"显示 / 隐藏");
-	AppendMenuW(hMenu, MF_SEPARATOR, 0, NULL);
-	AppendMenuW(hMenu, MF_STRING, WCH_IDM_EXIT, L"退出程序");
-	AppendMenuW(hMenu, MF_SEPARATOR, 0, NULL);
-	TrackPopupMenu(hMenu, TPM_RIGHTBUTTON, pt.x, pt.y, NULL, hWnd, NULL);
 }
 
 void WCH_PutPicture() {
@@ -301,6 +264,7 @@ WCH_Version WCH_GetVersion(string _in) {
 }
 
 int WCH_GetNumDigits(int _n) {
+	// Get digits of a number.
 	int _cnt = 1;
 	while ((_n /= 10) != 0) {
 		_cnt++;
@@ -346,68 +310,77 @@ void WCH_ProgressBar() {
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-	#ifdef _DEBUG
-	WCH_printlog(WCH_LOG_STATUS_DEBUG, "Starting \"WndProc()\"");
-	#endif
+	// Window processing module.
+	NOTIFYICONDATA nid {};
 	switch (message) {
-		case 1025:
-			switch (lParam) {
-				case WM_LBUTTONDOWN:
+		case WM_CREATE:
+			#ifdef _DEBUG
+			WCH_printlog(WCH_LOG_STATUS_DEBUG, "Entering \"WndProc()\": \"WM_CREATE\"");
+			#endif
+			nid.cbSize = sizeof(nid);
+			nid.hWnd = hWnd;
+			nid.uID = 0;
+			nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+			nid.uCallbackMessage = WM_USER;
+			nid.hIcon = (HICON)LoadImageW(NULL, L"WCHS.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
+			wcscpy(nid.szTip, WCH_window_title.c_str());
+			Shell_NotifyIconW(NIM_ADD, &nid);
+			WCH_hMenu = CreatePopupMenu();
+			AppendMenuW(WCH_hMenu, MF_STRING, WCH_IDM_SHOWHIDE, L"Show");
+			AppendMenuW(WCH_hMenu, MF_SEPARATOR, 0, NULL);
+			AppendMenuW(WCH_hMenu, MF_STRING, WCH_IDM_EXIT, L"Quit");
+			break;
+		case WM_USER:
+			if (lParam == WM_LBUTTONDOWN) {
+				#ifdef _DEBUG
+				WCH_printlog(WCH_LOG_STATUS_DEBUG, "Entering \"WndProc()\": \"WM_USER\" & \"WM_LBUTTONDOWN\"");
+				#endif
+				WCH_SetWindowStatus(true);
+			} else if (lParam == WM_RBUTTONDOWN) {
+				POINT pt;
+				int xx;
+				GetCursorPos(&pt);
+				SetForegroundWindow(hWnd);
+				xx = TrackPopupMenu(WCH_hMenu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
+				#ifdef _DEBUG
+				WCH_printlog(WCH_LOG_STATUS_DEBUG, "Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = " + to_string(xx) + "\"");
+				#endif
+				if (xx == IDR_SHOW) {
+					#ifdef _DEBUG
+					WCH_printlog(WCH_LOG_STATUS_DEBUG, "Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"IDR_SHOW\"");
+					#endif
 					WCH_SetWindowStatus(true);
-					break;
-				case WM_RBUTTONDOWN:
-					WCH_SetTrayIconMenu(hWnd);
-					break;
-			}
-			break;
-		case WM_COMMAND:
-			switch (LOWORD(wParam)) {
-				case WCH_IDM_SHOWHIDE:
-					WCH_SetWindowStatus(!WCH_cmd_line);
-					break;
-				case WCH_IDM_EXIT:
+				} else if (xx == IDR_QUIT) {
+					#ifdef _DEBUG
+					WCH_printlog(WCH_LOG_STATUS_DEBUG, "Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"IDR_QUIT\"");
+					#endif
+					WCH_command_list.clear();
+					WCH_command_list.push_back("quit");
+					cout << endl;
 					exit(0);
-					break;
-				default:
-					return DefWindowProcW(hWnd, message, wParam, lParam);
-					break;
+				} else if (xx == 0) {
+					PostMessageW(hWnd, WM_LBUTTONDOWN, NULL, NULL);
+				}
 			}
-		case WM_PAINT: {
-			PAINTSTRUCT ps;
-			HDC hdc = BeginPaint(hWnd, &ps);
-			EndPaint(hWnd, &ps);
 			break;
-		}
 		case WM_DESTROY:
+			#ifdef _DEBUG
+			WCH_printlog(WCH_LOG_STATUS_DEBUG, "Entering \"WndProc()\": \"WM_DESTROY\"");
+			#endif
+			Shell_NotifyIconW(NIM_DELETE, &nid);
 			PostQuitMessage(0);
 			break;
 		default:
-			return DefWindowProcW(hWnd, message, wParam, lParam);
+			if (message == RegisterWindowMessageW(L"TaskbarCreated")) {
+				SendMessageW(hWnd, WM_CREATE, wParam, lParam);
+			}
+			break;
 	}
-	return 0;
-}
-
-ATOM WCH_RegisterClass(HINSTANCE hInstance, WCHAR* szWindowClass) {
-	#ifdef _DEBUG
-	WCH_printlog(WCH_LOG_STATUS_DEBUG, "Registering class");
-	#endif
-	WNDCLASSEXW wcex;
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = WndProc;
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.hInstance = hInstance;
-	wcex.hIcon = LoadIconW(hInstance, MAKEINTRESOURCEW(IDI_WCH));
-	wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_WCH);
-	wcex.lpszClassName = szWindowClass;
-	wcex.hIconSm = LoadIconW(wcex.hInstance, MAKEINTRESOURCEW(IDI_SMALL));
-	return RegisterClassExW(&wcex);
+	return DefWindowProcW(hWnd, message, wParam, lParam);
 }
 
 void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
+	// Show messagebox to inform a bug to user.
 	cout << "\a";
 	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by open a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
 		system("start resources/website/issues.url");

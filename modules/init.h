@@ -18,9 +18,9 @@ extern vector <string> WCH_command_list;
 extern multimap <int, pair <int, string>> WCH_clock_list;
 extern set <string> WCH_task_list;
 extern set <string> WCH_work_list;
+extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
-extern MyNotify *Myn;
-extern CTrayIcon *MyC;
+extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -74,11 +74,18 @@ int WCH_Init_Log() {
 
 void WCH_Init_Win() {
 	// Initialization for window.
-	SetConsoleTitleW((L"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")").c_str());
+	WCH_window_title = L"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")";
+	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
+		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR);
+		WCH_printlog(WCH_LOG_STATUS_WARN, "Application is already running");
+		exit(0);
+	}
+	SetConsoleTitleW(WCH_window_title.c_str());
 }
 
 void WCH_Init_Bind() {
 	// Initialization for bind.
+	atexit(WCH_quit);
 	WCH_signalHandler();
 }
 

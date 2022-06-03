@@ -200,17 +200,6 @@ private:
 	ULONG_PTR gdiplusToken;
 };
 
-class CTrayIcon {
-public:
-	CTrayIcon() {};
-	~CTrayIcon() {};
-	BOOL CreateTray(HWND, HICON, UINT, LPCTSTR = L"Web Class Helper");
-	BOOL ChangeTray(LPCTSTR, LPCTSTR = L"Web Class Helper", UINT = 3000);
-	BOOL DeleteTray();
-private:
-	NOTIFYICONDATAW m_Notify;
-};
-
 struct WCH_Time {
 	int Year {};
 	int Month {};
@@ -233,28 +222,15 @@ struct WCH_Version {
 	int Z {};
 };
 
-struct MyNotify {
-	MyNotify(HWND hWND, WCHAR* Path = (WCHAR*)L"WCH.ico", WCHAR* Title = (WCHAR*)L"Web Class Helper", UINT uID = 1) {
-		NOTIFYICONDATAW nID = {};
-		nID.hIcon = (HICON)LoadImageW(NULL, Path, IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
-		wcscpy_s(nID.szTip, Title);
-		nID.hWnd = hWND;
-		nID.uID = uID;
-		nID.uFlags = NIF_GUID | NIF_ICON | NIF_MESSAGE | NIF_TIP;
-		nID.uCallbackMessage = 1025;
-		Shell_NotifyIconW(NIM_ADD, &nID);
-	}
-};
-
 const string WCH_WDName[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 map <string, function <void ()>> WCH_command_support;
 vector <string> WCH_command_list;
 multimap <int, pair <int, string>> WCH_clock_list;
 set <string> WCH_task_list;
 set <string> WCH_work_list;
+wstring WCH_window_title;
 HWND WCH_hWnd;
-MyNotify *Myn;
-CTrayIcon *MyC;
+HMENU WCH_hMenu;
 int WCH_clock_num;
 int WCH_task_num;
 int WCH_work_num;

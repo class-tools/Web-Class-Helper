@@ -48,7 +48,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="WCH.ico">
+    <Image Include="WCHL.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
