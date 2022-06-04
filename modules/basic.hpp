@@ -120,7 +120,9 @@ Contributors: jsh-jsh ren-yc
 #pragma comment (lib, "urlmon.lib")
 
 using std::cin;
+using std::wcin;
 using std::cout;
+using std::wcout;
 using std::endl;
 using std::format;
 using std::getline;
@@ -128,76 +130,72 @@ using std::to_string;
 using std::to_wstring;
 using std::string;
 using std::wstring;
+using std::stringstream;
+using std::wstringstream;
 using std::ifstream;
+using std::wifstream;
 using std::ofstream;
+using std::wofstream;
+using std::locale;
 using std::map;
 using std::set;
 using std::vector;
 using std::multimap;
 using std::function;
 using std::pair;
-using std::stringstream;
 using std::thread;
 using std::runtime_error;
 using std::ios;
 using std::make_pair;
 using std::equal_range;
 
-#define WCH_IDM_SHOWHIDE 11461
-#define WCH_IDM_EXIT 11462
-#define WCH_IDM_OPENPIC 11463
-#define WCH_ERRNO_UNCORRECT 0
-#define WCH_ERRNO_NETWORK_FAILURE 1
-#define WCH_ERRNO_FILE_NOT_FOUND 2
-#define WCH_ERRNO_CLOCK_OPERATION 3
-#define WCH_ERRNO_TASK_OPERATION 4
-#define WCH_ERRNO_WORK_OPERATION 5
-#define WCH_ERROR_DPI_GET_FAILED 6
-#define WCH_LOG_STATUS_INFO "[INFO]"
-#define WCH_LOG_STATUS_DEBUG "[DEBUG]"
-#define WCH_LOG_STATUS_WARN "[WARN]"
-#define WCH_LOG_STATUS_ERROR "[ERROR]"
+#define WCH_MENU_SHOW 11461
+#define WCH_MENU_QUIT 11462
+#define WCH_LOG_STATUS_INFO L"[INFO]"
+#define WCH_LOG_STATUS_DEBUG L"[DEBUG]"
+#define WCH_LOG_STATUS_WARN L"[WARN]"
+#define WCH_LOG_STATUS_ERROR L"[ERROR]"
 
 class GdiplusWrapper {
-public:
-	GdiplusWrapper() {
-		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-	}
-	~GdiplusWrapper() {
-		Gdiplus::GdiplusShutdown(gdiplusToken);
-	}
-	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
-		UINT num = 0;
-		UINT size = 0;
-		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
-		Gdiplus::GetImageEncodersSize(&num, &size);
-		if (size == 0) {
-			return -1;
+	public:
+		GdiplusWrapper() {
+			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+			GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 		}
-		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
-		if (pImageCodecInfo == NULL) {
-			return -1;
+		~GdiplusWrapper() {
+			Gdiplus::GdiplusShutdown(gdiplusToken);
 		}
-		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
-		for (UINT j = 0; j < num; j++) {
-			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
-				*pClsid = pImageCodecInfo[j].Clsid;
-				free(pImageCodecInfo);
-				return j;
+		int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
+			UINT num = 0;
+			UINT size = 0;
+			Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+			Gdiplus::GetImageEncodersSize(&num, &size);
+			if (size == 0) {
+				return -1;
 			}
+			pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+			if (pImageCodecInfo == NULL) {
+				return -1;
+			}
+			Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+			for (UINT j = 0; j < num; j++) {
+				if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
+					*pClsid = pImageCodecInfo[j].Clsid;
+					free(pImageCodecInfo);
+					return j;
+				}
+			}
+			free(pImageCodecInfo);
+			return -1;
 		}
-		free(pImageCodecInfo);
-		return -1;
-	}
-	void SaveImage(HBITMAP hBitmap, const WCHAR* filename, const WCHAR* format) {
-		CLSID pngClsid;
-		Gdiplus::Bitmap bitmap(hBitmap, NULL);
-		GetEncoderClsid(format, &pngClsid);
-		bitmap.Save(filename, &pngClsid);
-	}
-private:
-	ULONG_PTR gdiplusToken;
+		void SaveImage(HBITMAP hBitmap, const WCHAR* filename, const WCHAR* format) {
+			CLSID pngClsid;
+			Gdiplus::Bitmap bitmap(hBitmap, NULL);
+			GetEncoderClsid(format, &pngClsid);
+			bitmap.Save(filename, &pngClsid);
+		}
+	private:
+		ULONG_PTR gdiplusToken;
 };
 
 struct WCH_Time {
@@ -208,7 +206,6 @@ struct WCH_Time {
 	int Minute {};
 	int Second {};
 	int WeekDay {};
-	string Name {};
 };
 
 struct WCH_Data_Body {
@@ -222,12 +219,12 @@ struct WCH_Version {
 	int Z {};
 };
 
-const string WCH_WDName[7] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-map <string, function <void ()>> WCH_command_support;
-vector <string> WCH_command_list;
-multimap <int, pair <int, string>> WCH_clock_list;
-set <string> WCH_task_list;
-set <string> WCH_work_list;
+const wstring WCH_WDName[7] = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+map <wstring, function <void ()>> WCH_command_support;
+vector <wstring> WCH_command_list;
+multimap <int, pair <int, wstring>> WCH_clock_list;
+set <wstring> WCH_task_list;
+set <wstring> WCH_work_list;
 wstring WCH_window_title;
 HWND WCH_hWnd;
 HMENU WCH_hMenu;
@@ -243,14 +240,15 @@ int WCH_InputTimes;
 bool WCH_cmd_line = true;
 bool WCH_anti_idle;
 bool WCH_program_end;
-string WCH_command;
-string WCH_ProgressBarStr;
+wstring WCH_command;
+wstring WCH_ProgressBarStr;
 ifstream fin;
+wifstream wfin;
 ofstream fout;
+wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(int _in);
-void WCH_printlog(string _mode, string _info);
+void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
 int WCH_GetNumDigits(int _n);

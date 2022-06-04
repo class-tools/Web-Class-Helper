@@ -12,12 +12,12 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const string WCH_WDName[7];
-extern map <string, function <void ()>> WCH_command_support;
-extern vector <string> WCH_command_list;
-extern multimap <int, pair <int, string>> WCH_clock_list;
-extern set <string> WCH_task_list;
-extern set <string> WCH_work_list;
+extern const wstring WCH_WDName[7];
+extern map <wstring, function <void ()>> WCH_command_support;
+extern vector <wstring> WCH_command_list;
+extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <wstring> WCH_task_list;
+extern set <wstring> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;
@@ -33,14 +33,15 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
-extern string WCH_command;
-extern string WCH_ProgressBarStr;
+extern wstring WCH_command;
+extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
+extern wifstream wfin;
 extern ofstream fout;
+extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(int _in);
-void WCH_printlog(string _mode, string _info);
+void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
 int WCH_GetNumDigits(int _n);
@@ -58,7 +59,11 @@ void WCH_Init_Dir() {
 void WCH_Init_Var() {
 	// Initialization for varible.
 	WCH_hWnd = GetForegroundWindow();
-	WCH_ProgressBarStr = IsWindows10OrGreater() ? UTF8ToANSI("━") : "-";
+	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
+	wcin.imbue(locale("chs"));
+	wcout.imbue(locale("chs"));
+	wfin.imbue(locale("chs"));
+	wfout.imbue(locale("chs"));
 }
 
 int WCH_Init_Log() {
@@ -68,7 +73,7 @@ int WCH_Init_Log() {
 	if (_waccess(L"logs/latest.log", 0) != -1) {
 		returnVal = _wrename(L"logs/latest.log", format(L"logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, "Starting \"Web Class Helper (x" + to_string(WCH_DisplayFramework) + ")\"");
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")\"");
 	return returnVal == -1;
 }
 
@@ -77,7 +82,7 @@ void WCH_Init_Win() {
 	WCH_window_title = L"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")";
 	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
 		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR);
-		WCH_printlog(WCH_LOG_STATUS_WARN, "Application is already running");
+		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
 		exit(0);
 	}
 	SetConsoleTitleW(WCH_window_title.c_str());
@@ -91,32 +96,32 @@ void WCH_Init_Bind() {
 
 void WCH_Init_Cmd() {
 	// Initialization for command support list.
-	WCH_command_support.insert(make_pair("clock", WCH_check_clock));
-	WCH_command_support.insert(make_pair("task", WCH_check_task));
-	WCH_command_support.insert(make_pair("work", WCH_check_work));
-	WCH_command_support.insert(make_pair("help", WCH_help));
-	WCH_command_support.insert(make_pair("ow", WCH_ow));
-	WCH_command_support.insert(make_pair("hide", WCH_hide));
-	WCH_command_support.insert(make_pair("game", WCH_game));
-	WCH_command_support.insert(make_pair("time", WCH_time));
-	WCH_command_support.insert(make_pair("pi", WCH_pi));
-	WCH_command_support.insert(make_pair("speedtest", WCH_speedtest));
-	WCH_command_support.insert(make_pair("trans", WCH_trans));
-	WCH_command_support.insert(make_pair("anti-idle", WCH_anti_idle_func));
-	WCH_command_support.insert(make_pair("update", WCH_update));
-	WCH_command_support.insert(make_pair("wiki", WCH_wiki));
-	WCH_command_support.insert(make_pair("license", WCH_license));
-	WCH_command_support.insert(make_pair("clear", WCH_clear));
-	WCH_command_support.insert(make_pair("save", WCH_save_cmd));
-	WCH_command_support.insert(make_pair("quit", WCH_quit));
+	WCH_command_support.insert(make_pair(L"clock", WCH_check_clock));
+	WCH_command_support.insert(make_pair(L"task", WCH_check_task));
+	WCH_command_support.insert(make_pair(L"work", WCH_check_work));
+	WCH_command_support.insert(make_pair(L"help", WCH_help));
+	WCH_command_support.insert(make_pair(L"ow", WCH_ow));
+	WCH_command_support.insert(make_pair(L"hide", WCH_hide));
+	WCH_command_support.insert(make_pair(L"game", WCH_game));
+	WCH_command_support.insert(make_pair(L"time", WCH_time));
+	WCH_command_support.insert(make_pair(L"pi", WCH_pi));
+	WCH_command_support.insert(make_pair(L"speedtest", WCH_speedtest));
+	WCH_command_support.insert(make_pair(L"trans", WCH_trans));
+	WCH_command_support.insert(make_pair(L"anti-idle", WCH_anti_idle_func));
+	WCH_command_support.insert(make_pair(L"update", WCH_update));
+	WCH_command_support.insert(make_pair(L"wiki", WCH_wiki));
+	WCH_command_support.insert(make_pair(L"license", WCH_license));
+	WCH_command_support.insert(make_pair(L"clear", WCH_clear));
+	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
+	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
 }
 
 void WCH_Init_Out() {
 	// Initialization for output.
-	cout << "Web Class Helper " << WCH_VER << " (x" << to_string(WCH_DisplayFramework) << ")" << endl;
-	cout << "Copyright (c) 2022 Class Tools Develop Team." << endl;
-	cout << "Type \"help\", \"update\" or \"license\" for more information." << endl;
-	cout << endl;
+	wcout << L"Web Class Helper " << WCH_VER << L" (x" << to_wstring(WCH_DisplayFramework) << L")" << endl;
+	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
+	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
+	wcout << endl;
 }
 
 void WCH_Init() {

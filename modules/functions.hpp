@@ -12,12 +12,12 @@ Contributors: jsh-jsh ren-yc
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const string WCH_WDName[7];
-extern map <string, function <void ()>> WCH_command_support;
-extern vector <string> WCH_command_list;
-extern multimap <int, pair <int, string>> WCH_clock_list;
-extern set <string> WCH_task_list;
-extern set <string> WCH_work_list;
+extern const wstring WCH_WDName[7];
+extern map <wstring, function <void ()>> WCH_command_support;
+extern vector <wstring> WCH_command_list;
+extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <wstring> WCH_task_list;
+extern set <wstring> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;
@@ -33,74 +33,18 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
-extern string WCH_command;
-extern string WCH_ProgressBarStr;
+extern wstring WCH_command;
+extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
+extern wifstream wfin;
 extern ofstream fout;
+extern wofstream wfout;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
-void WCH_Error(int _in);
-void WCH_printlog(string _mode, string _info);
+void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
 int WCH_GetNumDigits(int _n);
-
-WCH_Time WCH_GetTime() {
-	// Get current time and return a WCH_Time object.
-	WCH_Time NowTime;
-	time_t rawtime;
-	struct tm *ptminfo;
-	time(&rawtime);
-	ptminfo = localtime(&rawtime);
-	NowTime.Year = ptminfo -> tm_year + 1900;
-	NowTime.Month = ptminfo -> tm_mon + 1;
-	NowTime.Day = ptminfo -> tm_mday;
-	NowTime.Hour = ptminfo -> tm_hour;
-	NowTime.Minute = ptminfo -> tm_min;
-	NowTime.Second = ptminfo -> tm_sec;
-	NowTime.Name = "NULL";
-	return NowTime;
-}
-
-string WCH_TransStrChar(string str) {
-	// Translate the upper cases in string to lower cases.
-	for (int i = 0; i < (int)str.size(); i++) {
-		if (str[i] >= 'A' && str[i] <= 'Z') {
-			str[i] = (char)tolower(str[i]);
-		}
-	}
-	return str;
-}
-
-void WCH_Error(int _in) {
-	// Error message checker.
-	string _info;
-	string _mode;
-	if (_in == WCH_ERRNO_UNCORRECT) {
-		_info = "Your input code is uncorrect, please check and try again";
-		_mode = WCH_LOG_STATUS_WARN;
-	} else if (_in == WCH_ERRNO_NETWORK_FAILURE) {
-		_info = "An network error occurred, please check your network connection and try to update this program";
-		_mode = WCH_LOG_STATUS_WARN;
-	} else if (_in == WCH_ERRNO_FILE_NOT_FOUND) {
-		_info = "File processing failed. Please try reinstalling this program";
-		_mode = WCH_LOG_STATUS_ERROR;
-	} else if (_in == WCH_ERRNO_CLOCK_OPERATION) {
-		_info = "Cannot operate the clock list, please try to restart this program";
-		_mode = WCH_LOG_STATUS_ERROR;
-	} else if (_in == WCH_ERRNO_TASK_OPERATION) {
-		_info = "Cannot operate the task list, please try to restart this program";
-		_mode = WCH_LOG_STATUS_ERROR;
-	} else if (_in == WCH_ERRNO_WORK_OPERATION) {
-		_info = "Cannot operate the work list, please try to restart this program";
-		_mode = WCH_LOG_STATUS_ERROR;
-	} else if (_in == WCH_ERROR_DPI_GET_FAILED) {
-		_info = "Cannot get the DPI, please try to restart this program";
-		_mode = WCH_LOG_STATUS_ERROR;
-	}
-	cout << _info << "." << endl;
-	WCH_printlog(_mode, _info);
-}
 
 bool WCH_ShortCutKeyCheck() {
 	// Check if the shortcut key is pressed.
@@ -120,8 +64,8 @@ void WCH_check_clock_loop() {
 		WCH_Time NOW = WCH_GetTime();
 		for (auto it = WCH_clock_list.equal_range(NOW.Hour).first; it != WCH_clock_list.equal_range(NOW.Hour).second; it++) {
 			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
-				cout << "\a";
-				MessageBoxA(NULL, ((it -> second).second).c_str(), "WCH Clock", MB_OK);
+				wcout << L"\a";
+				MessageBoxW(NULL, ((it -> second).second).c_str(), L"WCH Clock", MB_OK);
 			}
 		}
 		WCH_Sleep(60000);
@@ -169,14 +113,14 @@ void WCH_message_loop() {
 
 void WCH_CL_Init() {
 	// Initialize the command line.
-	BEGIN: cout << ">>> ";
-	getline(cin, WCH_command);
-	if (cin.eof()) {
+	BEGIN: wcout << L">>> ";
+	getline(wcin, WCH_command);
+	if (wcin.eof()) {
 		raise(SIGINT);
 	}
 	WCH_command_list = WCH_split(WCH_command);
 	if ((int)WCH_command_list.size() == 0) {
-		cout << endl << endl;
+		wcout << endl << endl;
 		goto BEGIN;
 	}
 	transform(WCH_command_list[0].begin(), WCH_command_list[0].end(), WCH_command_list[0].begin(), ::tolower);
