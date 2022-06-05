@@ -149,6 +149,7 @@ using std::ios;
 using std::make_pair;
 using std::equal_range;
 
+#define WCH_HOTKEY_SHOW 121
 #define WCH_MENU_SHOW 11461
 #define WCH_MENU_QUIT 11462
 #define WCH_LOG_STATUS_INFO L"[INFO]"

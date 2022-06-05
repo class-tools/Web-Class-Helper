@@ -105,6 +105,7 @@ void WCH_message_loop() {
 	hwnd = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
 	ShowWindow(hwnd, SW_HIDE);
 	UpdateWindow(hwnd);
+	RegisterHotKey(hwnd, WCH_HOTKEY_SHOW, MOD_CONTROL, VK_DOWN);
 	while (GetMessageW(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);

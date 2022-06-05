@@ -5,7 +5,7 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER L"2.0.1"
-#include "resource.hpp"
+#include "yaml-cpp/yaml.h"
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
 #include "modules/commands.hpp"

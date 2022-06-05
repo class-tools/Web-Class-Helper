@@ -331,6 +331,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	// Window processing module.
 	NOTIFYICONDATA nid {};
 	switch (message) {
+		case WM_HOTKEY:
+			#ifdef _DEBUG
+			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_HOTKEY\" & \"wParam = " + to_wstring(wParam) + L"\" & \"lParam = " + to_wstring(lParam) + L"\"");
+			#endif
+			if (wParam == WCH_HOTKEY_SHOW) {
+				if (!WCH_program_end) {
+					if (WCH_anti_idle) {
+						WCH_anti_idle = false;
+					}
+					WCH_SetWindowStatus(true);
+				}
+			}
+			break;
 		case WM_CREATE:
 			#ifdef _DEBUG
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_CREATE\"");
@@ -344,7 +357,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			wcscpy(nid.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &nid);
 			WCH_hMenu = CreatePopupMenu();
-			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Show");
+			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Show (Disable anti-idle)");
 			AppendMenuW(WCH_hMenu, MF_SEPARATOR, 0, NULL);
 			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_QUIT, L"Quit");
 			break;
@@ -353,7 +366,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				#ifdef _DEBUG
 				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_LBUTTONDOWN\"");
 				#endif
-				WCH_SetWindowStatus(true);
+				if (!WCH_program_end) {
+					if (WCH_anti_idle) {
+						WCH_anti_idle = false;
+					}
+					WCH_SetWindowStatus(true);
+				}
 			} else if (lParam == WM_RBUTTONDOWN) {
 				POINT pt;
 				int xx;
@@ -367,7 +385,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 					#ifdef _DEBUG
 					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_SHOW\"");
 					#endif
-					WCH_SetWindowStatus(true);
+					if (!WCH_program_end) {
+						if (WCH_anti_idle) {
+							WCH_anti_idle = false;
+						}
+						WCH_SetWindowStatus(true);
+					}
 				} else if (xx == WCH_MENU_QUIT) {
 					#ifdef _DEBUG
 					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_QUIT\"");

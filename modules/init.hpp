@@ -70,9 +70,17 @@ int WCH_Init_Log() {
 	// Initialization for log.
 	int returnVal = 0;
 	WCH_Time now = WCH_GetTime();
-	if (_waccess(L"logs/latest.log", 0) != -1) {
-		returnVal = _wrename(L"logs/latest.log", format(L"logs/{:04}{:02}{:02}{:02}{:02}{:02}.log", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).c_str());
+	YAML::Node settings = YAML::LoadFile("settings.yml");
+	if (!settings["Start"]) {
+		settings["Start"] = "00000000000000";
 	}
+	if (_waccess(L"logs/latest.log", 0) != -1) {
+		returnVal = _wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(settings["Start"].as <string> ())).c_str());
+	}
+	settings["Start"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
+	fout.open("settings.yml");
+	fout << settings << endl;
+	fout.close();
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")\"");
 	return returnVal == -1;
 }
