@@ -39,6 +39,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
+extern Json::StreamWriterBuilder bui;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
@@ -58,60 +59,77 @@ void WCH_read_clock() {
 	// Read clock data.
 	WCH_Time q = WCH_GetTime();
 	wstring NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	wstring FilePath = L"data/" + NowWeekDay + L".dat";
-	wfin.open(FilePath);
-	if (!wfin.is_open()) {
+	wstring FilePath = L"data/" + NowWeekDay + L".json";
+	Json::Value val;
+	Json::Reader rea;
+	fin.open(FilePath);
+	if (!fin.is_open()) {
 		return;
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
-	wfin >> WCH_clock_num;
-	wfin.ignore();
-	for (int i = 1; i <= WCH_clock_num; i++) {
-		wstring tmp1;
-		getline(wfin, tmp1);
-		vector <wstring> tmp2 = WCH_split(tmp1);
-		int H = stoi(tmp2[0]);
-		int M = stoi(tmp2[1]);
-		wstring Tname = tmp1.substr((int)tmp2[0].size() + (int)tmp2[1].size() + 2, tmp1.size() - 1);
-		WCH_clock_list.emplace(make_pair(H, make_pair(M, Tname)));
+	if (rea.parse(fin, val)) {
+		try {
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+			WCH_clock_num = val.size();
+			for (int i = 0; i < WCH_clock_num; i++) {
+				WCH_clock_list.emplace(make_pair(val[i][0].asInt(), make_pair(val[i][1].asInt(), StrToWstr(val[i][2].asString()))));
+			}
+		} catch (...) {
+			goto ERR;
+		}
+	} else {
+		ERR: WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 	}
-	wfin.close();
+	fin.close();
 }
 
 void WCH_read_task() {
 	// Read task data.
-	wstring FilePath = L"data/task.dat";
-	wfin.open(FilePath);
-	if (!wfin.is_open()) {
+	wstring FilePath = L"data/task.json";
+	Json::Value val;
+	Json::Reader rea;
+	fin.open(FilePath);
+	if (!fin.is_open()) {
 		return;
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
-	wfin >> WCH_task_num;
-	wfin.ignore();
-	for (int i = 1; i <= WCH_task_num; i++) {
-		wstring TaskName;
-		getline(wfin, TaskName);
-		WCH_task_list.insert(TaskName);
+	if (rea.parse(fin, val)) {
+		try {
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+			WCH_task_num = val.size();
+			for (int i = 0; i < WCH_task_num; i++) {
+				WCH_task_list.insert(StrToWstr(val[i].asString()));
+			}
+		} catch (...) {
+			goto ERR;
+		}
+	} else {
+		ERR: WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 	}
-	wfin.close();
+	fin.close();
 }
 
 void WCH_read_work() {
 	// Read work data.
-	wstring FilePath = L"data/work.dat";
-	wfin.open(FilePath);
-	if (!wfin.is_open()) {
+	wstring FilePath = L"data/work.json";
+	Json::Value val;
+	Json::Reader rea;
+	fin.open(FilePath);
+	if (!fin.is_open()) {
 		return;
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
-	wfin >> WCH_work_num;
-	wfin.ignore();
-	for (int i = 1; i <= WCH_work_num; i++) {
-		wstring WorkName;
-		getline(wfin, WorkName);
-		WCH_work_list.insert(WorkName);
+	if (rea.parse(fin, val)) {
+		try {
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+			WCH_work_num = val.size();
+			for (int i = 0; i < WCH_work_num; i++) {
+				WCH_work_list.insert(StrToWstr(val[i].asString()));
+			}
+		} catch (...) {
+			goto ERR;
+		}
+	} else {
+		ERR: WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 	}
-	wfin.close();
+	fin.close();
 }
 
 void WCH_read() {
@@ -133,7 +151,9 @@ void WCH_save_clock() {
 	// Save clock data.
 	WCH_Time q = WCH_GetTime();
 	wstring NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	wstring FilePath = L"data/" + NowWeekDay + L".dat";
+	wstring FilePath = L"data/" + NowWeekDay + L".json";
+	Json::Value val;
+	unique_ptr <Json::StreamWriter> sw(bui.newStreamWriter());
 	if (WCH_clock_num == 0) {
 		if (_waccess(FilePath.c_str(), 0) != -1) {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Deleting file \"" + FilePath + L"\"");
@@ -142,19 +162,25 @@ void WCH_save_clock() {
 		return;
 	}
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
-	wfout.open(FilePath);
-	wfout << WCH_clock_num << endl;
 	for (int i = 0; i <= 24; i++) {
 		for (auto it = WCH_clock_list.equal_range(i).first; it != WCH_clock_list.equal_range(i).second; it++) {
-			wfout << i << L" " << (it -> second).first << L" " << (it -> second).second << endl;
+			Json::Value sval;
+			sval.append(i);
+			sval.append((it -> second).first);
+			sval.append(WstrToStr((it -> second).second));
+			val.append(sval);
 		}
 	}
-	wfout.close();
+	fout.open(FilePath);
+	sw -> write(val, &fout);
+	fout.close();
 }
 
 void WCH_save_task() {
 	// Save task list data.
-	wstring FilePath = L"data/task.dat";
+	wstring FilePath = L"data/task.json";
+	Json::Value val;
+	unique_ptr <Json::StreamWriter> sw(bui.newStreamWriter());
 	if (WCH_task_num == 0) {
 		if (_waccess(FilePath.c_str(), 0) != -1) {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Deleting file \"" + FilePath + L"\"");
@@ -163,17 +189,19 @@ void WCH_save_task() {
 		return;
 	}
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
-	wfout.open(FilePath);
-	wfout << WCH_task_num << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-		wfout << *it << endl;
+		val.append(WstrToStr(*it));
 	}
-	wfout.close();
+	fout.open(FilePath);
+	sw -> write(val, &fout);
+	fout.close();
 }
 
 void WCH_save_work() {
 	// Save task list data.
-	wstring FilePath = L"data/work.dat";
+	wstring FilePath = L"data/work.json";
+	Json::Value val;
+	unique_ptr <Json::StreamWriter> sw(bui.newStreamWriter());
 	if (WCH_work_num == 0) {
 		if (_waccess(FilePath.c_str(), 0) != -1) {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Deleting file \"" + FilePath + L"\"");
@@ -182,12 +210,12 @@ void WCH_save_work() {
 		return;
 	}
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
-	wfout.open(FilePath);
-	wfout << WCH_work_num << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		wfout << *it << endl;
+		val.append(WstrToStr(*it));
 	}
-	wfout.close();
+	fout.open(FilePath);
+	sw -> write(val, &fout);
+	fout.close();
 }
 
 bool WCH_save_func() {

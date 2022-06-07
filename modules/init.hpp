@@ -39,6 +39,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
+extern Json::StreamWriterBuilder bui;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
@@ -60,6 +61,12 @@ void WCH_Init_Var() {
 	// Initialization for varible.
 	WCH_hWnd = GetForegroundWindow();
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
+	bui.settings_ = []() {
+		Json::Value def;
+		Json::StreamWriterBuilder::setDefaults(&def);
+		def["emitUTF8"] = true;
+		return def;
+	} ();
 	wcin.imbue(locale("chs"));
 	wcout.imbue(locale("chs"));
 	wfin.imbue(locale("chs"));
@@ -70,16 +77,21 @@ int WCH_Init_Log() {
 	// Initialization for log.
 	int returnVal = 0;
 	WCH_Time now = WCH_GetTime();
-	YAML::Node settings = YAML::LoadFile("settings.yml");
-	if (!settings["Start"]) {
-		settings["Start"] = "00000000000000";
-	}
+	Json::Value val;
+	Json::Reader rea;
+	unique_ptr <Json::StreamWriter> sw(bui.newStreamWriter());
+	fin.open(L"settings.json");
 	if (_waccess(L"logs/latest.log", 0) != -1) {
-		returnVal = _wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(settings["Start"].as <string> ())).c_str());
+		if (rea.parse(fin, val)) {
+			returnVal = _wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(val["Start"].asString())).c_str());
+		} else {
+			returnVal = _wrename(L"logs/latest.log", L"logs/00000000000000.log");
+		}
 	}
-	settings["Start"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
-	fout.open("settings.yml");
-	fout << settings << endl;
+	fin.close();
+	val["Start"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
+	fout.open(L"settings.json");
+	sw -> write(val, &fout);
 	fout.close();
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")\"");
 	return returnVal == -1;

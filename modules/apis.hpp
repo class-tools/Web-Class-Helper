@@ -39,6 +39,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
+extern Json::StreamWriterBuilder bui;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);

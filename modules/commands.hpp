@@ -39,6 +39,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
+extern Json::StreamWriterBuilder bui;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
@@ -345,7 +346,6 @@ void WCH_add_task() {
 		return;
 	}
 	wstring task = WCH_command.substr(9, WCH_command.size() - 1);
-	transform(task.begin(), task.end(), task.begin(), ::tolower);
 	if (WCH_task_list.find(task) != WCH_task_list.end()) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
 		wcout << L"Cannot operate the list, please try to restart this program." << endl;
@@ -364,7 +364,6 @@ void WCH_delete_task() {
 		return;
 	}
 	wstring task = WCH_command.substr(12, WCH_command.size() - 1);
-	transform(task.begin(), task.end(), task.begin(), ::tolower);
 	if (WCH_task_list.find(task) == WCH_task_list.end()) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
 		wcout << L"Cannot operate the list, please try to restart this program." << endl;
@@ -417,7 +416,6 @@ void WCH_check_task() {
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
 	if (WCH_command_list[1] == L"add") {
 		WCH_add_task();
 	} else if (WCH_command_list[1] == L"delete") {
@@ -457,7 +455,7 @@ void WCH_delete_work() {
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	wstring work = WCH_command.substr(10, WCH_command.size() - 1);
+	wstring work = WCH_command.substr(12, WCH_command.size() - 1);
 	if (WCH_work_list.find(work) == WCH_work_list.end()) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
 		wcout << L"Cannot operate the list, please try to restart this program." << endl;
@@ -651,7 +649,7 @@ void WCH_trans() {
 		}
 		Json::Reader rea;
 		Json::Value val;
-		fin.open("WCH_TRANS.tmp");
+		fin.open(L"WCH_TRANS.tmp");
 		if (!rea.parse(fin, val)) {
 			throw runtime_error("");
 		}
@@ -713,9 +711,9 @@ void WCH_time() {
 void WCH_help() {
 	// Print help information.
 	if ((int)WCH_command_list.size() == 1) {
-		if (_waccess(L"resources/help/index.dat", 0) != -1) {
+		if (_waccess(L"resources/help/index.json", 0) != -1) {
 			wstring _res;
-			wfin.open(L"resources/help/index.dat");
+			wfin.open(L"resources/help/index.json");
 			while (getline(wfin, _res)) {
 				wcout << _res << endl;
 			}
@@ -726,9 +724,9 @@ void WCH_help() {
 		}
 	} else {
 		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-		if ((int)WCH_command_list.size() == 2 && _waccess((L"resources/help/" + WCH_command_list[1] + L".dat").c_str(), 0) != -1) {
+		if ((int)WCH_command_list.size() == 2 && _waccess((L"resources/help/" + WCH_command_list[1] + L".json").c_str(), 0) != -1) {
 			wstring _res;
-			wfin.open((L"resources/help/" + WCH_command_list[1] + L".dat").c_str());
+			wfin.open((L"resources/help/" + WCH_command_list[1] + L".json").c_str());
 			while (getline(wfin, _res)) {
 				wcout << _res << endl;
 			}

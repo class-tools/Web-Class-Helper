@@ -5,7 +5,6 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER L"2.0.1"
-#include "yaml-cpp/yaml.h"
 #include "json/json.h"
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
@@ -41,6 +40,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
+extern Json::StreamWriterBuilder bui;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);

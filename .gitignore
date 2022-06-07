@@ -5,7 +5,7 @@
 /.vs/
 /genexe/
 /genins/
-/data/*.dat
+/data/*.json
 /logs/*.log
 *.tmp
 *.exe
@@ -13,3 +13,4 @@
 *.o
 *.APS
 CppProperties.json
+settings.json
