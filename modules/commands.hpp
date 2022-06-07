@@ -73,8 +73,8 @@ void WCH_quit() {
 	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_ERROR.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_UPD.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_TRANS.tmp");
-	WCH_CheckAndDeleteFile(L"WCH_STDL.tmp");
-	exit(0);
+	WCH_CheckAndDeleteFile(L"WCH_OW.tmp");
+	_exit(0);
 }
 
 void WCH_hide() {
@@ -119,7 +119,7 @@ void WCH_update() {
 		getline(wfin, res);
 		wfin.close();
 		WCH_Sleep(5000);
-		if (res == L"") {
+		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
 			throw runtime_error("");
 		}
 		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER), WCH_GetVersion(res))) {
@@ -643,29 +643,29 @@ void WCH_trans() {
 		return;
 	}
 	try {
-		wstring info;
-		wstring res;
-		info = L"TRANS";
-		info += to_wstring(WCH_Framework);
-		info += L" -i \"";
-		info += WCH_command.substr(5, WCH_command.size() - 1);
-		info += L"\" > WCH_TRANS.tmp";
-		_wsystem(info.c_str());
+		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WCH_command.substr(6, WCH_command.size() - 1)))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
 		WCH_Sleep(1000);
 		WCH_cmd_line = false;
-		if (_waccess(L"WCH_TRANS.tmp", 0) != -1) {
-			wfin.open(L"WCH_TRANS.tmp");
-			getline(wfin, res);
-			wcout << res << endl;
-			wfin.close();
-			DeleteFileW(L"WCH_TRANS.tmp");
-		} else {
+		if (WCH_FileIsBlank(L"WCH_TRANS.tmp")) {
 			throw runtime_error("");
 		}
+		Json::Reader rea;
+		Json::Value val;
+		fin.open("WCH_TRANS.tmp");
+		if (!rea.parse(fin, val)) {
+			throw runtime_error("");
+		}
+		if (!val.isMember("translation")) {
+			throw runtime_error("");
+		}
+		wcout << StrToWstr(UTF8ToANSI(val["translation"][0].asString())) << endl;
+		fin.close();
+		DeleteFileW(L"WCH_TRANS.tmp");
 		WCH_cmd_line = true;
 	} catch (...) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"An network error occurred, please check your network connection and try to update this program");
 		wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
+		WCH_cmd_line = true;
 		return;
 	}
 }
@@ -678,23 +678,23 @@ void WCH_ow() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", L"WCH_STDL.tmp", 0, 0);
+		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", L"WCH_OW.tmp", 0, 0);
 		WCH_Sleep(1000);
 		WCH_cmd_line = false;
-		if (_waccess(L"WCH_STDL.tmp", 0) != -1) {
-			wfin.open(L"WCH_STDL.tmp");
-			wstring res;
-			getline(wfin, res);
-			wcout << res << endl;
-			wfin.close();
-			DeleteFileW(L"WCH_STDL.tmp");
-		} else {
+		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
 			throw runtime_error("");
 		}
+		wfin.open(L"WCH_OW.tmp");
+		wstring res;
+		getline(wfin, res);
+		wcout << StrToWstr(UTF8ToANSI(WstrToStr(res))) << endl;
+		wfin.close();
+		DeleteFileW(L"WCH_OW.tmp");
 		WCH_cmd_line = true;
 	} catch (...) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"An network error occurred, please check your network connection and try to update this program");
 		wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
+		WCH_cmd_line = true;
 		return;
 	}
 }

@@ -121,7 +121,7 @@ void WCH_CL_Init() {
 	}
 	WCH_command_list = WCH_split(WCH_command);
 	if ((int)WCH_command_list.size() == 0) {
-		wcout << endl << endl;
+		wcout << endl;
 		goto BEGIN;
 	}
 	transform(WCH_command_list[0].begin(), WCH_command_list[0].end(), WCH_command_list[0].begin(), ::tolower);

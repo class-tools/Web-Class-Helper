@@ -131,6 +131,38 @@ string WstrToStr(wstring wstr) {
 	return result;
 }
 
+string UrlEncode(const wstring &input) {
+	string output;
+	int cbNeeded = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
+	if (cbNeeded > 0) {
+		char *utf8 = new char[cbNeeded];
+		if (WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, utf8, cbNeeded, NULL, NULL) != 0) {
+			for (char *p = utf8; *p; *p++) {
+				char onehex[5];
+				_snprintf(onehex, sizeof(onehex), "%%%02.2X", (unsigned char)*p);
+				output.append(onehex);
+			}
+		}
+		delete[] utf8;
+	}
+	return output;
+}
+
+string UTF8ToANSI(string strUTF8) {
+	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
+	WCHAR *wszBuffer = new WCHAR[nLen + 1];
+	nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, wszBuffer, nLen);
+	wszBuffer[nLen] = 0;
+	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, NULL, 0, NULL, 0);
+	CHAR *szBuffer = new CHAR[nLen + 1];
+	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
+	szBuffer[nLen] = 0;
+	strUTF8 = szBuffer;
+	delete[] szBuffer;
+	delete[] wszBuffer;
+	return strUTF8;
+}
+
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_hWnd, flag);
@@ -227,21 +259,6 @@ bool WCH_TaskKill(wstring name) {
 	DeleteFileW(L"WCH_SYSTEM_NORMAL.tmp");
 	DeleteFileW(L"WCH_SYSTEM_ERROR.tmp");
 	return _res;
-}
-
-string UTF8ToANSI(string strUTF8) {
-	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
-	WCHAR *wszBuffer = new WCHAR[nLen + 1];
-	nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, wszBuffer, nLen);
-	wszBuffer[nLen] = 0;
-	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, NULL, 0, NULL, 0);
-	CHAR *szBuffer = new CHAR[nLen + 1];
-	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
-	szBuffer[nLen] = 0;
-	strUTF8 = szBuffer;
-	delete[] szBuffer;
-	delete[] wszBuffer;
-	return strUTF8;
 }
 
 bool WCH_CheckVersion(const WCH_Version _Fir, const WCH_Version _Sec) {

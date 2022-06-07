@@ -6,6 +6,7 @@ Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER L"2.0.1"
 #include "yaml-cpp/yaml.h"
+#include "json/json.h"
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
 #include "modules/commands.hpp"
