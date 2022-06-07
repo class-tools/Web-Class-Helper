@@ -357,6 +357,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				if (!WCH_program_end) {
 					if (WCH_anti_idle) {
 						WCH_anti_idle = false;
+						WCH_SetTrayStatus(true);
 					}
 					WCH_SetWindowStatus(true);
 				}
@@ -387,6 +388,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				if (!WCH_program_end) {
 					if (WCH_anti_idle) {
 						WCH_anti_idle = false;
+						WCH_SetTrayStatus(true);
 					}
 					WCH_SetWindowStatus(true);
 				}
@@ -406,6 +408,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 					if (!WCH_program_end) {
 						if (WCH_anti_idle) {
 							WCH_anti_idle = false;
+							WCH_SetTrayStatus(true);
 						}
 						WCH_SetWindowStatus(true);
 					}
