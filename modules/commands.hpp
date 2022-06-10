@@ -17,7 +17,7 @@ extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
 extern multimap <int, pair <int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
-extern set <wstring> WCH_work_list;
+extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;
@@ -55,7 +55,7 @@ void WCH_clear() {
 		return;
 	}
 	system("cls");
-	wcout << L"Web Class Helper " << WCH_VER <<  L" (x" << to_wstring(WCH_DisplayFramework) << L")" << endl;
+	wcout << WCH_window_title << endl;
 	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
 	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
 }
@@ -67,7 +67,7 @@ void WCH_quit() {
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Exiting \"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")\"");
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"Exiting \"" + WCH_window_title + L"\"");
 	WCH_cmd_line = false;
 	WCH_program_end = true;
 	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_NORMAL.tmp");
@@ -161,7 +161,7 @@ void WCH_license() {
 
 void WCH_add_clock() {
 	// Add a new clock.
-	if ((int)WCH_command_list.size() < 5) {
+	if ((int)WCH_command_list.size() != 5) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
@@ -169,7 +169,7 @@ void WCH_add_clock() {
 	try {
 		int h = stoi(WCH_command_list[2]);
 		int m = stoi(WCH_command_list[3]);
-		wstring Tname = WCH_command.substr(12 + (int)WCH_command_list[2].size() + (int)WCH_command_list[3].size(), WCH_command.size() - 1);
+		wstring Tname = WCH_command_list[4];
 		if ((int)WCH_command_list.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
 			WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 			wcout << L"Your input code is uncorrect, please check and try again." << endl;
@@ -199,7 +199,7 @@ void WCH_add_clock() {
 
 void WCH_delete_clock() {
 	// Delete a clock.
-	if ((int)WCH_command_list.size() < 5) {
+	if ((int)WCH_command_list.size() != 5) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
@@ -207,7 +207,7 @@ void WCH_delete_clock() {
 	try {
 		int h = stoi(WCH_command_list[2]);
 		int m = stoi(WCH_command_list[3]);
-		wstring Tname = WCH_command.substr(15 + (int)WCH_command_list[2].size() + (int)WCH_command_list[3].size(), WCH_command.size() - 1);
+		wstring Tname = WCH_command_list[4];
 		bool flag = false;
 		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
 			if ((it -> second).first == m && (it -> second).second == Tname) {
@@ -216,35 +216,6 @@ void WCH_delete_clock() {
 				WCH_clock_num--;
 				WCH_clock_change++;
 				break;
-			}
-		}
-		if (!flag) {
-			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
-			wcout << L"Cannot operate the list, please try to restart this program." << endl;
-		}
-	} catch (...) {
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
-		wcout << L"Cannot operate the list, please try to restart this program." << endl;
-	}
-}
-
-void WCH_change_clock() {
-	// Change a clock.
-	if ((int)WCH_command_list.size() < 5) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
-		return;
-	}
-	try {
-		int h = stoi(WCH_command_list[2]);
-		int m = stoi(WCH_command_list[3]);
-		wstring Tname = WCH_command.substr(15 + (int)WCH_command_list[2].size() + (int)WCH_command_list[3].size(), WCH_command.size() - 1);
-		bool flag = false;
-		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
-			if ((it -> second).first == m) {
-				(it -> second).second = Tname;
-				flag = true;
-				WCH_clock_change++;
 			}
 		}
 		if (!flag) {
@@ -328,8 +299,6 @@ void WCH_check_clock() {
 		WCH_delete_clock();
 	} else if (WCH_command_list[1] == L"clear") {
 		WCH_clear_clock();
-	} else if (WCH_command_list[1] == L"change") {
-		WCH_change_clock();
 	} else if (WCH_command_list[1] == L"list") {
 		WCH_list_clock();
 	} else {
@@ -340,12 +309,12 @@ void WCH_check_clock() {
 
 void WCH_add_task() {
 	// Add a new task.
-	if ((int)WCH_command_list.size() < 3) {
+	if ((int)WCH_command_list.size() != 3) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	wstring task = WCH_command.substr(9, WCH_command.size() - 1);
+	wstring task = WCH_command_list[2];
 	if (WCH_task_list.find(task) != WCH_task_list.end()) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
 		wcout << L"Cannot operate the list, please try to restart this program." << endl;
@@ -358,12 +327,12 @@ void WCH_add_task() {
 
 void WCH_delete_task() {
 	// Delete a task.
-	if ((int)WCH_command_list.size() < 3) {
+	if ((int)WCH_command_list.size() != 3) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	wstring task = WCH_command.substr(12, WCH_command.size() - 1);
+	wstring task = WCH_command_list[2];
 	if (WCH_task_list.find(task) == WCH_task_list.end()) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
 		wcout << L"Cannot operate the list, please try to restart this program." << endl;
@@ -432,17 +401,18 @@ void WCH_check_task() {
 
 void WCH_add_work() {
 	// Add a new work.
-	if ((int)WCH_command_list.size() < 3) {
+	if ((int)WCH_command_list.size() != 4) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	wstring work = WCH_command.substr(9, WCH_command.size() - 1);
-	if (WCH_work_list.find(work) != WCH_work_list.end()) {
+	wstring work = WCH_command_list[2];
+	wstring tag = WCH_command_list[3];
+	if (WCH_work_list.find(make_pair(work, tag)) != WCH_work_list.end()) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
 		wcout << L"Cannot operate the list, please try to restart this program." << endl;
 	} else {
-		WCH_work_list.insert(work);
+		WCH_work_list.insert(make_pair(work, tag));
 		WCH_work_num++;
 		WCH_work_change++;
 	}
@@ -450,17 +420,18 @@ void WCH_add_work() {
 
 void WCH_delete_work() {
 	// Delete a work.
-	if ((int)WCH_command_list.size() < 3) {
+	if ((int)WCH_command_list.size() != 3) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	wstring work = WCH_command.substr(12, WCH_command.size() - 1);
-	if (WCH_work_list.find(work) == WCH_work_list.end()) {
+	wstring work = WCH_command_list[2];
+	wstring tag = WCH_command_list[3];
+	if (WCH_work_list.find(make_pair(work, tag)) == WCH_work_list.end()) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
 		wcout << L"Cannot operate the list, please try to restart this program." << endl;
 	} else {
-		WCH_work_list.erase(work);
+		WCH_work_list.erase(make_pair(work, tag));
 		WCH_work_num--;
 		WCH_work_change++;
 	}
@@ -485,19 +456,30 @@ void WCH_list_work() {
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
-	int MAX = -1;
+	int MAXN = -1;
+	int MAXT = -1;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		MAX = max(MAX, (int)(*it).size());
+		MAXN = max(MAXN, (int)(it -> first).size());
+		MAXT = max(MAXT, (int)(it -> second).size());
 	}
-	if (MAX == -1) {
+	if (MAXN == -1 && MAXT == -1) {
 		return;
 	}
-	MAX = max(MAX, 4);
-	wcout << L"Name" << endl;
-	WCH_PrintChar(MAX, '-');
+	MAXN = max(MAXN, 4);
+	MAXT = max(MAXT, 3);
+	wcout << L"Name";
+	WCH_PrintChar(MAXN - 4, ' ');
+	wcout << L" | Tag";
+	WCH_PrintChar(MAXT - 6, ' ');
+	wcout << endl;
+	WCH_PrintChar(MAXN, '-');
+	wcout << L" | ";
+	WCH_PrintChar(MAXT, '-');
 	wcout << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		wcout << *it << endl;
+		wcout << it -> first;
+		WCH_PrintChar(MAXN - (int)((it -> first).size()), ' ');
+		wcout << L" | " << it -> second << endl;
 	}
 }
 
@@ -635,13 +617,13 @@ void WCH_anti_idle_func() {
 
 void WCH_trans() {
 	// Translate string between Chinese / English.
-	if ((int)WCH_command_list.size() == 1) {
+	if ((int)WCH_command_list.size() != 2) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
 	}
 	try {
-		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WCH_command.substr(6, WCH_command.size() - 1)))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
+		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WCH_command_list[1]))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
 		WCH_Sleep(1000);
 		WCH_cmd_line = false;
 		if (WCH_FileIsBlank(L"WCH_TRANS.tmp")) {
@@ -711,9 +693,9 @@ void WCH_time() {
 void WCH_help() {
 	// Print help information.
 	if ((int)WCH_command_list.size() == 1) {
-		if (_waccess(L"resources/help/index.json", 0) != -1) {
+		if (_waccess(L"resources/help/index.dat", 0) != -1) {
 			wstring _res;
-			wfin.open(L"resources/help/index.json");
+			wfin.open(L"resources/help/index.dat");
 			while (getline(wfin, _res)) {
 				wcout << _res << endl;
 			}
@@ -724,9 +706,9 @@ void WCH_help() {
 		}
 	} else {
 		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-		if ((int)WCH_command_list.size() == 2 && _waccess((L"resources/help/" + WCH_command_list[1] + L".json").c_str(), 0) != -1) {
+		if ((int)WCH_command_list.size() == 2 && _waccess((L"resources/help/" + WCH_command_list[1] + L".dat").c_str(), 0) != -1) {
 			wstring _res;
-			wfin.open((L"resources/help/" + WCH_command_list[1] + L".json").c_str());
+			wfin.open((L"resources/help/" + WCH_command_list[1] + L".dat").c_str());
 			while (getline(wfin, _res)) {
 				wcout << _res << endl;
 			}

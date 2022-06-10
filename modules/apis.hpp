@@ -17,7 +17,7 @@ extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
 extern multimap <int, pair <int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
-extern set <wstring> WCH_work_list;
+extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;
@@ -67,15 +67,91 @@ void WCH_PrintChar(int _times, wchar_t _c) {
 	}
 }
 
+wstring StrToWstr(string str) {
+	wstring result;
+	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), NULL, 0);
+	TCHAR* buffer = new TCHAR[len + 1];
+	MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), buffer, len);
+	buffer[len] = '\0';
+	result.append(buffer);
+	delete[] buffer;
+	return result;
+}
+
+string WstrToStr(wstring wstr) {
+	string result;
+	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
+	char* buffer = new char[len + 1];
+	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), buffer, len, NULL, NULL);
+	buffer[len] = '\0';
+	result.append(buffer);
+	delete[] buffer;
+	return result;
+}
+
+string UrlEncode(const wstring& input) {
+	string output;
+	int cbNeeded = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
+	if (cbNeeded > 0) {
+		char* utf8 = new char[cbNeeded];
+		if (WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, utf8, cbNeeded, NULL, NULL) != 0) {
+			for (char* p = utf8; *p; *p++) {
+				char onehex[5];
+				_snprintf(onehex, sizeof(onehex), "%%%02.2X", (unsigned char)*p);
+				output.append(onehex);
+			}
+		}
+		delete[] utf8;
+	}
+	return output;
+}
+
+string UTF8ToANSI(string strUTF8) {
+	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
+	WCHAR* wszBuffer = new WCHAR[nLen + 1];
+	nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, wszBuffer, nLen);
+	wszBuffer[nLen] = 0;
+	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, NULL, 0, NULL, 0);
+	CHAR* szBuffer = new CHAR[nLen + 1];
+	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
+	szBuffer[nLen] = 0;
+	strUTF8 = szBuffer;
+	delete[] szBuffer;
+	delete[] wszBuffer;
+	return strUTF8;
+}
+
 vector <wstring> WCH_split(const wstring &_in) {
 	#ifdef _DEBUG
 	WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Spliting string: \"" + _in + L"\"");
 	#endif
 	vector <wstring> _res;
 	wstring _tmp;
-	wstringstream _wss(_in);
-	while (getline(_wss, _tmp, L' ')) {
+	bool flag = false;
+	for (int i = 0; i < (int)_in.size(); i++) {
+		if (_in[i] == L' ' && !flag && i != 0) {
+			if (_in[i - 1] != L'"') {
+				_res.push_back(_tmp);
+				_tmp = L"";
+			}
+		} else if (_in[i] == L'"') {
+			if (flag) {
+				_res.push_back(_tmp);
+				_tmp = L"";
+				flag = false;
+			} else {
+				flag = true;
+			}
+		} else {
+			_tmp += _in[i];
+		}
+	}
+	if (_tmp != L"") {
 		_res.push_back(_tmp);
+	}
+	if (flag) {
+		_res.clear();
+		_res.push_back(L"Incorrect");
 	}
 	#ifdef _DEBUG
 	if ((int)_res.size() != 0) {
@@ -110,58 +186,23 @@ WCH_Time WCH_GetTime() {
 	return NowTime;
 }
 
-wstring StrToWstr(string str) {
-	wstring result;
-	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), NULL, 0);
-	TCHAR *buffer = new TCHAR[len + 1];
-	MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), buffer, len);
-	buffer[len] = '\0';
-	result.append(buffer);
-	delete[] buffer;
-	return result;
-}
-
-string WstrToStr(wstring wstr) {
-	string result;
-	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
-	char* buffer = new char[len + 1];
-	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), buffer, len, NULL, NULL);
-	buffer[len] = '\0';
-	result.append(buffer);
-	delete[] buffer;
-	return result;
-}
-
-string UrlEncode(const wstring &input) {
-	string output;
-	int cbNeeded = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
-	if (cbNeeded > 0) {
-		char *utf8 = new char[cbNeeded];
-		if (WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, utf8, cbNeeded, NULL, NULL) != 0) {
-			for (char *p = utf8; *p; *p++) {
-				char onehex[5];
-				_snprintf(onehex, sizeof(onehex), "%%%02.2X", (unsigned char)*p);
-				output.append(onehex);
-			}
-		}
-		delete[] utf8;
-	}
-	return output;
-}
-
-string UTF8ToANSI(string strUTF8) {
-	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
-	WCHAR *wszBuffer = new WCHAR[nLen + 1];
-	nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, wszBuffer, nLen);
-	wszBuffer[nLen] = 0;
-	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, NULL, 0, NULL, 0);
-	CHAR *szBuffer = new CHAR[nLen + 1];
-	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
-	szBuffer[nLen] = 0;
-	strUTF8 = szBuffer;
-	delete[] szBuffer;
-	delete[] wszBuffer;
-	return strUTF8;
+wstring WCH_GetCompileTime() {
+	// Get program compile time.
+	vector <wstring> spi = WCH_split(StrToWstr(__DATE__));
+	map <wstring, int> mon;
+	mon[L"Jan"] = 1;
+	mon[L"Feb"] = 2;
+	mon[L"Mar"] = 3;
+	mon[L"Apr"] = 4;
+	mon[L"May"] = 5;
+	mon[L"Jun"] = 6;
+	mon[L"Jul"] = 7;
+	mon[L"Aug"] = 8;
+	mon[L"Sep"] = 9;
+	mon[L"Oct"] = 10;
+	mon[L"Nov"] = 11;
+	mon[L"Dec"] = 12;
+	return format(L"{}/{:02}/{} {}", spi[2], mon[spi[0]], spi[1], StrToWstr(__TIME__));
 }
 
 void WCH_SetWindowStatus(bool flag) {
@@ -221,7 +262,7 @@ void WCH_SaveImg() {
 	hBitmap = CreateCompatibleBitmap(hdcScreen, nWidth, nHeight);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
 	BitBlt(hMemDC, 0, 0, nWidth, nHeight, hdcScreen, 0, 0, SRCCOPY);
-	GdiplusWrapper gdiplus;
+	GdiplusWrapper gdiplus {};
 	gdiplus.SaveImage(hBitmap, SavePath.c_str(), L"image/jpeg");
 	DeleteDC(hdcScreen);
 	DeleteDC(hMemDC);

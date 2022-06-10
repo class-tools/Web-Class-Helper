@@ -17,7 +17,7 @@ extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
 extern multimap <int, pair <int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
-extern set <wstring> WCH_work_list;
+extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;
@@ -59,6 +59,11 @@ void WCH_Init_Dir() {
 
 void WCH_Init_Var() {
 	// Initialization for varible.
+	WCH_window_title = L"Web Class Helper";
+	#if ALPHA == TRUE
+	WCH_window_title += L" Internal Preview";
+	#endif
+	WCH_window_title += L" (x" + to_wstring(WCH_DisplayFramework) + L")";
 	WCH_hWnd = GetForegroundWindow();
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
 	bui.settings_ = []() {
@@ -93,13 +98,12 @@ int WCH_Init_Log() {
 	fout.open(L"settings.json");
 	sw -> write(val, &fout);
 	fout.close();
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")\"");
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"" + WCH_window_title + L"\"");
 	return returnVal == -1;
 }
 
 void WCH_Init_Win() {
 	// Initialization for window.
-	WCH_window_title = L"Web Class Helper (x" + to_wstring(WCH_DisplayFramework) + L")";
 	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
 		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR);
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
@@ -138,7 +142,7 @@ void WCH_Init_Cmd() {
 
 void WCH_Init_Out() {
 	// Initialization for output.
-	wcout << L"Web Class Helper " << WCH_VER << L" (x" << to_wstring(WCH_DisplayFramework) << L")" << endl;
+	wcout << WCH_window_title << endl;
 	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
 	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
 	wcout << endl;
@@ -146,6 +150,16 @@ void WCH_Init_Out() {
 
 void WCH_Init() {
 	// Initialize the whole program.
+	#if ALPHA == TRUE
+	WCH_SetWindowStatus(false);
+	if (MessageBoxW(NULL, (L"This version of the program is only used for internal testing and is strictly prohibited to be transmitted externally.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
+		WCH_command_list.clear();
+		WCH_command_list.push_back(L"quit");
+		WCH_quit();
+	} else {
+		WCH_SetWindowStatus(true);
+	}
+	#endif
 	WCH_Init_Dir();
 	WCH_Init_Var();
 	if (WCH_Init_Log()) {

@@ -5,6 +5,7 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER L"2.0.1"
+#define ALPHA TRUE
 #include "json/json.h"
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
@@ -18,7 +19,7 @@ extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
 extern multimap <int, pair <int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
-extern set <wstring> WCH_work_list;
+extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;

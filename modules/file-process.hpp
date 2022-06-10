@@ -17,7 +17,7 @@ extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
 extern multimap <int, pair <int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
-extern set <wstring> WCH_work_list;
+extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;
@@ -121,7 +121,7 @@ void WCH_read_work() {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 			WCH_work_num = val.size();
 			for (int i = 0; i < WCH_work_num; i++) {
-				WCH_work_list.insert(StrToWstr(val[i].asString()));
+				WCH_work_list.insert(make_pair(StrToWstr(val[i][0].asString()), StrToWstr(val[i][1].asString())));
 			}
 		} catch (...) {
 			goto ERR;
@@ -211,7 +211,10 @@ void WCH_save_work() {
 	}
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		val.append(WstrToStr(*it));
+		Json::Value sval;
+		sval.append(WstrToStr(it -> first));
+		sval.append(WstrToStr(it -> second));
+		val.append(sval);
 	}
 	fout.open(FilePath);
 	sw -> write(val, &fout);

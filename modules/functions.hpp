@@ -17,7 +17,7 @@ extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
 extern multimap <int, pair <int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
-extern set <wstring> WCH_work_list;
+extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_hWnd;
 extern HMENU WCH_hMenu;
@@ -66,7 +66,7 @@ void WCH_check_clock_loop() {
 		for (auto it = WCH_clock_list.equal_range(NOW.Hour).first; it != WCH_clock_list.equal_range(NOW.Hour).second; it++) {
 			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
 				wcout << L"\a";
-				MessageBoxW(NULL, ((it -> second).second).c_str(), L"WCH Clock", MB_OK);
+				MessageBoxW(NULL, ((it -> second).second).c_str(), L"WCH CLOCK", MB_OK);
 			}
 		}
 		WCH_Sleep(60000);

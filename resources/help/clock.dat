@@ -3,16 +3,17 @@ Modify clock list.
 Usage:
 
 CLOCK ADD [hour] [minute] [name]
-CLOCK CHANGE [hour] [minute] [name (new)]
 CLOCK DELETE [hour] [minute] [name]
 CLOCK CLEAR
 
 "CLOCK CLEAR" has no parameters.
 
-You can add a zero in front of [hour] / [minute] if it is less than 10.
+If [name] has Spaces, please add double quotation marks.
+
+You can add a zero in front of [hour] / [minute] if it is less than 10. (Not required)
 
 These two commands are same:
 
-CLOCK ADD 1 1 something
+CLOCK ADD 1 1 "something a"
 
-CLOCK ADD 01 01 something
+CLOCK ADD 01 01 "something a"

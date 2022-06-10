@@ -4,12 +4,10 @@ Usage:
 
 TRANS [info]
 
-All the things after the space behind "TRANS" will be read in.
+Please add double quotation mark when [info] has Spaces:
 
-Please do not use double quotation mark like this:
-
-TRANS "Hello world!"
+TRANS Hello world!
 
 This is correct:
 
-TRANS Hello world!
+TRANS "Hello world!"

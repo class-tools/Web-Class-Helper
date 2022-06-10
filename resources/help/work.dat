@@ -2,18 +2,16 @@ Modify work list.
 
 Usage:
 
-WORK ADD [name]
-WORK DELETE [name]
+WORK ADD [name] [tag]
+WORK DELETE [name] [tag]
 WORK CLEAR
 
 "WORK CLEAR" has no parameters.
 
-All the things after the space behind "ADD" / "DELETE" will be read in.
+Please add double quotation mark when [name] / [tag] has Spaces:
 
-Please do not use double quotation mark like this:
-
-TASK ADD "Do something"
+TASK ADD Do something
 
 This is correct:
 
-TASK ADD Do something
+TASK ADD "Do something"

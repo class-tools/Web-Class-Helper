@@ -1,15 +1,14 @@
-If you want to get the full information of a command, please input "HELP {command name}".
-CLOCK ADD {hour} {minute} {name} (Add clock at {hour}:{minute})
-CLOCK DELETE {hour} {minute} {name} (Delete clock at {hour}:{minute})
-CLOCK CHANGE {hour} {minute} {name} (Change clock at {hour}:{minute})
+If you want to get the full information of a command, please input "HELP [command name]".
+CLOCK ADD [hour] [minute] [name] (Add clock at [hour]:[minute])
+CLOCK DELETE [hour] [minute] [name] (Delete clock at [hour]:[minute])
 CLOCK LIST (List all clocks)
 CLOCK CLEAR (Clear clock list)
-TASK ADD {process name} (Add task {process name} to kill when enable "anti-idle")
-TASK DELETE {process name} (Delete task {process name} to kill when enable "anti-idle")
+TASK ADD [process name] (Add task [process name] to kill when enable "anti-idle")
+TASK DELETE [process name] (Delete task [process name] to kill when enable "anti-idle")
 TASK LIST (List all tasks)
 TASK CLEAR (Clear task list)
-WORK ADD {name} (Add {name} to work plan)
-WORK DELETE {name} (Delete work plan item {name})
+WORK ADD [name] [tag] (Add [name] with [tag] to work plan)
+WORK DELETE [name] [tag] (Delete work plan item [name] with [tag])
 WORK LIST (List all items in work plan)
 WORK CLEAR (Clear work list)
 HELP (Get help output)
@@ -19,7 +18,7 @@ GAME (Guessing game)
 TIME (Get time at once)
 PI (Make a screenshot and save in "Pictures" folder)
 SPEEDTEST (Start a speed test with a GUI window) **Need Internet**
-TRANS {info} (Translate a sentence between English / Chinese) **Need Internet**
+TRANS [info] (Translate a sentence between English / Chinese) **Need Internet**
 ANTI-IDLE (Enable anti-idle mode)
 UPDATE (Check update for this program) **Need Internet**
 WIKI (Jump to program wiki page in default browser) **Need Internet**
