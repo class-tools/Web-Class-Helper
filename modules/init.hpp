@@ -153,9 +153,8 @@ void WCH_Init() {
 	#if ALPHA == TRUE
 	WCH_SetWindowStatus(false);
 	if (MessageBoxW(NULL, (L"This version of the program is only used for internal testing and is strictly prohibited to be transmitted externally.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
-		WCH_command_list.clear();
-		WCH_command_list.push_back(L"quit");
-		WCH_quit();
+		WCH_CheckAndDeleteFile(L"logs/latest.log");
+		_exit(0);
 	} else {
 		WCH_SetWindowStatus(true);
 	}
