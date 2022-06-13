@@ -5,7 +5,7 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER L"2.0.1"
-#define ALPHA TRUE
+#define TYPE 1
 #include "json/json.h"
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"

@@ -60,9 +60,12 @@ void WCH_Init_Dir() {
 void WCH_Init_Var() {
 	// Initialization for varible.
 	WCH_window_title = L"Web Class Helper";
-	#if ALPHA == TRUE
+#if TYPE == 1
 	WCH_window_title += L" Internal Preview";
-	#endif
+#endif
+#if TYPE == 2
+	WCH_window_title += L" Public Preview";
+#endif
 	WCH_window_title += L" (x" + to_wstring(WCH_DisplayFramework) + L")";
 	WCH_hWnd = GetForegroundWindow();
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
@@ -150,15 +153,22 @@ void WCH_Init_Out() {
 
 void WCH_Init() {
 	// Initialize the whole program.
-	#if ALPHA == TRUE
+	wstring vertype = L"";
+#if TYPE == 1
+	vertype = L"Internal Preview";
+#endif
+#if TYPE == 2
+	vertype = L"Public Preview";
+#endif
+#if TYPE == 1 || TYPE == 2
 	WCH_SetWindowStatus(false);
-	if (MessageBoxW(NULL, (L"This version of the program is only used for internal testing and is strictly prohibited to be transmitted externally.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
+	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
 		WCH_CheckAndDeleteFile(L"logs/latest.log");
 		_exit(0);
 	} else {
 		WCH_SetWindowStatus(true);
 	}
-	#endif
+#endif
 	WCH_Init_Dir();
 	WCH_Init_Var();
 	if (WCH_Init_Log()) {

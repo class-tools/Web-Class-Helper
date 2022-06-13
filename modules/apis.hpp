@@ -122,9 +122,9 @@ string UTF8ToANSI(string strUTF8) {
 }
 
 vector <wstring> WCH_split(const wstring &_in) {
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Spliting string: \"" + _in + L"\"");
-	#endif
+#endif
 	vector <wstring> _res;
 	wstring _tmp;
 	bool flag = false;
@@ -153,7 +153,7 @@ vector <wstring> WCH_split(const wstring &_in) {
 		_res.clear();
 		_res.push_back(L"Incorrect");
 	}
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	if ((int)_res.size() != 0) {
 		if ((int)_res.size() != 1) {
 			wstring _debug = L"Splited result: \"" + _res[0] + L"\", ";
@@ -166,7 +166,7 @@ vector <wstring> WCH_split(const wstring &_in) {
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Splited result: \"" + _res[0] + L"\"");
 		}
 	}
-	#endif
+#endif
 	return _res;
 }
 
@@ -233,26 +233,7 @@ void WCH_SaveImg() {
 	WCH_Time now = WCH_GetTime();
 	wstring SavePath = format(L"C:\\Users\\{}\\Pictures\\{:04}{:02}{:02}{:02}{:02}{:02}.jpg", cUserNameBuffer, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 	HDC hdcScreen = ::GetDC(NULL);
-	int oDpi = GetDpiForWindow(GetDesktopWindow());
-	double dDpi = 0;
-	switch (oDpi) {
-		case 96:
-			dDpi = 1;
-			break;
-		case 120:
-			dDpi = 1.25;
-			break;
-		case 144:
-			dDpi = 1.5;
-			break;
-		case 192:
-			dDpi = 2;
-			break;
-		default:
-			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot get the DPI, please try to restart this program");
-			wcout << L"Cannot get the DPI, please try to restart this program." << endl;
-			break;
-	}
+	double dDpi = (double)GetDeviceCaps(GetDC(GetDesktopWindow()), DESKTOPHORZRES) / GetSystemMetrics(SM_CXSCREEN);
 	int nBitPerPixel = GetDeviceCaps(hdcScreen, BITSPIXEL);
 	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * dDpi);
 	int nHeight = (int)round(GetDeviceCaps(hdcScreen, VERTRES) * dDpi);
@@ -391,9 +372,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	NOTIFYICONDATA nid {};
 	switch (message) {
 		case WM_HOTKEY:
-			#ifdef _DEBUG
+#ifdef _DEBUG
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_HOTKEY\" & \"wParam = " + to_wstring(wParam) + L"\" & \"lParam = " + to_wstring(lParam) + L"\"");
-			#endif
+#endif
 			if (wParam == WCH_HOTKEY_SHOW) {
 				if (!WCH_program_end) {
 					if (WCH_anti_idle) {
@@ -405,9 +386,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			}
 			break;
 		case WM_CREATE:
-			#ifdef _DEBUG
+#ifdef _DEBUG
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_CREATE\"");
-			#endif
+#endif
 			nid.cbSize = sizeof(nid);
 			nid.hWnd = hWnd;
 			nid.uID = 0;
@@ -423,9 +404,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			break;
 		case WM_USER:
 			if (lParam == WM_LBUTTONDOWN) {
-				#ifdef _DEBUG
+#ifdef _DEBUG
 				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_LBUTTONDOWN\"");
-				#endif
+#endif
 				if (!WCH_program_end) {
 					if (WCH_anti_idle) {
 						WCH_anti_idle = false;
@@ -439,13 +420,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				GetCursorPos(&pt);
 				SetForegroundWindow(hWnd);
 				xx = TrackPopupMenu(WCH_hMenu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
-				#ifdef _DEBUG
+#ifdef _DEBUG
 				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = " + to_wstring(xx) + L"\"");
-				#endif
+#endif
 				if (xx == WCH_MENU_SHOW) {
-					#ifdef _DEBUG
+#ifdef _DEBUG
 					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_SHOW\"");
-					#endif
+#endif
 					if (!WCH_program_end) {
 						if (WCH_anti_idle) {
 							WCH_anti_idle = false;
@@ -454,9 +435,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 						WCH_SetWindowStatus(true);
 					}
 				} else if (xx == WCH_MENU_QUIT) {
-					#ifdef _DEBUG
+#ifdef _DEBUG
 					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_QUIT\"");
-					#endif
+#endif
 					WCH_command_list.clear();
 					WCH_command_list.push_back(L"quit");
 					wcout << endl;
@@ -467,9 +448,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			}
 			break;
 		case WM_DESTROY:
-			#ifdef _DEBUG
+#ifdef _DEBUG
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_DESTROY\"");
-			#endif
+#endif
 			Shell_NotifyIconW(NIM_DELETE, &nid);
 			PostQuitMessage(0);
 			break;
