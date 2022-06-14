@@ -253,7 +253,7 @@ void WCH_list_clock() {
 	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
 		MAXH = max(MAXH, WCH_GetNumDigits(it -> first));
 		MAXM = max(MAXM, WCH_GetNumDigits((it -> second).first));
-		MAXT = max(MAXT, (int)((it -> second).second).size());
+		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize((it -> second).second));
 	}
 	if (MAXH == -1 && MAXM == -1 && MAXT == -1) {
 		return;
@@ -364,7 +364,7 @@ void WCH_list_task() {
 	}
 	int MAX = -1;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-		MAX = max(MAX, (int)(*it).size());
+		MAX = max(MAX, (int)WCH_GetWstrDisplaySize(*it));
 	}
 	if (MAX == -1) {
 		return;
@@ -420,7 +420,7 @@ void WCH_add_work() {
 
 void WCH_delete_work() {
 	// Delete a work.
-	if ((int)WCH_command_list.size() != 3) {
+	if ((int)WCH_command_list.size() != 4) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
 		return;
@@ -459,8 +459,8 @@ void WCH_list_work() {
 	int MAXN = -1;
 	int MAXT = -1;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		MAXN = max(MAXN, (int)(it -> first).size());
-		MAXT = max(MAXT, (int)(it -> second).size());
+		MAXN = max(MAXN, (int)WCH_GetWstrDisplaySize(it -> first));
+		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(it -> second));
 	}
 	if (MAXN == -1 && MAXT == -1) {
 		return;
@@ -478,7 +478,7 @@ void WCH_list_work() {
 	wcout << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
 		wcout << it -> first;
-		WCH_PrintChar(MAXN - (int)((it -> first).size()), ' ');
+		WCH_PrintChar(MAXN - (int)WCH_GetWstrDisplaySize(it -> first), ' ');
 		wcout << L" | " << it -> second << endl;
 	}
 }

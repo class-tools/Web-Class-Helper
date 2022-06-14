@@ -205,6 +205,19 @@ wstring WCH_GetCompileTime() {
 	return format(L"{}/{:02}/{} {}", spi[2], mon[spi[0]], spi[1], StrToWstr(__TIME__));
 }
 
+size_t WCH_GetWstrDisplaySize(wstring _in) {
+	// Get display length of wide string.
+	size_t _size = 0;
+	for (int i = 0; i < (int)_in.size(); i++) {
+		if (iswascii(_in[i])) {
+			_size++;
+		} else {
+			_size += 2;
+		}
+	}
+	return _size;
+}
+
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_hWnd, flag);
