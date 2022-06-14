@@ -5,7 +5,7 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER L"2.0.1"
-#define TYPE 1
+#define TYPE 2
 #include "json/json.h"
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
@@ -55,10 +55,8 @@ int main() {
 		if (WCH_cmd_line) {
 			WCH_CL_Init();
 			if (WCH_command_support.find(WCH_command_list[0]) != WCH_command_support.end()) {
-				WCH_printlog(WCH_LOG_STATUS_INFO, L"Using command \"" + WCH_command + L"\"");
 				WCH_command_support.find(WCH_command_list[0]) -> second();
 			} else {
-				WCH_printlog(WCH_LOG_STATUS_INFO, L"Using unknown command \"" + WCH_command + L"\"");
 				WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 				wcout << L"Your input code is uncorrect, please check and try again." << endl;
 			}

@@ -50,7 +50,7 @@ int WCH_GetNumDigits(int _n);
 void WCH_Sleep(int _ms) {
 	// Sleep.
 	while (_ms > 0 && !WCH_program_end) {
-		Sleep(100);
+		sleep_for(milliseconds(100));
 		_ms -= 100;
 	}
 }

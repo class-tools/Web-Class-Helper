@@ -153,6 +153,8 @@ using std::exception;
 using std::ios;
 using std::make_pair;
 using std::equal_range;
+using std::chrono::milliseconds;
+using std::this_thread::sleep_for;
 
 #define WCH_HOTKEY_SHOW 121
 #define WCH_MENU_SHOW 11461
