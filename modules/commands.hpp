@@ -664,11 +664,11 @@ void WCH_ow() {
 		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
 			throw runtime_error("");
 		}
-		wfin.open(L"WCH_OW.tmp");
-		wstring res;
-		getline(wfin, res);
-		wcout << StrToWstr(UTF8ToANSI(WstrToStr(res))) << endl;
-		wfin.close();
+		fin.open(L"WCH_OW.tmp");
+		string res;
+		getline(fin, res);
+		cout << UTF8ToANSI(res) << endl;
+		fin.close();
 		DeleteFileW(L"WCH_OW.tmp");
 		WCH_cmd_line = true;
 	} catch (...) {
