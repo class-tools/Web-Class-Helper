@@ -15,11 +15,12 @@ Contributors: jsh-jsh ren-yc hjl2011
 extern const wstring WCH_WDName[7];
 extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
-extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <tuple <int, int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
 extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern HWND WCH_hWnd;
+extern HWND WCH_Win_hWnd;
+extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
@@ -33,6 +34,7 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
+extern bool WCH_pre_start;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
@@ -75,6 +77,7 @@ void WCH_quit() {
 	WCH_CheckAndDeleteFile(L"WCH_UPD.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_TRANS.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_OW.tmp");
+	SendMessageW(WCH_Tray_hWnd, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
 
@@ -176,8 +179,8 @@ void WCH_add_clock() {
 			return;
 		} else {
 			bool flag = false;
-			for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
-				if ((it -> second).first == m) {
+			for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+				if (get <0> (*it) == h && get <1> (*it) == m && get <2> (*it) == Tname) {
 					flag = true;
 					break;
 				}
@@ -185,7 +188,7 @@ void WCH_add_clock() {
 			if (!flag) {
 				WCH_clock_num++;
 				WCH_clock_change++;
-				WCH_clock_list.emplace(make_pair(h, make_pair(m, Tname)));
+				WCH_clock_list.insert(make_tuple(h, m, Tname));
 			} else {
 				WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 				wcout << L"Your input code is uncorrect, please check and try again." << endl;
@@ -209,8 +212,8 @@ void WCH_delete_clock() {
 		int m = stoi(WCH_command_list[3]);
 		wstring Tname = WCH_command_list[4];
 		bool flag = false;
-		for (auto it = WCH_clock_list.equal_range(h).first; it != WCH_clock_list.equal_range(h).second; it++) {
-			if ((it -> second).first == m && (it -> second).second == Tname) {
+		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+			if (get <0> (*it) == h && get <1> (*it) == m && get <2> (*it) == Tname) {
 				WCH_clock_list.erase(it);
 				flag = true;
 				WCH_clock_num--;
@@ -251,9 +254,9 @@ void WCH_list_clock() {
 	int MAXM = -1;
 	int MAXT = -1;
 	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
-		MAXH = max(MAXH, WCH_GetNumDigits(it -> first));
-		MAXM = max(MAXM, WCH_GetNumDigits((it -> second).first));
-		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize((it -> second).second));
+		MAXH = max(MAXH, WCH_GetNumDigits(get <0> (*it)));
+		MAXM = max(MAXM, WCH_GetNumDigits(get <1> (*it)));
+		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(get <2> (*it)));
 	}
 	if (MAXH == -1 && MAXM == -1 && MAXT == -1) {
 		return;
@@ -262,26 +265,24 @@ void WCH_list_clock() {
 	MAXM = max(MAXM, 6);
 	MAXT = max(MAXT, 4);
 	wcout << L"Hour";
-	WCH_PrintChar(MAXH - 4, ' ');
+	WCH_PrintChar(MAXH - 4, L' ');
 	wcout << L" | Minute";
-	WCH_PrintChar(MAXM - 6, ' ');
+	WCH_PrintChar(MAXM - 6, L' ');
 	wcout << L" | Name";
-	WCH_PrintChar(MAXT - 4, ' ');
+	WCH_PrintChar(MAXT - 4, L' ');
 	wcout << endl;
-	WCH_PrintChar(MAXH, '-');
+	WCH_PrintChar(MAXH, L'-');
 	wcout << L" | ";
-	WCH_PrintChar(MAXM, '-');
+	WCH_PrintChar(MAXM, L'-');
 	wcout << L" | ";
-	WCH_PrintChar(MAXT, '-');
+	WCH_PrintChar(MAXT, L'-');
 	wcout << endl;
-	for (int i = 0; i <= 24; i++) {
-		for (auto it = WCH_clock_list.equal_range(i).first; it != WCH_clock_list.equal_range(i).second; it++) {
-			wcout << i;
-			WCH_PrintChar(MAXH - WCH_GetNumDigits(i), ' ');
-			wcout << L" | " << (it -> second).first;
-			WCH_PrintChar(MAXM - WCH_GetNumDigits((it -> second).first), ' ');
-			wcout << L" | " << (it -> second).second << endl;
-		}
+	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+		wcout << get <0> (*it);
+		WCH_PrintChar(MAXH - WCH_GetNumDigits(get <0> (*it)), L' ');
+		wcout << L" | " << get <1> (*it);
+		WCH_PrintChar(MAXM - WCH_GetNumDigits(get <1> (*it)), L' ');
+		wcout << L" | " << get <2> (*it) << endl;
 	}
 }
 
@@ -371,7 +372,7 @@ void WCH_list_task() {
 	}
 	MAX = max(MAX, 12);
 	wcout << L"Process Name" << endl;
-	WCH_PrintChar(MAX, '-');
+	WCH_PrintChar(MAX, L'-');
 	wcout << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
 		wcout << *it << endl;
@@ -468,17 +469,17 @@ void WCH_list_work() {
 	MAXN = max(MAXN, 4);
 	MAXT = max(MAXT, 3);
 	wcout << L"Name";
-	WCH_PrintChar(MAXN - 4, ' ');
+	WCH_PrintChar(MAXN - 4, L' ');
 	wcout << L" | Tag";
-	WCH_PrintChar(MAXT - 6, ' ');
+	WCH_PrintChar(MAXT - 6, L' ');
 	wcout << endl;
-	WCH_PrintChar(MAXN, '-');
+	WCH_PrintChar(MAXN, L'-');
 	wcout << L" | ";
-	WCH_PrintChar(MAXT, '-');
+	WCH_PrintChar(MAXT, L'-');
 	wcout << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
 		wcout << it -> first;
-		WCH_PrintChar(MAXN - (int)WCH_GetWstrDisplaySize(it -> first), ' ');
+		WCH_PrintChar(MAXN - (int)WCH_GetWstrDisplaySize(it -> first), L' ');
 		wcout << L" | " << it -> second << endl;
 	}
 }

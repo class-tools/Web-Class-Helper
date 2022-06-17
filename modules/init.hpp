@@ -15,11 +15,12 @@ Contributors: jsh-jsh ren-yc hjl2011
 extern const wstring WCH_WDName[7];
 extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
-extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <tuple <int, int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
 extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern HWND WCH_hWnd;
+extern HWND WCH_Win_hWnd;
+extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
@@ -33,6 +34,7 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
+extern bool WCH_pre_start;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
@@ -67,7 +69,7 @@ void WCH_Init_Var() {
 	WCH_window_title += L" Public Preview";
 #endif
 	WCH_window_title += L" (x" + to_wstring(WCH_DisplayFramework) + L")";
-	WCH_hWnd = GetForegroundWindow();
+	WCH_Win_hWnd = GetForegroundWindow();
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
 	bui.settings_ = []() {
 		Json::Value def;
@@ -143,14 +145,6 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
 }
 
-void WCH_Init_Out() {
-	// Initialization for output.
-	wcout << WCH_window_title << endl;
-	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
-	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
-	wcout << endl;
-}
-
 void WCH_Init() {
 	// Initialize the whole program.
 	wstring vertype = L"";
@@ -185,7 +179,10 @@ void WCH_Init() {
 	T2.detach();
 	thread T3(WCH_message_loop);
 	T3.detach();
-	WCH_Init_Out();
+	wcout << WCH_window_title << endl;
+	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
+	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
+	wcout << endl;
 }
 
 #endif

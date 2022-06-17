@@ -15,11 +15,12 @@ Contributors: jsh-jsh ren-yc
 extern const wstring WCH_WDName[7];
 extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
-extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <tuple <int, int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
 extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern HWND WCH_hWnd;
+extern HWND WCH_Win_hWnd;
+extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
@@ -33,6 +34,7 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
+extern bool WCH_pre_start;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
@@ -63,10 +65,10 @@ void WCH_check_clock_loop() {
 	WCH_Sleep((60 - WCH_GetTime().Second) * 1000);
 	while (!WCH_program_end) {
 		WCH_Time NOW = WCH_GetTime();
-		for (auto it = WCH_clock_list.equal_range(NOW.Hour).first; it != WCH_clock_list.equal_range(NOW.Hour).second; it++) {
-			if ((it -> second).first == NOW.Minute && ((it -> second).second).size() > 0) {
+		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+			if (get <0> (*it) == NOW.Hour && get <1> (*it) == NOW.Minute && get <2> (*it).size() > 0) {
 				wcout << L"\a";
-				MessageBoxW(NULL, ((it -> second).second).c_str(), L"WCH CLOCK", MB_OK);
+				MessageBoxW(NULL, (get <2> (*it)).c_str(), L"WCH CLOCK", MB_OK);
 			}
 		}
 		WCH_Sleep(60000);
@@ -103,10 +105,10 @@ void WCH_message_loop() {
 		MessageBoxW(NULL, L"This program requires Windows NT!", WCH_window_title.c_str(), MB_ICONERROR);
 		exit(0);
 	}
-	hwnd = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
-	ShowWindow(hwnd, SW_HIDE);
-	UpdateWindow(hwnd);
-	RegisterHotKey(hwnd, WCH_HOTKEY_SHOW, MOD_CONTROL, VK_DOWN);
+	WCH_Tray_hWnd = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
+	ShowWindow(WCH_Tray_hWnd, SW_HIDE);
+	UpdateWindow(WCH_Tray_hWnd);
+	RegisterHotKey(WCH_Tray_hWnd, WCH_HOTKEY_SHOW, MOD_CONTROL, VK_DOWN);
 	while (GetMessageW(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);

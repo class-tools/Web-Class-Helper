@@ -5,7 +5,7 @@ Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #define WCH_VER L"2.0.1"
-#define TYPE 2
+#define TYPE 1
 #include "json/json.h"
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
@@ -17,11 +17,12 @@ Contributors: jsh-jsh ren-yc
 extern const wstring WCH_WDName[7];
 extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
-extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <tuple <int, int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
 extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern HWND WCH_hWnd;
+extern HWND WCH_Win_hWnd;
+extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
@@ -35,6 +36,7 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
+extern bool WCH_pre_start;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
 extern ifstream fin;

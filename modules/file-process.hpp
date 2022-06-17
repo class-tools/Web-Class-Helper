@@ -15,11 +15,12 @@ Contributors: jsh-jsh ren-yc
 extern const wstring WCH_WDName[7];
 extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
-extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <tuple <int, int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
 extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern HWND WCH_hWnd;
+extern HWND WCH_Win_hWnd;
+extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
@@ -33,6 +34,7 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
+extern bool WCH_pre_start;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
@@ -49,10 +51,12 @@ int WCH_GetNumDigits(int _n);
 
 void WCH_printlog(wstring _mode, wstring _info) {
 	// Print log.
-	WCH_Time now = WCH_GetTime();
-	wfout.open(L"logs/latest.log", ios::app);
-	wfout << format(L"[{:02}:{:02}:{:02}] {}: {}.", now.Hour, now.Minute, now.Second, _mode, _info) << endl;
-	wfout.close();
+	if (!WCH_pre_start) {
+		WCH_Time now = WCH_GetTime();
+		wfout.open(L"logs/latest.log", ios::app);
+		wfout << format(L"[{:02}:{:02}:{:02}] {}: {}.", now.Hour, now.Minute, now.Second, _mode, _info) << endl;
+		wfout.close();
+	}
 }
 
 void WCH_read_clock() {
@@ -71,7 +75,7 @@ void WCH_read_clock() {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 			WCH_clock_num = val.size();
 			for (int i = 0; i < WCH_clock_num; i++) {
-				WCH_clock_list.emplace(make_pair(val[i][0].asInt(), make_pair(val[i][1].asInt(), StrToWstr(val[i][2].asString()))));
+				WCH_clock_list.insert(make_tuple(val[i][0].asInt(), val[i][1].asInt(), StrToWstr(val[i][2].asString())));
 			}
 		} catch (...) {
 			goto ERR;
@@ -162,14 +166,12 @@ void WCH_save_clock() {
 		return;
 	}
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
-	for (int i = 0; i <= 24; i++) {
-		for (auto it = WCH_clock_list.equal_range(i).first; it != WCH_clock_list.equal_range(i).second; it++) {
-			Json::Value sval;
-			sval.append(i);
-			sval.append((it -> second).first);
-			sval.append(WstrToStr((it -> second).second));
-			val.append(sval);
-		}
+	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+		Json::Value sval;
+		sval.append(get <0> (*it));
+		sval.append(get <1> (*it));
+		sval.append(WstrToStr(get <2> (*it)));
+		val.append(sval);
 	}
 	fout.open(FilePath);
 	sw -> write(val, &fout);

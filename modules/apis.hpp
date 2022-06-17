@@ -15,11 +15,12 @@ Contributors: jsh-jsh ren-yc
 extern const wstring WCH_WDName[7];
 extern map <wstring, function <void ()>> WCH_command_support;
 extern vector <wstring> WCH_command_list;
-extern multimap <int, pair <int, wstring>> WCH_clock_list;
+extern set <tuple <int, int, wstring>> WCH_clock_list;
 extern set <wstring> WCH_task_list;
 extern set <pair <wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern HWND WCH_hWnd;
+extern HWND WCH_Win_hWnd;
+extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern int WCH_clock_num;
 extern int WCH_task_num;
@@ -33,6 +34,7 @@ extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_program_end;
+extern bool WCH_pre_start;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
@@ -123,24 +125,26 @@ string UTF8ToANSI(string strUTF8) {
 
 vector <wstring> WCH_split(const wstring &_in) {
 #ifdef _DEBUG
-	WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Spliting string: \"" + _in + L"\"");
+	if (!WCH_pre_start) {
+		WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Spliting string: \"" + _in + L"\"");
+	}
 #endif
 	vector <wstring> _res;
 	wstring _tmp;
-	bool flag = false;
+	bool _flag = false;
 	for (int i = 0; i < (int)_in.size(); i++) {
-		if (_in[i] == L' ' && !flag && i != 0) {
+		if (_in[i] == L' ' && !_flag && i != 0) {
 			if (_in[i - 1] != L'"') {
 				_res.push_back(_tmp);
 				_tmp = L"";
 			}
 		} else if (_in[i] == L'"') {
-			if (flag) {
+			if (_flag) {
 				_res.push_back(_tmp);
 				_tmp = L"";
-				flag = false;
+				_flag = false;
 			} else {
-				flag = true;
+				_flag = true;
 			}
 		} else {
 			_tmp += _in[i];
@@ -149,21 +153,23 @@ vector <wstring> WCH_split(const wstring &_in) {
 	if (_tmp != L"") {
 		_res.push_back(_tmp);
 	}
-	if (flag) {
+	if (_flag) {
 		_res.clear();
 		_res.push_back(L"Incorrect");
 	}
 #ifdef _DEBUG
-	if ((int)_res.size() != 0) {
-		if ((int)_res.size() != 1) {
-			wstring _debug = L"Splited result: \"" + _res[0] + L"\", ";
-			for (int i = 1; i < (int)_res.size() - 1; i++) {
-				_debug += L"\"" + _res[i] + L"\", ";
+	if (!WCH_pre_start) {
+		if ((int)_res.size() != 0) {
+			if ((int)_res.size() != 1) {
+				wstring _debug = L"Splited result: \"" + _res[0] + L"\", ";
+				for (int i = 1; i < (int)_res.size() - 1; i++) {
+					_debug += L"\"" + _res[i] + L"\", ";
+				}
+				_debug += L"\"" + _res[(int)_res.size() - 1] + L"\"";
+				WCH_printlog(WCH_LOG_STATUS_DEBUG, _debug);
+			} else {
+				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Splited result: \"" + _res[0] + L"\"");
 			}
-			_debug += L"\"" + _res[(int)_res.size() - 1] + L"\"";
-			WCH_printlog(WCH_LOG_STATUS_DEBUG, _debug);
-		} else {
-			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Splited result: \"" + _res[0] + L"\"");
 		}
 	}
 #endif
@@ -220,7 +226,7 @@ size_t WCH_GetWstrDisplaySize(wstring _in) {
 
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
-	ShowWindow(WCH_hWnd, flag);
+	ShowWindow(WCH_Win_hWnd, flag);
 	WCH_cmd_line = flag;
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag == true ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
@@ -347,7 +353,7 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 	// Print a progress bar.
 	wstring _ETAStr = format(L"{:02}:{:02}:{:02}", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
 	if (_flag) {
-		WCH_PrintChar(WCH_ProgressBarCount, '\b');
+		WCH_PrintChar(WCH_ProgressBarCount, L'\b');
 	}
 	WCH_PrintColor(0x0A);
 	for (int i = 0; i < _n / 2; i++) {
