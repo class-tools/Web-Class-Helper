@@ -1,4 +1,4 @@
-name: "Code Scanning"
+name: "Security Extended"
 
 queries:
-  - uses: code-scanning
+  - uses: security-extended
