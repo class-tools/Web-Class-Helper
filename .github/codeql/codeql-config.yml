@@ -1,4 +1,4 @@
-name: "Security and Quality"
+name: "Code Scanning"
 
 queries:
-  - uses: security-and-quality
+  - uses: code-scanning

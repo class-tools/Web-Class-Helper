@@ -88,7 +88,6 @@ void WCH_safety_input_loop() {
 
 void WCH_message_loop() {
 	// Message loop.
-	HWND hwnd {};
 	MSG msg {};
 	WNDCLASS wndclass {};
 	wndclass.style = CS_HREDRAW | CS_VREDRAW;

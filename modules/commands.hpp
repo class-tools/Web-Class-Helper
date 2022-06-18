@@ -190,8 +190,7 @@ void WCH_add_clock() {
 				WCH_clock_change++;
 				WCH_clock_list.insert(make_tuple(h, m, Tname));
 			} else {
-				WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-				wcout << L"Your input code is uncorrect, please check and try again." << endl;
+				throw runtime_error("");
 			}
 		}
 	} catch (...) {
@@ -222,8 +221,7 @@ void WCH_delete_clock() {
 			}
 		}
 		if (!flag) {
-			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
-			wcout << L"Cannot operate the list, please try to restart this program." << endl;
+			throw runtime_error("");
 		}
 	} catch (...) {
 		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Cannot operate the list, please try to restart this program");
@@ -534,7 +532,7 @@ void WCH_game() {
 					goto END;
 				}
 			} else if (zv[0][0] == L'-' || zv[0][0] == L'0' || (zv[0].size() >= 5 && zv[0] != L"10000")) {
-				wcout << L"Number out of range." << endl;
+				throw runtime_error("");
 			} else if (stoi(zv[0]) > ans) {
 				wcout << L"The answer is smaller." << endl;
 			} else if (stoi(zv[0]) < ans) {
