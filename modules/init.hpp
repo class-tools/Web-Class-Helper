@@ -161,6 +161,7 @@ void WCH_Init() {
 		_exit(0);
 	} else {
 		WCH_SetWindowStatus(true);
+		WCH_pre_start = false;
 	}
 #endif
 	WCH_Init_Dir();

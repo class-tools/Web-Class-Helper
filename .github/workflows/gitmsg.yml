@@ -1,6 +1,6 @@
 ---
 
-name: "Check Commit Message"
+name: "Check Commit Messages"
 
 on:
   push:

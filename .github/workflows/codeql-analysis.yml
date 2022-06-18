@@ -1,6 +1,6 @@
 ---
 
-name: "CodeQL"
+name: "CodeQL Code Static Scanning"
 
 on:
   push:

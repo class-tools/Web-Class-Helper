@@ -180,15 +180,15 @@ WCH_Time WCH_GetTime() {
 	// Get current time and return a WCH_Time object.
 	WCH_Time NowTime;
 	time_t rawtime;
-	struct tm *ptminfo;
+	struct tm ptminfo;
 	time(&rawtime);
-	ptminfo = localtime(&rawtime);
-	NowTime.Year = ptminfo -> tm_year + 1900;
-	NowTime.Month = ptminfo -> tm_mon + 1;
-	NowTime.Day = ptminfo -> tm_mday;
-	NowTime.Hour = ptminfo -> tm_hour;
-	NowTime.Minute = ptminfo -> tm_min;
-	NowTime.Second = ptminfo -> tm_sec;
+	localtime_s(&ptminfo, &rawtime);
+	NowTime.Year = ptminfo.tm_year + 1900;
+	NowTime.Month = ptminfo.tm_mon + 1;
+	NowTime.Day = ptminfo.tm_mday;
+	NowTime.Hour = ptminfo.tm_hour;
+	NowTime.Minute = ptminfo.tm_min;
+	NowTime.Second = ptminfo.tm_sec;
 	return NowTime;
 }
 
