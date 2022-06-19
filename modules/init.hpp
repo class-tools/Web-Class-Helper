@@ -143,6 +143,7 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair(L"wiki", WCH_wiki));
 	WCH_command_support.insert(make_pair(L"license", WCH_license));
 	WCH_command_support.insert(make_pair(L"clear", WCH_clear));
+	WCH_command_support.insert(make_pair(L"count-down", WCH_count_down));
 	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
 	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
 }
