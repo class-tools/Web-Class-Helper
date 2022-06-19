@@ -2,7 +2,7 @@
 Web Class Helper Basic Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc
+Contributors: jsh-jsh ren-yc hjl2011
 */
 #ifndef BASIC_H
 #define BASIC_H
@@ -250,6 +250,8 @@ bool WCH_program_end;
 bool WCH_pre_start = true;
 wstring WCH_command;
 wstring WCH_ProgressBarStr;
+wchar_t msg[10005];
+int count_down_flg = 0;
 ifstream fin;
 wifstream wfin;
 ofstream fout;

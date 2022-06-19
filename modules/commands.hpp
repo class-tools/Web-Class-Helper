@@ -63,6 +63,52 @@ void WCH_clear() {
 	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
 }
 
+void WCH_count_down() {
+	// Run count down.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
+		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		return;
+	}
+	system("cls");
+	int h, m, s;
+	while (true) {
+		wprintf(L"Web Class Helper - Count down\n\n");
+		wprintf(L"hour(s) : ");
+		wscanf(L"%d", &h);
+		wprintf(L"\nminute(s) : ");
+		wscanf(L"%d", &m);
+		wprintf(L"\nsecond(s) : ");
+		wscanf(L"%d", &s);
+		system("cls");
+		wsprintf(msg, L"hour(s) = %d\nminute(s) = %d\nsecond(s) = %d\n", h, m, s);
+		if (m > 59 || s > 59 || h > 99 || m < 0 || s < 0 || h < 0) continue;
+		printf("\n\nPlease confirm ...");
+		int code = MessageBox(NULL, msg, L"Count-down", MB_YESNO);
+		if (code == 6) break;
+	}
+	system("cls");
+	wprintf(L"Web Class Helper - Count down\n\n");
+	while (h || m || s) {
+		wprintf(L"%02d:%02d:%02d   ", h, m, s);
+		s--;
+		if (s < 0) {
+			s = 59, m--;
+			if (m < 0) {
+				m = 59;
+				h--;
+			}
+		}
+		Sleep(999);
+		wprintf(L"\b\b\b\r");
+	}
+	system("cls");
+	wcout << WCH_window_title << endl;
+	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
+	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
+	count_down_flg = 1;
+}
+
 void WCH_quit() {
 	// Quit.
 	if ((int)WCH_command_list.size() != 1) {
