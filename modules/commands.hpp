@@ -64,7 +64,7 @@ void WCH_clear() {
 }
 
 void WCH_count_down() {
-	// Run count down.
+	// Start a count-down timer.
 	if ((int)WCH_command_list.size() != 1) {
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
 		wcout << L"Your input code is uncorrect, please check and try again." << endl;
