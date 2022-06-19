@@ -22,6 +22,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
+extern NOTIFYICONDATA WCH_NID;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -41,7 +42,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder bui;
+extern Json::StreamWriterBuilder Json_SWB;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
@@ -116,7 +117,7 @@ void WCH_update() {
 		T.detach();
 		wstring url = L"https://class-tools.gq/update/WCH?";
 		srand((unsigned)time(NULL));
-		url += to_wstring(rand());
+		url.append(to_wstring(rand()));
 		URLDownloadToFileW(0, url.c_str(), L"WCH_UPD.tmp", 0, 0);
 		wstring res;
 		wfin.open(L"WCH_UPD.tmp");
@@ -126,7 +127,7 @@ void WCH_update() {
 		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
 			throw runtime_error("");
 		}
-		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER), WCH_GetVersion(res))) {
+		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER_MAIN), WCH_GetVersion(res))) {
 			wcout << L"Program version is less than latest released version, jumping to releases page..." << endl;
 			_wsystem(L"start resources/website/releases.url");
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Updating to version \"" + res + L"\"");
@@ -558,8 +559,7 @@ void WCH_speedtest() {
 		return;
 	}
 	wstring tmp = L"SPEEDTEST";
-	tmp += to_wstring(WCH_Framework);
-	tmp += L".EXE";
+	tmp.append(to_wstring(WCH_Framework) + L".EXE");
 	_wsystem(tmp.c_str());
 }
 

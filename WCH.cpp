@@ -4,9 +4,8 @@ This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#define WCH_VER L"2.0.1"
-#define TYPE 1
-#include "json/json.h"
+#define WCH_VER_MAIN TEXT("2.0.1")
+#define WCH_VER_TYPE 1
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
 #include "modules/commands.hpp"
@@ -24,6 +23,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
+extern NOTIFYICONDATA WCH_NID;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -43,7 +43,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder bui;
+extern Json::StreamWriterBuilder Json_SWB;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);

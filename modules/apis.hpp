@@ -22,6 +22,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
+extern NOTIFYICONDATA WCH_NID;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -41,7 +42,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder bui;
+extern Json::StreamWriterBuilder Json_SWB;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
@@ -124,11 +125,6 @@ string UTF8ToANSI(string strUTF8) {
 }
 
 vector <wstring> WCH_split(const wstring &_in) {
-#ifdef _DEBUG
-	if (!WCH_pre_start) {
-		WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Spliting string: \"" + _in + L"\"");
-	}
-#endif
 	vector <wstring> _res;
 	wstring _tmp;
 	bool _flag = false;
@@ -147,7 +143,7 @@ vector <wstring> WCH_split(const wstring &_in) {
 				_flag = true;
 			}
 		} else {
-			_tmp += _in[i];
+			_tmp.push_back(_in[i]);
 		}
 	}
 	if (_tmp != L"") {
@@ -157,22 +153,18 @@ vector <wstring> WCH_split(const wstring &_in) {
 		_res.clear();
 		_res.push_back(L"Incorrect");
 	}
-#ifdef _DEBUG
-	if (!WCH_pre_start) {
-		if ((int)_res.size() != 0) {
-			if ((int)_res.size() != 1) {
-				wstring _debug = L"Splited result: \"" + _res[0] + L"\", ";
-				for (int i = 1; i < (int)_res.size() - 1; i++) {
-					_debug += L"\"" + _res[i] + L"\", ";
-				}
-				_debug += L"\"" + _res[(int)_res.size() - 1] + L"\"";
-				WCH_printlog(WCH_LOG_STATUS_DEBUG, _debug);
-			} else {
-				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Splited result: \"" + _res[0] + L"\"");
+	if ((int)_res.size() != 0) {
+		if ((int)_res.size() != 1) {
+			wstring _debug = L"Using command: \"" + _res[0] + L"\", ";
+			for (int i = 1; i < (int)_res.size() - 1; i++) {
+				_debug.append(L"\"" + _res[i] + L"\", ");
 			}
+			_debug.append(L"\"" + _res[(int)_res.size() - 1] + L"\"");
+			WCH_printlog(WCH_LOG_STATUS_INFO, _debug);
+		} else {
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Using command: \"" + _res[0] + L"\"");
 		}
 	}
-#endif
 	return _res;
 }
 
@@ -388,7 +380,6 @@ void WCH_ProgressBar() {
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	// Window processing module.
-	NOTIFYICONDATA nid {};
 	switch (message) {
 		case WM_HOTKEY:
 #ifdef _DEBUG
@@ -408,14 +399,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 #ifdef _DEBUG
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_CREATE\"");
 #endif
-			nid.cbSize = sizeof(nid);
-			nid.hWnd = hWnd;
-			nid.uID = 0;
-			nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-			nid.uCallbackMessage = WM_USER;
-			nid.hIcon = (HICON)LoadImageW(NULL, L"WCH.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
-			wcscpy(nid.szTip, WCH_window_title.c_str());
-			Shell_NotifyIconW(NIM_ADD, &nid);
+			WCH_NID.cbSize = sizeof(WCH_NID);
+			WCH_NID.hWnd = hWnd;
+			WCH_NID.uID = 0;
+			WCH_NID.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+			WCH_NID.uCallbackMessage = WM_USER;
+			WCH_NID.hIcon = (HICON)LoadImageW(NULL, L"WCH.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
+			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
+			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
 			WCH_hMenu = CreatePopupMenu();
 			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Show (Disable anti-idle)");
 			AppendMenuW(WCH_hMenu, MF_SEPARATOR, 0, NULL);
@@ -470,7 +461,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 #ifdef _DEBUG
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_DESTROY\"");
 #endif
-			Shell_NotifyIconW(NIM_DELETE, &nid);
+			Shell_NotifyIconW(NIM_DELETE, &WCH_NID);
 			PostQuitMessage(0);
 			break;
 		default:

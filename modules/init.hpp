@@ -22,6 +22,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
+extern NOTIFYICONDATA WCH_NID;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -41,7 +42,7 @@ extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder bui;
+extern Json::StreamWriterBuilder Json_SWB;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
@@ -61,26 +62,27 @@ void WCH_Init_Dir() {
 
 void WCH_Init_Var() {
 	// Initialization for varible.
-	WCH_window_title = L"Web Class Helper";
-#if TYPE == 1
-	WCH_window_title += L" Internal Preview";
+	WCH_window_title = L"Web Class Helper ";
+	WCH_window_title.append(WCH_VER_MAIN);
+#if WCH_VER_TYPE == 1
+	WCH_window_title.append(L" Internal Preview");
 #endif
-#if TYPE == 2
-	WCH_window_title += L" Public Preview";
+#if WCH_VER_TYPE == 2
+	WCH_window_title.append(L" Public Preview");
 #endif
-	WCH_window_title += L" (x" + to_wstring(WCH_DisplayFramework) + L")";
+	WCH_window_title.append(L" (x" + to_wstring(WCH_DisplayFramework) + L")");
 	WCH_Win_hWnd = GetForegroundWindow();
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
-	bui.settings_ = []() {
+	Json_SWB.settings_ = []() {
 		Json::Value def;
 		Json::StreamWriterBuilder::setDefaults(&def);
 		def["emitUTF8"] = true;
 		return def;
 	} ();
-	wcin.imbue(locale("chs"));
-	wcout.imbue(locale("chs"));
-	wfin.imbue(locale("chs"));
-	wfout.imbue(locale("chs"));
+	wcin.imbue(locale("chs", LC_CTYPE));
+	wcout.imbue(locale("chs", LC_CTYPE));
+	wfin.imbue(locale("chs", LC_CTYPE));
+	wfout.imbue(locale("chs", LC_CTYPE));
 }
 
 int WCH_Init_Log() {
@@ -89,7 +91,7 @@ int WCH_Init_Log() {
 	WCH_Time now = WCH_GetTime();
 	Json::Value val;
 	Json::Reader rea;
-	unique_ptr <Json::StreamWriter> sw(bui.newStreamWriter());
+	unique_ptr <Json::StreamWriter> sw(Json_SWB.newStreamWriter());
 	fin.open(L"settings.json");
 	if (_waccess(L"logs/latest.log", 0) != -1) {
 		if (rea.parse(fin, val)) {
@@ -148,13 +150,13 @@ void WCH_Init_Cmd() {
 void WCH_Init() {
 	// Initialize the whole program.
 	wstring vertype = L"";
-#if TYPE == 1
+#if WCH_VER_TYPE == 1
 	vertype = L"Internal Preview";
 #endif
-#if TYPE == 2
+#if WCH_VER_TYPE == 2
 	vertype = L"Public Preview";
 #endif
-#if TYPE == 1 || TYPE == 2
+#if WCH_VER_TYPE == 1 || WCH_VER_TYPE == 2
 	WCH_SetWindowStatus(false);
 	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
 		WCH_CheckAndDeleteFile(L"logs/latest.log");

@@ -109,11 +109,7 @@ Contributors: jsh-jsh ren-yc
 #include <direct.h>
 #include <VersionHelpers.h>
 #include <gdiplus.h>
-#include "file-process.hpp"
-#include "init.hpp"
-#include "commands.hpp"
-#include "functions.hpp"
-#include "apis.hpp"
+#include "json/json.h"
 
 #pragma comment (lib, "winmm.lib")
 #pragma comment (lib, "gdiplus.lib")
@@ -238,6 +234,7 @@ wstring WCH_window_title;
 HWND WCH_Win_hWnd;
 HWND WCH_Tray_hWnd;
 HMENU WCH_hMenu;
+NOTIFYICONDATA WCH_NID;
 int WCH_clock_num;
 int WCH_task_num;
 int WCH_work_num;
@@ -257,7 +254,7 @@ ifstream fin;
 wifstream wfin;
 ofstream fout;
 wofstream wfout;
-Json::StreamWriterBuilder bui;
+Json::StreamWriterBuilder Json_SWB;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
