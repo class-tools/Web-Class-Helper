@@ -20,10 +20,10 @@ PI (Make a screenshot and save in "Pictures" folder)
 SPEEDTEST (Start a speed test with a GUI window) **Need Internet**
 TRANS [info] (Translate a sentence between English / Chinese) **Need Internet**
 ANTI-IDLE (Enable anti-idle mode)
+COUNT-DOWN [h] [m] [s] (Start a count-down timer which lasts [h] hour(s) [m] minute(s) [s] second(s))
 UPDATE (Check update for this program) **Need Internet**
 WIKI (Jump to program wiki page in default browser) **Need Internet**
 LICENSE (Print license information)
 CLEAR (Clear console window information)
-COUNT-DOWN (Start a count-down timer)
 SAVE (Save changes on data)
 QUIT (Quit this program without saving data)

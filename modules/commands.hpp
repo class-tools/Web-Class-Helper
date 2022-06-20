@@ -34,6 +34,7 @@ extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
+extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern wstring WCH_command;
@@ -61,52 +62,6 @@ void WCH_clear() {
 	wcout << WCH_window_title << endl;
 	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
 	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
-}
-
-void WCH_count_down() {
-	// Start a count-down timer.
-	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
-		return;
-	}
-	system("cls");
-	int h, m, s;
-	while (true) {
-		wprintf(L"Web Class Helper - Count down\n\n");
-		wprintf(L"hour(s) : ");
-		wscanf(L"%d", &h);
-		wprintf(L"\nminute(s) : ");
-		wscanf(L"%d", &m);
-		wprintf(L"\nsecond(s) : ");
-		wscanf(L"%d", &s);
-		system("cls");
-		wsprintf(msg, L"hour(s) = %d\nminute(s) = %d\nsecond(s) = %d\n", h, m, s);
-		if (m > 59 || s > 59 || h > 99 || m < 0 || s < 0 || h < 0) continue;
-		printf("\n\nPlease confirm ...");
-		int code = MessageBox(NULL, msg, L"Count-down", MB_YESNO);
-		if (code == 6) break;
-	}
-	system("cls");
-	wprintf(L"Web Class Helper - Count down\n\n");
-	while (h || m || s) {
-		wprintf(L"%02d:%02d:%02d   ", h, m, s);
-		s--;
-		if (s < 0) {
-			s = 59, m--;
-			if (m < 0) {
-				m = 59;
-				h--;
-			}
-		}
-		Sleep(999);
-		wprintf(L"\b\b\b\r");
-	}
-	system("cls");
-	wcout << WCH_window_title << endl;
-	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
-	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
-	count_down_flg = 1;
 }
 
 void WCH_quit() {
@@ -623,6 +578,32 @@ void WCH_pi() {
 	WCH_Sleep(500);
 	WCH_SetWindowStatus(true);
 	wcout << L"The picture is in the clipboard and be saved in your Pictures folder." << endl;
+}
+
+void WCH_count_down_func() {
+	// Start a count-down timer.
+	if ((int)WCH_command_list.size() != 4) {
+		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
+		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		return;
+	}
+	try {
+		int h = stoi(WCH_command_list[1]);
+		int m = stoi(WCH_command_list[2]);
+		int s = stoi(WCH_command_list[3]);
+		if ((h == 0 && m == 0 && s == 0) || h < 0 || m < 0 || s < 0) {
+			throw runtime_error("");
+		}
+		WCH_count_down = true;
+		wcout << L"Starting count down timer..." << endl;
+		WCH_ProgressBarTot = h * 3600 + m * 60 + s;
+		WCH_ProgressBar();
+		WCH_count_down = false;
+	} catch (...) {
+		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
+		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_count_down = false;
+	}
 }
 
 void WCH_check_task_loop() {

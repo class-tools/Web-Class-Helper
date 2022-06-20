@@ -2,7 +2,7 @@
 Web Class Helper Basic Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc hjl2011
+Contributors: jsh-jsh ren-yc
 */
 #ifndef BASIC_H
 #define BASIC_H
@@ -108,6 +108,7 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include <conio.h>
 #include <direct.h>
 #include <VersionHelpers.h>
+#include <ShObjidl.h>
 #include <gdiplus.h>
 #include "json/json.h"
 
@@ -246,12 +247,11 @@ int WCH_ProgressBarTot;
 int WCH_InputTimes;
 bool WCH_cmd_line = true;
 bool WCH_anti_idle;
+bool WCH_count_down;
 bool WCH_program_end;
 bool WCH_pre_start = true;
 wstring WCH_command;
 wstring WCH_ProgressBarStr;
-wchar_t msg[10005];
-int count_down_flg = 0;
 ifstream fin;
 wifstream wfin;
 ofstream fout;

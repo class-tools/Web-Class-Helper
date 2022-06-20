@@ -34,6 +34,7 @@ extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
+extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern wstring WCH_command;
@@ -229,6 +230,20 @@ void WCH_SetTrayStatus(bool flag) {
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"TRAY\" argument \"STATUS\" was set to {}", (flag == true ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
 
+void WCH_CheckHotkey() {
+	// Check when hot key is pressed.
+	if (!WCH_program_end) {
+		if (WCH_anti_idle) {
+			WCH_anti_idle = false;
+			WCH_SetTrayStatus(true);
+		}
+		if (WCH_count_down) {
+			WCH_count_down = false;
+		}
+		WCH_SetWindowStatus(true);
+	}
+}
+
 void WCH_PutPicture() {
 	// Press PrintScreen. (Keyboard)
 	keybd_event(VK_SNAPSHOT, 0, 0, 0);
@@ -367,9 +382,10 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 
 void WCH_ProgressBar() {
 	// Progress bar.
+	bool _cd = WCH_count_down;
 	int _pro = 100 / WCH_ProgressBarTot;
 	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
-	for (int i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end; i--) {
+	for (int i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
 		WCH_PrintProgressBar(i, (WCH_ProgressBarTot - i) * _pro, true);
 	}
@@ -386,13 +402,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_HOTKEY\" & \"wParam = " + to_wstring(wParam) + L"\" & \"lParam = " + to_wstring(lParam) + L"\"");
 #endif
 			if (wParam == WCH_HOTKEY_SHOW) {
-				if (!WCH_program_end) {
-					if (WCH_anti_idle) {
-						WCH_anti_idle = false;
-						WCH_SetTrayStatus(true);
-					}
-					WCH_SetWindowStatus(true);
-				}
+				WCH_CheckHotkey();
 			}
 			break;
 		case WM_CREATE:
@@ -408,7 +418,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
 			WCH_hMenu = CreatePopupMenu();
-			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Show (Disable anti-idle)");
+			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Simulate Ctrl + Down");
 			AppendMenuW(WCH_hMenu, MF_SEPARATOR, 0, NULL);
 			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_QUIT, L"Quit");
 			break;
@@ -417,13 +427,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 #ifdef _DEBUG
 				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_LBUTTONDOWN\"");
 #endif
-				if (!WCH_program_end) {
-					if (WCH_anti_idle) {
-						WCH_anti_idle = false;
-						WCH_SetTrayStatus(true);
-					}
-					WCH_SetWindowStatus(true);
-				}
+				WCH_CheckHotkey();
 			} else if (lParam == WM_RBUTTONDOWN) {
 				POINT pt;
 				int xx;
@@ -437,13 +441,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 #ifdef _DEBUG
 					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_SHOW\"");
 #endif
-					if (!WCH_program_end) {
-						if (WCH_anti_idle) {
-							WCH_anti_idle = false;
-							WCH_SetTrayStatus(true);
-						}
-						WCH_SetWindowStatus(true);
-					}
+					WCH_CheckHotkey();
 				} else if (xx == WCH_MENU_QUIT) {
 #ifdef _DEBUG
 					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_QUIT\"");

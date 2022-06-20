@@ -35,6 +35,7 @@ extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
+extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern wstring WCH_command;

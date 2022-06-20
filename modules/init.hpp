@@ -34,6 +34,7 @@ extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
+extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern wstring WCH_command;
@@ -139,11 +140,11 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair(L"speedtest", WCH_speedtest));
 	WCH_command_support.insert(make_pair(L"trans", WCH_trans));
 	WCH_command_support.insert(make_pair(L"anti-idle", WCH_anti_idle_func));
+	WCH_command_support.insert(make_pair(L"count-down", WCH_count_down_func));
 	WCH_command_support.insert(make_pair(L"update", WCH_update));
 	WCH_command_support.insert(make_pair(L"wiki", WCH_wiki));
 	WCH_command_support.insert(make_pair(L"license", WCH_license));
 	WCH_command_support.insert(make_pair(L"clear", WCH_clear));
-	WCH_command_support.insert(make_pair(L"count-down", WCH_count_down));
 	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
 	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
 }

@@ -2,7 +2,7 @@
 Web Class Helper Functions Module Header File 2.0.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
-Contributors: jsh-jsh ren-yc hjl2011
+Contributors: jsh-jsh ren-yc
 */
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
@@ -34,6 +34,7 @@ extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
+extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern wstring WCH_command;
@@ -118,22 +119,14 @@ void WCH_message_loop() {
 void WCH_CL_Init() {
 	// Initialize the command line.
 BEGIN:
-	if (!count_down_flg) {
-		wcout << L">>> ";
-	} else {
-		count_down_flg = -1;
-	}
+	wcout << L">>> ";
 	getline(wcin, WCH_command);
 	if (wcin.eof()) {
 		raise(SIGINT);
 	}
 	WCH_command_list = WCH_split(WCH_command);
 	if ((int)WCH_command_list.size() == 0) {
-		if (count_down_flg != -1) {
-			wcout << endl;
-		} else {
-			count_down_flg = 0;
-		}
+		wcout << endl;
 		goto BEGIN;
 	}
 	transform(WCH_command_list[0].begin(), WCH_command_list[0].end(), WCH_command_list[0].begin(), ::tolower);

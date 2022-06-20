@@ -2,6 +2,12 @@ Start a count-down timer.
 
 Usage:
 
-COUNT-DOWN
+COUNT-DOWN [h] [m] [s]
 
-This command has no parameters.
+You can add a zero in front of [h] / [m] / [s] if it is less than 10. (Not required)
+
+These two commands are same:
+
+COUNT-DOWN 1 1 1
+
+COUNT-DOWN 01 01 01
