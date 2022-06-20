@@ -5,6 +5,8 @@
 <h1 align="center">- Web Class Helper -</h1>
 
 <p align="center">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/gitmsg.yml/badge.svg">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codeql.yml/badge.svg">
 <img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
 <img src="https://img.shields.io/badge/support-Windows%208%20+-blue?logo=Windows">
 </p>

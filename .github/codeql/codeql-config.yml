@@ -1,4 +1,4 @@
-name: "Security Extended"
+name: "Security and Quality"
 
 queries:
-  - uses: security-extended
+  - uses: security-and-quality

@@ -591,7 +591,7 @@ void WCH_count_down_func() {
 		int h = stoi(WCH_command_list[1]);
 		int m = stoi(WCH_command_list[2]);
 		int s = stoi(WCH_command_list[3]);
-		if ((h == 0 && m == 0 && s == 0) || h < 0 || m < 0 || s < 0) {
+		if ((h == 0 && m == 0 && s == 0) || (h < 0 || m < 0 || s < 0) || (h >= 24 || m >= 60 || s >= 60)) {
 			throw runtime_error("");
 		}
 		WCH_count_down = true;

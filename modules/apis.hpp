@@ -383,11 +383,11 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 void WCH_ProgressBar() {
 	// Progress bar.
 	bool _cd = WCH_count_down;
-	int _pro = 100 / WCH_ProgressBarTot;
+	double _pro = 100.0 / WCH_ProgressBarTot;
 	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
 	for (int i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
-		WCH_PrintProgressBar(i, (WCH_ProgressBarTot - i) * _pro, true);
+		WCH_PrintProgressBar(i, (int)((WCH_ProgressBarTot - i) * _pro), true);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
