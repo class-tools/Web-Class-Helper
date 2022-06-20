@@ -260,7 +260,6 @@ void WCH_SaveImg() {
 	wstring SavePath = format(L"C:\\Users\\{}\\Pictures\\{:04}{:02}{:02}{:02}{:02}{:02}.jpg", cUserNameBuffer, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 	HDC hdcScreen = ::GetDC(NULL);
 	double dDpi = (double)GetDeviceCaps(GetDC(GetDesktopWindow()), DESKTOPHORZRES) / GetSystemMetrics(SM_CXSCREEN);
-	int nBitPerPixel = GetDeviceCaps(hdcScreen, BITSPIXEL);
 	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * dDpi);
 	int nHeight = (int)round(GetDeviceCaps(hdcScreen, VERTRES) * dDpi);
 	HDC hMemDC;

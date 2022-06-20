@@ -607,15 +607,6 @@ private:
   Value& resolveReference(const char* key);
   Value& resolveReference(const char* key, const char* end);
 
-  // struct MemberNamesTransform
-  //{
-  //   typedef const char *result_type;
-  //   const char *operator()( const CZString &name ) const
-  //   {
-  //      return name.c_str();
-  //   }
-  //};
-
   union ValueHolder {
     LargestInt int_;
     LargestUInt uint_;
@@ -823,8 +814,6 @@ class JSON_API ValueConstIterator : public ValueIteratorBase {
 
 public:
   using value_type = const Value;
-  // typedef unsigned int size_t;
-  // typedef int difference_type;
   using reference = const Value&;
   using pointer = const Value*;
   using SelfType = ValueConstIterator;
