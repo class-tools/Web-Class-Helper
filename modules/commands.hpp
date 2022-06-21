@@ -23,6 +23,7 @@ extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
+extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -54,8 +55,7 @@ int WCH_GetNumDigits(int _n);
 void WCH_clear() {
 	// Clear console information.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	system("cls");
@@ -67,8 +67,7 @@ void WCH_clear() {
 void WCH_quit() {
 	// Quit.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Exiting \"" + WCH_window_title + L"\"");
@@ -79,6 +78,8 @@ void WCH_quit() {
 	WCH_CheckAndDeleteFile(L"WCH_UPD.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_TRANS.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_OW.tmp");
+	WCH_CheckAndDeleteFile(L"WCH_FATE.tmp");
+	WCH_CheckAndDeleteFile(L"WCH_IDENT.tmp");
 	SendMessageW(WCH_Tray_hWnd, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
@@ -86,8 +87,7 @@ void WCH_quit() {
 void WCH_hide() {
 	// Hide the window.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	WCH_SetWindowStatus(false);
@@ -96,8 +96,7 @@ void WCH_hide() {
 void WCH_wiki() {
 	// Visit the wiki page.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wcout << L"Jumping to wiki page..." << endl;
@@ -107,8 +106,7 @@ void WCH_wiki() {
 void WCH_update() {
 	// Visit the website to update the program.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	try {
@@ -138,8 +136,7 @@ void WCH_update() {
 		}
 		DeleteFileW(L"WCH_UPD.tmp");
 	} catch (...) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"An network error occurred, please check your network connection and try to update this program");
-		wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
+		WCH_PrintNetworkErr();
 		return;
 	}
 }
@@ -147,8 +144,7 @@ void WCH_update() {
 void WCH_license() {
 	// Print the license.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wfin.open(L"LICENSE");
@@ -167,8 +163,7 @@ void WCH_license() {
 void WCH_add_clock() {
 	// Add a new clock.
 	if ((int)WCH_command_list.size() != 5) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	try {
@@ -176,8 +171,7 @@ void WCH_add_clock() {
 		int m = stoi(WCH_command_list[3]);
 		wstring Tname = WCH_command_list[4];
 		if ((int)WCH_command_list.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
-			WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-			wcout << L"Your input code is uncorrect, please check and try again." << endl;
+			WCH_PrintIncorrect();
 			return;
 		} else {
 			bool flag = false;
@@ -196,16 +190,14 @@ void WCH_add_clock() {
 			}
 		}
 	} catch (...) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 	}
 }
 
 void WCH_delete_clock() {
 	// Delete a clock.
 	if ((int)WCH_command_list.size() != 5) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	try {
@@ -234,8 +226,7 @@ void WCH_delete_clock() {
 void WCH_clear_clock() {
 	// Clear clock list.
 	if ((int)WCH_command_list.size() != 2) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	WCH_clock_list.clear();
@@ -246,8 +237,7 @@ void WCH_clear_clock() {
 void WCH_list_clock() {
 	// List all tasks.
 	if ((int)WCH_command_list.size() != 2) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	int MAXH = -1;
@@ -289,8 +279,7 @@ void WCH_list_clock() {
 void WCH_check_clock() {
 	// Clock series command input.
 	if (WCH_command_list.size() == 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
@@ -303,16 +292,14 @@ void WCH_check_clock() {
 	} else if (WCH_command_list[1] == L"list") {
 		WCH_list_clock();
 	} else {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 	}
 }
 
 void WCH_add_task() {
 	// Add a new task.
 	if ((int)WCH_command_list.size() != 3) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wstring task = WCH_command_list[2];
@@ -329,8 +316,7 @@ void WCH_add_task() {
 void WCH_delete_task() {
 	// Delete a task.
 	if ((int)WCH_command_list.size() != 3) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wstring task = WCH_command_list[2];
@@ -347,8 +333,7 @@ void WCH_delete_task() {
 void WCH_clear_task() {
 	// Clear task list.
 	if ((int)WCH_command_list.size() != 2) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	WCH_task_list.clear();
@@ -359,8 +344,7 @@ void WCH_clear_task() {
 void WCH_list_task() {
 	// List all tasks.
 	if ((int)WCH_command_list.size() != 2) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	int MAX = -1;
@@ -382,8 +366,7 @@ void WCH_list_task() {
 void WCH_check_task() {
 	// Task series command input.
 	if ((int)WCH_command_list.size() == 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	if (WCH_command_list[1] == L"add") {
@@ -395,16 +378,14 @@ void WCH_check_task() {
 	} else if (WCH_command_list[1] == L"list") {
 		WCH_list_task();
 	} else {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 	}
 }
 
 void WCH_add_work() {
 	// Add a new work.
 	if ((int)WCH_command_list.size() != 4) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wstring work = WCH_command_list[2];
@@ -422,8 +403,7 @@ void WCH_add_work() {
 void WCH_delete_work() {
 	// Delete a work.
 	if ((int)WCH_command_list.size() != 4) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wstring work = WCH_command_list[2];
@@ -441,8 +421,7 @@ void WCH_delete_work() {
 void WCH_clear_work() {
 	// Clear work list.
 	if ((int)WCH_command_list.size() != 2) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	WCH_work_list.clear();
@@ -453,15 +432,14 @@ void WCH_clear_work() {
 void WCH_list_work() {
 	// List all works.
 	if ((int)WCH_command_list.size() != 2) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	int MAXN = -1;
 	int MAXT = -1;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		MAXN = max(MAXN, (int)WCH_GetWstrDisplaySize(it -> first));
-		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(it -> second));
+		MAXN = max(MAXN, (int)WCH_GetWstrDisplaySize(it->first));
+		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(it->second));
 	}
 	if (MAXN == -1 && MAXT == -1) {
 		return;
@@ -478,17 +456,16 @@ void WCH_list_work() {
 	WCH_PrintChar(MAXT, L'-');
 	wcout << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		wcout << it -> first;
-		WCH_PrintChar(MAXN - (int)WCH_GetWstrDisplaySize(it -> first), L' ');
-		wcout << L" | " << it -> second << endl;
+		wcout << it->first;
+		WCH_PrintChar(MAXN - (int)WCH_GetWstrDisplaySize(it->first), L' ');
+		wcout << L" | " << it->second << endl;
 	}
 }
 
 void WCH_check_work() {
 	// Work series command input.
 	if (WCH_command_list.size() == 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
@@ -501,16 +478,14 @@ void WCH_check_work() {
 	} else if (WCH_command_list[1] == L"list") {
 		WCH_list_work();
 	} else {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 	}
 }
 
 void WCH_game() {
 	// Guessing game.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	srand((unsigned)time(NULL));
@@ -555,8 +530,7 @@ void WCH_game() {
 void WCH_speedtest() {
 	// Start a speed test with Python program.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wstring tmp = L"SPEEDTEST";
@@ -567,8 +541,7 @@ void WCH_speedtest() {
 void WCH_pi() {
 	// A sequence of function to make a screenshot.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	WCH_SetWindowStatus(false);
@@ -583,8 +556,7 @@ void WCH_pi() {
 void WCH_count_down_func() {
 	// Start a count-down timer.
 	if ((int)WCH_command_list.size() != 4) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	try {
@@ -600,8 +572,7 @@ void WCH_count_down_func() {
 		WCH_ProgressBar();
 		WCH_count_down = false;
 	} catch (...) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		WCH_count_down = false;
 	}
 }
@@ -623,8 +594,7 @@ void WCH_check_task_loop() {
 void WCH_anti_idle_func() {
 	// Enable anti-idle function.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	wstring ch;
@@ -644,14 +614,11 @@ void WCH_anti_idle_func() {
 void WCH_trans() {
 	// Translate string between Chinese / English.
 	if ((int)WCH_command_list.size() != 2) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	try {
 		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WCH_command_list[1]))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
-		WCH_Sleep(1000);
-		WCH_cmd_line = false;
 		if (WCH_FileIsBlank(L"WCH_TRANS.tmp")) {
 			throw runtime_error("");
 		}
@@ -667,11 +634,8 @@ void WCH_trans() {
 		wcout << StrToWstr(UTF8ToANSI(val["translation"][0].asString())) << endl;
 		fin.close();
 		DeleteFileW(L"WCH_TRANS.tmp");
-		WCH_cmd_line = true;
 	} catch (...) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"An network error occurred, please check your network connection and try to update this program");
-		wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
-		WCH_cmd_line = true;
+		WCH_PrintNetworkErr();
 		return;
 	}
 }
@@ -679,14 +643,11 @@ void WCH_trans() {
 void WCH_ow() {
 	// Get a random sentence.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	try {
 		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", L"WCH_OW.tmp", 0, 0);
-		WCH_Sleep(1000);
-		WCH_cmd_line = false;
 		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
 			throw runtime_error("");
 		}
@@ -696,11 +657,42 @@ void WCH_ow() {
 		cout << UTF8ToANSI(res) << endl;
 		fin.close();
 		DeleteFileW(L"WCH_OW.tmp");
-		WCH_cmd_line = true;
 	} catch (...) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"An network error occurred, please check your network connection and try to update this program");
-		wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
-		WCH_cmd_line = true;
+		WCH_PrintNetworkErr();
+		return;
+	}
+}
+
+void WCH_fate() {
+	// Get fate.
+	if ((int)WCH_command_list.size() != 1) {
+		WCH_PrintIncorrect();
+		return;
+	}
+	try {
+		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(WCH_GetUniIdent()))).c_str(), L"WCH_FATE.tmp", 0, NULL);
+		if (WCH_FileIsBlank(L"WCH_FATE.tmp")) {
+			throw runtime_error("");
+		}
+		Json::Reader rea;
+		Json::Value val;
+		fin.open(L"WCH_FATE.tmp");
+		if (!rea.parse(fin, val)) {
+			throw runtime_error("");
+		}
+		if (!val.isMember("data")) {
+			throw runtime_error("");
+		}
+		if (val["status"].asString() == "20011") {
+			wcout << StrToWstr(UTF8ToANSI(val["data"]["fortuneSummary"].asString())) << endl;
+			wcout << StrToWstr(UTF8ToANSI(val["data"]["luckyStar"].asString())) << endl;
+			wcout << StrToWstr(UTF8ToANSI(val["data"]["signText"].asString())) << endl;
+			wcout << StrToWstr(UTF8ToANSI(val["data"]["unSignText"].asString())) << endl;
+		}
+		fin.close();
+		DeleteFileW(L"WCH_FATE.tmp");
+	} catch (...) {
+		WCH_PrintNetworkErr();
 		return;
 	}
 }
@@ -708,8 +700,7 @@ void WCH_ow() {
 void WCH_time() {
 	// Print current time.
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	WCH_Time q = WCH_GetTime();
@@ -744,8 +735,7 @@ void WCH_help() {
 				WCH_printlog(WCH_LOG_STATUS_ERROR, L"File processing failed. Please try reinstalling this program");
 				wcout << L"File processing failed. Please try reinstalling this program." << endl;
 			} else {
-				WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-				wcout << L"Your input code is uncorrect, please check and try again." << endl;
+				WCH_PrintIncorrect();
 			}
 			return;
 		}
@@ -755,8 +745,7 @@ void WCH_help() {
 void WCH_save_cmd() {
 	// Save data. (Command)
 	if ((int)WCH_command_list.size() != 1) {
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-		wcout << L"Your input code is uncorrect, please check and try again." << endl;
+		WCH_PrintIncorrect();
 		return;
 	}
 	if (WCH_save_func()) {

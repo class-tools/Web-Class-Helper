@@ -23,6 +23,7 @@ extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
+extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -50,6 +51,14 @@ void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
 int WCH_GetNumDigits(int _n);
+
+void WCH_Init_Bind() {
+	// Initialization for bind.
+	atexit(WCH_quit);
+	WCH_signalHandler();
+	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	WCH_TBL.CoCreateInstance(CLSID_TaskbarList);
+}
 
 void WCH_Init_Dir() {
 	// Initialization for directory.
@@ -86,7 +95,29 @@ void WCH_Init_Var() {
 	wfout.imbue(locale("chs", LC_CTYPE));
 }
 
-int WCH_Init_Log() {
+void WCH_Init_Ver() {
+	// Initialization for version.
+	wstring vertype = L"";
+#if WCH_VER_TYPE == 1
+	vertype = L"Internal Preview";
+#endif
+#if WCH_VER_TYPE == 2
+	vertype = L"Public Preview";
+#endif
+#if WCH_VER_TYPE == 1 || WCH_VER_TYPE == 2
+	WCH_SetWindowStatus(false);
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
+	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
+		WCH_CheckAndDeleteFile(L"logs/latest.log");
+		_exit(0);
+	} else {
+		WCH_SetWindowStatus(true);
+		WCH_pre_start = false;
+	}
+#endif
+}
+
+void WCH_Init_Log() {
 	// Initialization for log.
 	int returnVal = 0;
 	WCH_Time now = WCH_GetTime();
@@ -96,34 +127,30 @@ int WCH_Init_Log() {
 	fin.open(L"settings.json");
 	if (_waccess(L"logs/latest.log", 0) != -1) {
 		if (rea.parse(fin, val)) {
-			returnVal = _wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(val["Start"].asString())).c_str());
+			_wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(val["Start"].asString())).c_str());
 		} else {
-			returnVal = _wrename(L"logs/latest.log", L"logs/00000000000000.log");
+			_wrename(L"logs/latest.log", L"logs/00000000000000.log");
 		}
 	}
 	fin.close();
 	val["Start"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
 	fout.open(L"settings.json");
-	sw -> write(val, &fout);
+	sw->write(val, &fout);
 	fout.close();
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"" + WCH_window_title + L"\"");
-	return returnVal == -1;
 }
 
 void WCH_Init_Win() {
 	// Initialization for window.
 	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
+		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
 		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR);
+		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
 		exit(0);
 	}
 	SetConsoleTitleW(WCH_window_title.c_str());
-}
-
-void WCH_Init_Bind() {
-	// Initialization for bind.
-	atexit(WCH_quit);
-	WCH_signalHandler();
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 }
 
 void WCH_Init_Cmd() {
@@ -139,6 +166,7 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair(L"pi", WCH_pi));
 	WCH_command_support.insert(make_pair(L"speedtest", WCH_speedtest));
 	WCH_command_support.insert(make_pair(L"trans", WCH_trans));
+	WCH_command_support.insert(make_pair(L"fate", WCH_fate));
 	WCH_command_support.insert(make_pair(L"anti-idle", WCH_anti_idle_func));
 	WCH_command_support.insert(make_pair(L"count-down", WCH_count_down_func));
 	WCH_command_support.insert(make_pair(L"update", WCH_update));
@@ -151,30 +179,12 @@ void WCH_Init_Cmd() {
 
 void WCH_Init() {
 	// Initialize the whole program.
-	wstring vertype = L"";
-#if WCH_VER_TYPE == 1
-	vertype = L"Internal Preview";
-#endif
-#if WCH_VER_TYPE == 2
-	vertype = L"Public Preview";
-#endif
-#if WCH_VER_TYPE == 1 || WCH_VER_TYPE == 2
-	WCH_SetWindowStatus(false);
-	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
-		WCH_CheckAndDeleteFile(L"logs/latest.log");
-		_exit(0);
-	} else {
-		WCH_SetWindowStatus(true);
-		WCH_pre_start = false;
-	}
-#endif
+	WCH_Init_Bind();
 	WCH_Init_Dir();
 	WCH_Init_Var();
-	if (WCH_Init_Log()) {
-		raise(SIGABRT);
-	}
+	WCH_Init_Ver();
+	WCH_Init_Log();
 	WCH_Init_Win();
-	WCH_Init_Bind();
 	WCH_Init_Cmd();
 	WCH_read();
 	WCH_SetWindowStatus(true);

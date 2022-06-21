@@ -23,6 +23,7 @@ extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
+extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -176,7 +177,7 @@ void WCH_save_clock() {
 		val.append(sval);
 	}
 	fout.open(FilePath);
-	sw -> write(val, &fout);
+	sw->write(val, &fout);
 	fout.close();
 }
 
@@ -197,7 +198,7 @@ void WCH_save_task() {
 		val.append(WstrToStr(*it));
 	}
 	fout.open(FilePath);
-	sw -> write(val, &fout);
+	sw->write(val, &fout);
 	fout.close();
 }
 
@@ -216,12 +217,12 @@ void WCH_save_work() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
 		Json::Value sval;
-		sval.append(WstrToStr(it -> first));
-		sval.append(WstrToStr(it -> second));
+		sval.append(WstrToStr(it->first));
+		sval.append(WstrToStr(it->second));
 		val.append(sval);
 	}
 	fout.open(FilePath);
-	sw -> write(val, &fout);
+	sw->write(val, &fout);
 	fout.close();
 }
 

@@ -23,6 +23,7 @@ extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
+extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -60,11 +61,12 @@ void WCH_Sleep(int _ms) {
 }
 
 void WCH_PrintColor(WORD _mode) {
+	// Change console text color.
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _mode);
 }
 
 void WCH_PrintChar(int _times, wchar_t _c) {
-	// Print space.
+	// Print characters.
 	while (_times > 0 && !WCH_program_end) {
 		_times--;
 		wcout << _c;
@@ -72,6 +74,7 @@ void WCH_PrintChar(int _times, wchar_t _c) {
 }
 
 wstring StrToWstr(string str) {
+	// Convert multiple byte string to wide string.
 	wstring result;
 	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), NULL, 0);
 	TCHAR* buffer = new TCHAR[len + 1];
@@ -83,6 +86,7 @@ wstring StrToWstr(string str) {
 }
 
 string WstrToStr(wstring wstr) {
+	// Convert wide string to multiple byte string.
 	string result;
 	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
 	char* buffer = new char[len + 1];
@@ -94,6 +98,7 @@ string WstrToStr(wstring wstr) {
 }
 
 string UrlEncode(const wstring& input) {
+	// Get URL encode result.
 	string output;
 	int cbNeeded = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
 	if (cbNeeded > 0) {
@@ -110,7 +115,24 @@ string UrlEncode(const wstring& input) {
 	return output;
 }
 
+wstring WCH_GetUniIdent() {
+	// Get unique identification. (Public IP)
+	wstring _in, _res;
+	URLDownloadToFileW(NULL, L"https://api.ipify.org", L"WCH_IDENT.tmp", 0, NULL);
+	wfin.open(L"WCH_IDENT.tmp");
+	wfin >> _in;
+	wfin.close();
+	DeleteFileW(L"WCH_IDENT.tmp");
+	for (int i = 0; i < (int)_in.size(); i++) {
+		if (_in[i] != L'.') {
+			_res.push_back(_in[i]);
+		}
+	}
+	return _res;
+}
+
 string UTF8ToANSI(string strUTF8) {
+	// Convert string from UTF-8 to ANSI.
 	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
 	WCHAR* wszBuffer = new WCHAR[nLen + 1];
 	nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, wszBuffer, nLen);
@@ -126,6 +148,7 @@ string UTF8ToANSI(string strUTF8) {
 }
 
 vector <wstring> WCH_split(const wstring &_in) {
+	// Split CLI string.
 	vector <wstring> _res;
 	wstring _tmp;
 	bool _flag = false;
@@ -228,6 +251,30 @@ void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"TRAY\" argument \"STATUS\" was set to {}", (flag == true ? L"\"SHOW\"" : L"\"HIDE\"")));
+}
+
+void WCH_ShowTaskBarError() {
+	// Show error on task bar icon.
+	WCH_TBL->SetProgressValue(WCH_Win_hWnd, 100, 100);
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_ERROR);
+	WCH_Sleep(1000);
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+}
+
+void WCH_PrintIncorrect() {
+	// Print text for incorrect inputs.
+	WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
+	wcout << L"Your input code is uncorrect, please check and try again." << endl;
+	thread T(WCH_ShowTaskBarError);
+	T.detach();
+}
+
+void WCH_PrintNetworkErr() {
+	// Print text for network errors.
+	WCH_printlog(WCH_LOG_STATUS_WARN, L"An network error occurred, please check your network connection and try to update this program");
+	wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
+	thread T(WCH_ShowTaskBarError);
+	T.detach();
 }
 
 void WCH_CheckHotkey() {
@@ -384,12 +431,16 @@ void WCH_ProgressBar() {
 	bool _cd = WCH_count_down;
 	double _pro = 100.0 / WCH_ProgressBarTot;
 	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NORMAL);
+	WCH_TBL->SetProgressValue(WCH_Win_hWnd, 0, 100);
 	for (int i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
 		WCH_PrintProgressBar(i, (int)((WCH_ProgressBarTot - i) * _pro), true);
+		WCH_TBL->SetProgressValue(WCH_Win_hWnd, (unsigned long long)((WCH_ProgressBarTot - i) * _pro), 100);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 	wcout << endl;
 }
 
@@ -473,6 +524,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
 	// Show messagebox to inform a bug to user.
 	wcout << L"\a";
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
 	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by open a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
 		_wsystem(L"start resources/website/issues.url");
 	}

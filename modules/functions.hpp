@@ -23,6 +23,7 @@ extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
+extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;

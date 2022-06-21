@@ -102,19 +102,21 @@ Contributors: jsh-jsh ren-yc
 #include <stop_token>
 #include <version>
 #include <io.h>
-#include <windows.h>
-#include <wininet.h>
-#include <tlhelp32.h>
 #include <conio.h>
 #include <direct.h>
+#include <Windows.h>
+#include <WinInet.h>
+#include <TLHelp32.h>
 #include <VersionHelpers.h>
 #include <ShObjidl.h>
 #include <gdiplus.h>
+#include <atlbase.h>
 #include "json/json.h"
 
-#pragma comment (lib, "winmm.lib")
-#pragma comment (lib, "gdiplus.lib")
-#pragma comment (lib, "urlmon.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "gdiplus.lib")
+#pragma comment(lib, "urlmon.lib")
+#pragma comment(lib, "ole32.lib")
 
 using std::cin;
 using std::wcin;
@@ -236,6 +238,7 @@ HWND WCH_Win_hWnd;
 HWND WCH_Tray_hWnd;
 HMENU WCH_hMenu;
 NOTIFYICONDATA WCH_NID;
+ATL::CComPtr <ITaskbarList3> WCH_TBL;
 int WCH_clock_num;
 int WCH_task_num;
 int WCH_work_num;
