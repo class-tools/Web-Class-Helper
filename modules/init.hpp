@@ -108,7 +108,6 @@ void WCH_Init_Ver() {
 	WCH_SetWindowStatus(false);
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
 	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
-		WCH_CheckAndDeleteFile(L"logs/latest.log");
 		_exit(0);
 	} else {
 		WCH_SetWindowStatus(true);
@@ -119,7 +118,6 @@ void WCH_Init_Ver() {
 
 void WCH_Init_Log() {
 	// Initialization for log.
-	int returnVal = 0;
 	WCH_Time now = WCH_GetTime();
 	Json::Value val;
 	Json::Reader rea;
@@ -164,7 +162,6 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair(L"game", WCH_game));
 	WCH_command_support.insert(make_pair(L"time", WCH_time));
 	WCH_command_support.insert(make_pair(L"pi", WCH_pi));
-	WCH_command_support.insert(make_pair(L"speedtest", WCH_speedtest));
 	WCH_command_support.insert(make_pair(L"trans", WCH_trans));
 	WCH_command_support.insert(make_pair(L"fate", WCH_fate));
 	WCH_command_support.insert(make_pair(L"anti-idle", WCH_anti_idle_func));
