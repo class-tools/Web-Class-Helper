@@ -71,7 +71,7 @@ void WCH_check_clock_loop() {
 		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
 			if (get <0> (*it) == NOW.Hour && get <1> (*it) == NOW.Minute && get <2> (*it).size() > 0) {
 				wcout << L"\a";
-				MessageBoxW(NULL, (get <2> (*it)).c_str(), L"WCH CLOCK", MB_OK);
+				MessageBoxW(NULL, (get <2> (*it)).c_str(), L"WCH CLOCK", MB_OK | MB_TOPMOST);
 			}
 		}
 		WCH_Sleep(60000);
@@ -104,7 +104,7 @@ void WCH_message_loop() {
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = WCH_window_title.c_str();
 	if (!RegisterClassW(&wndclass)) {
-		MessageBoxW(NULL, L"This program requires Windows NT!", WCH_window_title.c_str(), MB_ICONERROR);
+		MessageBoxW(NULL, L"This program requires Windows NT!", WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
 		exit(0);
 	}
 	WCH_Tray_hWnd = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);

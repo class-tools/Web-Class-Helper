@@ -107,7 +107,7 @@ void WCH_Init_Ver() {
 #if WCH_VER_TYPE == 1 || WCH_VER_TYPE == 2
 	WCH_SetWindowStatus(false);
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
-	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO) == IDNO) {
+	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
 		_exit(0);
 	} else {
 		WCH_SetWindowStatus(true);
@@ -142,7 +142,7 @@ void WCH_Init_Win() {
 	// Initialization for window.
 	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
 		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
-		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR);
+		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
 		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
 		exit(0);

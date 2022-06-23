@@ -543,6 +543,17 @@ void WCH_signalHandler() {
 		WCH_ShowBugMessagebox(signum, L"Program interrupted");
 		exit(signum);
 	});
+	signal(SIGBREAK, [](int signum) {
+		WCH_cmd_line = false;
+		WCH_program_end = true;
+		WCH_PrintColor(0x07);
+		wcout << endl;
+		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Signal " + to_wstring(signum) + L" detected (Program broke)");
+		Sleep(500);
+		WCH_SetWindowStatus(false);
+		WCH_ShowBugMessagebox(signum, L"Program broke");
+		exit(signum);
+	});
 	signal(SIGABRT, [](int signum) {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
