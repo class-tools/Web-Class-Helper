@@ -23,6 +23,11 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
+    - name: Initialize vcpkg
+      run: |
+        vcpkg integrate install
+        vcpkg install jsoncpp:x64-windows
+        vcpkg install jsoncpp:x86-windows
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
