@@ -527,17 +527,6 @@ void WCH_game() {
 	wcout << endl;
 }
 
-void WCH_speedtest() {
-	// Start a speed test with Python program.
-	if ((int)WCH_command_list.size() != 1) {
-		WCH_PrintIncorrect();
-		return;
-	}
-	wstring tmp = L"SPEEDTEST";
-	tmp.append(to_wstring(WCH_Framework) + L".EXE");
-	_wsystem(tmp.c_str());
-}
-
 void WCH_pi() {
 	// A sequence of function to make a screenshot.
 	if ((int)WCH_command_list.size() != 1) {
