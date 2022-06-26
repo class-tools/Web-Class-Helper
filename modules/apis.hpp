@@ -173,7 +173,7 @@ vector <wstring> WCH_split(const wstring &_in) {
 	if (_tmp != L"") {
 		_res.push_back(_tmp);
 	}
-	if (_flag) {
+	if (_flag || find(_res.begin(), _res.end(), L"") != _res.end()) {
 		_res.clear();
 		_res.push_back(L"Incorrect");
 	}
