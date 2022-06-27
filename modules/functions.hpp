@@ -119,8 +119,7 @@ void WCH_message_loop() {
 
 void WCH_CL_Init() {
 	// Initialize the command line.
-BEGIN:
-	wcout << L">>> ";
+	BEGIN: wcout << L">>> ";
 	getline(wcin, WCH_command);
 	if (wcin.eof()) {
 		raise(SIGINT);
