@@ -146,14 +146,13 @@ using std::vector;
 using std::tuple;
 using std::function;
 using std::pair;
-using std::get;
 using std::thread;
 using std::runtime_error;
 using std::exception;
 using std::ios;
-using std::make_pair;
-using std::equal_range;
 using std::chrono::milliseconds;
+using std::make_pair;
+using std::get;
 using std::this_thread::sleep_for;
 
 #define WCH_HOTKEY_SHOW 121
@@ -165,45 +164,45 @@ using std::this_thread::sleep_for;
 #define WCH_LOG_STATUS_ERROR L"[ERROR]"
 
 class GdiplusWrapper {
-	public:
-		GdiplusWrapper() {
-			Gdiplus::GdiplusStartupInput gdiplusStartupInput;
-			GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
-		}
-		~GdiplusWrapper() {
-			Gdiplus::GdiplusShutdown(gdiplusToken);
-		}
-		int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
-			UINT num = 0;
-			UINT size = 0;
-			Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
-			Gdiplus::GetImageEncodersSize(&num, &size);
-			if (size == 0) {
-				return -1;
-			}
-			pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
-			if (pImageCodecInfo == NULL) {
-				return -1;
-			}
-			Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
-			for (UINT j = 0; j < num; j++) {
-				if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
-					*pClsid = pImageCodecInfo[j].Clsid;
-					free(pImageCodecInfo);
-					return j;
-				}
-			}
-			free(pImageCodecInfo);
+public:
+	GdiplusWrapper() {
+		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+	}
+	~GdiplusWrapper() {
+		Gdiplus::GdiplusShutdown(gdiplusToken);
+	}
+	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
+		UINT num = 0;
+		UINT size = 0;
+		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
+		Gdiplus::GetImageEncodersSize(&num, &size);
+		if (size == 0) {
 			return -1;
 		}
-		void SaveImage(HBITMAP hBitmap, const WCHAR* filename, const WCHAR* format) {
-			CLSID pngClsid;
-			Gdiplus::Bitmap bitmap(hBitmap, NULL);
-			GetEncoderClsid(format, &pngClsid);
-			bitmap.Save(filename, &pngClsid);
+		pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size));
+		if (pImageCodecInfo == NULL) {
+			return -1;
 		}
-	private:
-		ULONG_PTR gdiplusToken;
+		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+		for (UINT j = 0; j < num; j++) {
+			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
+				*pClsid = pImageCodecInfo[j].Clsid;
+				free(pImageCodecInfo);
+				return j;
+			}
+		}
+		free(pImageCodecInfo);
+		return -1;
+	}
+	void SaveImage(HBITMAP hBitmap, const WCHAR* filename, const WCHAR* format) {
+		CLSID pngClsid;
+		Gdiplus::Bitmap bitmap(hBitmap, NULL);
+		GetEncoderClsid(format, &pngClsid);
+		bitmap.Save(filename, &pngClsid);
+	}
+private:
+	ULONG_PTR gdiplusToken;
 };
 
 struct WCH_Time {
@@ -228,17 +227,17 @@ struct WCH_Version {
 };
 
 const wstring WCH_WDName[7] = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
-map <wstring, function <void ()>> WCH_command_support;
-vector <wstring> WCH_command_list;
-set <tuple <int, int, wstring>> WCH_clock_list;
-set <wstring> WCH_task_list;
-set <pair <wstring, wstring>> WCH_work_list;
+map<wstring, function<void()>> WCH_command_support;
+vector<wstring> WCH_command_list;
+set<tuple<int, int, wstring>> WCH_clock_list;
+set<wstring> WCH_task_list;
+set<pair<wstring, wstring>> WCH_work_list;
 wstring WCH_window_title;
 HWND WCH_Win_hWnd;
 HWND WCH_Tray_hWnd;
 HMENU WCH_hMenu;
 NOTIFYICONDATA WCH_NID;
-ATL::CComPtr <ITaskbarList3> WCH_TBL;
+ATL::CComPtr<ITaskbarList3> WCH_TBL;
 int WCH_clock_num;
 int WCH_task_num;
 int WCH_work_num;

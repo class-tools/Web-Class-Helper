@@ -13,17 +13,17 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "basic.hpp"
 
 extern const wstring WCH_WDName[7];
-extern map <wstring, function <void ()>> WCH_command_support;
-extern vector <wstring> WCH_command_list;
-extern set <tuple <int, int, wstring>> WCH_clock_list;
-extern set <wstring> WCH_task_list;
-extern set <pair <wstring, wstring>> WCH_work_list;
+extern map<wstring, function<void()>> WCH_command_support;
+extern vector<wstring> WCH_command_list;
+extern set<tuple<int, int, wstring>> WCH_clock_list;
+extern set<wstring> WCH_task_list;
+extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
-extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
+extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -88,7 +88,7 @@ void WCH_Init_Var() {
 		Json::StreamWriterBuilder::setDefaults(&def);
 		def["emitUTF8"] = true;
 		return def;
-	} ();
+	}();
 	wcin.imbue(locale("chs", LC_CTYPE));
 	wcout.imbue(locale("chs", LC_CTYPE));
 	wfin.imbue(locale("chs", LC_CTYPE));
@@ -121,7 +121,7 @@ void WCH_Init_Log() {
 	WCH_Time now = WCH_GetTime();
 	Json::Value val;
 	Json::Reader rea;
-	unique_ptr <Json::StreamWriter> sw(Json_SWB.newStreamWriter());
+	unique_ptr<Json::StreamWriter> sw(Json_SWB.newStreamWriter());
 	fin.open(L"settings.json");
 	if (_waccess(L"logs/latest.log", 0) != -1) {
 		if (rea.parse(fin, val)) {

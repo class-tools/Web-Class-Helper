@@ -13,17 +13,17 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "basic.hpp"
 
 extern const wstring WCH_WDName[7];
-extern map <wstring, function <void ()>> WCH_command_support;
-extern vector <wstring> WCH_command_list;
-extern set <tuple <int, int, wstring>> WCH_clock_list;
-extern set <wstring> WCH_task_list;
-extern set <pair <wstring, wstring>> WCH_work_list;
+extern map<wstring, function<void()>> WCH_command_support;
+extern vector<wstring> WCH_command_list;
+extern set<tuple<int, int, wstring>> WCH_clock_list;
+extern set<wstring> WCH_task_list;
+extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
-extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
+extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -176,7 +176,7 @@ void WCH_add_clock() {
 		} else {
 			bool flag = false;
 			for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
-				if (get <0> (*it) == h && get <1> (*it) == m && get <2> (*it) == Tname) {
+				if (get<0>(*it) == h && get<1>(*it) == m && get<2>(*it) == Tname) {
 					flag = true;
 					break;
 				}
@@ -206,7 +206,7 @@ void WCH_delete_clock() {
 		wstring Tname = WCH_command_list[4];
 		bool flag = false;
 		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
-			if (get <0> (*it) == h && get <1> (*it) == m && get <2> (*it) == Tname) {
+			if (get<0>(*it) == h && get<1>(*it) == m && get<2>(*it) == Tname) {
 				WCH_clock_list.erase(it);
 				flag = true;
 				WCH_clock_num--;
@@ -244,9 +244,9 @@ void WCH_list_clock() {
 	int MAXM = -1;
 	int MAXT = -1;
 	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
-		MAXH = max(MAXH, WCH_GetNumDigits(get <0> (*it)));
-		MAXM = max(MAXM, WCH_GetNumDigits(get <1> (*it)));
-		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(get <2> (*it)));
+		MAXH = max(MAXH, WCH_GetNumDigits(get<0>(*it)));
+		MAXM = max(MAXM, WCH_GetNumDigits(get<1>(*it)));
+		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(get<2>(*it)));
 	}
 	if (MAXH == -1 && MAXM == -1 && MAXT == -1) {
 		return;
@@ -268,11 +268,11 @@ void WCH_list_clock() {
 	WCH_PrintChar(MAXT, L'-');
 	wcout << endl;
 	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
-		wcout << get <0> (*it);
-		WCH_PrintChar(MAXH - WCH_GetNumDigits(get <0> (*it)), L' ');
-		wcout << L" | " << get <1> (*it);
-		WCH_PrintChar(MAXM - WCH_GetNumDigits(get <1> (*it)), L' ');
-		wcout << L" | " << get <2> (*it) << endl;
+		wcout << get<0>(*it);
+		WCH_PrintChar(MAXH - WCH_GetNumDigits(get<0>(*it)), L' ');
+		wcout << L" | " << get<1>(*it);
+		WCH_PrintChar(MAXM - WCH_GetNumDigits(get<1>(*it)), L' ');
+		wcout << L" | " << get<2>(*it) << endl;
 	}
 }
 
@@ -492,11 +492,12 @@ void WCH_game() {
 	int ans = rand() % 10000 + 1;
 	bool flag = true;
 	wstring z = L"0";
-	vector <wstring> zv;
+	vector<wstring> zv;
 	zv.push_back(L"0");
 	try {
 		while (stoi(zv[0]) != ans) {
-			BEGIN: wcout << L"Please input your number (1 ~ 10000): ";
+		BEGIN:
+			wcout << L"Please input your number (1 ~ 10000): ";
 			getline(wcin, z);
 			zv = WCH_split(z);
 			if ((int)zv.size() != 1) {
@@ -520,7 +521,8 @@ void WCH_game() {
 		wcout << L"Number out of range." << endl;
 		goto BEGIN;
 	}
-	END: wcout << L"The number is " << ans << L".";
+END:
+	wcout << L"The number is " << ans << L".";
 	if (flag) {
 		wcout << L" You WIN!";
 	}

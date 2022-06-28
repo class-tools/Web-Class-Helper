@@ -13,17 +13,17 @@ Contributors: jsh-jsh ren-yc
 #include "basic.hpp"
 
 extern const wstring WCH_WDName[7];
-extern map <wstring, function <void ()>> WCH_command_support;
-extern vector <wstring> WCH_command_list;
-extern set <tuple <int, int, wstring>> WCH_clock_list;
-extern set <wstring> WCH_task_list;
-extern set <pair <wstring, wstring>> WCH_work_list;
+extern map<wstring, function<void()>> WCH_command_support;
+extern vector<wstring> WCH_command_list;
+extern set<tuple<int, int, wstring>> WCH_clock_list;
+extern set<wstring> WCH_task_list;
+extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
-extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
+extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -69,9 +69,9 @@ void WCH_check_clock_loop() {
 	while (!WCH_program_end) {
 		WCH_Time NOW = WCH_GetTime();
 		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
-			if (get <0> (*it) == NOW.Hour && get <1> (*it) == NOW.Minute && get <2> (*it).size() > 0) {
+			if (get<0>(*it) == NOW.Hour && get<1>(*it) == NOW.Minute && get<2>(*it).size() > 0) {
 				wcout << L"\a";
-				MessageBoxW(NULL, (get <2> (*it)).c_str(), L"WCH CLOCK", MB_OK | MB_TOPMOST);
+				MessageBoxW(NULL, (get<2>(*it)).c_str(), L"WCH CLOCK", MB_OK | MB_TOPMOST);
 			}
 		}
 		WCH_Sleep(60000);
@@ -119,7 +119,8 @@ void WCH_message_loop() {
 
 void WCH_CL_Init() {
 	// Initialize the command line.
-	BEGIN: wcout << L">>> ";
+BEGIN:
+	wcout << L">>> ";
 	getline(wcin, WCH_command);
 	if (wcin.eof()) {
 		raise(SIGINT);

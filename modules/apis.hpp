@@ -13,17 +13,17 @@ Contributors: jsh-jsh ren-yc
 #include "basic.hpp"
 
 extern const wstring WCH_WDName[7];
-extern map <wstring, function <void ()>> WCH_command_support;
-extern vector <wstring> WCH_command_list;
-extern set <tuple <int, int, wstring>> WCH_clock_list;
-extern set <wstring> WCH_task_list;
-extern set <pair <wstring, wstring>> WCH_work_list;
+extern map<wstring, function<void()>> WCH_command_support;
+extern vector<wstring> WCH_command_list;
+extern set<tuple<int, int, wstring>> WCH_clock_list;
+extern set<wstring> WCH_task_list;
+extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
-extern ATL::CComPtr <ITaskbarList3> WCH_TBL;
+extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
@@ -147,9 +147,9 @@ string UTF8ToANSI(string strUTF8) {
 	return strUTF8;
 }
 
-vector <wstring> WCH_split(const wstring &_in) {
+vector<wstring> WCH_split(const wstring& _in) {
 	// Split CLI string.
-	vector <wstring> _res;
+	vector<wstring> _res;
 	wstring _tmp;
 	bool _flag = false;
 	for (int i = 0; i < (int)_in.size(); i++) {
@@ -210,8 +210,8 @@ WCH_Time WCH_GetTime() {
 
 wstring WCH_GetCompileTime() {
 	// Get program compile time.
-	vector <wstring> spi = WCH_split(StrToWstr(__DATE__));
-	map <wstring, int> mon;
+	vector<wstring> spi = WCH_split(StrToWstr(__DATE__));
+	map<wstring, int> mon;
 	mon[L"Jan"] = 1;
 	mon[L"Feb"] = 2;
 	mon[L"Mar"] = 3;
