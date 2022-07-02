@@ -7,11 +7,12 @@
 <p align="center">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/gitmsg.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codeql.yml/badge.svg">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/clangformat.yml/badge.svg">
 <img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
 <img src="https://img.shields.io/badge/support-Windows%208%20+-blue?logo=Windows">
 </p>
 
-A practical command line gadget during web class.
+A command line tool using with online class.
 
 **English** | [简体中文](./README.zh-Hans.md)
 

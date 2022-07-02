@@ -114,7 +114,7 @@ void WCH_update() {
 		WCH_ProgressBarTot = 5;
 		thread T(WCH_ProgressBar);
 		T.detach();
-		wstring url = L"https://class-tools.gq/update/WCH?";
+		wstring url = L"https://class-tools.github.io/update/WCH?";
 		srand((unsigned)time(NULL));
 		url.append(to_wstring(rand()));
 		URLDownloadToFileW(0, url.c_str(), L"WCH_UPD.tmp", 0, 0);

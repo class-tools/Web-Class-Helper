@@ -7,11 +7,12 @@
 <p align="center">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/gitmsg.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codeql.yml/badge.svg">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/clangformat.yml/badge.svg">
 <img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
 <img src="https://img.shields.io/badge/support-Windows%208%20+-blue?logo=Windows">
 </p>
 
-一个在网课期间实用的命令行小工具。
+一个在网课期间命令行小工具。
 
 [English](./README.md) | **简体中文**
 
