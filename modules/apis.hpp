@@ -128,7 +128,7 @@ wstring WCH_GetUniIdent() {
 			_res.push_back(_in[i]);
 		}
 	}
-	return _res;
+	return L"11111" + to_wstring(stoll(_res) % 99991);
 }
 
 string UTF8ToANSI(string strUTF8) {

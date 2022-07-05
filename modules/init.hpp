@@ -109,11 +109,10 @@ void WCH_Init_Ver() {
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
 	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
 		_exit(0);
-	} else {
-		WCH_SetWindowStatus(true);
-		WCH_pre_start = false;
 	}
+	WCH_SetWindowStatus(true);
 #endif
+	WCH_pre_start = false;
 }
 
 void WCH_Init_Log() {
