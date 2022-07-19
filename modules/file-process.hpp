@@ -1,5 +1,5 @@
 /*
-Web Class Helper File Process Module Header File 2.0.1
+Web Class Helper File Process Module Header File 2.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -30,7 +30,6 @@ extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
-extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;

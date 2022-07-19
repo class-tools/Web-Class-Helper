@@ -1,5 +1,5 @@
 /*
-Web Class Helper Basic Module Header File 2.0.1
+Web Class Helper Basic Module Header File 2.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -244,7 +244,6 @@ int WCH_work_num;
 int WCH_clock_change;
 int WCH_task_change;
 int WCH_work_change;
-int WCH_ProgressBarCount;
 int WCH_ProgressBarTot;
 int WCH_InputTimes;
 bool WCH_cmd_line = true;

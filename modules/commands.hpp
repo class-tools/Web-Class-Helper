@@ -1,5 +1,5 @@
 /*
-Web Class Helper Commands Module Header File 2.0.1
+Web Class Helper Commands Module Header File 2.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc hjl2011
@@ -30,7 +30,6 @@ extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
-extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
@@ -561,6 +560,7 @@ void WCH_count_down_func() {
 		wcout << L"Starting count down timer..." << endl;
 		WCH_ProgressBarTot = h * 3600 + m * 60 + s;
 		WCH_ProgressBar();
+		wcout << L"\a";
 		WCH_count_down = false;
 	} catch (...) {
 		WCH_PrintIncorrect();
@@ -609,7 +609,7 @@ void WCH_trans() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WCH_command_list[1]))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
+		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(ANSIToUTF8((WstrToStr((WCH_command_list[1]))))))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
 		if (WCH_FileIsBlank(L"WCH_TRANS.tmp")) {
 			throw runtime_error("");
 		}
@@ -661,7 +661,7 @@ void WCH_fate() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(WCH_GetUniIdent()))).c_str(), L"WCH_FATE.tmp", 0, NULL);
+		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(ANSIToUTF8(WstrToStr((WCH_GetUniIdent())))))).c_str(), L"WCH_FATE.tmp", 0, NULL);
 		if (WCH_FileIsBlank(L"WCH_FATE.tmp")) {
 			throw runtime_error("");
 		}

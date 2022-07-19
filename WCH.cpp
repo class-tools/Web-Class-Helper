@@ -1,11 +1,11 @@
 /*
-Web Class Helper Main File 2.0.1
+Web Class Helper Main File 2.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#define WCH_VER_MAIN TEXT("2.0.1")
-#define WCH_VER_TYPE 0
+#define WCH_VER_MAIN TEXT("2.1.0")
+#define WCH_VER_TYPE 1
 #include "modules/file-process.hpp"
 #include "modules/init.hpp"
 #include "modules/commands.hpp"
@@ -31,7 +31,6 @@ extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
-extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;

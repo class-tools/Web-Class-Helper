@@ -1,5 +1,5 @@
 /*
-Web Class Helper Resource Control Header File 2.0.1
+Web Class Helper Resource Control Header File 2.1.0
 This source code file isn't under any license.
 Generator: Visual Studio 2022
 */

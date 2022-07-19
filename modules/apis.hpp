@@ -1,5 +1,5 @@
 /*
-Web Class Helper APIs Module Header File 2.0.1
+Web Class Helper APIs Module Header File 2.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -30,7 +30,6 @@ extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
-extern int WCH_ProgressBarCount;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
@@ -97,22 +96,23 @@ string WstrToStr(wstring wstr) {
 	return result;
 }
 
-string UrlEncode(const wstring& input) {
+string UrlEncode(const string _in) {
 	// Get URL encode result.
-	string output;
-	int cbNeeded = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
-	if (cbNeeded > 0) {
-		char* utf8 = new char[cbNeeded];
-		if (WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, utf8, cbNeeded, NULL, NULL) != 0) {
-			for (char* p = utf8; *p; *p++) {
-				char onehex[5];
-				_snprintf(onehex, sizeof(onehex), "%%%02.2X", (unsigned char)*p);
-				output.append(onehex);
-			}
+	string _res = "";
+	for (int i = 0; i < (int)_in.size(); i++) {
+		if (isalnum((unsigned char)_in[i]) || _in[i] == '-' || _in[i] == '_' || _in[i] == '.' || _in[i] == '~') {
+			_res += _in[i];
+		} else if (_in[i] == ' ') {
+			_res += "+";
+		} else {
+			char _tmp1 = (unsigned char)_in[i] >> 4;
+			char _tmp2 = (unsigned char)_in[i] % 16;
+			_res += '%';
+			_res += _tmp1 > 9 ? _tmp1 + 55 : _tmp1 + 48;
+			_res += _tmp2 > 9 ? _tmp2 + 55 : _tmp2 + 48;
 		}
-		delete[] utf8;
 	}
-	return output;
+	return _res;
 }
 
 wstring WCH_GetUniIdent() {
@@ -145,6 +145,22 @@ string UTF8ToANSI(string strUTF8) {
 	delete[] szBuffer;
 	delete[] wszBuffer;
 	return strUTF8;
+}
+
+string ANSIToUTF8(string strANSI) {
+	// Convert string from UTF-8 to ANSI.
+	UINT nLen = MultiByteToWideChar(936, 0, strANSI.c_str(), -1, NULL, 0);
+	WCHAR* wszBuffer = new WCHAR[nLen + 1];
+	nLen = MultiByteToWideChar(936, 0, strANSI.c_str(), -1, wszBuffer, nLen);
+	wszBuffer[nLen] = 0;
+	nLen = WideCharToMultiByte(CP_UTF8, 0, wszBuffer, -1, NULL, 0, NULL, 0);
+	CHAR* szBuffer = new CHAR[nLen + 1];
+	nLen = WideCharToMultiByte(CP_UTF8, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
+	szBuffer[nLen] = 0;
+	strANSI = szBuffer;
+	delete[] szBuffer;
+	delete[] wszBuffer;
+	return strANSI;
 }
 
 vector<wstring> WCH_split(const wstring& _in) {
@@ -406,7 +422,7 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 	// Print a progress bar.
 	wstring _ETAStr = format(L"{:02}:{:02}:{:02}", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
 	if (_flag) {
-		WCH_PrintChar(WCH_ProgressBarCount, L'\b');
+		wcout << "\r";
 	}
 	WCH_PrintColor(0x0A);
 	for (int i = 0; i < _n / 2; i++) {
@@ -423,7 +439,6 @@ void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
 	WCH_PrintColor(0x09);
 	wcout << _ETAStr;
 	WCH_PrintColor(0x07);
-	WCH_ProgressBarCount = 65 + WCH_GetNumDigits(_n);
 }
 
 void WCH_ProgressBar() {
