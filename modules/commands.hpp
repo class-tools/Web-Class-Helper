@@ -639,7 +639,7 @@ void WCH_ow() {
 	}
 	try {
 		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", L"WCH_OW.tmp", 0, 0);
-		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
+		if (WCH_FileIsBlank(L"WCH_OW.tmp")) {
 			throw runtime_error("");
 		}
 		fin.open(L"WCH_OW.tmp");
