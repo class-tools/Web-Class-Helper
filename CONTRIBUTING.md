@@ -1,6 +1,6 @@
 ## Contributing
 
-**English** | [简体中文](./CONTRIBUTING.zh-Hans.md)
+**English** | [简体中文](./CONTRIBUTING.zh-CN.md)
 
 Welcome to Web Class Helper!
 

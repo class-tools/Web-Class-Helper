@@ -49,7 +49,7 @@ void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
-int WCH_GetNumDigits(int _n);
+size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_printlog(wstring _mode, wstring _info) {
 	// Print log.

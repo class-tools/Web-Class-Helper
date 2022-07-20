@@ -49,7 +49,7 @@ void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
-int WCH_GetNumDigits(int _n);
+size_t WCH_GetNumDigits(size_t _n);
 
 bool WCH_ShortCutKeyCheck() {
 	// Check if the shortcut key is pressed.
@@ -125,7 +125,7 @@ BEGIN:
 		raise(SIGINT);
 	}
 	WCH_command_list = WCH_split(WCH_command);
-	if ((int)WCH_command_list.size() == 0) {
+	if (WCH_command_list.size() == 0) {
 		wcout << endl;
 		goto BEGIN;
 	}

@@ -15,7 +15,7 @@
 
 A command line tool using with online class.
 
-**English** | [简体中文](./README.zh-Hans.md)
+**English** | [简体中文](./README.zh-CN.md)
 
 ### Contributors
 

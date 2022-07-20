@@ -49,7 +49,7 @@ void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
-int WCH_GetNumDigits(int _n);
+size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_Sleep(int _ms) {
 	// Sleep.
@@ -64,7 +64,7 @@ void WCH_PrintColor(WORD _mode) {
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _mode);
 }
 
-void WCH_PrintChar(int _times, wchar_t _c) {
+void WCH_PrintChar(size_t _times, wchar_t _c) {
 	// Print characters.
 	while (_times > 0 && !WCH_program_end) {
 		_times--;
@@ -99,7 +99,7 @@ string WstrToStr(wstring wstr) {
 string UrlEncode(const string _in) {
 	// Get URL encode result.
 	string _res = "";
-	for (int i = 0; i < (int)_in.size(); i++) {
+	for (size_t i = 0; i < _in.size(); i++) {
 		if (isalnum((unsigned char)_in[i]) || _in[i] == '-' || _in[i] == '_' || _in[i] == '.' || _in[i] == '~') {
 			_res += _in[i];
 		} else if (_in[i] == ' ') {
@@ -123,7 +123,7 @@ wstring WCH_GetUniIdent() {
 	wfin >> _in;
 	wfin.close();
 	DeleteFileW(L"WCH_IDENT.tmp");
-	for (int i = 0; i < (int)_in.size(); i++) {
+	for (size_t i = 0; i < _in.size(); i++) {
 		if (_in[i] != L'.') {
 			_res.push_back(_in[i]);
 		}
@@ -168,7 +168,7 @@ vector<wstring> WCH_split(const wstring& _in) {
 	vector<wstring> _res;
 	wstring _tmp;
 	bool _flag = false;
-	for (int i = 0; i < (int)_in.size(); i++) {
+	for (size_t i = 0; i < _in.size(); i++) {
 		if (_in[i] == L' ' && !_flag && i != 0) {
 			if (_in[i - 1] != L'"') {
 				_res.push_back(_tmp);
@@ -193,16 +193,16 @@ vector<wstring> WCH_split(const wstring& _in) {
 		_res.clear();
 		_res.push_back(L"Incorrect");
 	}
-	if ((int)_res.size() != 0) {
-		if ((int)_res.size() != 1) {
-			wstring _debug = L"Using command: \"" + _res[0] + L"\", ";
-			for (int i = 1; i < (int)_res.size() - 1; i++) {
+	if (_res.size() != 0) {
+		if (_res.size() != 1) {
+			wstring _debug = L"Input string: \"" + _res[0] + L"\", ";
+			for (size_t i = 1; i < _res.size() - 1; i++) {
 				_debug.append(L"\"" + _res[i] + L"\", ");
 			}
-			_debug.append(L"\"" + _res[(int)_res.size() - 1] + L"\"");
+			_debug.append(L"\"" + _res[_res.size() - 1] + L"\"");
 			WCH_printlog(WCH_LOG_STATUS_INFO, _debug);
 		} else {
-			WCH_printlog(WCH_LOG_STATUS_INFO, L"Using command: \"" + _res[0] + L"\"");
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Input string: \"" + _res[0] + L"\"");
 		}
 	}
 	return _res;
@@ -246,7 +246,7 @@ wstring WCH_GetCompileTime() {
 size_t WCH_GetWstrDisplaySize(wstring _in) {
 	// Get display length of wide string.
 	size_t _size = 0;
-	for (int i = 0; i < (int)_in.size(); i++) {
+	for (size_t i = 0; i < _in.size(); i++) {
 		if (iswascii(_in[i])) {
 			_size++;
 		} else {
@@ -352,15 +352,14 @@ bool WCH_FileIsBlank(wstring _filename) {
 		wfin.open(_filename, ios::in);
 		wstring _line;
 		while (getline(wfin, _line)) {
-			if ((int)_line.size() != 0) {
+			if (_line.size() != 0) {
 				wfin.close();
 				return false;
 			}
 		}
 		wfin.close();
-		return true;
 	}
-	return false;
+	return true;
 }
 
 bool WCH_TaskKill(wstring name) {
@@ -395,23 +394,23 @@ bool WCH_CheckVersion(const WCH_Version _Fir, const WCH_Version _Sec) {
 WCH_Version WCH_GetVersion(wstring _in) {
 	// Get version from string.
 	WCH_Version _res;
-	int _pos = (int)_in.find(L".");
+	size_t _pos = _in.find(L".");
 	if (_pos != wstring::npos) {
 		_res.X = stoi(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
-	_pos = (int)_in.find(L".");
+	_pos = _in.find(L".");
 	if (_pos != wstring::npos) {
 		_res.Y = stoi(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
-	_res.Z = (int)stoi(_in);
+	_res.Z = stoi(_in);
 	return _res;
 }
 
-int WCH_GetNumDigits(int _n) {
+size_t WCH_GetNumDigits(size_t _n) {
 	// Get digits of a number.
-	int _cnt = 1;
+	size_t _cnt = 1;
 	while ((_n /= 10) != 0) {
 		_cnt++;
 	}
@@ -483,7 +482,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
 			WCH_hMenu = CreatePopupMenu();
-			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Simulate Ctrl + Down");
+			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
 			AppendMenuW(WCH_hMenu, MF_SEPARATOR, 0, NULL);
 			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_QUIT, L"Quit");
 			break;

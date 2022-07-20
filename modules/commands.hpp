@@ -49,11 +49,11 @@ void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read();
 bool WCH_save_func();
-int WCH_GetNumDigits(int _n);
+size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_clear() {
 	// Clear console information.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -65,7 +65,7 @@ void WCH_clear() {
 
 void WCH_quit() {
 	// Quit.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -85,7 +85,7 @@ void WCH_quit() {
 
 void WCH_hide() {
 	// Hide the window.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -94,7 +94,7 @@ void WCH_hide() {
 
 void WCH_wiki() {
 	// Visit the wiki page.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -104,7 +104,7 @@ void WCH_wiki() {
 
 void WCH_update() {
 	// Visit the website to update the program.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -142,7 +142,7 @@ void WCH_update() {
 
 void WCH_license() {
 	// Print the license.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -161,7 +161,7 @@ void WCH_license() {
 
 void WCH_add_clock() {
 	// Add a new clock.
-	if ((int)WCH_command_list.size() != 5) {
+	if (WCH_command_list.size() != 5) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -169,7 +169,7 @@ void WCH_add_clock() {
 		int h = stoi(WCH_command_list[2]);
 		int m = stoi(WCH_command_list[3]);
 		wstring Tname = WCH_command_list[4];
-		if ((int)WCH_command_list.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
+		if (WCH_command_list.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
 			WCH_PrintIncorrect();
 			return;
 		} else {
@@ -195,7 +195,7 @@ void WCH_add_clock() {
 
 void WCH_delete_clock() {
 	// Delete a clock.
-	if ((int)WCH_command_list.size() != 5) {
+	if (WCH_command_list.size() != 5) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -224,7 +224,7 @@ void WCH_delete_clock() {
 
 void WCH_clear_clock() {
 	// Clear clock list.
-	if ((int)WCH_command_list.size() != 2) {
+	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -235,19 +235,19 @@ void WCH_clear_clock() {
 
 void WCH_list_clock() {
 	// List all tasks.
-	if ((int)WCH_command_list.size() != 2) {
+	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;
 	}
-	int MAXH = -1;
-	int MAXM = -1;
-	int MAXT = -1;
+	size_t MAXH = 0;
+	size_t MAXM = 0;
+	size_t MAXT = 0;
 	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
-		MAXH = max(MAXH, WCH_GetNumDigits(get<0>(*it)));
-		MAXM = max(MAXM, WCH_GetNumDigits(get<1>(*it)));
-		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(get<2>(*it)));
+		MAXH = max(MAXH, WCH_GetNumDigits((size_t)get<0>(*it)));
+		MAXM = max(MAXM, WCH_GetNumDigits((size_t)get<1>(*it)));
+		MAXT = max(MAXT, WCH_GetWstrDisplaySize(get<2>(*it)));
 	}
-	if (MAXH == -1 && MAXM == -1 && MAXT == -1) {
+	if (MAXH == 0 && MAXM == 0 && MAXT == 0) {
 		return;
 	}
 	MAXH = max(MAXH, 4);
@@ -297,7 +297,7 @@ void WCH_check_clock() {
 
 void WCH_add_task() {
 	// Add a new task.
-	if ((int)WCH_command_list.size() != 3) {
+	if (WCH_command_list.size() != 3) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -314,7 +314,7 @@ void WCH_add_task() {
 
 void WCH_delete_task() {
 	// Delete a task.
-	if ((int)WCH_command_list.size() != 3) {
+	if (WCH_command_list.size() != 3) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -331,7 +331,7 @@ void WCH_delete_task() {
 
 void WCH_clear_task() {
 	// Clear task list.
-	if ((int)WCH_command_list.size() != 2) {
+	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -342,15 +342,15 @@ void WCH_clear_task() {
 
 void WCH_list_task() {
 	// List all tasks.
-	if ((int)WCH_command_list.size() != 2) {
+	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;
 	}
-	int MAX = -1;
+	size_t MAX = 0;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-		MAX = max(MAX, (int)WCH_GetWstrDisplaySize(*it));
+		MAX = max(MAX, WCH_GetWstrDisplaySize(*it));
 	}
-	if (MAX == -1) {
+	if (MAX == 0) {
 		return;
 	}
 	MAX = max(MAX, 12);
@@ -364,7 +364,7 @@ void WCH_list_task() {
 
 void WCH_check_task() {
 	// Task series command input.
-	if ((int)WCH_command_list.size() == 1) {
+	if (WCH_command_list.size() == 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -383,7 +383,7 @@ void WCH_check_task() {
 
 void WCH_add_work() {
 	// Add a new work.
-	if ((int)WCH_command_list.size() != 4) {
+	if (WCH_command_list.size() != 4) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -401,7 +401,7 @@ void WCH_add_work() {
 
 void WCH_delete_work() {
 	// Delete a work.
-	if ((int)WCH_command_list.size() != 4) {
+	if (WCH_command_list.size() != 4) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -419,7 +419,7 @@ void WCH_delete_work() {
 
 void WCH_clear_work() {
 	// Clear work list.
-	if ((int)WCH_command_list.size() != 2) {
+	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -430,17 +430,17 @@ void WCH_clear_work() {
 
 void WCH_list_work() {
 	// List all works.
-	if ((int)WCH_command_list.size() != 2) {
+	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;
 	}
-	int MAXN = -1;
-	int MAXT = -1;
+	size_t MAXN = 0;
+	size_t MAXT = 0;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
-		MAXN = max(MAXN, (int)WCH_GetWstrDisplaySize(it->first));
-		MAXT = max(MAXT, (int)WCH_GetWstrDisplaySize(it->second));
+		MAXN = max(MAXN, WCH_GetWstrDisplaySize(it->first));
+		MAXT = max(MAXT, WCH_GetWstrDisplaySize(it->second));
 	}
-	if (MAXN == -1 && MAXT == -1) {
+	if (MAXN == 0 && MAXT == 0) {
 		return;
 	}
 	MAXN = max(MAXN, 4);
@@ -456,7 +456,7 @@ void WCH_list_work() {
 	wcout << endl;
 	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
 		wcout << it->first;
-		WCH_PrintChar(MAXN - (int)WCH_GetWstrDisplaySize(it->first), L' ');
+		WCH_PrintChar(MAXN - WCH_GetWstrDisplaySize(it->first), L' ');
 		wcout << L" | " << it->second << endl;
 	}
 }
@@ -483,7 +483,7 @@ void WCH_check_work() {
 
 void WCH_game() {
 	// Guessing game.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -499,8 +499,8 @@ void WCH_game() {
 			wcout << L"Please input your number (1 ~ 10000): ";
 			getline(wcin, z);
 			zv = WCH_split(z);
-			if ((int)zv.size() != 1) {
-				if ((int)zv.size() > 1) {
+			if (zv.size() != 1) {
+				if (zv.size() > 1) {
 					wcout << L"Number out of range." << endl;
 					zv.clear();
 					zv.push_back(L"0");
@@ -530,7 +530,7 @@ END:
 
 void WCH_pi() {
 	// A sequence of function to make a screenshot.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -545,7 +545,7 @@ void WCH_pi() {
 
 void WCH_count_down_func() {
 	// Start a count-down timer.
-	if ((int)WCH_command_list.size() != 4) {
+	if (WCH_command_list.size() != 4) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -584,7 +584,7 @@ void WCH_check_task_loop() {
 
 void WCH_anti_idle_func() {
 	// Enable anti-idle function.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -604,7 +604,7 @@ void WCH_anti_idle_func() {
 
 void WCH_trans() {
 	// Translate string between Chinese / English.
-	if ((int)WCH_command_list.size() != 2) {
+	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -633,7 +633,7 @@ void WCH_trans() {
 
 void WCH_ow() {
 	// Get a random sentence.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -656,7 +656,7 @@ void WCH_ow() {
 
 void WCH_fate() {
 	// Get fate.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -690,7 +690,7 @@ void WCH_fate() {
 
 void WCH_time() {
 	// Print current time.
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}
@@ -700,7 +700,7 @@ void WCH_time() {
 
 void WCH_help() {
 	// Print help information.
-	if ((int)WCH_command_list.size() == 1) {
+	if (WCH_command_list.size() == 1) {
 		if (_waccess(L"resources/help/index.dat", 0) != -1) {
 			wstring _res;
 			wfin.open(L"resources/help/index.dat");
@@ -714,7 +714,7 @@ void WCH_help() {
 		}
 	} else {
 		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-		if ((int)WCH_command_list.size() == 2 && _waccess((L"resources/help/" + WCH_command_list[1] + L".dat").c_str(), 0) != -1) {
+		if (WCH_command_list.size() == 2 && _waccess((L"resources/help/" + WCH_command_list[1] + L".dat").c_str(), 0) != -1) {
 			wstring _res;
 			wfin.open((L"resources/help/" + WCH_command_list[1] + L".dat").c_str());
 			while (getline(wfin, _res)) {
@@ -735,7 +735,7 @@ void WCH_help() {
 
 void WCH_save_cmd() {
 	// Save data. (Command)
-	if ((int)WCH_command_list.size() != 1) {
+	if (WCH_command_list.size() != 1) {
 		WCH_PrintIncorrect();
 		return;
 	}

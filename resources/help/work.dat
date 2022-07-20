@@ -10,8 +10,8 @@ WORK CLEAR
 
 Please add double quotation mark when [name] / [tag] has Spaces:
 
-TASK ADD Do something Tag A
+WORK ADD Do something Tag A
 
 This is correct:
 
-TASK ADD "Do something" "Tag A"
+WORK ADD "Do something" "Tag A"

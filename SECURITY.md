@@ -1,6 +1,6 @@
 ## Security Policy
 
-**English** | [简体中文](./SECURITY.zh-Hans.md)
+**English** | [简体中文](./SECURITY.zh-CN.md)
 
 ## Supported Operating Systems
 
