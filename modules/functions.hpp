@@ -70,7 +70,14 @@ void WCH_check_clock_loop() {
 		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
 			if (get<0>(*it) == NOW.Hour && get<1>(*it) == NOW.Minute && get<2>(*it).size() > 0) {
 				wcout << L"\a";
+				bool _tmp = WCH_cmd_line;
+				if (_tmp) {
+					WCH_SetWindowStatus(false);
+				}
 				MessageBoxW(NULL, (get<2>(*it)).c_str(), L"WCH CLOCK", MB_OK | MB_TOPMOST);
+				if (!WCH_anti_idle || _tmp) {
+					WCH_SetWindowStatus(true);
+				}
 			}
 		}
 		WCH_Sleep(60000);

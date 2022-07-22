@@ -99,7 +99,7 @@ void WCH_wiki() {
 		return;
 	}
 	wcout << L"Jumping to wiki page..." << endl;
-	_wsystem(L"start resources/website/wiki.url");
+	_wsystem(L"START resources/website/wiki.url");
 }
 
 void WCH_update() {
@@ -127,7 +127,7 @@ void WCH_update() {
 		}
 		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER_MAIN), WCH_GetVersion(res))) {
 			wcout << L"Program version is less than latest released version, jumping to releases page..." << endl;
-			_wsystem(L"start resources/website/releases.url");
+			_wsystem(L"START resources/website/releases.url");
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Updating to version \"" + res + L"\"");
 		} else {
 			wcout << L"Program version equals or is greater than latest released version." << endl;
@@ -257,9 +257,7 @@ void WCH_list_clock() {
 	WCH_PrintChar(MAXH - 4, L' ');
 	wcout << L" | Minute";
 	WCH_PrintChar(MAXM - 6, L' ');
-	wcout << L" | Name";
-	WCH_PrintChar(MAXT - 4, L' ');
-	wcout << endl;
+	wcout << L" | Name" << endl;
 	WCH_PrintChar(MAXH, L'-');
 	wcout << L" | ";
 	WCH_PrintChar(MAXM, L'-');
@@ -447,9 +445,7 @@ void WCH_list_work() {
 	MAXT = max(MAXT, 3);
 	wcout << L"Name";
 	WCH_PrintChar(MAXN - 4, L' ');
-	wcout << L" | Tag";
-	WCH_PrintChar(MAXT - 6, L' ');
-	wcout << endl;
+	wcout << L" | Tag" << endl;
 	WCH_PrintChar(MAXN, L'-');
 	wcout << L" | ";
 	WCH_PrintChar(MAXT, L'-');

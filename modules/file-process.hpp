@@ -153,7 +153,7 @@ void WCH_read() {
 	T.detach();
 	WCH_Sleep(4000);
 	WCH_cmd_line = true;
-	_wsystem(L"cls");
+	_wsystem(L"CLS");
 }
 
 void WCH_save_clock() {

@@ -183,6 +183,8 @@ void WCH_Init() {
 	WCH_Init_Cmd();
 	WCH_read();
 	WCH_SetWindowStatus(true);
+	_wsystem(L"CHCP 936");
+	_wsystem(L"CLS");
 	thread T1(WCH_check_clock_loop);
 	T1.detach();
 	thread T2(WCH_safety_input_loop);
