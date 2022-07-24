@@ -75,9 +75,9 @@ void WCH_PrintChar(size_t _times, wchar_t _c) {
 wstring StrToWstr(string str) {
 	// Convert multiple byte string to wide string.
 	wstring result;
-	int len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), NULL, 0);
+	int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), NULL, 0);
 	TCHAR* buffer = new TCHAR[len + 1];
-	MultiByteToWideChar(CP_ACP, 0, str.c_str(), (int)str.size(), buffer, len);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), buffer, len);
 	buffer[len] = '\0';
 	result.append(buffer);
 	delete[] buffer;
@@ -87,9 +87,9 @@ wstring StrToWstr(string str) {
 string WstrToStr(wstring wstr) {
 	// Convert wide string to multiple byte string.
 	string result;
-	int len = WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
+	int len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
 	char* buffer = new char[len + 1];
-	WideCharToMultiByte(CP_ACP, 0, wstr.c_str(), (int)wstr.size(), buffer, len, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), buffer, len, NULL, NULL);
 	buffer[len] = '\0';
 	result.append(buffer);
 	delete[] buffer;
@@ -129,38 +129,6 @@ wstring WCH_GetUniIdent() {
 		}
 	}
 	return L"11111" + to_wstring(stoll(_res) % 99991);
-}
-
-string UTF8ToANSI(string strUTF8) {
-	// Convert string from UTF-8 to ANSI.
-	UINT nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, NULL, 0);
-	WCHAR* wszBuffer = new WCHAR[nLen + 1];
-	nLen = MultiByteToWideChar(CP_UTF8, 0, strUTF8.c_str(), -1, wszBuffer, nLen);
-	wszBuffer[nLen] = 0;
-	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, NULL, 0, NULL, 0);
-	CHAR* szBuffer = new CHAR[nLen + 1];
-	nLen = WideCharToMultiByte(936, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
-	szBuffer[nLen] = 0;
-	strUTF8 = szBuffer;
-	delete[] szBuffer;
-	delete[] wszBuffer;
-	return strUTF8;
-}
-
-string ANSIToUTF8(string strANSI) {
-	// Convert string from UTF-8 to ANSI.
-	UINT nLen = MultiByteToWideChar(936, 0, strANSI.c_str(), -1, NULL, 0);
-	WCHAR* wszBuffer = new WCHAR[nLen + 1];
-	nLen = MultiByteToWideChar(936, 0, strANSI.c_str(), -1, wszBuffer, nLen);
-	wszBuffer[nLen] = 0;
-	nLen = WideCharToMultiByte(CP_UTF8, 0, wszBuffer, -1, NULL, 0, NULL, 0);
-	CHAR* szBuffer = new CHAR[nLen + 1];
-	nLen = WideCharToMultiByte(CP_UTF8, 0, wszBuffer, -1, szBuffer, nLen, NULL, 0);
-	szBuffer[nLen] = 0;
-	strANSI = szBuffer;
-	delete[] szBuffer;
-	delete[] wszBuffer;
-	return strANSI;
 }
 
 vector<wstring> WCH_split(const wstring& _in) {

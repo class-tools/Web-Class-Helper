@@ -111,6 +111,7 @@ Contributors: jsh-jsh ren-yc
 #include <ShObjidl.h>
 #include <gdiplus.h>
 #include <atlbase.h>
+#include <fcntl.h>
 #include "json/json.h"
 
 #pragma comment(lib, "winmm.lib")

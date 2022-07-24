@@ -21,19 +21,19 @@ jobs:
       matrix:
         language: [ 'cpp' ]
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    - name: Initialize vcpkg
-      run: |
-        vcpkg integrate install
-        vcpkg install jsoncpp:x64-windows-static
-        vcpkg install jsoncpp:x86-windows-static
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
-        config-file: ./.github/codeql/codeql-config.yml
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v2
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Initialize vcpkg
+        run: |
+          vcpkg integrate install
+          vcpkg install jsoncpp:x64-windows-static
+          vcpkg install jsoncpp:x86-windows-static
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql/codeql-config.yml
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

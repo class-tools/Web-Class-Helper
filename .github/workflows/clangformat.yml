@@ -10,10 +10,22 @@ on:
 
 jobs:
   check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: DoozyX/clang-format-lint-action@v0.14
-      with:
-        extensions: 'cpp,hpp'
-        clangFormatVersion: 14
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Run Clang Format
+        uses: DoozyX/clang-format-lint-action@v0.14
+        with:
+          extensions: 'cpp,hpp'
+          clangFormatVersion: 14
+          inplace: True
+      - name: Commit Changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Yuchen Ren
+          author_email: ldfx_ryc@163.com
+          message: 'SUM Adjust Source Code Format\n\n*< Adjust source code format using Clang Format.\n : By GitHub Actions.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

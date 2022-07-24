@@ -88,10 +88,10 @@ void WCH_Init_Var() {
 		def["emitUTF8"] = true;
 		return def;
 	}();
-	wcin.imbue(locale("chs", LC_CTYPE));
-	wcout.imbue(locale("chs", LC_CTYPE));
-	wfin.imbue(locale("chs", LC_CTYPE));
-	wfout.imbue(locale("chs", LC_CTYPE));
+	_setmode(_fileno(stdin), _O_WTEXT);
+	_setmode(_fileno(stdout), _O_WTEXT);
+	wfin.imbue(locale(".UTF-8", LC_CTYPE));
+	wfout.imbue(locale(".UTF-8", LC_CTYPE));
 }
 
 void WCH_Init_Ver() {
@@ -181,10 +181,10 @@ void WCH_Init() {
 	WCH_Init_Log();
 	WCH_Init_Win();
 	WCH_Init_Cmd();
+	_wsystem(L"CHCP 65001 > WCH_SYSTEM_NORMAL.tmp");
+	DeleteFileW(L"WCH_SYSTEM_NORMAL.tmp");
 	WCH_read();
 	WCH_SetWindowStatus(true);
-	_wsystem(L"CHCP 936");
-	_wsystem(L"CLS");
 	thread T1(WCH_check_clock_loop);
 	T1.detach();
 	thread T2(WCH_safety_input_loop);

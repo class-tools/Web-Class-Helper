@@ -605,7 +605,7 @@ void WCH_trans() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(ANSIToUTF8((WstrToStr((WCH_command_list[1]))))))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
+		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WstrToStr((WCH_command_list[1]))))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
 		if (WCH_FileIsBlank(L"WCH_TRANS.tmp")) {
 			throw runtime_error("");
 		}
@@ -618,7 +618,7 @@ void WCH_trans() {
 		if (!val.isMember("translation")) {
 			throw runtime_error("");
 		}
-		wcout << StrToWstr(UTF8ToANSI(val["translation"][0].asString())) << endl;
+		wcout << StrToWstr(val["translation"][0].asString()) << endl;
 		fin.close();
 		DeleteFileW(L"WCH_TRANS.tmp");
 	} catch (...) {
@@ -641,7 +641,7 @@ void WCH_ow() {
 		fin.open(L"WCH_OW.tmp");
 		string res;
 		getline(fin, res);
-		cout << UTF8ToANSI(res) << endl;
+		wcout << StrToWstr(res) << endl;
 		fin.close();
 		DeleteFileW(L"WCH_OW.tmp");
 	} catch (...) {
@@ -657,7 +657,7 @@ void WCH_fate() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(ANSIToUTF8(WstrToStr((WCH_GetUniIdent())))))).c_str(), L"WCH_FATE.tmp", 0, NULL);
+		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(WstrToStr((WCH_GetUniIdent()))))).c_str(), L"WCH_FATE.tmp", 0, NULL);
 		if (WCH_FileIsBlank(L"WCH_FATE.tmp")) {
 			throw runtime_error("");
 		}
@@ -671,10 +671,10 @@ void WCH_fate() {
 			throw runtime_error("");
 		}
 		if (val["status"].asString() == "20011") {
-			wcout << StrToWstr(UTF8ToANSI(val["data"]["fortuneSummary"].asString())) << endl;
-			wcout << StrToWstr(UTF8ToANSI(val["data"]["luckyStar"].asString())) << endl;
-			wcout << StrToWstr(UTF8ToANSI(val["data"]["signText"].asString())) << endl;
-			wcout << StrToWstr(UTF8ToANSI(val["data"]["unSignText"].asString())) << endl;
+			wcout << StrToWstr(val["data"]["fortuneSummary"].asString()) << endl;
+			wcout << StrToWstr(val["data"]["luckyStar"].asString()) << endl;
+			wcout << StrToWstr(val["data"]["signText"].asString()) << endl;
+			wcout << StrToWstr(val["data"]["unSignText"].asString()) << endl;
 		}
 		fin.close();
 		DeleteFileW(L"WCH_FATE.tmp");
