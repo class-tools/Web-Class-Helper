@@ -12,6 +12,16 @@
 | 6.1.x.y | ❓ |
 | < 6.1.0.0 | ❌ |
 
+## Supported CPU Architectures
+
+* x64
+
+* x86
+
+* ARM
+
+* ARM64
+
 ## Reporting a Vulnerability
 
 Please use private ways to contact maintainers of this project like E-mail.
