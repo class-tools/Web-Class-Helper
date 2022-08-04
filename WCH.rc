@@ -9,7 +9,7 @@ Generator: Visual Studio 2022
 #undef APSTUDIO_READONLY_SYMBOLS
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-#pragma code_page(936)
+#pragma code_page(65001)
 #ifdef APSTUDIO_INVOKED
 1 TEXTINCLUDE
 BEGIN

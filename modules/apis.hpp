@@ -194,7 +194,7 @@ WCH_Time WCH_GetTime() {
 
 wstring WCH_GetCompileTime() {
 	// Get program compile time.
-	vector<wstring> spi = WCH_split(StrToWstr(__DATE__));
+	wstring spi = StrToWstr(__DATE__);
 	map<wstring, int> mon;
 	mon[L"Jan"] = 1;
 	mon[L"Feb"] = 2;
@@ -208,7 +208,7 @@ wstring WCH_GetCompileTime() {
 	mon[L"Oct"] = 10;
 	mon[L"Nov"] = 11;
 	mon[L"Dec"] = 12;
-	return format(L"{}/{:02}/{} {}", spi[2], mon[spi[0]], spi[1], StrToWstr(__TIME__));
+	return format(L"{}/{:02}/{} {}", spi.substr(7, 4), mon[spi.substr(0, 3)], (spi[4] == L' ' ? spi[5] + L"" : spi.substr(4, 2)), StrToWstr(__TIME__));
 }
 
 size_t WCH_GetWstrDisplaySize(wstring _in) {

@@ -1,4 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Web Class Helper Visual C++ Project File Filters 2.1.0 -->
+<!-- This source code file isn't under any license. -->
+<!-- Generator: Visual Studio 2022 -->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="源文件">

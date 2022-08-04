@@ -1,5 +1,7 @@
-/x64/
 /x86/
+/x64/
+/ARM/
+/ARM64/
 /.vscode/
 /.vs/
 /genexe/
