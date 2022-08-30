@@ -14,22 +14,27 @@ Contributors: jsh-jsh ren-yc hjl2011
 
 extern const wstring WCH_WDName[7];
 extern map<wstring, function<void()>> WCH_command_support;
+extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int, int, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
+extern wstring WCH_command;
+extern wstring WCH_ProgressBarStr;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
+extern Json::Value WCH_Settings;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
+extern int WCH_settings_change;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
@@ -37,18 +42,20 @@ extern bool WCH_anti_idle;
 extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder Json_SWB;
+extern Json::Reader JSON_Reader;
+extern Json::StreamWriterBuilder JSON_SWB;
+extern unique_ptr<Json::StreamWriter> JSON_SW;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
+void WCH_read_settings();
 void WCH_read();
-bool WCH_save_func();
+void WCH_save_settings();
+bool WCH_save_func(bool output);
 size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_clear() {
@@ -100,6 +107,47 @@ void WCH_wiki() {
 	}
 	wcout << L"Jumping to wiki page..." << endl;
 	_wsystem(L"START resources/website/wiki.url");
+}
+
+void WCH_set() {
+	// Set a value of settings.
+	if (WCH_command_list.size() != 3) {
+		WCH_PrintIncorrect();
+		return;
+	}
+	wstring KeyType = L"String";
+	bool flag = false;
+	if (WCH_command_list[2] == L"True" || WCH_command_list[2] == L"False") {
+		KeyType = L"Boolean";
+	}
+	if (WCH_command_list[2].size() < 10) {
+		for (size_t i = 0; i < WCH_command_list[2].size(); i++) {
+			if (!iswdigit(WCH_command_list[2][i])) {
+				break;
+			}
+			if (WCH_command_list[2].size() == i + 1) {
+				KeyType = L"Number";
+			}
+		}
+	}
+	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+		if (WCH_command_list[1] == get<0>(*it)) {
+			if (KeyType != get<1>(*it)) {
+				WCH_PrintIncorrect();
+				return;
+			} else {
+				flag = true;
+				break;
+			}
+		}
+	}
+	if (!flag) {
+		WCH_PrintIncorrect();
+		return;
+	}
+	WCH_Settings[WstrToStr(WCH_command_list[1])] = WstrToStr(WCH_command_list[2]);
+	WCH_settings_change++;
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[1] + L"\" has been changed to \"" + WCH_command_list[2] + L"\" (Type: \"" + KeyType + L"\")");
 }
 
 void WCH_update() {
@@ -556,7 +604,9 @@ void WCH_count_down_func() {
 		wcout << L"Starting count down timer..." << endl;
 		WCH_ProgressBarTot = h * 3600 + m * 60 + s;
 		WCH_ProgressBar();
-		wcout << L"\a";
+		if (StrToWstr(WCH_Settings["CountDownSoundPrompt"].asString()) == L"True") {
+			wcout << L"\a";
+		}
 		WCH_count_down = false;
 	} catch (...) {
 		WCH_PrintIncorrect();
@@ -609,10 +659,9 @@ void WCH_trans() {
 		if (WCH_FileIsBlank(L"WCH_TRANS.tmp")) {
 			throw runtime_error("");
 		}
-		Json::Reader rea;
 		Json::Value val;
 		fin.open(L"WCH_TRANS.tmp");
-		if (!rea.parse(fin, val)) {
+		if (!JSON_Reader.parse(fin, val)) {
 			throw runtime_error("");
 		}
 		if (!val.isMember("translation")) {
@@ -661,10 +710,9 @@ void WCH_fate() {
 		if (WCH_FileIsBlank(L"WCH_FATE.tmp")) {
 			throw runtime_error("");
 		}
-		Json::Reader rea;
 		Json::Value val;
 		fin.open(L"WCH_FATE.tmp");
-		if (!rea.parse(fin, val)) {
+		if (!JSON_Reader.parse(fin, val)) {
 			throw runtime_error("");
 		}
 		if (!val.isMember("data")) {
@@ -735,7 +783,7 @@ void WCH_save_cmd() {
 		WCH_PrintIncorrect();
 		return;
 	}
-	if (WCH_save_func()) {
+	if (WCH_save_func(true)) {
 		wcout << L"Successfully saved all data." << endl;
 	} else {
 		wcout << L"No data to save." << endl;

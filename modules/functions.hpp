@@ -14,22 +14,27 @@ Contributors: jsh-jsh ren-yc
 
 extern const wstring WCH_WDName[7];
 extern map<wstring, function<void()>> WCH_command_support;
+extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int, int, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
+extern wstring WCH_command;
+extern wstring WCH_ProgressBarStr;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
+extern Json::Value WCH_Settings;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
+extern int WCH_settings_change;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
@@ -37,18 +42,20 @@ extern bool WCH_anti_idle;
 extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder Json_SWB;
+extern Json::Reader JSON_Reader;
+extern Json::StreamWriterBuilder JSON_SWB;
+extern unique_ptr<Json::StreamWriter> JSON_SW;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
+void WCH_read_settings();
 void WCH_read();
-bool WCH_save_func();
+void WCH_save_settings();
+bool WCH_save_func(bool output);
 size_t WCH_GetNumDigits(size_t _n);
 
 bool WCH_ShortCutKeyCheck() {
@@ -120,6 +127,14 @@ void WCH_message_loop() {
 	while (GetMessageW(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
+	}
+}
+
+void WCH_AutoSave_loop() {
+	// Check if the data files are changed and save them.
+	while (!WCH_program_end) {
+		WCH_Sleep(stoi(StrToWstr(WCH_Settings["AutoSaveTime"].asString())));
+		WCH_save_func(false);
 	}
 }
 

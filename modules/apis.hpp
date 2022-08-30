@@ -14,22 +14,27 @@ Contributors: jsh-jsh ren-yc
 
 extern const wstring WCH_WDName[7];
 extern map<wstring, function<void()>> WCH_command_support;
+extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int, int, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
+extern wstring WCH_command;
+extern wstring WCH_ProgressBarStr;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
+extern Json::Value WCH_Settings;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
+extern int WCH_settings_change;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
@@ -37,18 +42,20 @@ extern bool WCH_anti_idle;
 extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder Json_SWB;
+extern Json::Reader JSON_Reader;
+extern Json::StreamWriterBuilder JSON_SWB;
+extern unique_ptr<Json::StreamWriter> JSON_SW;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
+void WCH_read_settings();
 void WCH_read();
-bool WCH_save_func();
+void WCH_save_settings();
+bool WCH_save_func(bool output);
 size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_Sleep(int _ms) {
@@ -115,22 +122,6 @@ string UrlEncode(const string _in) {
 	return _res;
 }
 
-wstring WCH_GetUniIdent() {
-	// Get unique identification. (Public IP)
-	wstring _in, _res;
-	URLDownloadToFileW(NULL, L"https://api.ipify.org", L"WCH_IDENT.tmp", 0, NULL);
-	wfin.open(L"WCH_IDENT.tmp");
-	wfin >> _in;
-	wfin.close();
-	DeleteFileW(L"WCH_IDENT.tmp");
-	for (size_t i = 0; i < _in.size(); i++) {
-		if (_in[i] != L'.') {
-			_res.push_back(_in[i]);
-		}
-	}
-	return L"11111" + to_wstring(stoll(_res) % 99991);
-}
-
 vector<wstring> WCH_split(const wstring& _in) {
 	// Split CLI string.
 	vector<wstring> _res;
@@ -163,14 +154,14 @@ vector<wstring> WCH_split(const wstring& _in) {
 	}
 	if (_res.size() != 0) {
 		if (_res.size() != 1) {
-			wstring _debug = L"Input string: \"" + _res[0] + L"\", ";
+			wstring _debug = L"Input command array: \"" + _res[0] + L"\", ";
 			for (size_t i = 1; i < _res.size() - 1; i++) {
 				_debug.append(L"\"" + _res[i] + L"\", ");
 			}
 			_debug.append(L"\"" + _res[_res.size() - 1] + L"\"");
 			WCH_printlog(WCH_LOG_STATUS_INFO, _debug);
 		} else {
-			WCH_printlog(WCH_LOG_STATUS_INFO, L"Input string: \"" + _res[0] + L"\"");
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Input command array: \"" + _res[0] + L"\"");
 		}
 	}
 	return _res;
@@ -209,6 +200,30 @@ wstring WCH_GetCompileTime() {
 	mon[L"Nov"] = 11;
 	mon[L"Dec"] = 12;
 	return format(L"{}/{:02}/{} {}", spi.substr(7, 4), mon[spi.substr(0, 3)], (spi[4] == L' ' ? spi[5] + L"" : spi.substr(4, 2)), StrToWstr(__TIME__));
+}
+
+wstring WCH_GetUniIdent() {
+	// Get unique identification. (Public IP)
+	wstring _in, _res;
+	URLDownloadToFileW(NULL, L"https://api.ipify.org", L"WCH_IDENT.tmp", 0, NULL);
+	wfin.open(L"WCH_IDENT.tmp");
+	wfin >> _in;
+	wfin.close();
+	DeleteFileW(L"WCH_IDENT.tmp");
+	for (size_t i = 0; i < _in.size(); i++) {
+		if (_in[i] != L'.') {
+			_res.push_back(_in[i]);
+		}
+	}
+	return L"11111" + to_wstring(stoll(_res) % 99991);
+}
+
+wstring WCH_GetUserName() {
+	// Get current Windows user name.
+	WCHAR cUserNameBuffer[256] = {0};
+	DWORD dwUserNameSize = 256;
+	GetUserNameW(cUserNameBuffer, &dwUserNameSize);
+	return cUserNameBuffer;
 }
 
 size_t WCH_GetWstrDisplaySize(wstring _in) {
@@ -284,11 +299,12 @@ void WCH_PutPicture() {
 
 void WCH_SaveImg() {
 	// Save screenshot to file.
-	WCHAR cUserNameBuffer[256] = {0};
-	DWORD dwUserNameSize = 256;
-	GetUserNameW(cUserNameBuffer, &dwUserNameSize);
 	WCH_Time now = WCH_GetTime();
-	wstring SavePath = format(L"C:\\Users\\{}\\Pictures\\{:04}{:02}{:02}{:02}{:02}{:02}.jpg", cUserNameBuffer, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+	wstring SavePathDir = StrToWstr(WCH_Settings["ScreenshotSavePath"].asString());
+	wstring SavePath = format(L"{}{:04}{:02}{:02}{:02}{:02}{:02}.jpg", SavePathDir, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+	if (_waccess(SavePathDir.c_str(), 0) != 0) {
+		CreateDirectoryW(SavePathDir.c_str(), NULL);
+	}
 	HDC hdcScreen = ::GetDC(NULL);
 	double dDpi = (double)GetDeviceCaps(GetDC(GetDesktopWindow()), DESKTOPHORZRES) / GetSystemMetrics(SM_CXSCREEN);
 	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * dDpi);

@@ -14,22 +14,27 @@ Contributors: jsh-jsh ren-yc hjl2011
 
 extern const wstring WCH_WDName[7];
 extern map<wstring, function<void()>> WCH_command_support;
+extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int, int, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
+extern wstring WCH_command;
+extern wstring WCH_ProgressBarStr;
 extern HWND WCH_Win_hWnd;
 extern HWND WCH_Tray_hWnd;
 extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
+extern Json::Value WCH_Settings;
 extern int WCH_clock_num;
 extern int WCH_task_num;
 extern int WCH_work_num;
 extern int WCH_clock_change;
 extern int WCH_task_change;
 extern int WCH_work_change;
+extern int WCH_settings_change;
 extern int WCH_ProgressBarTot;
 extern int WCH_InputTimes;
 extern bool WCH_cmd_line;
@@ -37,18 +42,20 @@ extern bool WCH_anti_idle;
 extern bool WCH_count_down;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern ifstream fin;
 extern wifstream wfin;
 extern ofstream fout;
 extern wofstream wfout;
-extern Json::StreamWriterBuilder Json_SWB;
+extern Json::Reader JSON_Reader;
+extern Json::StreamWriterBuilder JSON_SWB;
+extern unique_ptr<Json::StreamWriter> JSON_SW;
 WCH_Time WCH_GetTime();
 void WCH_Sleep(int _ms);
 void WCH_printlog(wstring _mode, wstring _info);
+void WCH_read_settings();
 void WCH_read();
-bool WCH_save_func();
+void WCH_save_settings();
+bool WCH_save_func(bool output);
 size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_Init_Bind() {
@@ -84,7 +91,7 @@ void WCH_Init_Var() {
 	WCH_window_title.append(L")");
 	WCH_Win_hWnd = GetConsoleWindow();
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
-	Json_SWB.settings_ = []() {
+	JSON_SWB.settings_ = []() {
 		Json::Value def;
 		Json::StreamWriterBuilder::setDefaults(&def);
 		def["emitUTF8"] = true;
@@ -112,46 +119,10 @@ void WCH_Init_Ver() {
 	}
 	WCH_SetWindowStatus(true);
 #endif
-	WCH_pre_start = false;
 }
 
-void WCH_Init_Log() {
-	// Initialization for log.
-	WCH_Time now = WCH_GetTime();
-	Json::Value val;
-	Json::Reader rea;
-	unique_ptr<Json::StreamWriter> sw(Json_SWB.newStreamWriter());
-	fin.open(L"settings.json");
-	if (_waccess(L"logs/latest.log", 0) != -1) {
-		if (rea.parse(fin, val)) {
-			_wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(val["Start"].asString())).c_str());
-		} else {
-			_wrename(L"logs/latest.log", L"logs/00000000000000.log");
-		}
-	}
-	fin.close();
-	val["Start"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
-	fout.open(L"settings.json");
-	sw->write(val, &fout);
-	fout.close();
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"" + WCH_window_title + L"\"");
-}
-
-void WCH_Init_Win() {
-	// Initialization for window.
-	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
-		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
-		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
-		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
-		exit(0);
-	}
-	SetConsoleTitleW(WCH_window_title.c_str());
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
-}
-
-void WCH_Init_Cmd() {
-	// Initialization for command support list.
+void WCH_Init_Invar() {
+	// Initialization for invariable lists.
 	WCH_command_support.insert(make_pair(L"clock", WCH_check_clock));
 	WCH_command_support.insert(make_pair(L"task", WCH_check_task));
 	WCH_command_support.insert(make_pair(L"work", WCH_check_work));
@@ -169,8 +140,53 @@ void WCH_Init_Cmd() {
 	WCH_command_support.insert(make_pair(L"wiki", WCH_wiki));
 	WCH_command_support.insert(make_pair(L"license", WCH_license));
 	WCH_command_support.insert(make_pair(L"clear", WCH_clear));
+	WCH_command_support.insert(make_pair(L"set", WCH_set));
 	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
 	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
+	WCH_settings_support.insert(make_tuple(L"AutoSave", L"Boolean", L"True"));
+	WCH_settings_support.insert(make_tuple(L"AutoSaveTime", L"Number", L"60000"));
+	WCH_settings_support.insert(make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"));
+	WCH_settings_support.insert(make_tuple(L"ScreenshotSavePath", L"String", L"C:\\Users\\" + WCH_GetUserName() + L"\\Pictures\\"));
+}
+
+void WCH_Init_Log() {
+	// Initialization for log.
+	WCH_Time now = WCH_GetTime();
+	WCH_read_settings();
+	if (_waccess(L"logs/latest.log", 0) != -1) {
+		_wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(WCH_Settings["StartTime"].asString())).c_str());
+	}
+	WCH_Settings["StartTime"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
+	WCH_save_settings();
+	WCH_pre_start = false;
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"Starting \"" + WCH_window_title + L"\"");
+}
+
+void WCH_Init_Win() {
+	// Initialization for window.
+	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
+		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
+		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
+		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
+		exit(0);
+	}
+	SetConsoleTitleW(WCH_window_title.c_str());
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+}
+
+void WCH_Init_Loop() {
+	// Initialization for multiple thread loop.
+	thread T1(WCH_check_clock_loop);
+	T1.detach();
+	thread T2(WCH_safety_input_loop);
+	T2.detach();
+	thread T3(WCH_message_loop);
+	T3.detach();
+	if (StrToWstr(WCH_Settings["AutoSave"].asString()) == L"True") {
+		thread T4(WCH_AutoSave_loop);
+		T4.detach();
+	}
 }
 
 void WCH_Init() {
@@ -179,19 +195,13 @@ void WCH_Init() {
 	WCH_Init_Dir();
 	WCH_Init_Var();
 	WCH_Init_Ver();
+	WCH_Init_Invar();
 	WCH_Init_Log();
 	WCH_Init_Win();
-	WCH_Init_Cmd();
-	_wsystem(L"CHCP 65001 > WCH_SYSTEM_NORMAL.tmp");
-	DeleteFileW(L"WCH_SYSTEM_NORMAL.tmp");
+	_wsystem(L"CHCP 65001 > NUL");
 	WCH_read();
 	WCH_SetWindowStatus(true);
-	thread T1(WCH_check_clock_loop);
-	T1.detach();
-	thread T2(WCH_safety_input_loop);
-	T2.detach();
-	thread T3(WCH_message_loop);
-	T3.detach();
+	WCH_Init_Loop();
 	wcout << WCH_window_title << endl;
 	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
 	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
