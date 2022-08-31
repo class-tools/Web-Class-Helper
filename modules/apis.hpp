@@ -272,6 +272,11 @@ void WCH_CheckHotkey() {
 	// Check when hot key is pressed.
 	if (!WCH_program_end) {
 		if (WCH_anti_idle) {
+			if (StrToWstr(WCH_Settings["AntiIdleEndPrompt"].asString()) == L"True") {
+				if (MessageBoxW(NULL, StrToWstr(WCH_Settings["AntiIdleEndContent"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
+					return;
+				}
+			}
 			WCH_anti_idle = false;
 			WCH_SetTrayStatus(true);
 		}

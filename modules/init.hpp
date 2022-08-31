@@ -143,6 +143,8 @@ void WCH_Init_Invar() {
 	WCH_command_support.insert(make_pair(L"config", WCH_check_config));
 	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
 	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
+	WCH_settings_support.insert(make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?"));
+	WCH_settings_support.insert(make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"));
 	WCH_settings_support.insert(make_tuple(L"AutoSave", L"Boolean", L"True"));
 	WCH_settings_support.insert(make_tuple(L"AutoSaveTime", L"Number", L"60000"));
 	WCH_settings_support.insert(make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"));

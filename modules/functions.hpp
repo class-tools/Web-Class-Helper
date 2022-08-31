@@ -58,17 +58,6 @@ void WCH_save_settings();
 bool WCH_save_func(bool output);
 size_t WCH_GetNumDigits(size_t _n);
 
-bool WCH_ShortCutKeyCheck() {
-	// Check if the shortcut key is pressed.
-	int a = GetKeyState(VK_CONTROL);
-	int b = GetKeyState(VK_DOWN);
-	if (a < 0 && b < 0) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 void WCH_check_clock_loop() {
 	// Check if the time equals to the clock. (Another thread)
 	WCH_Sleep((60 - WCH_GetTime().Second) * 1000);
