@@ -5,8 +5,9 @@ Usage:
 CLOCK ADD [hour] [minute] [name]
 CLOCK DELETE [hour] [minute] [name]
 CLOCK CLEAR
+CLOCK LIST
 
-"CLOCK CLEAR" has no parameters.
+"CLOCK CLEAR" and "CLOCK LIST" has no parameters.
 
 If [name] has Spaces, please add double quotation marks.
 

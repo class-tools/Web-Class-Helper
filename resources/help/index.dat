@@ -25,6 +25,7 @@ UPDATE (Check update for this program) **Need Internet**
 WIKI (Jump to program wiki page in default browser) **Need Internet**
 LICENSE (Print license information)
 CLEAR (Clear console window information)
-SET [Key] [Value] (Set a value of settings)
+CONFIG SET [Key] [Value] (Set a value of settings)
+CONFIG LIST (List all values of settings)
 SAVE (Save changes on data)
 QUIT (Quit this program without saving data)

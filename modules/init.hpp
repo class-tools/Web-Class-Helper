@@ -140,7 +140,7 @@ void WCH_Init_Invar() {
 	WCH_command_support.insert(make_pair(L"wiki", WCH_wiki));
 	WCH_command_support.insert(make_pair(L"license", WCH_license));
 	WCH_command_support.insert(make_pair(L"clear", WCH_clear));
-	WCH_command_support.insert(make_pair(L"set", WCH_set));
+	WCH_command_support.insert(make_pair(L"config", WCH_check_config));
 	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
 	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
 	WCH_settings_support.insert(make_tuple(L"AutoSave", L"Boolean", L"True"));

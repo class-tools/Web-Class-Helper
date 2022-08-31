@@ -109,47 +109,6 @@ void WCH_wiki() {
 	_wsystem(L"START resources/website/wiki.url");
 }
 
-void WCH_set() {
-	// Set a value of settings.
-	if (WCH_command_list.size() != 3) {
-		WCH_PrintIncorrect();
-		return;
-	}
-	wstring KeyType = L"String";
-	bool flag = false;
-	if (WCH_command_list[2] == L"True" || WCH_command_list[2] == L"False") {
-		KeyType = L"Boolean";
-	}
-	if (WCH_command_list[2].size() < 10) {
-		for (size_t i = 0; i < WCH_command_list[2].size(); i++) {
-			if (!iswdigit(WCH_command_list[2][i])) {
-				break;
-			}
-			if (WCH_command_list[2].size() == i + 1) {
-				KeyType = L"Number";
-			}
-		}
-	}
-	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
-		if (WCH_command_list[1] == get<0>(*it)) {
-			if (KeyType != get<1>(*it)) {
-				WCH_PrintIncorrect();
-				return;
-			} else {
-				flag = true;
-				break;
-			}
-		}
-	}
-	if (!flag) {
-		WCH_PrintIncorrect();
-		return;
-	}
-	WCH_Settings[WstrToStr(WCH_command_list[1])] = WstrToStr(WCH_command_list[2]);
-	WCH_settings_change++;
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[1] + L"\" has been changed to \"" + WCH_command_list[2] + L"\" (Type: \"" + KeyType + L"\")");
-}
-
 void WCH_update() {
 	// Visit the website to update the program.
 	if (WCH_command_list.size() != 1) {
@@ -205,6 +164,94 @@ void WCH_license() {
 		wcout << _res << endl;
 	}
 	wfin.close();
+}
+
+void WCH_set_config() {
+	// Set a value of settings.
+	if (WCH_command_list.size() != 4) {
+		WCH_PrintIncorrect();
+		return;
+	}
+	wstring KeyType = L"String";
+	bool flag = false;
+	if (WCH_command_list[3] == L"True" || WCH_command_list[3] == L"False") {
+		KeyType = L"Boolean";
+	}
+	if (WCH_command_list[3].size() < 10) {
+		for (size_t i = 0; i < WCH_command_list[3].size(); i++) {
+			if (!iswdigit(WCH_command_list[3][i])) {
+				break;
+			}
+			if (WCH_command_list[3].size() == i + 1) {
+				KeyType = L"Number";
+			}
+		}
+	}
+	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+		if (WCH_command_list[2] == get<0>(*it)) {
+			if (KeyType != get<1>(*it)) {
+				WCH_PrintIncorrect();
+				return;
+			} else {
+				flag = true;
+				break;
+			}
+		}
+	}
+	if (!flag) {
+		WCH_PrintIncorrect();
+		return;
+	}
+	WCH_Settings[WstrToStr(WCH_command_list[2])] = WstrToStr(WCH_command_list[3]);
+	WCH_settings_change++;
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[1] + L"\" has been changed to \"" + WCH_command_list[3] + L"\" (Type: \"" + KeyType + L"\")");
+}
+
+void WCH_list_config() {
+	// List all configs.
+	if (WCH_command_list.size() != 2) {
+		WCH_PrintIncorrect();
+		return;
+	}
+	size_t MAXK = 0;
+	size_t MAXV = 0;
+	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+		MAXK = max(MAXK, get<0>(*it).size());
+		MAXV = max(MAXV, StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString()).size());
+	}
+	if (MAXK == 0 && MAXV == 0) {
+		return;
+	}
+	MAXK = max(MAXK, 3);
+	MAXV = max(MAXV, 5);
+	wcout << L"Key";
+	WCH_PrintChar(MAXK - 3, L' ');
+	wcout << L" | Value" << endl;
+	WCH_PrintChar(MAXK, L'-');
+	wcout << L" | ";
+	WCH_PrintChar(MAXV, L'-');
+	wcout << endl;
+	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+		wcout << get<0>(*it);
+		WCH_PrintChar(MAXK - get<0>(*it).size(), L' ');
+		wcout << L" | " << StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString()) << endl;
+	}
+}
+
+void WCH_check_config() {
+	// Config series command input.
+	if (WCH_command_list.size() == 1) {
+		WCH_PrintIncorrect();
+		return;
+	}
+	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
+	if (WCH_command_list[1] == L"set") {
+		WCH_set_config();
+	} else if (WCH_command_list[1] == L"list") {
+		WCH_list_config();
+	} else {
+		WCH_PrintIncorrect();
+	}
 }
 
 void WCH_add_clock() {
@@ -282,7 +329,7 @@ void WCH_clear_clock() {
 }
 
 void WCH_list_clock() {
-	// List all tasks.
+	// List all clocks.
 	if (WCH_command_list.size() != 2) {
 		WCH_PrintIncorrect();
 		return;

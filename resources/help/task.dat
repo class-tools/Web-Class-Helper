@@ -5,8 +5,9 @@ Usage:
 TASK ADD [process name]
 TASK DELETE [process name]
 TASK CLEAR
+TASK LIST
 
-"TASK CLEAR" has no parameters.
+"TASK CLEAR" and "TASK LIST" has no parameters.
 
 Please add double quotation mark when [process name] has Spaces:
 
