@@ -218,14 +218,6 @@ wstring WCH_GetUniIdent() {
 	return L"11111" + to_wstring(stoll(_res) % 99991);
 }
 
-wstring WCH_GetUserName() {
-	// Get current Windows user name.
-	WCHAR cUserNameBuffer[256] = {0};
-	DWORD dwUserNameSize = 256;
-	GetUserNameW(cUserNameBuffer, &dwUserNameSize);
-	return cUserNameBuffer;
-}
-
 size_t WCH_GetWstrDisplaySize(wstring _in) {
 	// Get display length of wide string.
 	size_t _size = 0;

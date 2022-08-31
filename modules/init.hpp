@@ -146,7 +146,7 @@ void WCH_Init_Invar() {
 	WCH_settings_support.insert(make_tuple(L"AutoSave", L"Boolean", L"True"));
 	WCH_settings_support.insert(make_tuple(L"AutoSaveTime", L"Number", L"60000"));
 	WCH_settings_support.insert(make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"));
-	WCH_settings_support.insert(make_tuple(L"ScreenshotSavePath", L"String", L"C:\\Users\\" + WCH_GetUserName() + L"\\Pictures\\"));
+	WCH_settings_support.insert(make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE"))));
 }
 
 void WCH_Init_Log() {

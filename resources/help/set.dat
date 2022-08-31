@@ -13,4 +13,4 @@ Key Name             | Value Type | Description                                 
 AutoSave             | Boolean    | Enable automatic saving data and settings files | True                         | Yes
 AutoSaveTime         | Number     | Time of auto save interval, in milliseconds     | 60000                        | Yes
 CountDownSoundPrompt | Boolean    | Make a sound prompt when count down ends        | False                        | No
-ScreenshotSavePath   | String     | Screenshot image save path (Command `pi`)       | C:\Users\$UserName\Pictures\ | No
+ScreenshotSavePath   | String     | Screenshot image save path (Command `pi`)       | %USERPROFILE%\Pictures\ | No
