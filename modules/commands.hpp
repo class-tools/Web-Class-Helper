@@ -202,6 +202,10 @@ void WCH_set_config() {
 		WCH_PrintIncorrect();
 		return;
 	}
+	if (WCH_command_list[2] == L"ScreenshotSavePath" && WCH_command_list[3][WCH_command_list[3].size() - 1] != L'\\') {
+		WCH_PrintIncorrect();
+		return;
+	}
 	WCH_Settings[WstrToStr(WCH_command_list[2])] = WstrToStr(WCH_command_list[3]);
 	WCH_settings_change++;
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[1] + L"\" has been changed to \"" + WCH_command_list[3] + L"\" (Type: \"" + KeyType + L"\")");

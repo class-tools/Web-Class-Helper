@@ -199,7 +199,7 @@ wstring WCH_GetCompileTime() {
 	mon[L"Oct"] = 10;
 	mon[L"Nov"] = 11;
 	mon[L"Dec"] = 12;
-	return format(L"{}/{:02}/{} {}", spi.substr(7, 4), mon[spi.substr(0, 3)], (spi[4] == L' ' ? spi[5] + L"" : spi.substr(4, 2)), StrToWstr(__TIME__));
+	return format(L"{}/{:02}/{:02} {}", spi.substr(7, 4), mon[spi.substr(0, 3)], stoi(spi[4] == L' ' ? spi.substr(5, 1) : spi.substr(4, 2)), StrToWstr(__TIME__));
 }
 
 wstring WCH_GetUniIdent() {
