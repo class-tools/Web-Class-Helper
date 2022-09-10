@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://ren-yc.github.io/assets/ClassTools/WCH_big.png" width="200">
+<img src="https://ren-yc.github.io/assets/ClassTools/WCH.png" width="200">
 </p>
 
 <h1 align="center">- 网课助手 -</h1>
