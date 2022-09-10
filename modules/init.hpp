@@ -86,6 +86,9 @@ void WCH_Init_Var() {
 #if WCH_VER_TYPE == 2
 	WCH_window_title.append(L" Public Preview");
 #endif
+#if WCH_VER_TYPE != 0
+	WCH_window_title.append(L" Build " + to_wstring(WCH_VER_BUILD));
+#endif
 	WCH_window_title.append(L" (");
 	WCH_window_title.append(WCH_Framework);
 	WCH_window_title.append(L")");
@@ -112,9 +115,9 @@ void WCH_Init_Ver() {
 #if WCH_VER_TYPE == 2
 	vertype = L"Public Preview";
 #endif
-#if WCH_VER_TYPE == 1 || WCH_VER_TYPE == 2
+#if WCH_VER_TYPE != 0
 	WCH_SetWindowStatus(false);
-	if (MessageBoxW(NULL, (L"This " + vertype + L" of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
+	if (MessageBoxW(NULL, (L"This " + vertype + L" (Build " + to_wstring(WCH_VER_BUILD) + L") of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
 		_exit(0);
 	}
 	WCH_SetWindowStatus(true);
