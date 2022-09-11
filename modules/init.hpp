@@ -174,6 +174,8 @@ void WCH_Init_Win() {
 		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
 		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
+		WCH_command_list.clear();
+		WCH_command_list.push_back(L"quit");
 		exit(0);
 	}
 	SetConsoleTitleW(WCH_window_title.c_str());

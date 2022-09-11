@@ -520,34 +520,25 @@ void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
 	// Show messagebox to inform a bug to user.
 	wcout << L"\a";
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
-	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by open a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
+	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by opening a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
 		_wsystem(L"START resources/website/issues.url");
 	}
+	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 }
 
 void WCH_signalHandler() {
 	// Signal handler.
 	signal(SIGINT, [](int signum) {
-		WCH_cmd_line = false;
-		WCH_program_end = true;
-		WCH_PrintColor(0x07);
+		WCH_command_list.clear();
+		WCH_command_list.push_back(L"quit");
 		wcout << endl;
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Signal " + to_wstring(signum) + L" detected (Program interrupted)");
-		Sleep(500);
-		WCH_SetWindowStatus(false);
-		WCH_ShowBugMessagebox(signum, L"Program interrupted");
-		exit(signum);
+		exit(signum - signum);
 	});
 	signal(SIGBREAK, [](int signum) {
-		WCH_cmd_line = false;
-		WCH_program_end = true;
-		WCH_PrintColor(0x07);
+		WCH_command_list.clear();
+		WCH_command_list.push_back(L"quit");
 		wcout << endl;
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Signal " + to_wstring(signum) + L" detected (Program broke)");
-		Sleep(500);
-		WCH_SetWindowStatus(false);
-		WCH_ShowBugMessagebox(signum, L"Program broke");
-		exit(signum);
+		exit(signum - signum);
 	});
 	signal(SIGABRT, [](int signum) {
 		WCH_cmd_line = false;

@@ -105,10 +105,7 @@ void WCH_message_loop() {
 	wndclass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = WCH_window_title.c_str();
-	if (!RegisterClassW(&wndclass)) {
-		MessageBoxW(NULL, L"This program requires Windows NT!", WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
-		exit(0);
-	}
+	RegisterClassW(&wndclass);
 	WCH_Tray_hWnd = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
 	ShowWindow(WCH_Tray_hWnd, SW_HIDE);
 	UpdateWindow(WCH_Tray_hWnd);
