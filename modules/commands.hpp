@@ -807,9 +807,9 @@ void WCH_help() {
 			WCH_printlog(WCH_LOG_STATUS_ERROR, L"File processing failed. Please try reinstalling this program");
 			wcout << L"File processing failed. Please try reinstalling this program." << endl;
 		}
-	} else {
+	} else if (WCH_command_list.size() == 2) {
 		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-		if (WCH_command_list.size() == 2 && _waccess((L"resources/help/" + WCH_command_list[1] + L".dat").c_str(), 0) != -1) {
+		if (_waccess((L"resources/help/" + WCH_command_list[1] + L".dat").c_str(), 0) != -1) {
 			wstring _res;
 			wfin.open((L"resources/help/" + WCH_command_list[1] + L".dat").c_str());
 			while (getline(wfin, _res)) {
@@ -825,6 +825,8 @@ void WCH_help() {
 			}
 			return;
 		}
+	} else {
+		WCH_PrintIncorrect();
 	}
 }
 
