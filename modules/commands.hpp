@@ -583,41 +583,39 @@ void WCH_game() {
 		return;
 	}
 	srand((unsigned)time(NULL));
-	int ans = rand() % 10000 + 1;
-	bool flag = true;
+	int inp = 0, ans = rand() % 10000 + 1;
+	bool digitflag = true, winflag = true;
 	wstring z = L"0";
 	vector<wstring> zv;
 	zv.push_back(L"0");
-	try {
-		while (stoi(zv[0]) != ans) {
-		BEGIN:
-			wcout << L"Please input your number (1 ~ 10000): ";
-			getline(wcin, z);
-			zv = WCH_split(z);
-			if (zv.size() != 1) {
-				if (zv.size() > 1) {
-					wcout << L"Number out of range." << endl;
-					zv.clear();
-					zv.push_back(L"0");
-				} else {
-					flag = false;
-					goto END;
-				}
-			} else if (zv[0][0] == L'-' || zv[0][0] == L'0' || (zv[0].size() >= 5 && zv[0] != L"10000")) {
-				throw runtime_error("");
-			} else if (stoi(zv[0]) > ans) {
-				wcout << L"The answer is smaller." << endl;
-			} else if (stoi(zv[0]) < ans) {
-				wcout << L"The answer is bigger." << endl;
-			}
+	while (true) {
+		wcout << L"Please input your number (1 ~ 10000): ";
+		getline(wcin, z);
+		zv = WCH_split(z);
+		if (zv.size() == 0) {
+			winflag = false;
+			break;
 		}
-	} catch (...) {
-		wcout << L"Number out of range." << endl;
-		goto BEGIN;
+		try {
+			inp = stoi(zv[0]);
+		} catch (...) {
+			wcout << L"Number out of range." << endl;
+			continue;
+		}
+		if (inp <= 0 || inp > 10000) {
+			wcout << L"Number out of range." << endl;
+			continue;
+		}
+		if (inp > ans) {
+			wcout << L"The answer is smaller." << endl;
+		} else if (inp < ans) {
+			wcout << L"The answer is bigger." << endl;
+		} else {
+			break;
+		}
 	}
-END:
 	wcout << L"The number is " << ans << L".";
-	if (flag) {
+	if (winflag) {
 		wcout << L" You WIN!";
 	}
 	wcout << endl;
