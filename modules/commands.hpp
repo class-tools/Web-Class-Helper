@@ -106,7 +106,7 @@ void WCH_wiki() {
 		return;
 	}
 	wcout << L"Jumping to wiki page..." << endl;
-	_wsystem(L"START resources/website/wiki.url");
+	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/wiki/");
 }
 
 void WCH_update() {
@@ -134,7 +134,7 @@ void WCH_update() {
 		}
 		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER_MAIN), WCH_GetVersion(res))) {
 			wcout << L"Program version is less than latest released version, jumping to releases page..." << endl;
-			_wsystem(L"START resources/website/releases.url");
+			_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Updating to version \"" + res + L"\"");
 		} else {
 			wcout << L"Program version equals or is greater than latest released version." << endl;
@@ -584,7 +584,7 @@ void WCH_game() {
 	}
 	srand((unsigned)time(NULL));
 	int inp = 0, ans = rand() % 10000 + 1;
-	bool digitflag = true, winflag = true;
+	bool flag = true;
 	wstring z = L"0";
 	vector<wstring> zv;
 	zv.push_back(L"0");
@@ -593,7 +593,7 @@ void WCH_game() {
 		getline(wcin, z);
 		zv = WCH_split(z);
 		if (zv.size() == 0) {
-			winflag = false;
+			flag = false;
 			break;
 		}
 		try {
@@ -615,7 +615,7 @@ void WCH_game() {
 		}
 	}
 	wcout << L"The number is " << ans << L".";
-	if (winflag) {
+	if (flag) {
 		wcout << L" You WIN!";
 	}
 	wcout << endl;

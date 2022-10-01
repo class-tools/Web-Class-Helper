@@ -521,7 +521,7 @@ void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
 	wcout << L"\a";
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
 	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by opening a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
-		_wsystem(L"START resources/website/issues.url");
+		_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/issues/");
 	}
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 }
