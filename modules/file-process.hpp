@@ -12,11 +12,11 @@ Contributors: jsh-jsh ren-yc
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const wstring WCH_WDName[7];
+extern const array<wstring, 7> WCH_WDName;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern vector<wstring> WCH_command_list;
-extern set<tuple<int, int, wstring>> WCH_clock_list;
+extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
@@ -28,15 +28,15 @@ extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
-extern int WCH_clock_num;
-extern int WCH_task_num;
-extern int WCH_work_num;
-extern int WCH_clock_change;
-extern int WCH_task_change;
-extern int WCH_work_change;
-extern int WCH_settings_change;
-extern int WCH_ProgressBarTot;
-extern int WCH_InputTimes;
+extern int32_t WCH_clock_num;
+extern int32_t WCH_task_num;
+extern int32_t WCH_work_num;
+extern int32_t WCH_clock_change;
+extern int32_t WCH_task_change;
+extern int32_t WCH_work_change;
+extern int32_t WCH_settings_change;
+extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -50,7 +50,7 @@ extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
 WCH_Time WCH_GetTime();
-void WCH_Sleep(int _ms);
+void WCH_Sleep(int32_t _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read_settings();
 void WCH_read();
@@ -72,7 +72,7 @@ void WCH_read_clock() {
 	// Read clock data.
 	WCH_Time q = WCH_GetTime();
 	wstring NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	wstring FilePath = L"data/" + NowWeekDay + L".json";
+	wstring FilePath = L"data/clock.json";
 	Json::Value val;
 	fin.open(FilePath);
 	if (!fin.is_open()) {
@@ -81,9 +81,9 @@ void WCH_read_clock() {
 	if (JSON_Reader.parse(fin, val)) {
 		try {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
-			WCH_clock_num = val.size();
-			for (int i = 0; i < WCH_clock_num; i++) {
-				WCH_clock_list.insert(make_tuple(val[i][0].asInt(), val[i][1].asInt(), StrToWstr(val[i][2].asString())));
+			WCH_clock_num = val[WstrToStr(NowWeekDay)].size();
+			for (int32_t i = 0; i < WCH_clock_num; i++) {
+				WCH_clock_list.insert(make_tuple(val[WstrToStr(NowWeekDay)][i][0].asInt(), val[WstrToStr(NowWeekDay)][i][1].asInt(), StrToWstr(val[WstrToStr(NowWeekDay)][i][2].asString())));
 			}
 		} catch (...) {
 			goto ERR;
@@ -107,7 +107,7 @@ void WCH_read_task() {
 		try {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 			WCH_task_num = val.size();
-			for (int i = 0; i < WCH_task_num; i++) {
+			for (int32_t i = 0; i < WCH_task_num; i++) {
 				WCH_task_list.insert(StrToWstr(val[i].asString()));
 			}
 		} catch (...) {
@@ -132,7 +132,7 @@ void WCH_read_work() {
 		try {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 			WCH_work_num = val.size();
-			for (int i = 0; i < WCH_work_num; i++) {
+			for (int32_t i = 0; i < WCH_work_num; i++) {
 				WCH_work_list.insert(make_pair(StrToWstr(val[i][0].asString()), StrToWstr(val[i][1].asString())));
 			}
 		} catch (...) {
@@ -197,26 +197,35 @@ void WCH_save_clock() {
 	// Save clock data.
 	WCH_Time q = WCH_GetTime();
 	wstring NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	wstring FilePath = L"data/" + NowWeekDay + L".json";
+	wstring FilePath = L"data/clock.json";
 	Json::Value val;
-	if (WCH_clock_num == 0) {
-		if (_waccess(FilePath.c_str(), 0) != -1) {
-			WCH_printlog(WCH_LOG_STATUS_INFO, L"Deleting file \"" + FilePath + L"\"");
-			DeleteFileW(FilePath.c_str());
-		}
-		return;
+	fin.open(FilePath);
+	if (fin.is_open()) {
+		JSON_Reader.parse(fin, val);
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
+	fin.close();
+	val[WstrToStr(NowWeekDay)].clear();
 	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
 		Json::Value sval;
 		sval.append(get<0>(*it));
 		sval.append(get<1>(*it));
 		sval.append(WstrToStr(get<2>(*it)));
-		val.append(sval);
+		val[WstrToStr(NowWeekDay)].append(sval);
 	}
-	fout.open(FilePath);
-	JSON_SW->write(val, &fout);
-	fout.close();
+	if (val[WstrToStr(NowWeekDay)].size() == 0) {
+		val.removeMember(WstrToStr(NowWeekDay));
+	}
+	if (val.size() != 0) {
+		WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
+		fout.open(FilePath);
+		JSON_SW->write(val, &fout);
+		fout.close();
+	} else {
+		if (_waccess(FilePath.c_str(), 0) != -1) {
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Deleting file \"" + FilePath + L"\"");
+			DeleteFileW(FilePath.c_str());
+		}
+	}
 }
 
 void WCH_save_task() {

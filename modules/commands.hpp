@@ -12,11 +12,11 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const wstring WCH_WDName[7];
+extern const array<wstring, 7> WCH_WDName;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern vector<wstring> WCH_command_list;
-extern set<tuple<int, int, wstring>> WCH_clock_list;
+extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
@@ -28,15 +28,15 @@ extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
-extern int WCH_clock_num;
-extern int WCH_task_num;
-extern int WCH_work_num;
-extern int WCH_clock_change;
-extern int WCH_task_change;
-extern int WCH_work_change;
-extern int WCH_settings_change;
-extern int WCH_ProgressBarTot;
-extern int WCH_InputTimes;
+extern int32_t WCH_clock_num;
+extern int32_t WCH_task_num;
+extern int32_t WCH_work_num;
+extern int32_t WCH_clock_change;
+extern int32_t WCH_task_change;
+extern int32_t WCH_work_change;
+extern int32_t WCH_settings_change;
+extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -50,7 +50,7 @@ extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
 WCH_Time WCH_GetTime();
-void WCH_Sleep(int _ms);
+void WCH_Sleep(int32_t _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read_settings();
 void WCH_read();
@@ -265,8 +265,8 @@ void WCH_add_clock() {
 		return;
 	}
 	try {
-		int h = stoi(WCH_command_list[2]);
-		int m = stoi(WCH_command_list[3]);
+		int32_t h = stoi(WCH_command_list[2]);
+		int32_t m = stoi(WCH_command_list[3]);
 		wstring Tname = WCH_command_list[4];
 		if (WCH_command_list.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
 			WCH_PrintIncorrect();
@@ -299,8 +299,8 @@ void WCH_delete_clock() {
 		return;
 	}
 	try {
-		int h = stoi(WCH_command_list[2]);
-		int m = stoi(WCH_command_list[3]);
+		int32_t h = stoi(WCH_command_list[2]);
+		int32_t m = stoi(WCH_command_list[3]);
 		wstring Tname = WCH_command_list[4];
 		bool flag = false;
 		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
@@ -583,7 +583,7 @@ void WCH_game() {
 		return;
 	}
 	srand((unsigned)time(NULL));
-	int inp = 0, ans = rand() % 10000 + 1;
+	int32_t inp = 0, ans = rand() % 10000 + 1;
 	bool flag = true;
 	wstring z = L"0";
 	vector<wstring> zv;
@@ -643,9 +643,9 @@ void WCH_count_down_func() {
 		return;
 	}
 	try {
-		int h = stoi(WCH_command_list[1]);
-		int m = stoi(WCH_command_list[2]);
-		int s = stoi(WCH_command_list[3]);
+		int32_t h = stoi(WCH_command_list[1]);
+		int32_t m = stoi(WCH_command_list[2]);
+		int32_t s = stoi(WCH_command_list[3]);
 		if ((h == 0 && m == 0 && s == 0) || (h < 0 || m < 0 || s < 0) || (h >= 24 || m >= 60 || s >= 60)) {
 			throw runtime_error("");
 		}

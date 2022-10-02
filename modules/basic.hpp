@@ -140,6 +140,7 @@ using std::ofstream;
 using std::wofstream;
 using std::unique_ptr;
 using std::locale;
+using std::array;
 using std::map;
 using std::set;
 using std::vector;
@@ -173,7 +174,7 @@ public:
 	~GdiplusWrapper() {
 		Gdiplus::GdiplusShutdown(gdiplusToken);
 	}
-	int GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
+	int32_t GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
 		UINT num = 0;
 		UINT size = 0;
 		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
@@ -207,31 +208,31 @@ private:
 };
 
 struct WCH_Time {
-	int Year {};
-	int Month {};
-	int Day {};
-	int Hour {};
-	int Minute {};
-	int Second {};
-	int WeekDay {};
+	int32_t Year {};
+	int32_t Month {};
+	int32_t Day {};
+	int32_t Hour {};
+	int32_t Minute {};
+	int32_t Second {};
+	int32_t WeekDay {};
 };
 
 struct WCH_Data_Body {
-	int H {};
-	int M {};
+	int32_t H {};
+	int32_t M {};
 };
 
 struct WCH_Version {
-	int X {};
-	int Y {};
-	int Z {};
+	int32_t X {};
+	int32_t Y {};
+	int32_t Z {};
 };
 
-const wstring WCH_WDName[7] = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+const array<wstring, 7> WCH_WDName {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
 map<wstring, function<void()>> WCH_command_support;
 set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 vector<wstring> WCH_command_list;
-set<tuple<int, int, wstring>> WCH_clock_list;
+set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 set<wstring> WCH_task_list;
 set<pair<wstring, wstring>> WCH_work_list;
 wstring WCH_window_title;
@@ -243,15 +244,15 @@ HMENU WCH_hMenu;
 NOTIFYICONDATA WCH_NID;
 ATL::CComPtr<ITaskbarList3> WCH_TBL;
 Json::Value WCH_Settings;
-int WCH_clock_num;
-int WCH_task_num;
-int WCH_work_num;
-int WCH_clock_change;
-int WCH_task_change;
-int WCH_work_change;
-int WCH_settings_change;
-int WCH_ProgressBarTot;
-int WCH_InputTimes;
+int32_t WCH_clock_num;
+int32_t WCH_task_num;
+int32_t WCH_work_num;
+int32_t WCH_clock_change;
+int32_t WCH_task_change;
+int32_t WCH_work_change;
+int32_t WCH_settings_change;
+int32_t WCH_ProgressBarTot;
+int32_t WCH_InputTimes;
 bool WCH_cmd_line = true;
 bool WCH_anti_idle;
 bool WCH_count_down;
@@ -265,7 +266,7 @@ Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
 unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
 WCH_Time WCH_GetTime();
-void WCH_Sleep(int _ms);
+void WCH_Sleep(int32_t _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read_settings();
 void WCH_read();

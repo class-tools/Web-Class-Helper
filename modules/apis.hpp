@@ -12,11 +12,11 @@ Contributors: jsh-jsh ren-yc
 #include "functions.hpp"
 #include "basic.hpp"
 
-extern const wstring WCH_WDName[7];
+extern const array<wstring, 7> WCH_WDName;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern vector<wstring> WCH_command_list;
-extern set<tuple<int, int, wstring>> WCH_clock_list;
+extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
@@ -28,15 +28,15 @@ extern HMENU WCH_hMenu;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
-extern int WCH_clock_num;
-extern int WCH_task_num;
-extern int WCH_work_num;
-extern int WCH_clock_change;
-extern int WCH_task_change;
-extern int WCH_work_change;
-extern int WCH_settings_change;
-extern int WCH_ProgressBarTot;
-extern int WCH_InputTimes;
+extern int32_t WCH_clock_num;
+extern int32_t WCH_task_num;
+extern int32_t WCH_work_num;
+extern int32_t WCH_clock_change;
+extern int32_t WCH_task_change;
+extern int32_t WCH_work_change;
+extern int32_t WCH_settings_change;
+extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -50,7 +50,7 @@ extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
 WCH_Time WCH_GetTime();
-void WCH_Sleep(int _ms);
+void WCH_Sleep(int32_t _ms);
 void WCH_printlog(wstring _mode, wstring _info);
 void WCH_read_settings();
 void WCH_read();
@@ -58,7 +58,7 @@ void WCH_save_settings();
 bool WCH_save_func(bool output);
 size_t WCH_GetNumDigits(size_t _n);
 
-void WCH_Sleep(int _ms) {
+void WCH_Sleep(int32_t _ms) {
 	// Sleep.
 	while (_ms > 0 && !WCH_program_end) {
 		sleep_for(milliseconds(100));
@@ -82,9 +82,9 @@ void WCH_PrintChar(size_t _times, wchar_t _c) {
 wstring StrToWstr(string str) {
 	// Convert multiple byte string to wide string.
 	wstring result;
-	int len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), NULL, 0);
+	int32_t len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), NULL, 0);
 	TCHAR* buffer = new TCHAR[len + 1];
-	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), buffer, len);
+	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), buffer, len);
 	buffer[len] = '\0';
 	result.append(buffer);
 	delete[] buffer;
@@ -94,9 +94,9 @@ wstring StrToWstr(string str) {
 string WstrToStr(wstring wstr) {
 	// Convert wide string to multiple byte string.
 	string result;
-	int len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), NULL, 0, NULL, NULL);
+	int32_t len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int32_t)wstr.size(), NULL, 0, NULL, NULL);
 	char* buffer = new char[len + 1];
-	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), buffer, len, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int32_t)wstr.size(), buffer, len, NULL, NULL);
 	buffer[len] = '\0';
 	result.append(buffer);
 	delete[] buffer;
@@ -186,7 +186,7 @@ WCH_Time WCH_GetTime() {
 wstring WCH_GetCompileTime() {
 	// Get program compile time.
 	wstring spi = StrToWstr(__DATE__);
-	map<wstring, int> mon;
+	map<wstring, int32_t> mon;
 	mon[L"Jan"] = 1;
 	mon[L"Feb"] = 2;
 	mon[L"Mar"] = 3;
@@ -304,8 +304,8 @@ void WCH_SaveImg() {
 	}
 	HDC hdcScreen = ::GetDC(NULL);
 	double dDpi = (double)GetDeviceCaps(GetDC(GetDesktopWindow()), DESKTOPHORZRES) / GetSystemMetrics(SM_CXSCREEN);
-	int nWidth = (int)round(GetDeviceCaps(hdcScreen, HORZRES) * dDpi);
-	int nHeight = (int)round(GetDeviceCaps(hdcScreen, VERTRES) * dDpi);
+	int32_t nWidth = (int32_t)round(GetDeviceCaps(hdcScreen, HORZRES) * dDpi);
+	int32_t nHeight = (int32_t)round(GetDeviceCaps(hdcScreen, VERTRES) * dDpi);
 	HDC hMemDC;
 	HBITMAP hBitmap, hOldBitmap;
 	hMemDC = CreateCompatibleDC(hdcScreen);
@@ -398,18 +398,18 @@ size_t WCH_GetNumDigits(size_t _n) {
 	return _cnt;
 }
 
-void WCH_PrintProgressBar(int _sur, int _n, bool _flag) {
+void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
 	// Print a progress bar.
-	wstring _ETAStr = format(L"{:02}:{:02}:{:02}", (int)(_sur / 3600), (int)((_sur % 3600) / 60), (int)(_sur % 60));
+	wstring _ETAStr = format(L"{:02}:{:02}:{:02}", (int32_t)(_sur / 3600), (int32_t)((_sur % 3600) / 60), (int32_t)(_sur % 60));
 	if (_flag) {
 		wcout << "\r";
 	}
 	WCH_PrintColor(0x0A);
-	for (int i = 0; i < _n / 2; i++) {
+	for (int32_t i = 0; i < _n / 2; i++) {
 		wcout << WCH_ProgressBarStr;
 	}
 	WCH_PrintColor(0x0C);
-	for (int i = _n / 2; i < 50; i++) {
+	for (int32_t i = _n / 2; i < 50; i++) {
 		wcout << WCH_ProgressBarStr;
 	}
 	WCH_PrintColor(0x02);
@@ -428,9 +428,9 @@ void WCH_ProgressBar() {
 	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NORMAL);
 	WCH_TBL->SetProgressValue(WCH_Win_hWnd, 0, 100);
-	for (int i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
+	for (int32_t i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
-		WCH_PrintProgressBar(i, (int)((WCH_ProgressBarTot - i) * _pro), true);
+		WCH_PrintProgressBar(i, (int32_t)((WCH_ProgressBarTot - i) * _pro), true);
 		WCH_TBL->SetProgressValue(WCH_Win_hWnd, (unsigned long long)((WCH_ProgressBarTot - i) * _pro), 100);
 	}
 	WCH_Sleep(1000);
@@ -475,7 +475,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				WCH_CheckHotkey();
 			} else if (lParam == WM_RBUTTONDOWN) {
 				POINT pt;
-				int xx;
+				int32_t xx;
 				GetCursorPos(&pt);
 				SetForegroundWindow(hWnd);
 				xx = TrackPopupMenu(WCH_hMenu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
@@ -516,7 +516,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return DefWindowProcW(hWnd, message, wParam, lParam);
 }
 
-void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
+void WCH_ShowBugMessagebox(int32_t errorcode, wstring errormsg) {
 	// Show messagebox to inform a bug to user.
 	wcout << L"\a";
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
@@ -528,19 +528,19 @@ void WCH_ShowBugMessagebox(int errorcode, wstring errormsg) {
 
 void WCH_signalHandler() {
 	// Signal handler.
-	signal(SIGINT, [](int signum) {
+	signal(SIGINT, []([[maybe_unused]] int32_t signum) {
 		WCH_command_list.clear();
 		WCH_command_list.push_back(L"quit");
 		wcout << endl;
-		exit(signum - signum);
+		exit(0);
 	});
-	signal(SIGBREAK, [](int signum) {
+	signal(SIGBREAK, []([[maybe_unused]] int32_t signum) {
 		WCH_command_list.clear();
 		WCH_command_list.push_back(L"quit");
 		wcout << endl;
-		exit(signum - signum);
+		exit(0);
 	});
-	signal(SIGABRT, [](int signum) {
+	signal(SIGABRT, [](int32_t signum) {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
@@ -551,7 +551,7 @@ void WCH_signalHandler() {
 		WCH_ShowBugMessagebox(signum, L"Program aborted");
 		exit(signum);
 	});
-	signal(SIGFPE, [](int signum) {
+	signal(SIGFPE, [](int32_t signum) {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
@@ -562,7 +562,7 @@ void WCH_signalHandler() {
 		WCH_ShowBugMessagebox(signum, L"Operation overflow");
 		exit(signum);
 	});
-	signal(SIGILL, [](int signum) {
+	signal(SIGILL, [](int32_t signum) {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
@@ -573,7 +573,7 @@ void WCH_signalHandler() {
 		WCH_ShowBugMessagebox(signum, L"Illegal instruction");
 		exit(signum);
 	});
-	signal(SIGSEGV, [](int signum) {
+	signal(SIGSEGV, [](int32_t signum) {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
