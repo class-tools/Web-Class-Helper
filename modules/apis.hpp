@@ -252,17 +252,25 @@ void WCH_ShowTaskBarError() {
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
 }
 
-void WCH_PrintIncorrect() {
+void WCH_InputCodeIncorrect() {
 	// Print text for incorrect inputs.
-	WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is uncorrect, please check and try again");
-	wcout << L"Your input code is uncorrect, please check and try again." << endl;
+	WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is incorrect, please check and try again");
+	wcout << L"Your input code is incorrect, please check and try again." << endl;
+	thread T(WCH_ShowTaskBarError);
+	T.detach();
+}
+
+void WCH_FileProcessingFailed() {
+	// Print text for failed file processings.
+	WCH_printlog(WCH_LOG_STATUS_ERROR, L"File processing failed. Please try reinstalling this program");
+	wcout << L"File processing failed. Please try reinstalling this program." << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
 }
 
 void WCH_PrintNetworkErr() {
 	// Print text for network errors.
-	WCH_printlog(WCH_LOG_STATUS_WARN, L"An network error occurred, please check your network connection and try to update this program");
+	WCH_printlog(WCH_LOG_STATUS_ERROR, L"An network error occurred, please check your network connection and try to update this program");
 	wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
