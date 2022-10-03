@@ -12,14 +12,24 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Pull submodules
+          command: |
+            git submodule update --init --recursive
+      - run:
           name: Initialize vcpkg
           command: |
-            vcpkg integrate install
-            vcpkg install jsoncpp:x64-windows-static
+            ./vcpkg/bootstrap-vcpkg.bat
+            ./vcpkg/vcpkg integrate install
+            ./vcpkg/vcpkg install jsoncpp:x64-windows-static
+      - save_cache:
+          key: vcpkg-cache
+          paths:
+            - vcpkg/installed
+            - vcpkg/packages
       - run:
-          name: Build Solution
+          name: Build solution
           command: |
-            "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild Release|x64
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x64"
   build-x86:
     executor:
       name: windows/server-2022
@@ -28,14 +38,24 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Pull submodules
+          command: |
+            git submodule update --init --recursive
+      - run:
           name: Initialize vcpkg
           command: |
-            vcpkg integrate install
-            vcpkg install jsoncpp:x86-windows-static
+            ./vcpkg/bootstrap-vcpkg.bat
+            ./vcpkg/vcpkg integrate install
+            ./vcpkg/vcpkg install jsoncpp:x86-windows-static
+      - save_cache:
+          key: vcpkg-cache
+          paths:
+            - vcpkg/installed
+            - vcpkg/packages
       - run:
-          name: Build Solution
+          name: Build solution
           command: |
-            "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild Release|x86
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x86"
   build-arm:
     executor:
       name: windows/server-2022
@@ -44,14 +64,24 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Pull submodules
+          command: |
+            git submodule update --init --recursive
+      - run:
           name: Initialize vcpkg
           command: |
-            vcpkg integrate install
-            vcpkg install jsoncpp:arm-windows-static
+            ./vcpkg/bootstrap-vcpkg.bat
+            ./vcpkg/vcpkg integrate install
+            ./vcpkg/vcpkg install jsoncpp:arm-windows-static
+      - save_cache:
+          key: vcpkg-cache
+          paths:
+            - vcpkg/installed
+            - vcpkg/packages
       - run:
-          name: Build Solution
+          name: Build solution
           command: |
-            "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild Release|ARM
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|ARM"
   build-arm64:
     executor:
       name: windows/server-2022
@@ -60,14 +90,24 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Pull submodules
+          command: |
+            git submodule update --init --recursive
+      - run:
           name: Initialize vcpkg
           command: |
-            vcpkg integrate install
-            vcpkg install jsoncpp:arm64-windows-static
+            ./vcpkg/bootstrap-vcpkg.bat
+            ./vcpkg/vcpkg integrate install
+            ./vcpkg/vcpkg install jsoncpp:arm64-windows-static
+      - save_cache:
+          key: vcpkg-cache
+          paths:
+            - vcpkg/installed
+            - vcpkg/packages
       - run:
-          name: Build Solution
+          name: Build solution
           command: |
-            "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild Release|ARM64
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|ARM64"
 
 workflows:
   "Build x64":
