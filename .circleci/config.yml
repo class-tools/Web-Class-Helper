@@ -12,20 +12,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Pull submodules
-          command: |
-            git submodule update --init --recursive
-      - run:
           name: Initialize vcpkg
           command: |
-            .\vcpkg\bootstrap-vcpkg.bat
-            .\vcpkg\vcpkg integrate install
-            .\vcpkg\vcpkg install jsoncpp:x64-windows-static
-      - save_cache:
-          key: vcpkg-cache
-          paths:
-            - vcpkg\installed
-            - vcpkg\packages
+            & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
+            & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
+            & $env:USERPROFILE\vcpkg\vcpkg integrate install
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x64-windows-static
       - run:
           name: Build solution
           command: |
@@ -38,20 +30,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Pull submodules
-          command: |
-            git submodule update --init --recursive
-      - run:
           name: Initialize vcpkg
           command: |
-            .\vcpkg\bootstrap-vcpkg.bat
-            .\vcpkg\vcpkg integrate install
-            .\vcpkg\vcpkg install jsoncpp:x86-windows-static
-      - save_cache:
-          key: vcpkg-cache
-          paths:
-            - vcpkg\installed
-            - vcpkg\packages
+            & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
+            & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
+            & $env:USERPROFILE\vcpkg\vcpkg integrate install
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x86-windows-static
       - run:
           name: Build solution
           command: |
@@ -64,20 +48,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Pull submodules
-          command: |
-            git submodule update --init --recursive
-      - run:
           name: Initialize vcpkg
           command: |
-            .\vcpkg\bootstrap-vcpkg.bat
-            .\vcpkg\vcpkg integrate install
-            .\vcpkg\vcpkg install jsoncpp:arm-windows-static
-      - save_cache:
-          key: vcpkg-cache
-          paths:
-            - vcpkg\installed
-            - vcpkg\packages
+            & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
+            & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
+            & $env:USERPROFILE\vcpkg\vcpkg integrate install
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm-windows-static
       - run:
           name: Modify Visual Studio
           command: |
@@ -94,20 +70,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Pull submodules
-          command: |
-            git submodule update --init --recursive
-      - run:
           name: Initialize vcpkg
           command: |
-            .\vcpkg\bootstrap-vcpkg.bat
-            .\vcpkg\vcpkg integrate install
-            .\vcpkg\vcpkg install jsoncpp:arm64-windows-static
-      - save_cache:
-          key: vcpkg-cache
-          paths:
-            - vcpkg\installed
-            - vcpkg\packages
+            & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
+            & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
+            & $env:USERPROFILE\vcpkg\vcpkg integrate install
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm64-windows-static
       - run:
           name: Modify Visual Studio
           command: |
