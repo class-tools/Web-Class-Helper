@@ -21,7 +21,7 @@ jobs:
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x64"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|x64"
   build-x86:
     executor:
       name: windows/server-2022
@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x86"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|x86"
   build-arm:
     executor:
       name: windows/server-2022
@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|ARM"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|ARM"
   build-arm64:
     executor:
       name: windows/server-2022
@@ -83,7 +83,7 @@ jobs:
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|ARM64"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|ARM64"
 
 workflows:
   "Build x64":

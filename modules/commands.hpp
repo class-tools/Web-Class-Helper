@@ -56,7 +56,7 @@ void WCH_read_settings();
 void WCH_read();
 void WCH_save_settings();
 bool WCH_save_func(bool output);
-size_t WCH_GetNumDigits(size_t _n);
+uint64_t WCH_GetNumDigits(uint64_t _n);
 
 void WCH_clear() {
 	// Clear console information.

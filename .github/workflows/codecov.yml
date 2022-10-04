@@ -18,8 +18,7 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:x86-windows
-          vcpkg install jsoncpp:x86-windows-static
+          vcpkg install jsoncpp:x86-windows jsoncpp:x86-windows-static
       - name: Setup MSBuild and add to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Run MSBuild

@@ -19,6 +19,7 @@ jobs:
         uses: DoozyX/clang-format-lint-action@v0.14
         with:
           extensions: 'cpp,hpp'
+          exclude: '.\UnitTest\'
           clangFormatVersion: 14
           inplace: True
       - name: Commit Changes

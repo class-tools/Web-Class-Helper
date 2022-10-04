@@ -74,7 +74,7 @@ PackConstructorInitializers: NextLine
 BasedOnStyle: ''
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 AllowAllConstructorInitializersOnNextLine: true
-FixNamespaceComments: true
+FixNamespaceComments: false
 ForEachMacros:
   - foreach
   - Q_FOREACH
@@ -118,7 +118,7 @@ LambdaBodyIndentation: Signature
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
-NamespaceIndentation: All
+NamespaceIndentation: Inner
 ObjCBinPackProtocolList: Never
 ObjCBlockIndentWidth: 2
 ObjCBreakBeforeNestedBlockParam: true
