@@ -17,11 +17,11 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x64-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x64-windows jsoncpp:x64-windows-static
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|x64"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x64"
   build-x86:
     executor:
       name: windows/server-2022
@@ -35,11 +35,11 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x86-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x86-windows jsoncpp:x86-windows-static
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|x86"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x86"
   build-arm:
     executor:
       name: windows/server-2022
@@ -53,7 +53,7 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm-windows jsoncpp:arm-windows-static
       - run:
           name: Modify Visual Studio
           command: |
@@ -61,7 +61,7 @@ jobs:
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|ARM"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|ARM"
   build-arm64:
     executor:
       name: windows/server-2022
@@ -75,7 +75,7 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm64-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm64-windows jsoncpp:arm64-windows-static
       - run:
           name: Modify Visual Studio
           command: |
@@ -83,7 +83,7 @@ jobs:
       - run:
           name: Build solution
           command: |
-            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.vcxproj /Rebuild "Release|ARM64"
+            & "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|ARM64"
 
 workflows:
   "Build x64":

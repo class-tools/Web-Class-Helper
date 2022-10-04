@@ -56,7 +56,7 @@ void WCH_read_settings();
 void WCH_read();
 void WCH_save_settings();
 bool WCH_save_func(bool output);
-uint64_t WCH_GetNumDigits(uint64_t _n);
+size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_Sleep(int32_t _ms) {
 	// Sleep.
@@ -397,9 +397,9 @@ WCH_Version WCH_GetVersion(wstring _in) {
 	return _res;
 }
 
-uint64_t WCH_GetNumDigits(uint64_t _n) {
+size_t WCH_GetNumDigits(size_t _n) {
 	// Get digits of a number.
-	uint64_t _cnt = 1;
+	size_t _cnt = 1;
 	while ((_n /= 10) != 0) {
 		_cnt++;
 	}

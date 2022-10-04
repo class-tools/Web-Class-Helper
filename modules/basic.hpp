@@ -223,9 +223,9 @@ struct WCH_Data_Body {
 };
 
 struct WCH_Version {
-	uint64_t X {};
-	uint64_t Y {};
-	uint64_t Z {};
+	size_t X {};
+	size_t Y {};
+	size_t Z {};
 	bool operator==(const WCH_Version& _in) {
 		return (X == _in.X && Y == _in.Y && Z == _in.Z);
 	}
@@ -275,6 +275,6 @@ void WCH_read_settings();
 void WCH_read();
 void WCH_save_settings();
 bool WCH_save_func(bool output);
-uint64_t WCH_GetNumDigits(uint64_t _n);
+size_t WCH_GetNumDigits(size_t _n);
 
 #endif

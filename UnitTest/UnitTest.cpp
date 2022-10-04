@@ -49,9 +49,9 @@ public:
 	}
 	TEST_METHOD(GetVersion) {
 		WCH_Version Temp;
-		Temp = {(uint64_t)0, (uint64_t)0, (uint64_t)0};
+		Temp = {(size_t)0, (size_t)0, (size_t)0};
 		Assert::IsTrue(WCH_GetVersion(L"0.0.0") == Temp);
-		Temp = {(uint64_t)18446744073709551615, (uint64_t)18446744073709551615, (uint64_t)18446744073709551615};
+		Temp = {(size_t)18446744073709551615, (size_t)18446744073709551615, (size_t)18446744073709551615};
 		Assert::IsTrue(WCH_GetVersion(L"18446744073709551615.18446744073709551615.18446744073709551615") == Temp);
 	}
 	TEST_METHOD(NumDigits) {

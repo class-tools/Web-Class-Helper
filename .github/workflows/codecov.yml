@@ -18,11 +18,11 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:x86-windows jsoncpp:x86-windows-static
+          vcpkg install jsoncpp:x64-windows jsoncpp:x64-windows-static
       - name: Setup MSBuild and add to PATH
         uses: microsoft/setup-msbuild@v1.1
       - name: Run MSBuild
-        run: msbuild .\UnitTest\UnitTest.vcxproj /p:Configuration=Debug /p:Platform=x86
+        run: msbuild .\UnitTest\UnitTest.vcxproj /p:Configuration=Release /p:Platform=x64
       - name: Setup VSTest and add to PATH
         uses: darenm/Setup-VSTest@v1
       - name: Setup OpenCppCoverage and add to PATH
@@ -30,7 +30,7 @@ jobs:
           choco install OpenCppCoverage -y
           echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
       - name: Generate Report
-        run: OpenCppCoverage.exe --verbose --sources WCH --export_type cobertura:WCH.xml -- "vstest.console.exe" .\x86\Debug\UnitTest.dll
+        run: OpenCppCoverage.exe --verbose --sources WCH --export_type cobertura:WCH.xml -- "vstest.console.exe" .\x64\Release\UnitTest.dll
       - name: Upload Report to Codecov
         uses: codecov/codecov-action@v3
         with:

@@ -60,7 +60,7 @@ void WCH_read_settings();
 void WCH_read();
 void WCH_save_settings();
 bool WCH_save_func(bool output);
-uint64_t WCH_GetNumDigits(uint64_t _n);
+size_t WCH_GetNumDigits(size_t _n);
 
 int32_t wmain([[maybe_unused]] int argc, [[maybe_unused]] wchar_t *argv[]) {
 	WCH_Init();
