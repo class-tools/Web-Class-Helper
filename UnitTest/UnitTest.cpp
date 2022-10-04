@@ -45,14 +45,14 @@ public:
 	}
 	TEST_METHOD(CheckVersion) {
 		Assert::AreEqual(WCH_CheckVersion({0, 0, 0}, {0, 0, 0}), false);
-		Assert::AreEqual(WCH_CheckVersion({0, 0, 0}, {18446744073709551615, 18446744073709551615, 18446744073709551615}), true);
+		Assert::AreEqual(WCH_CheckVersion({0, 0, 0}, {2147483647, 2147483647, 2147483647}), true);
 	}
 	TEST_METHOD(GetVersion) {
 		WCH_Version Temp;
-		Temp = {(size_t)0, (size_t)0, (size_t)0};
+		Temp = {0, 0, 0};
 		Assert::IsTrue(WCH_GetVersion(L"0.0.0") == Temp);
-		Temp = {(size_t)18446744073709551615, (size_t)18446744073709551615, (size_t)18446744073709551615};
-		Assert::IsTrue(WCH_GetVersion(L"18446744073709551615.18446744073709551615.18446744073709551615") == Temp);
+		Temp = {2147483647, 2147483647, 2147483647};
+		Assert::IsTrue(WCH_GetVersion(L"2147483647.2147483647.2147483647") == Temp);
 	}
 	TEST_METHOD(NumDigits) {
 		Assert::AreEqual(WCH_GetNumDigits(0), (size_t)1);

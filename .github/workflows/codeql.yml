@@ -30,7 +30,8 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           config-file: .\.github\codeql\codeql-config.yml
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+      - name: Build solution
+        run: |
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\devenv.com" WCH.sln /Rebuild "Debug|x64"
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

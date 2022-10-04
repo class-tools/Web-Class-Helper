@@ -223,9 +223,9 @@ struct WCH_Data_Body {
 };
 
 struct WCH_Version {
-	size_t X {};
-	size_t Y {};
-	size_t Z {};
+	int32_t X {};
+	int32_t Y {};
+	int32_t Z {};
 	bool operator==(const WCH_Version& _in) {
 		return (X == _in.X && Y == _in.Y && Z == _in.Z);
 	}

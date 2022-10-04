@@ -385,15 +385,15 @@ WCH_Version WCH_GetVersion(wstring _in) {
 	WCH_Version _res;
 	size_t _pos = _in.find(L".");
 	if (_pos != wstring::npos) {
-		_res.X = stoull(_in.substr(0, _pos));
+		_res.X = stoi(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
 	_pos = _in.find(L".");
 	if (_pos != wstring::npos) {
-		_res.Y = stoull(_in.substr(0, _pos));
+		_res.Y = stoi(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
-	_res.Z = stoull(_in);
+	_res.Z = stoi(_in);
 	return _res;
 }
 
