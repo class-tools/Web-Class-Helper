@@ -55,8 +55,8 @@ public:
 		Assert::IsTrue(WCH_GetVersion(L"2147483647.2147483647.2147483647") == Temp);
 	}
 	TEST_METHOD(NumDigits) {
-		Assert::AreEqual(WCH_GetNumDigits(0), (size_t)1);
-		Assert::AreEqual(WCH_GetNumDigits(18446744073709551615), (size_t)20);
+		Assert::AreEqual(WCH_GetNumDigits((size_t)0), (size_t)1);
+		Assert::AreEqual(WCH_GetNumDigits((size_t)18446744073709551615), (size_t)20);
 	}
 };
 }

@@ -7,7 +7,7 @@ jobs:
   build-x64:
     executor:
       name: windows/server-2022
-      size: large
+      size: medium
     working_directory: ~\Web-Class-Helper
     steps:
       - checkout
@@ -25,7 +25,7 @@ jobs:
   build-x86:
     executor:
       name: windows/server-2022
-      size: large
+      size: medium
     working_directory: ~\Web-Class-Helper
     steps:
       - checkout
@@ -43,7 +43,7 @@ jobs:
   build-arm:
     executor:
       name: windows/server-2022
-      size: large
+      size: medium
     working_directory: ~\Web-Class-Helper
     steps:
       - checkout
@@ -53,7 +53,7 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm-windows jsoncpp:arm-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x64-windows jsoncpp:arm-windows-static
       - run:
           name: Modify Visual Studio
           command: |
@@ -65,7 +65,7 @@ jobs:
   build-arm64:
     executor:
       name: windows/server-2022
-      size: large
+      size: medium
     working_directory: ~\Web-Class-Helper
     steps:
       - checkout
@@ -75,7 +75,7 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm64-windows jsoncpp:arm64-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x64-windows jsoncpp:arm64-windows-static
       - run:
           name: Modify Visual Studio
           command: |
