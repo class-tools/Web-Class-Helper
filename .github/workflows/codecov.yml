@@ -19,10 +19,9 @@ jobs:
         run: |
           vcpkg integrate install
           vcpkg install jsoncpp:x64-windows jsoncpp:x64-windows-static
-      - name: Setup MSBuild and add to PATH
-        uses: microsoft/setup-msbuild@v1.1
-      - name: Run MSBuild
-        run: msbuild .\UnitTest\UnitTest.vcxproj /p:Configuration=Release /p:Platform=x64
+      - name: Build Solution
+        run: |
+          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x64"
       - name: Setup VSTest and add to PATH
         uses: darenm/Setup-VSTest@v1
       - name: Setup OpenCppCoverage and add to PATH

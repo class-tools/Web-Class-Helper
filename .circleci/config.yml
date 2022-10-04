@@ -53,7 +53,7 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x64-windows jsoncpp:arm-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm-windows jsoncpp:arm-windows-static
       - run:
           name: Modify Visual Studio
           command: |
@@ -75,7 +75,7 @@ jobs:
             & git clone https://github.com/microsoft/vcpkg.git $env:USERPROFILE\vcpkg
             & $env:USERPROFILE\vcpkg\bootstrap-vcpkg.bat
             & $env:USERPROFILE\vcpkg\vcpkg integrate install
-            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:x64-windows jsoncpp:arm64-windows-static
+            & $env:USERPROFILE\vcpkg\vcpkg install jsoncpp:arm64-windows jsoncpp:arm64-windows-static
       - run:
           name: Modify Visual Studio
           command: |
