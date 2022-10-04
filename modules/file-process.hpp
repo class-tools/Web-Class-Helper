@@ -1,5 +1,5 @@
 /*
-Web Class Helper File Process Module Header File 2.1.0
+Web Class Helper File Processing Module Header File 2.1.0
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc

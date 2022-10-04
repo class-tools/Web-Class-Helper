@@ -1,7 +1,11 @@
-/x86/
 /x64/
+/x86/
 /ARM/
 /ARM64/
+/UnitTest/x64/
+/UnitTest/x86/
+/UnitTest/ARM/
+/UnitTest/ARM64/
 /.vscode/
 /.vs/
 /genexe/

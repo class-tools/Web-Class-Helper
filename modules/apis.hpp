@@ -385,21 +385,21 @@ WCH_Version WCH_GetVersion(wstring _in) {
 	WCH_Version _res;
 	size_t _pos = _in.find(L".");
 	if (_pos != wstring::npos) {
-		_res.X = stoi(_in.substr(0, _pos));
+		_res.X = stoull(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
 	_pos = _in.find(L".");
 	if (_pos != wstring::npos) {
-		_res.Y = stoi(_in.substr(0, _pos));
+		_res.Y = stoull(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
-	_res.Z = stoi(_in);
+	_res.Z = stoull(_in);
 	return _res;
 }
 
-size_t WCH_GetNumDigits(size_t _n) {
+uint64_t WCH_GetNumDigits(uint64_t _n) {
 	// Get digits of a number.
-	size_t _cnt = 1;
+	uint64_t _cnt = 1;
 	while ((_n /= 10) != 0) {
 		_cnt++;
 	}

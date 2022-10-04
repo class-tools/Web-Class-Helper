@@ -223,9 +223,12 @@ struct WCH_Data_Body {
 };
 
 struct WCH_Version {
-	int32_t X {};
-	int32_t Y {};
-	int32_t Z {};
+	uint64_t X {};
+	uint64_t Y {};
+	uint64_t Z {};
+	bool operator ==(const WCH_Version &_in) {
+		return (X == _in.X && Y == _in.Y && Z == _in.Z);
+	}
 };
 
 const array<wstring, 7> WCH_WDName {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
