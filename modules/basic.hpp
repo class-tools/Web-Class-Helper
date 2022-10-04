@@ -226,7 +226,7 @@ struct WCH_Version {
 	uint64_t X {};
 	uint64_t Y {};
 	uint64_t Z {};
-	bool operator ==(const WCH_Version &_in) {
+	bool operator==(const WCH_Version& _in) {
 		return (X == _in.X && Y == _in.Y && Z == _in.Z);
 	}
 };
