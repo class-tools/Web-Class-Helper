@@ -86,6 +86,9 @@ void WCH_Init_Var() {
 #if WCH_VER_TYPE == 2
 	WCH_window_title.append(L" Public Preview");
 #endif
+#if WCH_VER_TYPE == 3
+	WCH_window_title.append(L" Release Candidate");
+#endif
 #if WCH_VER_TYPE != 0
 	WCH_window_title.append(L" Build " + to_wstring(WCH_VER_BUILD));
 #endif
@@ -114,6 +117,9 @@ void WCH_Init_Ver() {
 #endif
 #if WCH_VER_TYPE == 2
 	vertype = L"Public Preview";
+#endif
+#if WCH_VER_TYPE == 3
+	vertype = L"Release Candidate";
 #endif
 #if WCH_VER_TYPE != 0
 	WCH_SetWindowStatus(false);

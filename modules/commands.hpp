@@ -133,11 +133,11 @@ void WCH_update() {
 			throw runtime_error("");
 		}
 		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER_MAIN), WCH_GetVersion(res))) {
-			wcout << L"Program version is less than latest released version, jumping to releases page..." << endl;
+			wcout << L"Program version is less than latest formal released version, jumping to releases page..." << endl;
 			_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Updating to version \"" + res + L"\"");
 		} else {
-			wcout << L"Program version equals or is greater than latest released version." << endl;
+			wcout << L"Program version equals or is greater than latest formal released version." << endl;
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Program version equals or is greater than \"" + res + L"\"");
 		}
 		DeleteFileW(L"WCH_UPD.tmp");

@@ -160,10 +160,10 @@ using std::this_thread::sleep_for;
 #define WCH_HOTKEY_SHOW 121
 #define WCH_MENU_SHOW 11461
 #define WCH_MENU_QUIT 11462
-#define WCH_LOG_STATUS_INFO L"[INFO]"
-#define WCH_LOG_STATUS_DEBUG L"[DEBUG]"
-#define WCH_LOG_STATUS_WARN L"[WARN]"
-#define WCH_LOG_STATUS_ERROR L"[ERROR]"
+#define WCH_LOG_STATUS_INFO TEXT("[INFO]")
+#define WCH_LOG_STATUS_DEBUG TEXT("[DEBUG]")
+#define WCH_LOG_STATUS_WARN TEXT("[WARN]")
+#define WCH_LOG_STATUS_ERROR TEXT("[ERROR]")
 
 class GdiplusWrapper {
 public:
