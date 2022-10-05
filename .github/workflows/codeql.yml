@@ -24,14 +24,13 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:x64-windows jsoncpp:x64-windows-static
-      - name: Build Solution
-        run: |
-          & "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\devenv.com" WCH.sln /Rebuild "Release|x64"
+          vcpkg install jsoncpp:arm-windows jsoncpp:arm-windows-static
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
           config-file: .\.github\codeql\codeql-config.yml
+      - name: Build solution
+        uses: github/codeql-action/autobuild@v2
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2

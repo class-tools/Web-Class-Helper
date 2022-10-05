@@ -28,6 +28,9 @@ public:
 	}
 	TEST_METHOD(EncodeURL) {
 		Assert::AreEqual(UrlEncode("测试").c_str(), "%E6%B5%8B%E8%AF%95");
+		Assert::AreEqual(UrlEncode("测 试").c_str(), "%E6%B5%8B+%E8%AF%95");
+		Assert::AreEqual(UrlEncode("测.试").c_str(), "%E6%B5%8B.%E8%AF%95");
+		Assert::AreEqual(UrlEncode("测A试").c_str(), "%E6%B5%8BA%E8%AF%95");
 	}
 	TEST_METHOD(StrSplit) {
 		vector<wstring> Temp;
@@ -35,8 +38,12 @@ public:
 		Assert::IsTrue(WCH_split(L"A BC") == Temp);
 		Temp = {L"A B", L"C"};
 		Assert::IsTrue(WCH_split(L"\"A B\" C") == Temp);
+		Temp = { L"A", L"B", L"C"};
+		Assert::IsTrue(WCH_split(L"A B C") == Temp);
 		Temp = {L"你", L"好 啊"};
 		Assert::IsTrue(WCH_split(L"你 \"好 啊\"") == Temp);
+		Temp = {L"Incorrect"};
+		Assert::IsTrue(WCH_split(L"A B C\"") == Temp);
 	}
 	TEST_METHOD(StrDisplaySize) {
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"Test"), (size_t)4);
