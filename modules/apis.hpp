@@ -79,11 +79,11 @@ void WCH_PrintChar(size_t _times, wchar_t _c) {
 	}
 }
 
-wstring StrToWstr(string str) {
+wstring StrToWstr(const string& str) {
 	// Convert multiple byte string to wide string.
 	wstring result;
 	int32_t len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), NULL, 0);
-	TCHAR* buffer = new TCHAR[len + 1];
+	TCHAR* buffer = new TCHAR[(size_t)len + 1];
 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), buffer, len);
 	buffer[len] = '\0';
 	result.append(buffer);
@@ -91,11 +91,11 @@ wstring StrToWstr(string str) {
 	return result;
 }
 
-string WstrToStr(wstring wstr) {
+string WstrToStr(const wstring& wstr) {
 	// Convert wide string to multiple byte string.
 	string result;
 	int32_t len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int32_t)wstr.size(), NULL, 0, NULL, NULL);
-	char* buffer = new char[len + 1];
+	char* buffer = new char[(size_t)len + 1];
 	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int32_t)wstr.size(), buffer, len, NULL, NULL);
 	buffer[len] = '\0';
 	result.append(buffer);
@@ -103,7 +103,7 @@ string WstrToStr(wstring wstr) {
 	return result;
 }
 
-string UrlEncode(const string _in) {
+string UrlEncode(const string& _in) {
 	// Get URL encode result.
 	string _res = "";
 	for (size_t i = 0; i < _in.size(); i++) {
@@ -218,7 +218,7 @@ wstring WCH_GetUniIdent() {
 	return L"11111" + to_wstring(stoll(_res) % 99991);
 }
 
-size_t WCH_GetWstrDisplaySize(wstring _in) {
+size_t WCH_GetWstrDisplaySize(const wstring& _in) {
 	// Get display length of wide string.
 	size_t _size = 0;
 	for (size_t i = 0; i < _in.size(); i++) {
@@ -328,14 +328,14 @@ void WCH_SaveImg() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Saving image to \"" + SavePath + L"\"");
 }
 
-void WCH_CheckAndDeleteFile(wstring _filename) {
+void WCH_CheckAndDeleteFile(const wstring& _filename) {
 	// Delete a file if it exists.
 	if (_waccess(_filename.c_str(), 0) != -1) {
 		DeleteFileW(_filename.c_str());
 	}
 }
 
-bool WCH_FileIsBlank(wstring _filename) {
+bool WCH_FileIsBlank(const wstring& _filename) {
 	// Check if a file is blank.
 	if (_waccess(_filename.c_str(), 0) != -1) {
 		wfin.open(_filename, ios::in);
@@ -351,7 +351,7 @@ bool WCH_FileIsBlank(wstring _filename) {
 	return true;
 }
 
-bool WCH_TaskKill(wstring name) {
+bool WCH_TaskKill(const wstring& name) {
 	// Kill a task by system command.
 	_wsystem((L"TASKKILL /F /IM " + name + L" > WCH_SYSTEM_NORMAL.tmp 2> WCH_SYSTEM_ERROR.tmp").c_str());
 	bool _res = (!WCH_FileIsBlank(L"WCH_SYSTEM_NORMAL.tmp") && WCH_FileIsBlank(L"WCH_SYSTEM_ERROR.tmp"));
@@ -360,7 +360,7 @@ bool WCH_TaskKill(wstring name) {
 	return _res;
 }
 
-bool WCH_CheckVersion(const WCH_Version _Fir, const WCH_Version _Sec) {
+bool WCH_CheckVersion(const WCH_Version& _Fir, const WCH_Version& _Sec) {
 	if (_Fir.X < _Sec.X) {
 		return true;
 	} else if (_Fir.X > _Sec.X) {
@@ -439,7 +439,7 @@ void WCH_ProgressBar() {
 	for (int32_t i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
 		WCH_PrintProgressBar(i, (int32_t)((WCH_ProgressBarTot - i) * _pro), true);
-		WCH_TBL->SetProgressValue(WCH_Win_hWnd, (unsigned long long)((WCH_ProgressBarTot - i) * _pro), 100);
+		WCH_TBL->SetProgressValue(WCH_Win_hWnd, (uint64_t)((WCH_ProgressBarTot - i) * _pro), 100);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
@@ -524,7 +524,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return DefWindowProcW(hWnd, message, wParam, lParam);
 }
 
-void WCH_ShowBugMessagebox(int32_t errorcode, wstring errormsg) {
+void WCH_ShowBugMessagebox(int32_t errorcode, const wstring& errormsg) {
 	// Show messagebox to inform a bug to user.
 	wcout << L"\a";
 	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);

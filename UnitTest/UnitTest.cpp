@@ -15,8 +15,8 @@ Contributors: ren-yc
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace UnitTest {
-TEST_CLASS(UnitTest) {
+namespace APIs {
+TEST_CLASS(String) {
 public:
 	TEST_METHOD(StrConvert) {
 		Assert::AreEqual(StrToWstr("Test").c_str(), L"Test");
@@ -50,6 +50,10 @@ public:
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"测试"), (size_t)4);
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"テスト"), (size_t)6);
 	}
+};
+
+TEST_CLASS(Version) {
+public:
 	TEST_METHOD(CheckVersion) {
 		Assert::AreEqual(WCH_CheckVersion({0, 0, 0}, {0, 0, 0}), false);
 		Assert::AreEqual(WCH_CheckVersion({0, 0, 0}, {2147483647, 2147483647, 2147483647}), true);
@@ -61,6 +65,10 @@ public:
 		Temp = {2147483647, 2147483647, 2147483647};
 		Assert::IsTrue(WCH_GetVersion(L"2147483647.2147483647.2147483647") == Temp);
 	}
+};
+
+TEST_CLASS(Other) {
+public:
 	TEST_METHOD(NumDigits) {
 		Assert::AreEqual(WCH_GetNumDigits((size_t)0), (size_t)1);
 		Assert::AreEqual(WCH_GetNumDigits((size_t)18446744073709551615), (size_t)20);

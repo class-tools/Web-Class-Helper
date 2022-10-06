@@ -9,12 +9,12 @@ Contributors: jsh-jsh ren-yc
 #if WCH_VER_TYPE != 0
 	#define WCH_VER_BUILD 6
 #endif
-#include "modules/file-process.hpp"
-#include "modules/init.hpp"
-#include "modules/commands.hpp"
-#include "modules/functions.hpp"
-#include "modules/apis.hpp"
-#include "modules/basic.hpp"
+#include "./modules/file-process.hpp"
+#include "./modules/init.hpp"
+#include "./modules/commands.hpp"
+#include "./modules/functions.hpp"
+#include "./modules/apis.hpp"
+#include "./modules/basic.hpp"
 
 extern const array<wstring, 7> WCH_WDName;
 extern map<wstring, function<void()>> WCH_command_support;
