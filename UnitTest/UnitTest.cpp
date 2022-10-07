@@ -55,8 +55,9 @@ public:
 TEST_CLASS(Version) {
 public:
 	TEST_METHOD(CheckVersion) {
-		Assert::AreEqual(WCH_CheckVersion({0, 0, 0}, {0, 0, 0}), false);
-		Assert::AreEqual(WCH_CheckVersion({0, 0, 0}, {2147483647, 2147483647, 2147483647}), true);
+		WCH_Version Temp1 = {0, 0, 0}, Temp2 = {2147483647, 2147483647, 2147483647};
+		Assert::IsFalse(Temp1 < Temp1);
+		Assert::IsTrue(Temp1 < Temp2);
 	}
 	TEST_METHOD(GetVersion) {
 		WCH_Version Temp;

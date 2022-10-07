@@ -22,8 +22,8 @@
 
 ### 贡献名单
 
-| <img src="https://avatars.githubusercontent.com/u/53416099?v=4" width="60px"></br> ren-yc (Yuchen Ren) | <img src="https://avatars.githubusercontent.com/u/68993466?v=4" width="60px"></br> jsh-jsh (jinshuhang) |
-| :---: | :---: |
-| ![](https://shields.io/badge/Coding-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) | ![](https://shields.io/badge/Creator-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) |
+| <img src="https://avatars.githubusercontent.com/u/53416099?v=4" width="60px"></br> ren-yc (Yuchen Ren) | <img src="https://avatars.githubusercontent.com/u/68993466?v=4" width="60px"></br> jsh-jsh (jinshuhang) | <img src="https://avatars.githubusercontent.com/u/100132650?v=4" width="60px"></br> hjl2011 |
+| :---: | :---: | :---: |
+| ![](https://shields.io/badge/Coding-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) | ![](https://shields.io/badge/Creator-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) | ![](https://shields.io/badge/Coding-green?logo=visual-studio-code&style=for-the-badge)<br>![](https://shields.io/badge/BugTester-yellow?logo=open-bug-bounty&style=for-the-badge) |
 
 **更多信息请至 [Wiki](https://github.com/class-tools/Web-Class-Helper/wiki)**。

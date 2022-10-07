@@ -22,9 +22,9 @@ extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
-extern HWND WCH_Win_hWnd;
-extern HWND WCH_Tray_hWnd;
-extern HMENU WCH_hMenu;
+extern HWND WCH_window_handle;
+extern HWND WCH_tray_handle;
+extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
@@ -86,7 +86,7 @@ void WCH_quit() {
 	WCH_CheckAndDeleteFile(L"WCH_OW.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_FATE.tmp");
 	WCH_CheckAndDeleteFile(L"WCH_IDENT.tmp");
-	SendMessageW(WCH_Tray_hWnd, WM_DESTROY, NULL, NULL);
+	SendMessageW(WCH_tray_handle, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
 
@@ -132,7 +132,7 @@ void WCH_update() {
 		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
 			throw runtime_error("");
 		}
-		if (WCH_CheckVersion(WCH_GetVersion(WCH_VER_MAIN), WCH_GetVersion(res))) {
+		if (WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)) {
 			wcout << L"Program version is less than latest formal released version, jumping to releases page..." << endl;
 			_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Updating to version \"" + res + L"\"");

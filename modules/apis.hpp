@@ -22,9 +22,9 @@ extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
-extern HWND WCH_Win_hWnd;
-extern HWND WCH_Tray_hWnd;
-extern HMENU WCH_hMenu;
+extern HWND WCH_window_handle;
+extern HWND WCH_tray_handle;
+extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
@@ -66,7 +66,7 @@ void WCH_Sleep(int32_t _ms) {
 	}
 }
 
-void WCH_PrintColor(WORD _mode) {
+void WCH_PrintColor(uint16_t _mode) {
 	// Change console text color.
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _mode);
 }
@@ -107,13 +107,13 @@ string UrlEncode(const string& _in) {
 	// Get URL encode result.
 	string _res = "";
 	for (size_t i = 0; i < _in.size(); i++) {
-		if (isalnum((unsigned char)_in[i]) || _in[i] == '-' || _in[i] == '_' || _in[i] == '.' || _in[i] == '~') {
+		if (isalnum((uint8_t)_in[i]) || _in[i] == '-' || _in[i] == '_' || _in[i] == '.' || _in[i] == '~') {
 			_res += _in[i];
 		} else if (_in[i] == ' ') {
 			_res += "+";
 		} else {
-			char _tmp1 = (unsigned char)_in[i] >> 4;
-			char _tmp2 = (unsigned char)_in[i] % 16;
+			char _tmp1 = (uint8_t)_in[i] >> 4;
+			char _tmp2 = (uint8_t)_in[i] % 16;
 			_res += '%';
 			_res += _tmp1 > 9 ? _tmp1 + 55 : _tmp1 + 48;
 			_res += _tmp2 > 9 ? _tmp2 + 55 : _tmp2 + 48;
@@ -233,7 +233,7 @@ size_t WCH_GetWstrDisplaySize(const wstring& _in) {
 
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
-	ShowWindow(WCH_Win_hWnd, flag);
+	ShowWindow(WCH_window_handle, flag);
 	WCH_cmd_line = flag;
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag == true ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
@@ -246,10 +246,10 @@ void WCH_SetTrayStatus(bool flag) {
 
 void WCH_ShowTaskBarError() {
 	// Show error on task bar icon.
-	WCH_TBL->SetProgressValue(WCH_Win_hWnd, 100, 100);
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_ERROR);
+	WCH_TBL->SetProgressValue(WCH_window_handle, 100, 100);
+	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_ERROR);
 	WCH_Sleep(1000);
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 }
 
 void WCH_InputCodeIncorrect() {
@@ -360,26 +360,6 @@ bool WCH_TaskKill(const wstring& name) {
 	return _res;
 }
 
-bool WCH_CheckVersion(const WCH_Version& _Fir, const WCH_Version& _Sec) {
-	if (_Fir.X < _Sec.X) {
-		return true;
-	} else if (_Fir.X > _Sec.X) {
-		return false;
-	} else {
-		if (_Fir.Y < _Sec.Y) {
-			return true;
-		} else if (_Fir.Y > _Sec.Y) {
-			return false;
-		} else {
-			if (_Fir.Z < _Sec.Z) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-	}
-}
-
 WCH_Version WCH_GetVersion(wstring _in) {
 	// Get version from string.
 	WCH_Version _res;
@@ -434,16 +414,16 @@ void WCH_ProgressBar() {
 	bool _cd = WCH_count_down;
 	double _pro = 100.0 / WCH_ProgressBarTot;
 	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NORMAL);
-	WCH_TBL->SetProgressValue(WCH_Win_hWnd, 0, 100);
+	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NORMAL);
+	WCH_TBL->SetProgressValue(WCH_window_handle, 0, 100);
 	for (int32_t i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
 		WCH_PrintProgressBar(i, (int32_t)((WCH_ProgressBarTot - i) * _pro), true);
-		WCH_TBL->SetProgressValue(WCH_Win_hWnd, (uint64_t)((WCH_ProgressBarTot - i) * _pro), 100);
+		WCH_TBL->SetProgressValue(WCH_window_handle, (uint64_t)((WCH_ProgressBarTot - i) * _pro), 100);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 	wcout << endl;
 }
 
@@ -470,10 +450,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			WCH_NID.hIcon = (HICON)LoadImageW(NULL, L"WCH.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
-			WCH_hMenu = CreatePopupMenu();
-			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
-			AppendMenuW(WCH_hMenu, MF_SEPARATOR, 0, NULL);
-			AppendMenuW(WCH_hMenu, MF_STRING, WCH_MENU_QUIT, L"Quit");
+			WCH_menu_handle = CreatePopupMenu();
+			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
+			AppendMenuW(WCH_menu_handle, MF_SEPARATOR, 0, NULL);
+			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_QUIT, L"Quit");
 			break;
 		case WM_USER:
 			if (lParam == WM_LBUTTONDOWN) {
@@ -486,7 +466,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				int32_t xx;
 				GetCursorPos(&pt);
 				SetForegroundWindow(hWnd);
-				xx = TrackPopupMenu(WCH_hMenu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
+				xx = TrackPopupMenu(WCH_menu_handle, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
 #ifdef _DEBUG
 				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = " + to_wstring(xx) + L"\"");
 #endif
@@ -527,11 +507,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 void WCH_ShowBugMessagebox(int32_t errorcode, const wstring& errormsg) {
 	// Show messagebox to inform a bug to user.
 	wcout << L"\a";
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
+	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_INDETERMINATE);
 	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by opening a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
 		_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/issues/");
 	}
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 }
 
 void WCH_signalHandler() {

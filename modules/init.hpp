@@ -22,9 +22,9 @@ extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
-extern HWND WCH_Win_hWnd;
-extern HWND WCH_Tray_hWnd;
-extern HMENU WCH_hMenu;
+extern HWND WCH_window_handle;
+extern HWND WCH_tray_handle;
+extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
@@ -95,7 +95,7 @@ void WCH_Init_Var() {
 	WCH_window_title.append(L" (");
 	WCH_window_title.append(WCH_Framework);
 	WCH_window_title.append(L")");
-	WCH_Win_hWnd = GetConsoleWindow();
+	WCH_window_handle = GetConsoleWindow();
 	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
 	JSON_SWB.settings_ = []() {
 		Json::Value def;
@@ -176,16 +176,16 @@ void WCH_Init_Log() {
 void WCH_Init_Win() {
 	// Initialization for window.
 	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
-		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_INDETERMINATE);
+		WCH_TBL->SetProgressState(WCH_window_handle, TBPF_INDETERMINATE);
 		MessageBoxW(NULL, L"Application is already running.\nQuiting...", WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
-		WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+		WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
 		WCH_command_list.clear();
 		WCH_command_list.push_back(L"quit");
 		exit(0);
 	}
 	SetConsoleTitleW(WCH_window_title.c_str());
-	WCH_TBL->SetProgressState(WCH_Win_hWnd, TBPF_NOPROGRESS);
+	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 }
 
 void WCH_Init_Loop() {

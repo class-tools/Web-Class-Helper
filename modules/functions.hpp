@@ -22,9 +22,9 @@ extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
 extern wstring WCH_command;
 extern wstring WCH_ProgressBarStr;
-extern HWND WCH_Win_hWnd;
-extern HWND WCH_Tray_hWnd;
-extern HMENU WCH_hMenu;
+extern HWND WCH_window_handle;
+extern HWND WCH_tray_handle;
+extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
@@ -106,10 +106,10 @@ void WCH_message_loop() {
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = WCH_window_title.c_str();
 	RegisterClassW(&wndclass);
-	WCH_Tray_hWnd = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
-	ShowWindow(WCH_Tray_hWnd, SW_HIDE);
-	UpdateWindow(WCH_Tray_hWnd);
-	RegisterHotKey(WCH_Tray_hWnd, WCH_HOTKEY_SHOW, MOD_CONTROL, VK_DOWN);
+	WCH_tray_handle = CreateWindowExW(WS_EX_TOOLWINDOW, WCH_window_title.c_str(), WCH_window_title.c_str(), WS_POPUP, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, NULL, NULL);
+	ShowWindow(WCH_tray_handle, SW_HIDE);
+	UpdateWindow(WCH_tray_handle);
+	RegisterHotKey(WCH_tray_handle, WCH_HOTKEY_SHOW, MOD_CONTROL, VK_DOWN);
 	while (GetMessageW(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);

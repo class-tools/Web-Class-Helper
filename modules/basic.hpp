@@ -174,7 +174,7 @@ public:
 	~GdiplusWrapper() {
 		Gdiplus::GdiplusShutdown(gdiplusToken);
 	}
-	int32_t GetEncoderClsid(const WCHAR* format, CLSID* pClsid) {
+	int32_t GetEncoderClsid(const wchar_t* format, CLSID* pClsid) {
 		UINT num = 0;
 		UINT size = 0;
 		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
@@ -197,7 +197,7 @@ public:
 		free(pImageCodecInfo);
 		return -1;
 	}
-	void SaveImage(HBITMAP hBitmap, const WCHAR* filename, const WCHAR* format) {
+	void SaveImage(HBITMAP hBitmap, const wchar_t* filename, const wchar_t* format) {
 		CLSID pngClsid;
 		Gdiplus::Bitmap bitmap(hBitmap, NULL);
 		GetEncoderClsid(format, &pngClsid);
@@ -229,6 +229,25 @@ struct WCH_Version {
 	bool operator==(const WCH_Version& _in) {
 		return (X == _in.X && Y == _in.Y && Z == _in.Z);
 	}
+	bool operator<(const WCH_Version& _in) {
+		if (X < _in.X) {
+			return true;
+		} else if (X > _in.X) {
+			return false;
+		} else {
+			if (Y < _in.Y) {
+				return true;
+			} else if (Y > _in.Y) {
+				return false;
+			} else {
+				if (Z < _in.Z) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+	}
 };
 
 const array<wstring, 7> WCH_WDName {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
@@ -241,9 +260,9 @@ set<pair<wstring, wstring>> WCH_work_list;
 wstring WCH_window_title;
 wstring WCH_command;
 wstring WCH_ProgressBarStr;
-HWND WCH_Win_hWnd;
-HWND WCH_Tray_hWnd;
-HMENU WCH_hMenu;
+HWND WCH_window_handle;
+HWND WCH_tray_handle;
+HMENU WCH_menu_handle;
 NOTIFYICONDATA WCH_NID;
 ATL::CComPtr<ITaskbarList3> WCH_TBL;
 Json::Value WCH_Settings;
