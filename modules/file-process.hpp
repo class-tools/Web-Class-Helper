@@ -1,5 +1,5 @@
 /*
-Web Class Helper File Processing Module Header File 2.1.0
+Web Class Helper File Processing Module Header File 2.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -12,9 +12,11 @@ Contributors: jsh-jsh ren-yc
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_WDName;
+extern const array<wstring, 7> WCH_weekday_list;
+extern const array<wstring, 1> WCH_language_list;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern set<wstring> WCH_language_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
@@ -28,6 +30,7 @@ extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
+extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
@@ -71,7 +74,7 @@ void WCH_printlog(wstring _mode, wstring _info) {
 void WCH_read_clock() {
 	// Read clock data.
 	WCH_Time q = WCH_GetTime();
-	wstring NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
+	wstring NowWeekDay = WCH_weekday_list[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	wstring FilePath = L"data/clock.json";
 	Json::Value val;
 	fin.open(FilePath);
@@ -158,6 +161,11 @@ void WCH_read_settings() {
 			if (!WCH_Settings.isMember("StartTime")) {
 				throw runtime_error("");
 			}
+			if (WCH_Settings.isMember("Language")) {
+				if (find(WCH_language_list.begin(), WCH_language_list.end(), StrToWstr(WCH_Settings["Language"].asString())) == WCH_language_list.end()) {
+					throw runtime_error("");
+				}
+			}
 			for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
 				if (!WCH_Settings.isMember(WstrToStr(get<0>(*it)))) {
 					throw runtime_error("");
@@ -177,26 +185,48 @@ void WCH_read_settings() {
 	fin.close();
 }
 
+void WCH_read_language() {
+	// Read language data.
+	wstring FilePath = L"resources/" + StrToWstr(WCH_Settings["Language"].asString()) + L"/interactive.json";
+	fin.open(FilePath);
+	if (!fin.is_open()) {
+		goto ERR;
+	}
+	if (JSON_Reader.parse(fin, WCH_Language)) {
+		try {
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+			for (auto it = WCH_language_support.begin(); it != WCH_language_support.end(); it++) {
+				if (!WCH_Language.isMember(WstrToStr(*it))) {
+					throw runtime_error("");
+				}
+			}
+		} catch (...) {
+			goto ERR;
+		}
+	} else {
+	ERR:
+		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+		WCH_FileProcessingFailed();
+		raise(SIGBREAK);
+	}
+	fin.close();
+}
+
 void WCH_read() {
 	// Read data.
 	WCH_cmd_line = false;
-	wcout << L"Reading data..." << endl;
 	WCH_read_clock();
 	WCH_read_task();
 	WCH_read_work();
 	WCH_read_settings();
-	WCH_ProgressBarTot = 3;
-	thread T(WCH_ProgressBar);
-	T.detach();
-	WCH_Sleep(4000);
+	WCH_read_language();
 	WCH_cmd_line = true;
-	_wsystem(L"CLS");
 }
 
 void WCH_save_clock() {
 	// Save clock data.
 	WCH_Time q = WCH_GetTime();
-	wstring NowWeekDay = WCH_WDName[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
+	wstring NowWeekDay = WCH_weekday_list[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
 	wstring FilePath = L"data/clock.json";
 	Json::Value val;
 	fin.open(FilePath);

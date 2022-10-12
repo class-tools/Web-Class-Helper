@@ -1,5 +1,5 @@
 /*
-Web Class Helper Basic Module Header File 2.1.0
+Web Class Helper Basic Module Header File 2.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -250,9 +250,11 @@ struct WCH_Version {
 	}
 };
 
-const array<wstring, 7> WCH_WDName {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+const array<wstring, 7> WCH_weekday_list {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+const array<wstring, 1> WCH_language_list {L"en-US"};
 map<wstring, function<void()>> WCH_command_support;
 set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+set<wstring> WCH_language_support;
 vector<wstring> WCH_command_list;
 set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 set<wstring> WCH_task_list;
@@ -266,6 +268,7 @@ HMENU WCH_menu_handle;
 NOTIFYICONDATA WCH_NID;
 ATL::CComPtr<ITaskbarList3> WCH_TBL;
 Json::Value WCH_Settings;
+Json::Value WCH_Language;
 int32_t WCH_clock_num;
 int32_t WCH_task_num;
 int32_t WCH_work_num;

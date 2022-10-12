@@ -1,5 +1,5 @@
 /*
-Web Class Helper Functions Module Header File 2.1.0
+Web Class Helper Functions Module Header File 2.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
@@ -12,9 +12,11 @@ Contributors: jsh-jsh ren-yc
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_WDName;
+extern const array<wstring, 7> WCH_weekday_list;
+extern const array<wstring, 1> WCH_language_list;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern set<wstring> WCH_language_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
@@ -28,6 +30,7 @@ extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
+extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;

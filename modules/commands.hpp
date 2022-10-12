@@ -1,5 +1,5 @@
 /*
-Web Class Helper Commands Module Header File 2.1.0
+Web Class Helper Commands Module Header File 2.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc hjl2011
@@ -12,9 +12,11 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_WDName;
+extern const array<wstring, 7> WCH_weekday_list;
+extern const array<wstring, 1> WCH_language_list;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern set<wstring> WCH_language_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
@@ -28,6 +30,7 @@ extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
+extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
@@ -66,8 +69,7 @@ void WCH_clear() {
 	}
 	system("cls");
 	wcout << WCH_window_title << endl;
-	wcout << L"Copyright (c) 2022 Class Tools Develop Team." << endl;
-	wcout << L"Type \"help\", \"update\" or \"license\" for more information." << endl;
+	wcout << StrToWstr(WCH_Language["Start"].asString()) << endl;
 }
 
 void WCH_quit() {
@@ -76,7 +78,7 @@ void WCH_quit() {
 		WCH_InputCodeIncorrect();
 		return;
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Exiting \"" + WCH_window_title + L"\"");
+	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Exiting \"Web Class Helper {}\"", WCH_VER_MAIN));
 	WCH_cmd_line = false;
 	WCH_program_end = true;
 	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_NORMAL.tmp");
@@ -105,7 +107,7 @@ void WCH_wiki() {
 		WCH_InputCodeIncorrect();
 		return;
 	}
-	wcout << L"Jumping to wiki page..." << endl;
+	wcout << StrToWstr(WCH_Language["JumpWiki"].asString()) << endl;
 	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/wiki/");
 }
 
@@ -116,7 +118,7 @@ void WCH_update() {
 		return;
 	}
 	try {
-		wcout << L"Checking update..." << endl;
+		wcout << StrToWstr(WCH_Language["CheckUpdate"].asString()) << endl;
 		WCH_ProgressBarTot = 5;
 		thread T(WCH_ProgressBar);
 		T.detach();
@@ -133,11 +135,11 @@ void WCH_update() {
 			throw runtime_error("");
 		}
 		if (WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)) {
-			wcout << L"Program version is less than latest formal released version, jumping to releases page..." << endl;
+			wcout << StrToWstr(WCH_Language["FindUpdate"].asString()) << endl;
 			_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Updating to version \"" + res + L"\"");
 		} else {
-			wcout << L"Program version equals or is greater than latest formal released version." << endl;
+			wcout << StrToWstr(WCH_Language["NoUpdate"].asString()) << endl;
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Program version equals or is greater than \"" + res + L"\"");
 		}
 		DeleteFileW(L"WCH_UPD.tmp");
@@ -201,7 +203,7 @@ void WCH_set_config() {
 		WCH_InputCodeIncorrect();
 		return;
 	}
-	if (WCH_command_list[2] == L"ScreenshotSavePath" && WCH_command_list[3][WCH_command_list[3].size() - 1] != L'\\') {
+	if ((WCH_command_list[2] == L"ScreenshotSavePath" && WCH_command_list[3][WCH_command_list[3].size() - 1] != L'\\') || WCH_command_list[2] == L"Language" && find(WCH_language_list.begin(), WCH_language_list.end(), StrToWstr(WCH_Settings["Language"].asString())) == WCH_language_list.end()) {
 		WCH_InputCodeIncorrect();
 		return;
 	}
@@ -225,11 +227,11 @@ void WCH_list_config() {
 	if (MAXK == 0 && MAXV == 0) {
 		return;
 	}
-	MAXK = max(MAXK, 3);
-	MAXV = max(MAXV, 5);
-	wcout << L"Key";
-	WCH_PrintChar(MAXK - 3, L' ');
-	wcout << L" | Value" << endl;
+	MAXK = max(MAXK, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Key"].asString())));
+	MAXV = max(MAXV, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Value"].asString())));
+	wcout << StrToWstr(WCH_Language["Key"].asString());
+	WCH_PrintChar(MAXK - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Key"].asString())), L' ');
+	wcout << L" | " + StrToWstr(WCH_Language["Value"].asString()) << endl;
 	WCH_PrintChar(MAXK, L'-');
 	wcout << L" | ";
 	WCH_PrintChar(MAXV, L'-');
@@ -347,14 +349,14 @@ void WCH_list_clock() {
 	if (MAXH == 0 && MAXM == 0 && MAXT == 0) {
 		return;
 	}
-	MAXH = max(MAXH, 4);
-	MAXM = max(MAXM, 6);
-	MAXT = max(MAXT, 4);
-	wcout << L"Hour";
-	WCH_PrintChar(MAXH - 4, L' ');
-	wcout << L" | Minute";
-	WCH_PrintChar(MAXM - 6, L' ');
-	wcout << L" | Name" << endl;
+	MAXH = max(MAXH, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Hour"].asString())));
+	MAXM = max(MAXM, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Minute"].asString())));
+	MAXT = max(MAXT, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Name"].asString())));
+	wcout << StrToWstr(WCH_Language["Hour"].asString());
+	WCH_PrintChar(MAXH - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Hour"].asString())), L' ');
+	wcout << L" | " + StrToWstr(WCH_Language["Minute"].asString());
+	WCH_PrintChar(MAXM - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Minute"].asString())), L' ');
+	wcout << L" | " + StrToWstr(WCH_Language["Name"].asString()) << endl;
 	WCH_PrintChar(MAXH, L'-');
 	wcout << L" | ";
 	WCH_PrintChar(MAXM, L'-');
@@ -446,8 +448,8 @@ void WCH_list_task() {
 	if (MAX == 0) {
 		return;
 	}
-	MAX = max(MAX, 12);
-	wcout << L"Process Name" << endl;
+	MAX = max(MAX, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["ProcessName"].asString())));
+	wcout << StrToWstr(WCH_Language["ProcessName"].asString()) << endl;
 	WCH_PrintChar(MAX, L'-');
 	wcout << endl;
 	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
@@ -534,11 +536,11 @@ void WCH_list_work() {
 	if (MAXN == 0 && MAXT == 0) {
 		return;
 	}
-	MAXN = max(MAXN, 4);
-	MAXT = max(MAXT, 3);
-	wcout << L"Name";
-	WCH_PrintChar(MAXN - 4, L' ');
-	wcout << L" | Tag" << endl;
+	MAXN = max(MAXN, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Name"].asString())));
+	MAXT = max(MAXT, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Tag"].asString())));
+	wcout << StrToWstr(WCH_Language["Name"].asString());
+	WCH_PrintChar(MAXN - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Name"].asString())), L' ');
+	wcout << L" | " + StrToWstr(WCH_Language["Tag"].asString()) << endl;
 	WCH_PrintChar(MAXN, L'-');
 	wcout << L" | ";
 	WCH_PrintChar(MAXT, L'-');
@@ -583,7 +585,7 @@ void WCH_game() {
 	vector<wstring> zv;
 	zv.push_back(L"0");
 	while (true) {
-		wcout << L"Please input your number (1 ~ 10000): ";
+		wcout << StrToWstr(WCH_Language["InputNumber"].asString()) + L" (1 ~ 10000): ";
 		getline(wcin, z);
 		zv = WCH_split(z);
 		if (zv.size() == 0) {
@@ -593,24 +595,24 @@ void WCH_game() {
 		try {
 			inp = stoi(zv[0]);
 		} catch (...) {
-			wcout << L"Number out of range." << endl;
+			wcout << StrToWstr(WCH_Language["NumberOutOfRange"].asString()) << endl;
 			continue;
 		}
 		if (inp <= 0 || inp > 10000) {
-			wcout << L"Number out of range." << endl;
+			wcout << StrToWstr(WCH_Language["NumberOutOfRange"].asString()) << endl;
 			continue;
 		}
 		if (inp > ans) {
-			wcout << L"The answer is smaller." << endl;
+			wcout << StrToWstr(WCH_Language["NumberSmaller"].asString()) << endl;
 		} else if (inp < ans) {
-			wcout << L"The answer is bigger." << endl;
+			wcout << StrToWstr(WCH_Language["NumberBigger"].asString()) << endl;
 		} else {
 			break;
 		}
 	}
-	wcout << L"The number is " << ans << L".";
+	wcout << StrToWstr(WCH_Language["NumberAnswer"].asString()) + L" " << ans << L".";
 	if (flag) {
-		wcout << L" You WIN!";
+		wcout << L" " + StrToWstr(WCH_Language["NumberWin"].asString());
 	}
 	wcout << endl;
 }
@@ -627,7 +629,7 @@ void WCH_pi() {
 	WCH_SaveImg();
 	WCH_Sleep(500);
 	WCH_SetWindowStatus(true);
-	wcout << L"The picture is in the clipboard and be saved in your Pictures folder." << endl;
+	wcout << StrToWstr(WCH_Language["Pi"].asString()) << endl;
 }
 
 void WCH_count_down_func() {
@@ -644,7 +646,7 @@ void WCH_count_down_func() {
 			throw runtime_error("");
 		}
 		WCH_count_down = true;
-		wcout << L"Starting count down timer..." << endl;
+		wcout << StrToWstr(WCH_Language["CountDown"].asString()) << endl;
 		WCH_ProgressBarTot = h * 3600 + m * 60 + s;
 		WCH_ProgressBar();
 		if (StrToWstr(WCH_Settings["CountDownSoundPrompt"].asString()) == L"True") {
@@ -678,7 +680,7 @@ void WCH_anti_idle_func() {
 		return;
 	}
 	wstring ch;
-	wcout << L"Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ";
+	wcout << StrToWstr(WCH_Language["AntiIdle"].asString()) + L" (Y/N): ";
 	getline(wcin, ch);
 	if (ch == L"Y" || ch == L"y") {
 		WCH_SetWindowStatus(false);
@@ -791,7 +793,7 @@ void WCH_help() {
 		WCH_InputCodeIncorrect();
 		return;
 	}
-	wstring FilePath = L"resources/help.json";
+	wstring FilePath = L"resources/" + StrToWstr(WCH_Settings["Language"].asString()) + L"/help.json";
 	Json::Value val;
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 	fin.open(FilePath);
@@ -834,9 +836,9 @@ void WCH_save_cmd() {
 		return;
 	}
 	if (WCH_save_func(true)) {
-		wcout << L"Successfully saved all data." << endl;
+		wcout << StrToWstr(WCH_Language["DataSaved"].asString()) << endl;
 	} else {
-		wcout << L"No data to save." << endl;
+		wcout << StrToWstr(WCH_Language["DataNone"].asString()) << endl;
 	}
 }
 

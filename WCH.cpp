@@ -1,13 +1,13 @@
 /*
-Web Class Helper Main File 2.1.0
+Web Class Helper Main File 2.1.1
 This source code file is under MIT License.
 Copyright (c) 2022 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#define WCH_VER_MAIN TEXT("2.1.0")
+#define WCH_VER_MAIN TEXT("2.1.1")
 #define WCH_VER_TYPE 1
 #if WCH_VER_TYPE != 0
-	#define WCH_VER_BUILD 6
+	#define WCH_VER_BUILD 1
 #endif
 #include "./modules/file-process.hpp"
 #include "./modules/init.hpp"
@@ -16,9 +16,11 @@ Contributors: jsh-jsh ren-yc
 #include "./modules/apis.hpp"
 #include "./modules/basic.hpp"
 
-extern const array<wstring, 7> WCH_WDName;
+extern const array<wstring, 7> WCH_weekday_list;
+extern const array<wstring, 1> WCH_language_list;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern set<wstring> WCH_language_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
@@ -32,6 +34,7 @@ extern HMENU WCH_menu_handle;
 extern NOTIFYICONDATA WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
+extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
@@ -62,7 +65,7 @@ void WCH_save_settings();
 bool WCH_save_func(bool output);
 size_t WCH_GetNumDigits(size_t _n);
 
-int32_t wmain([[maybe_unused]] int argc, [[maybe_unused]] wchar_t *argv[]) {
+int32_t wmain([[maybe_unused]] int argc, [[maybe_unused]] wchar_t* argv[]) {
 	WCH_Init();
 	while (true) {
 		if (WCH_cmd_line) {
