@@ -314,7 +314,7 @@ bool WCH_save_func(bool output) {
 	// Save data. (Function)
 	if (WCH_clock_change != 0 || WCH_task_change != 0 || WCH_work_change != 0 || WCH_settings_change != 0) {
 		if (output) {
-			wcout << L"Saving data..." << endl;
+			wcout << StrToWstr(WCH_Language["DataSaving"].asString()) << endl;
 			WCH_ProgressBarTot = WCH_clock_change + WCH_task_change + WCH_work_change + WCH_settings_change;
 		}
 		WCH_clock_change = 0;

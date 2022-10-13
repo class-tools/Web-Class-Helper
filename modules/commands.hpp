@@ -72,13 +72,26 @@ void WCH_clear() {
 	wcout << StrToWstr(WCH_Language["Start"].asString()) << endl;
 }
 
-void WCH_quit() {
-	// Quit.
+void WCH_exit() {
+	// Exit.
 	if (WCH_command_list.size() != 1) {
 		WCH_InputCodeIncorrect();
 		return;
 	}
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Exiting \"Web Class Helper {}\"", WCH_VER_MAIN));
+	wstring fullver = L" ";
+#if WCH_VER_TYPE != 0
+	#if WCH_VER_TYPE == 1
+	fullver += L"Internal Preview";
+	#elif WCH_VER_TYPE == 2
+	fullver += L"Public Preview";
+	#elif WCH_VER_TYPE == 3
+	fullver += L"Release Candidate";
+	#endif
+	fullver += L" Build " + to_wstring(WCH_VER_BUILD);
+#else
+	fullver = L"";
+#endif
+	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Exiting \"Web Class Helper {}{}\"", WCH_VER_MAIN, fullver));
 	WCH_cmd_line = false;
 	WCH_program_end = true;
 	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_NORMAL.tmp");
@@ -144,7 +157,7 @@ void WCH_update() {
 		}
 		DeleteFileW(L"WCH_UPD.tmp");
 	} catch (...) {
-		WCH_PrintNetworkErr();
+		WCH_NetworkError();
 		return;
 	}
 }
@@ -203,7 +216,7 @@ void WCH_set_config() {
 		WCH_InputCodeIncorrect();
 		return;
 	}
-	if ((WCH_command_list[2] == L"ScreenshotSavePath" && WCH_command_list[3][WCH_command_list[3].size() - 1] != L'\\') || WCH_command_list[2] == L"Language" && find(WCH_language_list.begin(), WCH_language_list.end(), StrToWstr(WCH_Settings["Language"].asString())) == WCH_language_list.end()) {
+	if ((WCH_command_list[2] == L"ScreenshotSavePath" && WCH_command_list[3][WCH_command_list[3].size() - 1] != L'\\') || WCH_command_list[2] == L"Language" && find(WCH_language_list.begin(), WCH_language_list.end(), WCH_command_list[3]) == WCH_language_list.end()) {
 		WCH_InputCodeIncorrect();
 		return;
 	}
@@ -716,7 +729,7 @@ void WCH_trans() {
 		fin.close();
 		DeleteFileW(L"WCH_TRANS.tmp");
 	} catch (...) {
-		WCH_PrintNetworkErr();
+		WCH_NetworkError();
 		return;
 	}
 }
@@ -739,7 +752,7 @@ void WCH_ow() {
 		fin.close();
 		DeleteFileW(L"WCH_OW.tmp");
 	} catch (...) {
-		WCH_PrintNetworkErr();
+		WCH_NetworkError();
 		return;
 	}
 }
@@ -772,7 +785,7 @@ void WCH_fate() {
 		fin.close();
 		DeleteFileW(L"WCH_FATE.tmp");
 	} catch (...) {
-		WCH_PrintNetworkErr();
+		WCH_NetworkError();
 		return;
 	}
 }

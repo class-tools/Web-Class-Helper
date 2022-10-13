@@ -258,7 +258,7 @@ void WCH_ShowTaskBarError() {
 void WCH_InputCodeIncorrect() {
 	// Print text for incorrect inputs.
 	WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is incorrect, please check and try again");
-	wcout << L"Your input code is incorrect, please check and try again." << endl;
+	wcout << StrToWstr(WCH_Language["InputCodeIncorrect"].asString()) << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
 }
@@ -266,15 +266,15 @@ void WCH_InputCodeIncorrect() {
 void WCH_FileProcessingFailed() {
 	// Print text for failed file processings.
 	WCH_printlog(WCH_LOG_STATUS_ERROR, L"File processing failed. Please try reinstalling this program");
-	wcout << L"File processing failed. Please try reinstalling this program." << endl;
+	wcout << StrToWstr(WCH_Language["FileProcessingFailed"].asString()) << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
 }
 
-void WCH_PrintNetworkErr() {
+void WCH_NetworkError() {
 	// Print text for network errors.
 	WCH_printlog(WCH_LOG_STATUS_ERROR, L"An network error occurred, please check your network connection and try to update this program");
-	wcout << L"An network error occurred, please check your network connection and try to update this program." << endl;
+	wcout << StrToWstr(WCH_Language["NetworkError"].asString()) << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
 }
@@ -456,7 +456,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			WCH_menu_handle = CreatePopupMenu();
 			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
 			AppendMenuW(WCH_menu_handle, MF_SEPARATOR, 0, NULL);
-			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_QUIT, L"Quit");
+			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_EXIT, L"Exit");
 			break;
 		case WM_USER:
 			if (lParam == WM_LBUTTONDOWN) {
@@ -478,9 +478,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_SHOW\"");
 #endif
 					WCH_CheckHotkey();
-				} else if (xx == WCH_MENU_QUIT) {
+				} else if (xx == WCH_MENU_EXIT) {
 #ifdef _DEBUG
-					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_QUIT\"");
+					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_EXIT\"");
 #endif
 					raise(SIGBREAK);
 				} else if (xx == 0) {
@@ -518,13 +518,13 @@ void WCH_signalHandler() {
 	// Signal handler.
 	signal(SIGINT, []([[maybe_unused]] int32_t signum) {
 		WCH_command_list.clear();
-		WCH_command_list.push_back(L"quit");
+		WCH_command_list.push_back(L"exit");
 		wcout << endl;
 		exit(0);
 	});
 	signal(SIGBREAK, []([[maybe_unused]] int32_t signum) {
 		WCH_command_list.clear();
-		WCH_command_list.push_back(L"quit");
+		WCH_command_list.push_back(L"exit");
 		wcout << endl;
 		exit(0);
 	});

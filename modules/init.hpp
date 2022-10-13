@@ -73,7 +73,7 @@ void WCH_Init_Dir() {
 
 void WCH_Init_Bind() {
 	// Initialization for bind.
-	atexit(WCH_quit);
+	atexit(WCH_exit);
 	WCH_signalHandler();
 	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
 	WCH_TBL.CoCreateInstance(CLSID_TaskbarList);
@@ -113,7 +113,7 @@ void WCH_Init_Invar() {
 	WCH_command_support.insert(make_pair(L"clear", WCH_clear));
 	WCH_command_support.insert(make_pair(L"config", WCH_check_config));
 	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
-	WCH_command_support.insert(make_pair(L"quit", WCH_quit));
+	WCH_command_support.insert(make_pair(L"exit", WCH_exit));
 	WCH_settings_support.insert(make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?"));
 	WCH_settings_support.insert(make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"));
 	WCH_settings_support.insert(make_tuple(L"AutoSave", L"Boolean", L"True"));
@@ -127,6 +127,11 @@ void WCH_Init_Invar() {
 	WCH_language_support.insert(L"InternalPreview");
 	WCH_language_support.insert(L"PublicPreview");
 	WCH_language_support.insert(L"ReleaseCandidate");
+	WCH_language_support.insert(L"Build");
+	WCH_language_support.insert(L"PreviewWarning");
+	WCH_language_support.insert(L"InputCodeIncorrect");
+	WCH_language_support.insert(L"FileProcessingFailed");
+	WCH_language_support.insert(L"NetworkError");
 	WCH_language_support.insert(L"JumpWiki");
 	WCH_language_support.insert(L"CheckUpdate");
 	WCH_language_support.insert(L"FindUpdate");
@@ -147,6 +152,8 @@ void WCH_Init_Invar() {
 	WCH_language_support.insert(L"Pi");
 	WCH_language_support.insert(L"CountDown");
 	WCH_language_support.insert(L"AntiIdle");
+	WCH_language_support.insert(L"DataReading");
+	WCH_language_support.insert(L"DataSaving");
 	WCH_language_support.insert(L"DataSaved");
 	WCH_language_support.insert(L"DataNone");
 }
@@ -161,7 +168,20 @@ void WCH_Init_Log() {
 	WCH_Settings["StartTime"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
 	WCH_save_settings();
 	WCH_pre_start = false;
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Starting \"Web Class Helper {}\"", WCH_VER_MAIN));
+	wstring fullver = L" ";
+#if WCH_VER_TYPE != 0
+	#if WCH_VER_TYPE == 1
+	fullver += L"Internal Preview";
+	#elif WCH_VER_TYPE == 2
+	fullver += L"Public Preview";
+	#elif WCH_VER_TYPE == 3
+	fullver += L"Release Candidate";
+	#endif
+	fullver += L" Build " + to_wstring(WCH_VER_BUILD);
+#else
+	fullver = L"";
+#endif
+	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Starting \"Web Class Helper {}{}\"", WCH_VER_MAIN, fullver));
 }
 
 void WCH_Init_Var() {
@@ -169,22 +189,21 @@ void WCH_Init_Var() {
 	wstring vertype = L"";
 	WCH_window_title = StrToWstr(WCH_Language["ProgramName"].asString()) + L" ";
 	WCH_window_title.append(WCH_VER_MAIN);
-#if WCH_VER_TYPE == 1
+#if WCH_VER_TYPE != 0
+	#if WCH_VER_TYPE == 1
 	WCH_window_title.append(L" " + StrToWstr(WCH_Language["InternalPreview"].asString()));
 	vertype = StrToWstr(WCH_Language["InternalPreview"].asString());
-#endif
-#if WCH_VER_TYPE == 2
+	#elif WCH_VER_TYPE == 2
 	WCH_window_title.append(L" " + StrToWstr(WCH_Language["PublicPreview"].asString()));
 	vertype = StrToWstr(WCH_Language["PublicPreview"].asString());
-#endif
-#if WCH_VER_TYPE == 3
+	#elif WCH_VER_TYPE == 3
 	WCH_window_title.append(L" " + StrToWstr(WCH_Language["ReleaseCandidate"].asString()));
 	vertype = StrToWstr(WCH_Language["ReleaseCandidate"].asString());
-#endif
-#if WCH_VER_TYPE != 0
-	WCH_window_title.append(L" Build " + to_wstring(WCH_VER_BUILD));
+	#endif
+	WCH_window_title.append(L" " + StrToWstr(WCH_Language["Build"].asString()) + L" " + to_wstring(WCH_VER_BUILD));
 	WCH_SetWindowStatus(false);
-	if (MessageBoxW(NULL, (L"This " + vertype + L" (Build " + to_wstring(WCH_VER_BUILD) + L") of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: " + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
+	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["PreviewWarning"].asString()) + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
+		WCH_CheckAndDeleteFile(L"logs/latest.log");
 		_exit(0);
 	}
 	WCH_SetWindowStatus(true);
@@ -219,7 +238,7 @@ void WCH_Init_Loop() {
 		thread T4(WCH_AutoSave_loop);
 		T4.detach();
 	}
-	wcout << L"Reading data..." << endl;
+	wcout << StrToWstr(WCH_Language["DataReading"].asString()) << endl;
 	WCH_ProgressBarTot = 3;
 	thread T5(WCH_ProgressBar);
 	T5.detach();

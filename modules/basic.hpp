@@ -13,6 +13,7 @@ Contributors: jsh-jsh ren-yc
 #include <climits>
 #include <clocale>
 #include <cmath>
+#include <codecvt>
 #include <csetjmp>
 #include <csignal>
 #include <cstdarg>
@@ -159,7 +160,7 @@ using std::this_thread::sleep_for;
 
 #define WCH_HOTKEY_SHOW 121
 #define WCH_MENU_SHOW 11461
-#define WCH_MENU_QUIT 11462
+#define WCH_MENU_EXIT 11462
 #define WCH_LOG_STATUS_INFO TEXT("[INFO]")
 #define WCH_LOG_STATUS_DEBUG TEXT("[DEBUG]")
 #define WCH_LOG_STATUS_WARN TEXT("[WARN]")

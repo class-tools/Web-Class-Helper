@@ -49,7 +49,7 @@
 		"",
 		"  SAVE (Save changes on data)",
 		"",
-		"  QUIT (Quit this program without saving data)",
+		"  EXIT (Exit this program without saving data)",
 		"",
 		"",
 		"Notice:",
@@ -114,6 +114,7 @@
 		"AutoSave             | Boolean    | Enable automatic saving data and settings files | True                    | Yes",
 		"AutoSaveTime         | Number     | Time of auto save interval, in milliseconds     | 60000                   | Yes",
 		"CountDownSoundPrompt | Boolean    | Make a sound prompt when count down ends        | False                   | No",
+		"Language             | String     | Program language (Support \"en-US\")              | en-US                   | Yes",
 		"ScreenshotSavePath   | String     | Screenshot image save path (Command `pi`)       | %USERPROFILE%\\Pictures\\ | No"
 	],
 	"count-down": [
@@ -200,12 +201,12 @@
 		"",
 		"This command has no parameters."
 	],
-	"quit": [
-		"Quit this program. (Without saving data)",
+	"exit": [
+		"Exit this program. (Without saving data)",
 		"",
 		"Usage:",
 		"",
-		"QUIT",
+		"EXIT",
 		"",
 		"This command has no parameters."
 	],

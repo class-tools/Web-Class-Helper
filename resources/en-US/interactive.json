@@ -1,10 +1,15 @@
 {
 	"ProgramName": "Web Class Helper",
 	"Start": "Copyright (c) 2022 Class Tools Develop Team.\nType \"help\", \"update\" or \"license\" for more information.",
-	"AlreadyRunning": "Application is already running.\nQuiting...",
+	"AlreadyRunning": "Application is already running.\nExiting...",
 	"InternalPreview": "Internal Preview",
 	"PublicPreview": "Public Preview",
 	"ReleaseCandidate": "Release Candidate",
+	"Build": "Build",
+	"PreviewWarning": "This version of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: ",
+	"InputCodeIncorrect": "Your input code is incorrect, please check and try again.",
+	"FileProcessingFailed": "File processing failed. Please try reinstalling this program.",
+	"NetworkError": "An network error occurred, please check your network connection and try to update this program.",
 	"JumpWiki": "Jumping to wiki page...",
 	"CheckUpdate": "Checking update...",
 	"FindUpdate": "Program version is less than latest formal released version, jumping to releases page...",
@@ -25,6 +30,8 @@
 	"Pi": "The picture is in the clipboard and be saved in your Pictures folder.",
 	"CountDown": "Starting count down timer...",
 	"AntiIdle": "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down.",
+	"DataReading": "Reading data...",
+	"DataSaving": "Saving data...",
 	"DataSaved": "Successfully saved all data.",
 	"DataNone": "No data to save."
 }
