@@ -17,7 +17,7 @@ Contributors: jsh-jsh ren-yc
 #include "./modules/basic.hpp"
 
 extern const array<wstring, 7> WCH_weekday_list;
-extern const array<wstring, 1> WCH_language_list;
+extern const array<wstring, 2> WCH_language_list;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern set<wstring> WCH_language_support;

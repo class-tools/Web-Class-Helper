@@ -60,6 +60,7 @@ Contributors: jsh-jsh ren-yc
 #include <stdexcept>
 #include <streambuf>
 #include <string>
+#include <string_view>
 #include <typeinfo>
 #include <utility>
 #include <valarray>
@@ -127,12 +128,15 @@ using std::cerr;
 using std::wcerr;
 using std::endl;
 using std::format;
+using std::vformat;
 using std::getline;
 using std::find;
 using std::to_string;
 using std::to_wstring;
 using std::string;
+using std::string_view;
 using std::wstring;
+using std::wstring_view;
 using std::stringstream;
 using std::wstringstream;
 using std::ifstream;
@@ -252,7 +256,7 @@ struct WCH_Version {
 };
 
 const array<wstring, 7> WCH_weekday_list {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
-const array<wstring, 1> WCH_language_list {L"en-US"};
+const array<wstring, 2> WCH_language_list {L"en-US", L"zh-CN"};
 map<wstring, function<void()>> WCH_command_support;
 set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 set<wstring> WCH_language_support;

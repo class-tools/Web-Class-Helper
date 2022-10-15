@@ -13,7 +13,7 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "basic.hpp"
 
 extern const array<wstring, 7> WCH_weekday_list;
-extern const array<wstring, 1> WCH_language_list;
+extern const array<wstring, 2> WCH_language_list;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern set<wstring> WCH_language_support;
@@ -149,6 +149,7 @@ void WCH_Init_Invar() {
 	WCH_language_support.insert(L"NumberBigger");
 	WCH_language_support.insert(L"NumberAnswer");
 	WCH_language_support.insert(L"NumberWin");
+	WCH_language_support.insert(L"NumberLose");
 	WCH_language_support.insert(L"Pi");
 	WCH_language_support.insert(L"CountDown");
 	WCH_language_support.insert(L"AntiIdle");

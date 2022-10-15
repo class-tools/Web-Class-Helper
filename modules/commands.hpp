@@ -13,7 +13,7 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "basic.hpp"
 
 extern const array<wstring, 7> WCH_weekday_list;
-extern const array<wstring, 1> WCH_language_list;
+extern const array<wstring, 2> WCH_language_list;
 extern map<wstring, function<void()>> WCH_command_support;
 extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern set<wstring> WCH_language_support;
@@ -598,7 +598,7 @@ void WCH_game() {
 	vector<wstring> zv;
 	zv.push_back(L"0");
 	while (true) {
-		wcout << StrToWstr(WCH_Language["InputNumber"].asString()) + L" (1 ~ 10000): ";
+		wcout << StrToWstr(WCH_Language["InputNumber"].asString());
 		getline(wcin, z);
 		zv = WCH_split(z);
 		if (zv.size() == 0) {
@@ -623,11 +623,12 @@ void WCH_game() {
 			break;
 		}
 	}
-	wcout << StrToWstr(WCH_Language["NumberAnswer"].asString()) + L" " << ans << L".";
+	wcout << StrToWstr(WCH_Language["NumberAnswer"].asString()) + L" " << ans;
 	if (flag) {
-		wcout << L" " + StrToWstr(WCH_Language["NumberWin"].asString());
+		wcout << StrToWstr(WCH_Language["NumberWin"].asString()) << endl;
+	} else {
+		wcout << StrToWstr(WCH_Language["NumberLose"].asString()) << endl;
 	}
-	wcout << endl;
 }
 
 void WCH_pi() {
@@ -693,7 +694,7 @@ void WCH_anti_idle_func() {
 		return;
 	}
 	wstring ch;
-	wcout << StrToWstr(WCH_Language["AntiIdle"].asString()) + L" (Y/N): ";
+	wcout << StrToWstr(WCH_Language["AntiIdle"].asString());
 	getline(wcin, ch);
 	if (ch == L"Y" || ch == L"y") {
 		WCH_SetWindowStatus(false);
