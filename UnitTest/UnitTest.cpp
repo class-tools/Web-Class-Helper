@@ -91,10 +91,16 @@ public:
 		Temp = WCH_CheckConfigValid(L"AutoSaveTime", L"2147483647");
 		Assert::IsFalse(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"String");
+		Temp = WCH_CheckConfigValid(L"AutoSaveTime", L"60000");
+		Assert::IsTrue(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"Number");
 		Temp = WCH_CheckConfigValid(L"Language", L"Test");
 		Assert::IsFalse(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"String");
 		Temp = WCH_CheckConfigValid(L"ScreenshotSavePath", L"C:\\Test");
+		Assert::IsFalse(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"String");
+		Temp = WCH_CheckConfigValid(L"Test", L"Test");
 		Assert::IsFalse(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"String");
 	}
