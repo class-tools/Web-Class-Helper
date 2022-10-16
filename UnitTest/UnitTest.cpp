@@ -70,9 +70,33 @@ public:
 
 TEST_CLASS(Other) {
 public:
+	TEST_CLASS_INITIALIZE(InitInvar) {
+		WCH_Init_Invar();
+	}
 	TEST_METHOD(NumDigits) {
 		Assert::AreEqual(WCH_GetNumDigits((size_t)0), (size_t)1);
 		Assert::AreEqual(WCH_GetNumDigits((size_t)18446744073709551615), (size_t)20);
+	}
+	TEST_METHOD(CheckConfigValid) {
+		pair<bool, wstring> Temp;
+		Temp = WCH_CheckConfigValid(L"AntiIdleEndContent", L"Test");
+		Assert::IsTrue(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"String");
+		Temp = WCH_CheckConfigValid(L"AntiIdleEndPrompt", L"True");
+		Assert::IsTrue(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"Boolean");
+		Temp = WCH_CheckConfigValid(L"AutoSave", L"Test");
+		Assert::IsFalse(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"String");
+		Temp = WCH_CheckConfigValid(L"AutoSaveTime", L"2147483647");
+		Assert::IsFalse(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"String");
+		Temp = WCH_CheckConfigValid(L"Language", L"Test");
+		Assert::IsFalse(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"String");
+		Temp = WCH_CheckConfigValid(L"ScreenshotSavePath", L"C:\\Test");
+		Assert::IsFalse(Temp.first);
+		Assert::AreEqual(Temp.second.c_str(), L"String");
 	}
 };
 }

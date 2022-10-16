@@ -106,16 +106,7 @@
 		"",
 		"\"CONFIG LIST\" 没有参数。",
 		"[Key] 的可能的值列表：",
-		"",
-		"键值名称             | 值的类别 | 描述                                 | 默认值                  | 是否需要重启程序",
-		"-------------------- | -------- | ------------------------------------ | ----------------------- | ---------------",
-		"AntiIdleEndContent   | String   | `AntiIdleEndPrompt` 对话框中的内容   | Disable anti-idle?      | No",
-		"AntiIdleEndPrompt    | Boolean  | 启用在用户尝试终止防摸鱼模块时的提示 | False                   | No",
-		"AutoSave             | Boolean  | 启用自动保存数据及设置               | True                    | Yes",
-		"AutoSaveTime         | Number   | 自动保存频率，单位为毫秒             | 60000                   | Yes",
-		"CountDownSoundPrompt | Boolean  | 在倒计时结束后声音提示               | False                   | No",
-		"Language             | String   | 程序语言 (支持 \"en-US\" \"zh-CN\")      | en-US                   | Yes",
-		"ScreenshotSavePath   | String   | 截图保存路径 (命令 `pi`)             | %USERPROFILE%\\Pictures\\ | No"
+		""
 	],
 	"count-down": [
 		"启动倒计时。",

@@ -106,16 +106,7 @@
 		"",
 		"\"CONFIG LIST\" has no parameters.",
 		"List of possible values of [Key]:",
-		"",
-		"Key Name             | Value Type | Description                                     | Default Value           | Require Restart",
-		"-------------------- | ---------- | ----------------------------------------------  | ----------------------- | ---------------",
-		"AntiIdleEndContent   | String     | The content in `AntiIdleEndPrompt` messagebox   | Disable anti-idle?      | No",
-		"AntiIdleEndPrompt    | Boolean    | Enable prompt when trying to disable anti-idle  | False                   | No",
-		"AutoSave             | Boolean    | Enable automatic saving data and settings files | True                    | Yes",
-		"AutoSaveTime         | Number     | Time of auto save interval, in milliseconds     | 60000                   | Yes",
-		"CountDownSoundPrompt | Boolean    | Make a sound prompt when count down ends        | False                   | No",
-		"Language             | String     | Program language (Support \"en-US\" \"zh-CN\")      | en-US                   | Yes",
-		"ScreenshotSavePath   | String     | Screenshot image save path (Command `pi`)       | %USERPROFILE%\\Pictures\\ | No"
+		""
 	],
 	"count-down": [
 		"Start a count-down timer.",

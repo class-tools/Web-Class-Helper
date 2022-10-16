@@ -389,6 +389,42 @@ size_t WCH_GetNumDigits(size_t _n) {
 	return _cnt;
 }
 
+pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Value) {
+	// Check if the settings key and the value of it match.
+	wstring KeyType = L"String";
+	bool flag = false;
+	if (Value == L"True" || Value == L"False") {
+		KeyType = L"Boolean";
+	}
+	if (Value.size() < 10) {
+		for (size_t i = 0; i < Value.size(); i++) {
+			if (!iswdigit(Value[i])) {
+				break;
+			}
+			if (Value.size() == i + 1) {
+				KeyType = L"Number";
+			}
+		}
+	}
+	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+		if (Key == get<0>(*it)) {
+			if (KeyType != get<1>(*it)) {
+				return make_pair(false, KeyType);
+			} else {
+				flag = true;
+				break;
+			}
+		}
+	}
+	if (!flag) {
+		return make_pair(false, KeyType);
+	}
+	if ((Key == L"ScreenshotSavePath" && Value[Value.size() - 1] != L'\\') || Key == L"Language" && find(WCH_language_list.begin(), WCH_language_list.end(), Value) == WCH_language_list.end()) {
+		return make_pair(false, KeyType);
+	}
+	return make_pair(true, KeyType);
+}
+
 void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
 	// Print a progress bar.
 	wstring _ETAStr = format(L"{:02}:{:02}:{:02}", (int32_t)(_sur / 3600), (int32_t)((_sur % 3600) / 60), (int32_t)(_sur % 60));

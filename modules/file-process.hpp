@@ -169,6 +169,8 @@ void WCH_read_settings() {
 			for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
 				if (!WCH_Settings.isMember(WstrToStr(get<0>(*it)))) {
 					throw runtime_error("");
+				} else if (!WCH_CheckConfigValid(get<0>(*it), StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString())).first) {
+					throw runtime_error("");
 				}
 			}
 		} catch (...) {
