@@ -136,8 +136,9 @@ void WCH_update() {
 		thread T(WCH_ProgressBar);
 		T.detach();
 		wstring url = L"https://class-tools.github.io/update/WCH?";
-		srand((unsigned)time(NULL));
-		url.append(to_wstring(rand()));
+		random_device rd;
+		mt19937 mtrand(rd());
+		url.append(to_wstring(mtrand()));
 		URLDownloadToFileW(0, url.c_str(), L"WCH_UPD.tmp", 0, 0);
 		wstring res;
 		wfin.open(L"WCH_UPD.tmp");
@@ -562,8 +563,9 @@ void WCH_game() {
 		WCH_InputCodeIncorrect();
 		return;
 	}
-	srand((unsigned)time(NULL));
-	int32_t inp = 0, ans = rand() % 10000 + 1;
+	random_device rd;
+	mt19937 mtrand(rd());
+	int32_t inp = 0, ans = mtrand() % 10000 + 1;
 	bool flag = true;
 	wstring z = L"0";
 	vector<wstring> zv;

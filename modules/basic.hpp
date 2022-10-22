@@ -156,6 +156,8 @@ using std::thread;
 using std::runtime_error;
 using std::exception;
 using std::ios;
+using std::random_device;
+using std::mt19937;
 using std::chrono::milliseconds;
 using std::make_pair;
 using std::make_tuple;
