@@ -255,10 +255,10 @@ void WCH_ShowTaskBarError() {
 	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 }
 
-void WCH_InputCodeIncorrect() {
+void WCH_InputCommandIncorrect() {
 	// Print text for incorrect inputs.
 	WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is incorrect, please check and try again");
-	wcout << StrToWstr(WCH_Language["InputCodeIncorrect"].asString()) << endl;
+	wcout << StrToWstr(WCH_Language["InputCommandIncorrect"].asString()) << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
 }

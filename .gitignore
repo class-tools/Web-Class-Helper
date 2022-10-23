@@ -8,14 +8,7 @@
 /UnitTest/ARM64/
 /.vscode/
 /.vs/
-/genexe/
-/genins/
 /data/*.json
 /logs/*.log
 *.tmp
-*.exe
-*.txt
-*.o
-*.APS
-CppProperties.json
 settings.json

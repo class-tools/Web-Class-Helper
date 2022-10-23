@@ -73,7 +73,7 @@ int32_t wmain([[maybe_unused]] int argc, [[maybe_unused]] wchar_t* argv[]) {
 			if (WCH_command_support.find(WCH_command_list[0]) != WCH_command_support.end()) {
 				WCH_command_support.find(WCH_command_list[0])->second();
 			} else {
-				WCH_InputCodeIncorrect();
+				WCH_InputCommandIncorrect();
 			}
 			wcout << endl;
 		} else {

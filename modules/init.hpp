@@ -129,7 +129,7 @@ void WCH_Init_Invar() {
 	WCH_language_support.insert(L"ReleaseCandidate");
 	WCH_language_support.insert(L"Build");
 	WCH_language_support.insert(L"PreviewWarning");
-	WCH_language_support.insert(L"InputCodeIncorrect");
+	WCH_language_support.insert(L"InputCommandIncorrect");
 	WCH_language_support.insert(L"FileProcessingFailed");
 	WCH_language_support.insert(L"NetworkError");
 	WCH_language_support.insert(L"JumpWiki");
