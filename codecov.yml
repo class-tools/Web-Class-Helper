@@ -1,3 +1,6 @@
+coverage:
+  status:
+    patch: false
 comment:
   layout: "reach, diff, flags, files, header, footer"
   behavior: new
