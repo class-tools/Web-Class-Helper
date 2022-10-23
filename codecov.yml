@@ -1,9 +1,3 @@
-coverage:
-  status:
-    project:
-      default:
-        target: 60%
-        threshold: 40%
 comment:
   layout: "reach, diff, flags, files, header, footer"
   behavior: new

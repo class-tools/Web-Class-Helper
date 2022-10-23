@@ -21,6 +21,7 @@
 	"Name": "名称",
 	"ProcessName": "进程名称",
 	"Tag": "标签",
+	"Unclassified": "未分类",
 	"InputNumber": "请输入你的数字 (1 ~ 10000)：",
 	"NumberOutOfRange": "数字超出范围。",
 	"NumberSmaller": "答案更小。",

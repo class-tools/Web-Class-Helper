@@ -21,6 +21,7 @@
 	"Name": "Name",
 	"ProcessName": "Process Name",
 	"Tag": "Tag",
+	"Unclassified": "Unclassified",
 	"InputNumber": "Please input your number (1 ~ 10000): ",
 	"NumberOutOfRange": "Number out of range.",
 	"NumberSmaller": "The answer is smaller.",

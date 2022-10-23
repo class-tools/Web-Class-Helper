@@ -143,6 +143,7 @@ void WCH_Init_Invar() {
 	WCH_language_support.insert(L"Name");
 	WCH_language_support.insert(L"ProcessName");
 	WCH_language_support.insert(L"Tag");
+	WCH_language_support.insert(L"Unclassified");
 	WCH_language_support.insert(L"InputNumber");
 	WCH_language_support.insert(L"NumberOutOfRange");
 	WCH_language_support.insert(L"NumberSmaller");

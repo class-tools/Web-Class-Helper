@@ -463,12 +463,12 @@ void WCH_check_task() {
 
 void WCH_add_work() {
 	// Add a new work.
-	if (WCH_command_list.size() != 4) {
+	if (WCH_command_list.size() != 3 && WCH_command_list.size() != 4) {
 		WCH_InputCodeIncorrect();
 		return;
 	}
 	wstring work = WCH_command_list[2];
-	wstring tag = WCH_command_list[3];
+	wstring tag = WCH_command_list.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_command_list[3];
 	if (WCH_work_list.find(make_pair(work, tag)) != WCH_work_list.end()) {
 		WCH_InputCodeIncorrect();
 	} else {
@@ -480,12 +480,12 @@ void WCH_add_work() {
 
 void WCH_delete_work() {
 	// Delete a work.
-	if (WCH_command_list.size() != 4) {
+	if (WCH_command_list.size() != 3 && WCH_command_list.size() != 4) {
 		WCH_InputCodeIncorrect();
 		return;
 	}
 	wstring work = WCH_command_list[2];
-	wstring tag = WCH_command_list[3];
+	wstring tag = WCH_command_list.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_command_list[3];
 	if (WCH_work_list.find(make_pair(work, tag)) == WCH_work_list.end()) {
 		WCH_InputCodeIncorrect();
 	} else {
