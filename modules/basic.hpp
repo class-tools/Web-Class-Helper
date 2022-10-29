@@ -300,8 +300,7 @@ const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"clear", WCH_clear),
 	make_pair(L"config", WCH_check_config),
 	make_pair(L"save", WCH_save_cmd),
-	make_pair(L"exit", WCH_exit)
-};
+	make_pair(L"exit", WCH_exit)};
 const set<tuple<wstring, wstring, wstring>> WCH_settings_support = {
 	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?"),
 	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"),
@@ -309,8 +308,7 @@ const set<tuple<wstring, wstring, wstring>> WCH_settings_support = {
 	make_tuple(L"AutoSaveTime", L"Number", L"60000"),
 	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"),
 	make_tuple(L"Language", L"String", L"en-US"),
-	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")))
-};
+	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")))};
 const set<wstring> WCH_language_support = {
 	L"ProgramName",
 	L"Start",
@@ -348,8 +346,7 @@ const set<wstring> WCH_language_support = {
 	L"DataReading",
 	L"DataSaving",
 	L"DataSaved",
-	L"DataNone"
-};
+	L"DataNone"};
 vector<wstring> WCH_command_list;
 set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 set<wstring> WCH_task_list;
