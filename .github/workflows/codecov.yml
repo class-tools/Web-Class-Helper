@@ -29,7 +29,7 @@ jobs:
           choco install OpenCppCoverage -y
           echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
       - name: Generate Report
-        run: OpenCppCoverage.exe --excluded_line_regex "\s*else.*" --excluded_line_regex "\s*\}.*" --export_type cobertura:WCH.xml -- "vstest.console.exe" x64\Release\UnitTest.dll
+        run: OpenCppCoverage --sources modules\apis.hpp --sources modules\basic.hpp --sources UnitTest\UnitTest.cpp --excluded_line_regex "\s*else.*" --excluded_line_regex "\s*\}.*" --export_type cobertura:WCH.xml -- "vstest.console.exe" x64\Release\UnitTest.dll
       - name: Upload Report to Codecov
         uses: codecov/codecov-action@v3
         with:

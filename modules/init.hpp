@@ -52,14 +52,10 @@ extern wofstream wfout;
 extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
-WCH_Time WCH_GetTime();
-void WCH_Sleep(int32_t _ms);
-void WCH_printlog(wstring _mode, wstring _info);
-void WCH_read_settings();
+
 void WCH_read();
+void WCH_read_settings();
 void WCH_save_settings();
-bool WCH_save_func(bool output);
-size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_Init_Dir() {
 	// Initialization for directory.
