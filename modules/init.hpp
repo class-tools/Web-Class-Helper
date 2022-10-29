@@ -14,9 +14,9 @@ Contributors: jsh-jsh ren-yc hjl2011
 
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
-extern map<wstring, function<void()>> WCH_command_support;
-extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
-extern set<wstring> WCH_language_support;
+extern const map<wstring, function<void()>> WCH_command_support;
+extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<wstring> WCH_language_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
@@ -90,74 +90,6 @@ void WCH_Init_Bind() {
 	wfin.imbue(locale(".UTF-8", LC_CTYPE));
 	wfout.imbue(locale(".UTF-8", LC_CTYPE));
 	_wsystem(L"CHCP 65001 > NUL");
-}
-
-void WCH_Init_Invar() {
-	// Initialization for invariable lists.
-	WCH_command_support.insert(make_pair(L"clock", WCH_check_clock));
-	WCH_command_support.insert(make_pair(L"task", WCH_check_task));
-	WCH_command_support.insert(make_pair(L"work", WCH_check_work));
-	WCH_command_support.insert(make_pair(L"help", WCH_help));
-	WCH_command_support.insert(make_pair(L"ow", WCH_ow));
-	WCH_command_support.insert(make_pair(L"hide", WCH_hide));
-	WCH_command_support.insert(make_pair(L"game", WCH_game));
-	WCH_command_support.insert(make_pair(L"time", WCH_time));
-	WCH_command_support.insert(make_pair(L"pi", WCH_pi));
-	WCH_command_support.insert(make_pair(L"trans", WCH_trans));
-	WCH_command_support.insert(make_pair(L"fate", WCH_fate));
-	WCH_command_support.insert(make_pair(L"anti-idle", WCH_anti_idle_func));
-	WCH_command_support.insert(make_pair(L"count-down", WCH_count_down_func));
-	WCH_command_support.insert(make_pair(L"update", WCH_update));
-	WCH_command_support.insert(make_pair(L"wiki", WCH_wiki));
-	WCH_command_support.insert(make_pair(L"license", WCH_license));
-	WCH_command_support.insert(make_pair(L"clear", WCH_clear));
-	WCH_command_support.insert(make_pair(L"config", WCH_check_config));
-	WCH_command_support.insert(make_pair(L"save", WCH_save_cmd));
-	WCH_command_support.insert(make_pair(L"exit", WCH_exit));
-	WCH_settings_support.insert(make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?"));
-	WCH_settings_support.insert(make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"));
-	WCH_settings_support.insert(make_tuple(L"AutoSave", L"Boolean", L"True"));
-	WCH_settings_support.insert(make_tuple(L"AutoSaveTime", L"Number", L"60000"));
-	WCH_settings_support.insert(make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"));
-	WCH_settings_support.insert(make_tuple(L"Language", L"String", L"en-US"));
-	WCH_settings_support.insert(make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE"))));
-	WCH_language_support.insert(L"ProgramName");
-	WCH_language_support.insert(L"Start");
-	WCH_language_support.insert(L"AlreadyRunning");
-	WCH_language_support.insert(L"InternalPreview");
-	WCH_language_support.insert(L"PublicPreview");
-	WCH_language_support.insert(L"ReleaseCandidate");
-	WCH_language_support.insert(L"Build");
-	WCH_language_support.insert(L"PreviewWarning");
-	WCH_language_support.insert(L"InputCommandIncorrect");
-	WCH_language_support.insert(L"FileProcessingFailed");
-	WCH_language_support.insert(L"NetworkError");
-	WCH_language_support.insert(L"JumpWiki");
-	WCH_language_support.insert(L"CheckUpdate");
-	WCH_language_support.insert(L"FindUpdate");
-	WCH_language_support.insert(L"NoUpdate");
-	WCH_language_support.insert(L"Key");
-	WCH_language_support.insert(L"Value");
-	WCH_language_support.insert(L"Hour");
-	WCH_language_support.insert(L"Minute");
-	WCH_language_support.insert(L"Name");
-	WCH_language_support.insert(L"ProcessName");
-	WCH_language_support.insert(L"Tag");
-	WCH_language_support.insert(L"Unclassified");
-	WCH_language_support.insert(L"InputNumber");
-	WCH_language_support.insert(L"NumberOutOfRange");
-	WCH_language_support.insert(L"NumberSmaller");
-	WCH_language_support.insert(L"NumberBigger");
-	WCH_language_support.insert(L"NumberAnswer");
-	WCH_language_support.insert(L"NumberWin");
-	WCH_language_support.insert(L"NumberLose");
-	WCH_language_support.insert(L"Pi");
-	WCH_language_support.insert(L"CountDown");
-	WCH_language_support.insert(L"AntiIdle");
-	WCH_language_support.insert(L"DataReading");
-	WCH_language_support.insert(L"DataSaving");
-	WCH_language_support.insert(L"DataSaved");
-	WCH_language_support.insert(L"DataNone");
 }
 
 void WCH_Init_Log() {
@@ -252,7 +184,6 @@ void WCH_Init() {
 	// Initialize the whole program.
 	WCH_Init_Dir();
 	WCH_Init_Bind();
-	WCH_Init_Invar();
 	WCH_Init_Log();
 	WCH_read();
 	WCH_Init_Var();

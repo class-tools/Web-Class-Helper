@@ -257,11 +257,99 @@ struct WCH_Version {
 	}
 };
 
+void WCH_check_clock();
+void WCH_check_task();
+void WCH_check_work();
+void WCH_help();
+void WCH_ow();
+void WCH_hide();
+void WCH_game();
+void WCH_time();
+void WCH_pi();
+void WCH_trans();
+void WCH_fate();
+void WCH_anti_idle_func();
+void WCH_count_down_func();
+void WCH_update();
+void WCH_wiki();
+void WCH_license();
+void WCH_clear();
+void WCH_check_config();
+void WCH_save_cmd();
+void WCH_exit();
+
 const array<wstring, 7> WCH_weekday_list {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
 const array<wstring, 2> WCH_language_list {L"en-US", L"zh-CN"};
-map<wstring, function<void()>> WCH_command_support;
-set<tuple<wstring, wstring, wstring>> WCH_settings_support;
-set<wstring> WCH_language_support;
+const map<wstring, function<void()>> WCH_command_support = {
+	make_pair(L"clock", WCH_check_clock),
+	make_pair(L"task", WCH_check_task),
+	make_pair(L"work", WCH_check_work),
+	make_pair(L"help", WCH_help),
+	make_pair(L"ow", WCH_ow),
+	make_pair(L"hide", WCH_hide),
+	make_pair(L"game", WCH_game),
+	make_pair(L"time", WCH_time),
+	make_pair(L"pi", WCH_pi),
+	make_pair(L"trans", WCH_trans),
+	make_pair(L"fate", WCH_fate),
+	make_pair(L"anti-idle", WCH_anti_idle_func),
+	make_pair(L"count-down", WCH_count_down_func),
+	make_pair(L"update", WCH_update),
+	make_pair(L"wiki", WCH_wiki),
+	make_pair(L"license", WCH_license),
+	make_pair(L"clear", WCH_clear),
+	make_pair(L"config", WCH_check_config),
+	make_pair(L"save", WCH_save_cmd),
+	make_pair(L"exit", WCH_exit)
+};
+const set<tuple<wstring, wstring, wstring>> WCH_settings_support = {
+	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?"),
+	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"),
+	make_tuple(L"AutoSave", L"Boolean", L"True"),
+	make_tuple(L"AutoSaveTime", L"Number", L"60000"),
+	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"),
+	make_tuple(L"Language", L"String", L"en-US"),
+	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")))
+};
+const set<wstring> WCH_language_support = {
+	L"ProgramName",
+	L"Start",
+	L"AlreadyRunning",
+	L"InternalPreview",
+	L"PublicPreview",
+	L"ReleaseCandidate",
+	L"Build",
+	L"PreviewWarning",
+	L"InputCommandIncorrect",
+	L"FileProcessingFailed",
+	L"NetworkError",
+	L"JumpWiki",
+	L"CheckUpdate",
+	L"FindUpdate",
+	L"NoUpdate",
+	L"Key",
+	L"Value",
+	L"Hour",
+	L"Minute",
+	L"Name",
+	L"ProcessName",
+	L"Tag",
+	L"Unclassified",
+	L"InputNumber",
+	L"NumberOutOfRange",
+	L"NumberSmaller",
+	L"NumberBigger",
+	L"NumberAnswer",
+	L"NumberWin",
+	L"NumberLose",
+	L"Pi",
+	L"CountDown",
+	L"AntiIdle",
+	L"DataReading",
+	L"DataSaving",
+	L"DataSaved",
+	L"DataNone"
+};
 vector<wstring> WCH_command_list;
 set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 set<wstring> WCH_task_list;
@@ -297,13 +385,5 @@ wofstream wfout;
 Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
 unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
-WCH_Time WCH_GetTime();
-void WCH_Sleep(int32_t _ms);
-void WCH_printlog(wstring _mode, wstring _info);
-void WCH_read_settings();
-void WCH_read();
-void WCH_save_settings();
-bool WCH_save_func(bool output);
-size_t WCH_GetNumDigits(size_t _n);
 
 #endif

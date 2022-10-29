@@ -18,9 +18,9 @@ Contributors: jsh-jsh ren-yc
 
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
-extern map<wstring, function<void()>> WCH_command_support;
-extern set<tuple<wstring, wstring, wstring>> WCH_settings_support;
-extern set<wstring> WCH_language_support;
+extern const map<wstring, function<void()>> WCH_command_support;
+extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<wstring> WCH_language_support;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;

@@ -70,9 +70,6 @@ public:
 
 TEST_CLASS(Other) {
 public:
-	TEST_CLASS_INITIALIZE(InitInvar) {
-		WCH_Init_Invar();
-	}
 	TEST_METHOD(NumDigits) {
 		Assert::AreEqual(WCH_GetNumDigits((size_t)0), (size_t)1);
 		Assert::AreEqual(WCH_GetNumDigits((size_t)18446744073709551615), (size_t)20);
