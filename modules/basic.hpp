@@ -306,6 +306,7 @@ const set<tuple<wstring, wstring, wstring>> WCH_settings_support = {
 	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"),
 	make_tuple(L"AutoSave", L"Boolean", L"True"),
 	make_tuple(L"AutoSaveTime", L"Number", L"60000"),
+	make_tuple(L"CommandPrompt", L"String", L">>>"),
 	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"),
 	make_tuple(L"Language", L"String", L"en-US"),
 	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")))};

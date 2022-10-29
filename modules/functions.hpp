@@ -130,7 +130,7 @@ void WCH_AutoSave_loop() {
 void WCH_CL_Init() {
 	// Initialize the command line.
 BEGIN:
-	wcout << L">>> ";
+	wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
 	getline(wcin, WCH_command);
 	if (wcin.eof()) {
 		raise(SIGINT);
