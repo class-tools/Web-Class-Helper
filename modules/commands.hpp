@@ -67,7 +67,7 @@ void WCH_clear() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	system("cls");
+	system("CLS");
 	wcout << WCH_window_title << endl;
 	wcout << StrToWstr(WCH_Language["Start"].asString()) << endl;
 }
@@ -94,13 +94,13 @@ void WCH_exit() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Exiting \"Web Class Helper {}{}\"", WCH_VER_MAIN, fullver));
 	WCH_cmd_line = false;
 	WCH_program_end = true;
-	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_NORMAL.tmp");
-	WCH_CheckAndDeleteFile(L"WCH_SYSTEM_ERROR.tmp");
-	WCH_CheckAndDeleteFile(L"WCH_UPD.tmp");
-	WCH_CheckAndDeleteFile(L"WCH_TRANS.tmp");
-	WCH_CheckAndDeleteFile(L"WCH_OW.tmp");
-	WCH_CheckAndDeleteFile(L"WCH_FATE.tmp");
-	WCH_CheckAndDeleteFile(L"WCH_IDENT.tmp");
+	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_NORMAL.tmp", _wgetenv(L"USERPROFILE")));
+	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_ERROR.tmp", _wgetenv(L"USERPROFILE")));
+	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_UPD.tmp", _wgetenv(L"USERPROFILE")));
+	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_TRANS.tmp", _wgetenv(L"USERPROFILE")));
+	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_OW.tmp", _wgetenv(L"USERPROFILE")));
+	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_FATE.tmp", _wgetenv(L"USERPROFILE")));
+	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_IDENT.tmp", _wgetenv(L"USERPROFILE")));
 	SendMessageW(WCH_tray_handle, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
@@ -135,17 +135,18 @@ void WCH_update() {
 		WCH_ProgressBarTot = 5;
 		thread T(WCH_ProgressBar);
 		T.detach();
+		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_UPD.tmp", _wgetenv(L"USERPROFILE"));
 		wstring url = L"https://class-tools.github.io/update/WCH?";
 		random_device rd;
 		mt19937 mtrand(rd());
 		url.append(to_wstring(mtrand()));
-		URLDownloadToFileW(0, url.c_str(), L"WCH_UPD.tmp", 0, 0);
+		URLDownloadToFileW(0, url.c_str(), FilePath.c_str(), 0, 0);
 		wstring res;
-		wfin.open(L"WCH_UPD.tmp");
+		wfin.open(FilePath);
 		getline(wfin, res);
 		wfin.close();
 		WCH_Sleep(5000);
-		if (WCH_FileIsBlank(L"WCH_UPD.tmp")) {
+		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");
 		}
 		if (WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)) {
@@ -156,7 +157,7 @@ void WCH_update() {
 			wcout << StrToWstr(WCH_Language["NoUpdate"].asString()) << endl;
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Program version equals or is greater than \"" + res + L"\"");
 		}
-		DeleteFileW(L"WCH_UPD.tmp");
+		DeleteFileW(FilePath.c_str());
 	} catch (...) {
 		WCH_NetworkError();
 		return;
@@ -169,7 +170,7 @@ void WCH_license() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wfin.open(L"LICENSE");
+	wfin.open(WCH_GetExecDir() + L"\\LICENSE");
 	if (!wfin.is_open()) {
 		WCH_FileProcessingFailed();
 		return;
@@ -687,12 +688,13 @@ void WCH_trans() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WstrToStr((WCH_command_list[1]))))).c_str(), L"WCH_TRANS.tmp", 0, NULL);
-		if (WCH_FileIsBlank(L"WCH_TRANS.tmp")) {
+		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_TRANS.tmp", _wgetenv(L"USERPROFILE"));
+		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WstrToStr((WCH_command_list[1]))))).c_str(), FilePath.c_str(), 0, NULL);
+		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");
 		}
 		Json::Value val;
-		fin.open(L"WCH_TRANS.tmp");
+		fin.open(FilePath);
 		if (!JSON_Reader.parse(fin, val)) {
 			throw runtime_error("");
 		}
@@ -701,7 +703,7 @@ void WCH_trans() {
 		}
 		wcout << StrToWstr(val["translation"][0].asString()) << endl;
 		fin.close();
-		DeleteFileW(L"WCH_TRANS.tmp");
+		DeleteFileW(FilePath.c_str());
 	} catch (...) {
 		WCH_NetworkError();
 		return;
@@ -715,16 +717,17 @@ void WCH_ow() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", L"WCH_OW.tmp", 0, 0);
-		if (WCH_FileIsBlank(L"WCH_OW.tmp")) {
+		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_OW.tmp", _wgetenv(L"USERPROFILE"));
+		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", FilePath.c_str(), 0, 0);
+		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");
 		}
-		fin.open(L"WCH_OW.tmp");
+		fin.open(FilePath);
 		string res;
 		getline(fin, res);
 		wcout << StrToWstr(res) << endl;
 		fin.close();
-		DeleteFileW(L"WCH_OW.tmp");
+		DeleteFileW(FilePath.c_str());
 	} catch (...) {
 		WCH_NetworkError();
 		return;
@@ -738,12 +741,13 @@ void WCH_fate() {
 		return;
 	}
 	try {
-		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(WstrToStr((WCH_GetUniIdent()))))).c_str(), L"WCH_FATE.tmp", 0, NULL);
-		if (WCH_FileIsBlank(L"WCH_FATE.tmp")) {
+		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_FATE.tmp", _wgetenv(L"USERPROFILE"));
+		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(WstrToStr((WCH_GetUniIdent()))))).c_str(), FilePath.c_str(), 0, NULL);
+		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");
 		}
 		Json::Value val;
-		fin.open(L"WCH_FATE.tmp");
+		fin.open(FilePath);
 		if (!JSON_Reader.parse(fin, val)) {
 			throw runtime_error("");
 		}
@@ -757,7 +761,7 @@ void WCH_fate() {
 			wcout << StrToWstr(val["data"]["unSignText"].asString()) << endl;
 		}
 		fin.close();
-		DeleteFileW(L"WCH_FATE.tmp");
+		DeleteFileW(FilePath.c_str());
 	} catch (...) {
 		WCH_NetworkError();
 		return;
@@ -780,7 +784,7 @@ void WCH_help() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring FilePath = L"resources/" + StrToWstr(WCH_Settings["Language"].asString()) + L"/help.json";
+	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\help.json";
 	Json::Value val;
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 	fin.open(FilePath);
@@ -806,7 +810,7 @@ void WCH_help() {
 				wcout << StrToWstr((*it).asString()) << endl;
 			}
 			if (WCH_command_list[1] == L"config") {
-				FilePath = L"resources/" + StrToWstr(WCH_Settings["Language"].asString()) + L"/config.json";
+				FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 				Json::Value valcfg;
 				WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 				fin.open(FilePath);

@@ -205,14 +205,27 @@ wstring WCH_GetCompileTime() {
 	return format(L"{}/{:02}/{:02} {}", spi.substr(7, 4), mon[spi.substr(0, 3)], stoi(spi[4] == L' ' ? spi.substr(5, 1) : spi.substr(4, 2)), StrToWstr(__TIME__));
 }
 
+wstring WCH_GetExecDir() {
+	// Get program executable directory.
+	wstring _res = _wpgmptr;
+	size_t _pos = 0;
+	for (size_t i = 0; i < _res.size(); i++) {
+		if (_res[i] == L'\\') {
+			_pos = i;
+		}
+	}
+	return _res.substr(0, _pos);
+}
+
 wstring WCH_GetUniIdent() {
 	// Get unique identification. (Public IP)
+	wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_IDENT.tmp", _wgetenv(L"USERPROFILE"));
 	wstring _in, _res;
-	URLDownloadToFileW(NULL, L"https://api.ipify.org", L"WCH_IDENT.tmp", 0, NULL);
-	wfin.open(L"WCH_IDENT.tmp");
+	URLDownloadToFileW(NULL, L"https://api.ipify.org", FilePath.c_str(), 0, NULL);
+	wfin.open(FilePath);
 	wfin >> _in;
 	wfin.close();
-	DeleteFileW(L"WCH_IDENT.tmp");
+	DeleteFileW(FilePath.c_str());
 	for (size_t i = 0; i < _in.size(); i++) {
 		if (_in[i] != L'.') {
 			_res.push_back(_in[i]);
@@ -356,10 +369,12 @@ bool WCH_FileIsBlank(const wstring& _filename) {
 
 bool WCH_TaskKill(const wstring& name) {
 	// Kill a task by system command.
-	_wsystem((L"TASKKILL /F /IM " + name + L" > WCH_SYSTEM_NORMAL.tmp 2> WCH_SYSTEM_ERROR.tmp").c_str());
+	wstring FilePathNormal = format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_NORMAL.tmp", _wgetenv(L"USERPROFILE"));
+	wstring FilePathError = format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_ERROR.tmp", _wgetenv(L"USERPROFILE"));
+	_wsystem(format(L"TASKKILL /F /IM {} > \"{}\" 2> \"{}\"", name, FilePathNormal, FilePathError).c_str());
 	bool _res = (!WCH_FileIsBlank(L"WCH_SYSTEM_NORMAL.tmp") && WCH_FileIsBlank(L"WCH_SYSTEM_ERROR.tmp"));
-	DeleteFileW(L"WCH_SYSTEM_NORMAL.tmp");
-	DeleteFileW(L"WCH_SYSTEM_ERROR.tmp");
+	DeleteFileW(FilePathNormal.c_str());
+	DeleteFileW(FilePathError.c_str());
 	return _res;
 }
 
@@ -486,7 +501,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			WCH_NID.uID = 0;
 			WCH_NID.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 			WCH_NID.uCallbackMessage = WM_USER;
-			WCH_NID.hIcon = (HICON)LoadImageW(NULL, L"WCH.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
+			WCH_NID.hIcon = (HICON)LoadImageW(NULL, (WCH_GetExecDir() + L"\\WCH.ico").c_str(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
 			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
 			WCH_menu_handle = CreatePopupMenu();

@@ -41,9 +41,6 @@
     <ClInclude Include="modules\basic.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WCH.rc">
@@ -51,8 +48,13 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="WCH.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <CopyFileToFolders Include="LICENSE" />
+    <CopyFileToFolders Include="WCH.ico" />
+    <CopyFileToFolders Include="resources\en-US\config.json" />
+    <CopyFileToFolders Include="resources\en-US\help.json" />
+    <CopyFileToFolders Include="resources\en-US\interactive.json" />
+    <CopyFileToFolders Include="resources\zh-CN\config.json" />
+    <CopyFileToFolders Include="resources\zh-CN\help.json" />
+    <CopyFileToFolders Include="resources\zh-CN\interactive.json" />
   </ItemGroup>
 </Project>

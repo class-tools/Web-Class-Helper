@@ -63,11 +63,14 @@ size_t WCH_GetNumDigits(size_t _n);
 
 void WCH_Init_Dir() {
 	// Initialization for directory.
-	if (_waccess(L"data", 0) != 0) {
-		CreateDirectoryW(L"data", NULL);
+	if (_waccess(format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE")).c_str(), 0) != 0) {
+		CreateDirectoryW(format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE")).c_str(), NULL);
 	}
-	if (_waccess(L"logs", 0) != 0) {
-		CreateDirectoryW(L"logs", NULL);
+	if (_waccess(format(L"{}\\AppData\\Local\\WCH\\data", _wgetenv(L"USERPROFILE")).c_str(), 0) != 0) {
+		CreateDirectoryW(format(L"{}\\AppData\\Local\\WCH\\data", _wgetenv(L"USERPROFILE")).c_str(), NULL);
+	}
+	if (_waccess(format(L"{}\\AppData\\Local\\WCH\\logs", _wgetenv(L"USERPROFILE")).c_str(), 0) != 0) {
+		CreateDirectoryW(format(L"{}\\AppData\\Local\\WCH\\logs", _wgetenv(L"USERPROFILE")).c_str(), NULL);
 	}
 }
 
@@ -96,8 +99,8 @@ void WCH_Init_Log() {
 	// Initialization for log.
 	WCH_Time now = WCH_GetTime();
 	WCH_read_settings();
-	if (_waccess(L"logs/latest.log", 0) != -1) {
-		_wrename(L"logs/latest.log", format(L"logs/{}.log", StrToWstr(WCH_Settings["StartTime"].asString())).c_str());
+	if (_waccess(format(L"{}\\AppData\\Local\\WCH\\logs\\latest.log", _wgetenv(L"USERPROFILE")).c_str(), 0) != -1) {
+		_wrename(format(L"{}\\AppData\\Local\\WCH\\logs\\latest.log", _wgetenv(L"USERPROFILE")).c_str(), format(L"{}\\AppData\\Local\\WCH\\logs\\{}.log", _wgetenv(L"USERPROFILE"), StrToWstr(WCH_Settings["StartTime"].asString())).c_str());
 	}
 	WCH_Settings["StartTime"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
 	WCH_save_settings();
@@ -137,7 +140,7 @@ void WCH_Init_Var() {
 	WCH_window_title.append(L" " + StrToWstr(WCH_Language["Build"].asString()) + L" " + to_wstring(WCH_VER_BUILD));
 	WCH_SetWindowStatus(false);
 	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["PreviewWarning"].asString()) + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
-		WCH_CheckAndDeleteFile(L"logs/latest.log");
+		WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\WCH\\logs\\latest.log", _wgetenv(L"USERPROFILE")));
 		_exit(0);
 	}
 	WCH_SetWindowStatus(true);

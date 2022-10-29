@@ -65,7 +65,7 @@ void WCH_printlog(wstring _mode, wstring _info) {
 	// Print log.
 	if (!WCH_pre_start) {
 		WCH_Time now = WCH_GetTime();
-		wfout.open(L"logs/latest.log", ios::app);
+		wfout.open(format(L"{}\\AppData\\Local\\WCH\\logs\\latest.log", _wgetenv(L"USERPROFILE")), ios::app);
 		wfout << format(L"[{:02}:{:02}:{:02}] {}: {}.", now.Hour, now.Minute, now.Second, _mode, _info) << endl;
 		wfout.close();
 	}
@@ -75,7 +75,7 @@ void WCH_read_clock() {
 	// Read clock data.
 	WCH_Time q = WCH_GetTime();
 	wstring NowWeekDay = WCH_weekday_list[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	wstring FilePath = L"data/clock.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\data\\clock.json", _wgetenv(L"USERPROFILE"));
 	Json::Value val;
 	fin.open(FilePath);
 	if (!fin.is_open()) {
@@ -100,7 +100,7 @@ void WCH_read_clock() {
 
 void WCH_read_task() {
 	// Read task data.
-	wstring FilePath = L"data/task.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\data\\task.json", _wgetenv(L"USERPROFILE"));
 	Json::Value val;
 	fin.open(FilePath);
 	if (!fin.is_open()) {
@@ -125,7 +125,7 @@ void WCH_read_task() {
 
 void WCH_read_work() {
 	// Read work data.
-	wstring FilePath = L"data/work.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\data\\work.json", _wgetenv(L"USERPROFILE"));
 	Json::Value val;
 	fin.open(FilePath);
 	if (!fin.is_open()) {
@@ -150,7 +150,7 @@ void WCH_read_work() {
 
 void WCH_read_settings() {
 	// Read settings data.
-	wstring FilePath = L"settings.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\settings.json", _wgetenv(L"USERPROFILE"));
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		goto ERR;
@@ -189,7 +189,7 @@ void WCH_read_settings() {
 
 void WCH_read_language() {
 	// Read language data.
-	wstring FilePath = L"resources/" + StrToWstr(WCH_Settings["Language"].asString()) + L"/interactive.json";
+	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\interactive.json";
 	fin.open(FilePath);
 	if (!fin.is_open()) {
 		goto ERR;
@@ -229,7 +229,7 @@ void WCH_save_clock() {
 	// Save clock data.
 	WCH_Time q = WCH_GetTime();
 	wstring NowWeekDay = WCH_weekday_list[(q.Day + 2 * q.Month + 3 * (q.Month + 1) / 5 + q.Year + q.Year / 4 - q.Year / 100 + q.Year / 400 + 1) % 7];
-	wstring FilePath = L"data/clock.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\data\\clock.json", _wgetenv(L"USERPROFILE"));
 	Json::Value val;
 	fin.open(FilePath);
 	if (fin.is_open()) {
@@ -262,7 +262,7 @@ void WCH_save_clock() {
 
 void WCH_save_task() {
 	// Save task list data.
-	wstring FilePath = L"data/task.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\data\\task.json", _wgetenv(L"USERPROFILE"));
 	Json::Value val;
 	if (WCH_task_num == 0) {
 		if (_waccess(FilePath.c_str(), 0) != -1) {
@@ -282,7 +282,7 @@ void WCH_save_task() {
 
 void WCH_save_work() {
 	// Save task list data.
-	wstring FilePath = L"data/work.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\data\\work.json", _wgetenv(L"USERPROFILE"));
 	Json::Value val;
 	if (WCH_work_num == 0) {
 		if (_waccess(FilePath.c_str(), 0) != -1) {
@@ -305,7 +305,7 @@ void WCH_save_work() {
 
 void WCH_save_settings() {
 	// Save settings data.
-	wstring FilePath = L"settings.json";
+	wstring FilePath = format(L"{}\\AppData\\Local\\WCH\\settings.json", _wgetenv(L"USERPROFILE"));
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Writing file \"" + FilePath + L"\"");
 	fout.open(FilePath);
 	JSON_SW->write(WCH_Settings, &fout);

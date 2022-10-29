@@ -8,7 +8,3 @@
 /UnitTest/ARM64/
 /.vscode/
 /.vs/
-/data/*.json
-/logs/*.log
-*.tmp
-settings.json
