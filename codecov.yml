@@ -1,3 +1,17 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 25%
+        base: auto
+    patch:
+      default:
+        target: auto
+        threshold: 25%
+        base: auto
+        if_ci_failed: error
+        only_pulls: true
 comment:
   layout: "reach, diff, flags, files, header, footer"
   behavior: new

@@ -178,9 +178,6 @@ public:
 		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
 		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 	}
-	~GdiplusWrapper() {
-		Gdiplus::GdiplusShutdown(gdiplusToken);
-	}
 	int32_t GetEncoderClsid(const wchar_t* format, CLSID* pClsid) {
 		UINT num = 0;
 		UINT size = 0;

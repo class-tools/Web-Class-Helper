@@ -49,6 +49,7 @@ public:
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"Test"), (size_t)4);
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"测试"), (size_t)4);
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"テスト"), (size_t)6);
+		Assert::AreEqual(WCH_GetWstrDisplaySize(L"T测テ"), (size_t)5);
 	}
 };
 
