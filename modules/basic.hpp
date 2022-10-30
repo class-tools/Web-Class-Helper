@@ -345,13 +345,14 @@ const set<wstring> WCH_language_support = {
 	L"DataSaving",
 	L"DataSaved",
 	L"DataNone"};
+const wstring WCH_progress_bar = IsWindows10OrGreater() ? L"━" : L"-";
+const wstring WCH_path_data = format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
+const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp", _wgetenv(L"USERPROFILE"));
 vector<wstring> WCH_command_list;
 set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 set<wstring> WCH_task_list;
 set<pair<wstring, wstring>> WCH_work_list;
 wstring WCH_window_title;
-wstring WCH_command;
-wstring WCH_ProgressBarStr;
 HWND WCH_window_handle;
 HWND WCH_tray_handle;
 HMENU WCH_menu_handle;

@@ -17,13 +17,14 @@ extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
 extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
+extern const wstring WCH_progress_bar;
+extern const wstring WCH_path_data;
+extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
@@ -59,14 +60,14 @@ void WCH_save_settings();
 
 void WCH_Init_Dir() {
 	// Initialization for directory.
-	if (_waccess(format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE")).c_str(), 0) != 0) {
-		CreateDirectoryW(format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE")).c_str(), NULL);
+	if (_waccess(WCH_path_data.c_str(), 0) != 0) {
+		CreateDirectoryW(WCH_path_data.c_str(), NULL);
 	}
-	if (_waccess(format(L"{}\\AppData\\Local\\WCH\\data", _wgetenv(L"USERPROFILE")).c_str(), 0) != 0) {
-		CreateDirectoryW(format(L"{}\\AppData\\Local\\WCH\\data", _wgetenv(L"USERPROFILE")).c_str(), NULL);
+	if (_waccess((WCH_path_data + L"\\data").c_str(), 0) != 0) {
+		CreateDirectoryW((WCH_path_data + L"\\data").c_str(), NULL);
 	}
-	if (_waccess(format(L"{}\\AppData\\Local\\WCH\\logs", _wgetenv(L"USERPROFILE")).c_str(), 0) != 0) {
-		CreateDirectoryW(format(L"{}\\AppData\\Local\\WCH\\logs", _wgetenv(L"USERPROFILE")).c_str(), NULL);
+	if (_waccess((WCH_path_data + L"\\logs").c_str(), 0) != 0) {
+		CreateDirectoryW((WCH_path_data + L"\\logs").c_str(), NULL);
 	}
 }
 
@@ -83,7 +84,6 @@ void WCH_Init_Bind() {
 		return def;
 	}();
 	WCH_window_handle = GetConsoleWindow();
-	WCH_ProgressBarStr = IsWindows10OrGreater() ? L"━" : L"-";
 	_setmode(_fileno(stdin), _O_WTEXT);
 	_setmode(_fileno(stdout), _O_WTEXT);
 	wfin.imbue(locale(".UTF-8", LC_CTYPE));
@@ -95,8 +95,8 @@ void WCH_Init_Log() {
 	// Initialization for log.
 	WCH_Time now = WCH_GetTime();
 	WCH_read_settings();
-	if (_waccess(format(L"{}\\AppData\\Local\\WCH\\logs\\latest.log", _wgetenv(L"USERPROFILE")).c_str(), 0) != -1) {
-		_wrename(format(L"{}\\AppData\\Local\\WCH\\logs\\latest.log", _wgetenv(L"USERPROFILE")).c_str(), format(L"{}\\AppData\\Local\\WCH\\logs\\{}.log", _wgetenv(L"USERPROFILE"), StrToWstr(WCH_Settings["StartTime"].asString())).c_str());
+	if (_waccess((WCH_path_data + L"\\logs\\latest.log").c_str(), 0) != -1) {
+		_wrename((WCH_path_data + L"\\logs\\latest.log").c_str(), (WCH_path_data + L"\\logs\\" + StrToWstr(WCH_Settings["StartTime"].asString()) + L".log").c_str());
 	}
 	WCH_Settings["StartTime"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
 	WCH_save_settings();
@@ -136,7 +136,7 @@ void WCH_Init_Var() {
 	WCH_window_title.append(L" " + StrToWstr(WCH_Language["Build"].asString()) + L" " + to_wstring(WCH_VER_BUILD));
 	WCH_SetWindowStatus(false);
 	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["PreviewWarning"].asString()) + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
-		WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\WCH\\logs\\latest.log", _wgetenv(L"USERPROFILE")));
+		WCH_CheckAndDeleteFile(WCH_path_data + L"\\logs\\latest.log");
 		_exit(0);
 	}
 	WCH_SetWindowStatus(true);

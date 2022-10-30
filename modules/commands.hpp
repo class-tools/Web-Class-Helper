@@ -17,13 +17,14 @@ extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
 extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
+extern const wstring WCH_progress_bar;
+extern const wstring WCH_path_data;
+extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
@@ -88,13 +89,13 @@ void WCH_exit() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Exiting \"Web Class Helper {}{}\"", WCH_VER_MAIN, fullver));
 	WCH_cmd_line = false;
 	WCH_program_end = true;
-	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_NORMAL.tmp", _wgetenv(L"USERPROFILE")));
-	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_ERROR.tmp", _wgetenv(L"USERPROFILE")));
-	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_UPD.tmp", _wgetenv(L"USERPROFILE")));
-	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_TRANS.tmp", _wgetenv(L"USERPROFILE")));
-	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_OW.tmp", _wgetenv(L"USERPROFILE")));
-	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_FATE.tmp", _wgetenv(L"USERPROFILE")));
-	WCH_CheckAndDeleteFile(format(L"{}\\AppData\\Local\\Temp\\WCH_IDENT.tmp", _wgetenv(L"USERPROFILE")));
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_SYSTEM_NORMAL.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_SYSTEM_ERROR.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_UPD.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_TRANS.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_OW.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_FATE.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_IDENT.tmp");
 	SendMessageW(WCH_tray_handle, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
@@ -129,7 +130,7 @@ void WCH_update() {
 		WCH_ProgressBarTot = 5;
 		thread T(WCH_ProgressBar);
 		T.detach();
-		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_UPD.tmp", _wgetenv(L"USERPROFILE"));
+		wstring FilePath = WCH_path_temp + L"\\WCH_UPD.tmp";
 		wstring url = L"https://class-tools.github.io/update/WCH?";
 		random_device rd;
 		mt19937 mtrand(rd());
@@ -682,7 +683,7 @@ void WCH_trans() {
 		return;
 	}
 	try {
-		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_TRANS.tmp", _wgetenv(L"USERPROFILE"));
+		wstring FilePath = WCH_path_temp + L"\\WCH_TRANS.tmp";
 		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WstrToStr((WCH_command_list[1]))))).c_str(), FilePath.c_str(), 0, NULL);
 		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");
@@ -711,7 +712,7 @@ void WCH_ow() {
 		return;
 	}
 	try {
-		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_OW.tmp", _wgetenv(L"USERPROFILE"));
+		wstring FilePath = WCH_path_temp + L"\\WCH_OW.tmp";
 		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", FilePath.c_str(), 0, 0);
 		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");
@@ -735,7 +736,7 @@ void WCH_fate() {
 		return;
 	}
 	try {
-		wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_FATE.tmp", _wgetenv(L"USERPROFILE"));
+		wstring FilePath = WCH_path_temp + L"\\WCH_FATE.tmp";
 		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(WstrToStr((WCH_GetUniIdent()))))).c_str(), FilePath.c_str(), 0, NULL);
 		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");

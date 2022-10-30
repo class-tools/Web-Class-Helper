@@ -17,13 +17,14 @@ extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
 extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
+extern const wstring WCH_progress_bar;
+extern const wstring WCH_path_data;
+extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
@@ -122,12 +123,13 @@ void WCH_AutoSave_loop() {
 void WCH_CL_Init() {
 	// Initialize the command line.
 BEGIN:
+	wstring _in;
 	wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
-	getline(wcin, WCH_command);
+	getline(wcin, _in);
 	if (wcin.eof()) {
 		raise(SIGINT);
 	}
-	WCH_command_list = WCH_split(WCH_command);
+	WCH_command_list = WCH_split(_in);
 	if (WCH_command_list.size() == 0) {
 		wcout << endl;
 		goto BEGIN;

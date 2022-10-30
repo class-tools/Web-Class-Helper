@@ -17,13 +17,14 @@ extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
 extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
+extern const wstring WCH_progress_bar;
+extern const wstring WCH_path_data;
+extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 extern set<wstring> WCH_task_list;
 extern set<pair<wstring, wstring>> WCH_work_list;
 extern wstring WCH_window_title;
-extern wstring WCH_command;
-extern wstring WCH_ProgressBarStr;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
@@ -213,7 +214,7 @@ wstring WCH_GetExecDir() {
 
 wstring WCH_GetUniIdent() {
 	// Get unique identification. (Public IP)
-	wstring FilePath = format(L"{}\\AppData\\Local\\Temp\\WCH_IDENT.tmp", _wgetenv(L"USERPROFILE"));
+	wstring FilePath = WCH_path_temp + L"\\WCH_IDENT.tmp";
 	wstring _in, _res;
 	URLDownloadToFileW(NULL, L"https://api.ipify.org", FilePath.c_str(), 0, NULL);
 	wfin.open(FilePath);
@@ -363,10 +364,10 @@ bool WCH_FileIsBlank(const wstring& _filename) {
 
 bool WCH_TaskKill(const wstring& name) {
 	// Kill a task by system command.
-	wstring FilePathNormal = format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_NORMAL.tmp", _wgetenv(L"USERPROFILE"));
-	wstring FilePathError = format(L"{}\\AppData\\Local\\Temp\\WCH_SYSTEM_ERROR.tmp", _wgetenv(L"USERPROFILE"));
+	wstring FilePathNormal = WCH_path_temp + L"\\WCH_SYSTEM_NORMAL.tmp";
+	wstring FilePathError = WCH_path_temp + L"\\WCH_SYSTEM_ERROR.tmp";
 	_wsystem(format(L"TASKKILL /F /IM {} > \"{}\" 2> \"{}\"", name, FilePathNormal, FilePathError).c_str());
-	bool _res = (!WCH_FileIsBlank(L"WCH_SYSTEM_NORMAL.tmp") && WCH_FileIsBlank(L"WCH_SYSTEM_ERROR.tmp"));
+	bool _res = (!WCH_FileIsBlank(FilePathNormal) && WCH_FileIsBlank(FilePathError));
 	DeleteFileW(FilePathNormal.c_str());
 	DeleteFileW(FilePathError.c_str());
 	return _res;
@@ -442,11 +443,11 @@ void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
 	}
 	WCH_PrintColor(0x0A);
 	for (int32_t i = 0; i < _n / 2; i++) {
-		wcout << WCH_ProgressBarStr;
+		wcout << WCH_progress_bar;
 	}
 	WCH_PrintColor(0x0C);
 	for (int32_t i = _n / 2; i < 50; i++) {
-		wcout << WCH_ProgressBarStr;
+		wcout << WCH_progress_bar;
 	}
 	WCH_PrintColor(0x02);
 	wcout << L" " << _n << L"%";
