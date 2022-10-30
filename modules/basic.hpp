@@ -120,6 +120,7 @@ Contributors: jsh-jsh ren-yc
 #pragma comment(lib, "urlmon.lib")
 #pragma comment(lib, "ole32.lib")
 
+using std::ignore;
 using std::cin;
 using std::wcin;
 using std::cout;
@@ -181,6 +182,7 @@ public:
 	int32_t GetEncoderClsid(const wchar_t* format, CLSID* pClsid) {
 		UINT num = 0;
 		UINT size = 0;
+		UINT ret = -1;
 		Gdiplus::ImageCodecInfo* pImageCodecInfo = NULL;
 		Gdiplus::GetImageEncodersSize(&num, &size);
 		if (size == 0) {
@@ -191,15 +193,17 @@ public:
 			return -1;
 		}
 		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
+#pragma warning(push)
+#pragma warning(disable : 6385)
 		for (UINT j = 0; j < num; j++) {
 			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
 				*pClsid = pImageCodecInfo[j].Clsid;
-				free(pImageCodecInfo);
-				return j;
+				ret = j;
 			}
 		}
 		free(pImageCodecInfo);
-		return -1;
+#pragma warning(pop)
+		return ret;
 	}
 	void SaveImage(HBITMAP hBitmap, const wchar_t* filename, const wchar_t* format) {
 		CLSID pngClsid;
@@ -212,24 +216,24 @@ private:
 };
 
 struct WCH_Time {
-	int32_t Year {};
-	int32_t Month {};
-	int32_t Day {};
-	int32_t Hour {};
-	int32_t Minute {};
-	int32_t Second {};
-	int32_t WeekDay {};
+	int32_t Year = 0;
+	int32_t Month = 0;
+	int32_t Day = 0;
+	int32_t Hour = 0;
+	int32_t Minute = 0;
+	int32_t Second = 0;
+	int32_t WeekDay = 0;
 };
 
 struct WCH_Data_Body {
-	int32_t H {};
-	int32_t M {};
+	int32_t H = 0;
+	int32_t M = 0;
 };
 
 struct WCH_Version {
-	int32_t X {};
-	int32_t Y {};
-	int32_t Z {};
+	int32_t X = 0;
+	int32_t Y = 0;
+	int32_t Z = 0;
 	bool operator==(const WCH_Version& _in) {
 		return (X == _in.X && Y == _in.Y && Z == _in.Z);
 	}
@@ -275,8 +279,15 @@ void WCH_check_config();
 void WCH_save_cmd();
 void WCH_exit();
 
-const array<wstring, 7> WCH_weekday_list {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
-const array<wstring, 2> WCH_language_list {L"en-US", L"zh-CN"};
+const array<wstring, 7> WCH_weekday_list = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+const array<wstring, 2> WCH_language_list = {L"en-US", L"zh-CN"};
+const map<wstring, wstring> WCH_MIME_list = {
+	make_pair(L"image/bmp", L".bmp"),
+	make_pair(L"image/gif", L".gif"),
+	make_pair(L"image/jpeg", L".jpg"),
+	make_pair(L"image/png", L".png"),
+	make_pair(L"image/tiff", L".tif")
+};
 const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"clock", WCH_check_clock),
 	make_pair(L"task", WCH_check_task),
@@ -306,6 +317,7 @@ const set<tuple<wstring, wstring, wstring>> WCH_settings_support = {
 	make_tuple(L"CommandPrompt", L"String", L">>>"),
 	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"),
 	make_tuple(L"Language", L"String", L"en-US"),
+	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png"),
 	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")))};
 const set<wstring> WCH_language_support = {
 	L"ProgramName",

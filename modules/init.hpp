@@ -75,8 +75,8 @@ void WCH_Init_Bind() {
 	// Initialization for bind.
 	atexit(WCH_exit);
 	WCH_signalHandler();
-	CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-	WCH_TBL.CoCreateInstance(CLSID_TaskbarList);
+	assert(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) == S_OK);
+	assert(WCH_TBL.CoCreateInstance(CLSID_TaskbarList) == S_OK);
 	JSON_SWB.settings_ = []() {
 		Json::Value def;
 		Json::StreamWriterBuilder::setDefaults(&def);
@@ -84,8 +84,8 @@ void WCH_Init_Bind() {
 		return def;
 	}();
 	WCH_window_handle = GetConsoleWindow();
-	_setmode(_fileno(stdin), _O_WTEXT);
-	_setmode(_fileno(stdout), _O_WTEXT);
+	assert(_setmode(_fileno(stdin), _O_WTEXT) != -1);
+	assert(_setmode(_fileno(stdout), _O_WTEXT) != -1);
 	wfin.imbue(locale(".UTF-8", LC_CTYPE));
 	wfout.imbue(locale(".UTF-8", LC_CTYPE));
 	_wsystem(L"CHCP 65001 > NUL");
@@ -96,7 +96,7 @@ void WCH_Init_Log() {
 	WCH_Time now = WCH_GetTime();
 	WCH_read_settings();
 	if (_waccess((WCH_path_data + L"\\logs\\latest.log").c_str(), 0) != -1) {
-		_wrename((WCH_path_data + L"\\logs\\latest.log").c_str(), (WCH_path_data + L"\\logs\\" + StrToWstr(WCH_Settings["StartTime"].asString()) + L".log").c_str());
+		ignore = _wrename((WCH_path_data + L"\\logs\\latest.log").c_str(), (WCH_path_data + L"\\logs\\" + StrToWstr(WCH_Settings["StartTime"].asString()) + L".log").c_str());
 	}
 	WCH_Settings["StartTime"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
 	WCH_save_settings();

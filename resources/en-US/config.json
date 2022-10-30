@@ -8,6 +8,7 @@
 		["Prompt when inputting command", "No"],
 		["Make a sound prompt when count down ends", "No"],
 		["Program language (Support \"en-US\" \"zh-CN\")", "Yes"],
-		["Screenshot image save path (Command `pi`)", "No"]
+		["Screenshot image save format (MIME)", "No"],
+		["Screenshot image save path", "No"]
 	]
 }

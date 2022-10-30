@@ -2,24 +2,30 @@
 name: Bug Report
 about: Bug report template Issues.
 labels: bug
-title: BUG ${Your title}
+title: Your title here
 assignees: ""
 ---
 
-Description:
+### Description
+
+Please describe the issue. (Causation, influence, etc)
+
+### Detailed information
 
 Screenshot (If any):
 
-Terminal Output (If needed):
+Full Console Output (If needed):
 
 ```plain
 ```
 
-Log File:
+Full Log File:
 
 ```plain
 ```
 
-Program Version: ``
+### Environment
 
-Operating System Version: ``
+Program Version: `` (e.g. `1.1.4-alpha.5`)
+
+Operating System Version: `` (e.g. `Windows 10.0.22623.875`)

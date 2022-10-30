@@ -317,7 +317,7 @@ void WCH_SaveImg() {
 	// Save screenshot to file.
 	WCH_Time now = WCH_GetTime();
 	wstring SavePathDir = StrToWstr(WCH_Settings["ScreenshotSavePath"].asString());
-	wstring SavePath = format(L"{}{:04}{:02}{:02}{:02}{:02}{:02}.jpg", SavePathDir, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+	wstring SavePath = format(L"{}{:04}{:02}{:02}{:02}{:02}{:02}{}", SavePathDir, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, WCH_MIME_list.find(StrToWstr(WCH_Settings["ScreenshotSaveMIME"].asString()))->second);
 	if (_waccess(SavePathDir.c_str(), 0) != 0) {
 		CreateDirectoryW(SavePathDir.c_str(), NULL);
 	}
@@ -332,7 +332,7 @@ void WCH_SaveImg() {
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
 	BitBlt(hMemDC, 0, 0, nWidth, nHeight, hdcScreen, 0, 0, SRCCOPY);
 	GdiplusWrapper gdiplus {};
-	gdiplus.SaveImage(hBitmap, SavePath.c_str(), L"image/jpeg");
+	gdiplus.SaveImage(hBitmap, SavePath.c_str(), StrToWstr(WCH_Settings["ScreenshotSaveMIME"].asString()).c_str());
 	DeleteDC(hdcScreen);
 	DeleteDC(hMemDC);
 	DeleteObject(hBitmap);
@@ -429,7 +429,7 @@ pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Valu
 	if (!flag) {
 		return make_pair(false, KeyType);
 	}
-	if ((Key == L"ScreenshotSavePath" && Value[Value.size() - 1] != L'\\') || Key == L"Language" && find(WCH_language_list.begin(), WCH_language_list.end(), Value) == WCH_language_list.end()) {
+	if ((Key == L"ScreenshotSavePath" && Value[Value.size() - 1] != L'\\') || (Key == L"Language" && find(WCH_language_list.begin(), WCH_language_list.end(), Value) == WCH_language_list.end()) || (Key == L"ScreenshotSaveMIME" && WCH_MIME_list.find(Value) == WCH_MIME_list.end())) {
 		return make_pair(false, KeyType);
 	}
 	return make_pair(true, KeyType);
@@ -468,7 +468,7 @@ void WCH_ProgressBar() {
 	for (int32_t i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
 		WCH_PrintProgressBar(i, (int32_t)((WCH_ProgressBarTot - i) * _pro), true);
-		WCH_TBL->SetProgressValue(WCH_window_handle, (uint64_t)((WCH_ProgressBarTot - i) * _pro), 100);
+		WCH_TBL->SetProgressValue(WCH_window_handle, (uint64_t)(((uint64_t)WCH_ProgressBarTot - (uint64_t)i) * _pro), 100);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
