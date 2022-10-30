@@ -286,8 +286,7 @@ const map<wstring, wstring> WCH_MIME_list = {
 	make_pair(L"image/gif", L".gif"),
 	make_pair(L"image/jpeg", L".jpg"),
 	make_pair(L"image/png", L".png"),
-	make_pair(L"image/tiff", L".tif")
-};
+	make_pair(L"image/tiff", L".tif")};
 const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"clock", WCH_check_clock),
 	make_pair(L"task", WCH_check_task),
