@@ -75,8 +75,8 @@ void WCH_Init_Bind() {
 	// Initialization for bind.
 	atexit(WCH_exit);
 	WCH_signalHandler();
-	assert(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) == S_OK);
-	assert(WCH_TBL.CoCreateInstance(CLSID_TaskbarList) == S_OK);
+	ignore = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	ignore = WCH_TBL.CoCreateInstance(CLSID_TaskbarList);
 	JSON_SWB.settings_ = []() {
 		Json::Value def;
 		Json::StreamWriterBuilder::setDefaults(&def);
@@ -84,8 +84,8 @@ void WCH_Init_Bind() {
 		return def;
 	}();
 	WCH_window_handle = GetConsoleWindow();
-	assert(_setmode(_fileno(stdin), _O_WTEXT) != -1);
-	assert(_setmode(_fileno(stdout), _O_WTEXT) != -1);
+	ignore = _setmode(_fileno(stdin), _O_WTEXT);
+	ignore = _setmode(_fileno(stdout), _O_WTEXT);
 	wfin.imbue(locale(".UTF-8", LC_CTYPE));
 	wfout.imbue(locale(".UTF-8", LC_CTYPE));
 	_wsystem(L"CHCP 65001 > NUL");
