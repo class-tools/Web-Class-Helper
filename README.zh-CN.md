@@ -5,10 +5,11 @@
 <h1 align="center">- 网课助手 -</h1>
 
 <p align="center">
-<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/gitmsg.yml/badge.svg">
-<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codeql.yml/badge.svg">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/build.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/clangformat.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codecov.yml/badge.svg">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codeql.yml/badge.svg">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/gitmsg.yml/badge.svg">
 <img src="https://codecov.io/gh/class-tools/Web-Class-Helper/branch/master/graph/badge.svg?token=VaaOrygZkX">
 <img src="https://circleci.com/gh/class-tools/Web-Class-Helper.svg?style=shield">
 <img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">

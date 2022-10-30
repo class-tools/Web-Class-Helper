@@ -1,0 +1,63 @@
+---
+
+name: "Build"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-x86:
+    name: Build x86
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Initialize vcpkg
+        run: |
+          vcpkg integrate install
+          vcpkg install jsoncpp:x86-windows jsoncpp:x86-windows-static
+      - name: Build solution
+        run: |
+          .\scripts\build.ps1 "Release|x86"
+  build-x64:
+    name: Build x64
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Initialize vcpkg
+        run: |
+          vcpkg integrate install
+          vcpkg install jsoncpp:x64-windows jsoncpp:x64-windows-static
+      - name: Build solution
+        run: |
+          .\scripts\build.ps1 "Release|x64"
+  build-arm:
+    name: Build ARM
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Initialize vcpkg
+        run: |
+          vcpkg integrate install
+          vcpkg install jsoncpp:arm-windows jsoncpp:arm-windows-static
+      - name: Build solution
+        run: |
+          .\scripts\build.ps1 "Release|ARM"
+  build-arm64:
+    name: Build ARM64
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Initialize vcpkg
+        run: |
+          vcpkg integrate install
+          vcpkg install jsoncpp:arm64-windows jsoncpp:arm64-windows-static
+      - name: Build solution
+        run: |
+          .\scripts\build.ps1 "Release|ARM64"
