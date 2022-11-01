@@ -331,7 +331,7 @@ void WCH_SaveImg() {
 	hBitmap = CreateCompatibleBitmap(hdcScreen, nWidth, nHeight);
 	hOldBitmap = (HBITMAP)SelectObject(hMemDC, hBitmap);
 	BitBlt(hMemDC, 0, 0, nWidth, nHeight, hdcScreen, 0, 0, SRCCOPY);
-	GdiplusWrapper gdiplus {};
+	GdiplusWrapper gdiplus = {};
 	gdiplus.SaveImage(hBitmap, SavePath.c_str(), StrToWstr(WCH_Settings["ScreenshotSaveMIME"].asString()).c_str());
 	DeleteDC(hdcScreen);
 	DeleteDC(hMemDC);
