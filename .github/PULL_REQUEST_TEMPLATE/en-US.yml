@@ -1,0 +1,30 @@
+name: PR en-US
+description: PR template for en-US.
+
+body:
+  - type: textarea
+    id: motivation
+    validations:
+      required: true
+    attributes:
+      label: Motivation
+      description: |
+        Please describe the motivation of this PR and the goal you want to achieve through this PR.
+      placeholder: |
+        (Motivation)
+  - type: textarea
+    id: modification
+    validations:
+      required: true
+    attributes:
+      label: Modification
+      description: |
+        Please briefly describe what modification is made in this PR.
+      placeholder: |
+        (Modification)
+  - type: textarea
+    id: other
+    attributes:
+      label: Other Information
+      description: |
+        Tell us anything else you think we should know.

@@ -1,0 +1,30 @@
+name: PR zh-CN
+description: zh-CN PR 模板.
+
+body:
+  - type: textarea
+    id: motivation
+    validations:
+      required: true
+    attributes:
+      label: 动机
+      description: |
+        请描述您新建此 PR 的动机与您想通过此 PR 达成什么目标.
+      placeholder: |
+        (动机)
+  - type: textarea
+    id: modification
+    validations:
+      required: true
+    attributes:
+      label: 更改
+      description: |
+        请您主要说明此 PR 更改了什么.
+      placeholder: |
+        (更改)
+  - type: textarea
+    id: other
+    attributes:
+      label: 其它信息
+      description: |
+        请告诉我们其它您觉得我们需要知道的信息.
