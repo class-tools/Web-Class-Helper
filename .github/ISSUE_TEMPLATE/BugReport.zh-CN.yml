@@ -1,0 +1,79 @@
+name: 故障报告
+description: 报告一个故障.
+labels: ["bug"]
+
+body:
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: 故障描述
+      description: |
+        请描述这个故障. (触发方式和带来影响等)
+      placeholder: |
+        (描述)
+  - type: textarea
+    id: details
+    validations:
+      required: true
+    attributes:
+      label: 细节信息
+      description: |
+        请加入在这里屏幕截图, 控制台输出和日志文件.
+      placeholder: |
+        (屏幕截图)
+
+        ```plain
+        控制台输出
+        ```
+
+        ```plain
+        日志文件
+        ```
+  - type: textarea
+    id: version
+    validations:
+      required: true
+    attributes:
+      label: 程序版本
+      description: |
+        您在使用哪个版本?
+      placeholder: |
+        ```plain
+        例:
+        1.0.0
+        2.0.1-beta.4
+        2.1.0-rc.1
+        2.1.1-alpha.1
+        ```
+  - type: textarea
+    id: environment
+    validations:
+      required: true
+    attributes:
+      label: 操作系统版本
+      description: |
+        请告知我们您的操作系统版本.
+      placeholder: |
+        ```plain
+        例:
+        Windows 10.0.22623.875
+        Ubuntu 22.04.1
+        ```
+  - type: textarea
+    id: other
+    attributes:
+      label: 其它信息
+      description: |
+        请告诉我们其它您觉得我们需要知道的信息.
+  - type: dropdown
+    id: self-bugfix
+    validations:
+      required: true
+    attributes:
+      label: 是否自己修复故障
+      description: 您将要自己修复这个故障吗?
+      options:
+        - 是
+        - 否

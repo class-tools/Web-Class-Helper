@@ -1,0 +1,79 @@
+name: Bug Report
+description: Report a bug.
+labels: ["bug"]
+
+body:
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: Describe the Bug
+      description: |
+        Please describe the bug. (Causation, influence, etc)
+      placeholder: |
+        (Description)
+  - type: textarea
+    id: details
+    validations:
+      required: true
+    attributes:
+      label: Detailed Information
+      description: |
+        Please add screenshots, console outputs and log file contents here.
+      placeholder: |
+        (Screenshot)
+
+        ```plain
+        Console Output
+        ```
+
+        ```plain
+        Log File
+        ```
+  - type: textarea
+    id: version
+    validations:
+      required: true
+    attributes:
+      label: Program Version
+      description: |
+        Which version of the program are you using?
+      placeholder: |
+        ```plain
+        e.g.
+        1.0.0
+        2.0.1-beta.4
+        2.1.0-rc.1
+        2.1.1-alpha.1
+        ```
+  - type: textarea
+    id: environment
+    validations:
+      required: true
+    attributes:
+      label: OS Version
+      description: |
+        Please tell us your operating system version here.
+      placeholder: |
+        ```plain
+        e.g.
+        Windows 10.0.22623.875
+        Ubuntu 22.04.1
+        ```
+  - type: textarea
+    id: other
+    attributes:
+      label: Other Information
+      description: |
+        Tell us anything else you think we should know.
+  - type: dropdown
+    id: self-bugfix
+    validations:
+      required: true
+    attributes:
+      label: Self Bugfix
+      description: Are you going to fix this bug by yourself?
+      options:
+        - "Yes"
+        - "No"

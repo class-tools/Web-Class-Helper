@@ -1,0 +1,39 @@
+name: Feature Request
+description: Request a feature.
+labels: ["enhancement"]
+
+body:
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: Describe the Feature
+      description: |
+        Please describe the feature. (Causation, influence, etc)
+      placeholder: |
+        (Description)
+  - type: textarea
+    id: details
+    attributes:
+      label: Detailed Information
+      description: |
+        Please add expected screenshots here. (If any)
+      placeholder: |
+        (Screenshot)
+  - type: textarea
+    id: other
+    attributes:
+      label: Other Information
+      description: |
+        Tell us anything else you think we should know.
+  - type: dropdown
+    id: self-resolve
+    validations:
+      required: true
+    attributes:
+      label: Self Resolve
+      description: Are you going to resolve this feature by yourself?
+      options:
+        - "Yes"
+        - "No"

@@ -1,0 +1,39 @@
+name: 特性请求
+description: 请求一个特性.
+labels: ["enhancement"]
+
+body:
+  - type: textarea
+    id: description
+    validations:
+      required: true
+    attributes:
+      label: 特性描述
+      description: |
+        请描述这个特性. (触发方式和带来影响等)
+      placeholder: |
+        (描述)
+  - type: textarea
+    id: details
+    attributes:
+      label: 细节信息
+      description: |
+        请加入您的期望特性屏幕截图. (如果有)
+      placeholder: |
+        (屏幕截图)
+  - type: textarea
+    id: other
+    attributes:
+      label: 其它信息
+      description: |
+        请告诉我们其它您觉得我们需要知道的信息.
+  - type: dropdown
+    id: self-resolve
+    validations:
+      required: true
+    attributes:
+      label: 是否自己实现特性
+      description: 您将要自己实现这个特性吗?
+      options:
+        - 是
+        - 否
