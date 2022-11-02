@@ -3,8 +3,9 @@
 	"Content": [
 		["The content in `AntiIdleEndPrompt` messagebox", "No"],
 		["Enable prompt when trying to disable anti-idle", "No"],
+		["Process killing interval, in milliseconds", "No"],
 		["Enable automatic saving data and settings files", "Yes"],
-		["Time of auto save interval, in milliseconds", "Yes"],
+		["Auto save interval, in milliseconds", "Yes"],
 		["Prompt when inputting command", "No"],
 		["Make a sound prompt when count down ends", "No"],
 		["Program language (Support \"en-US\" \"zh-CN\")", "Yes"],

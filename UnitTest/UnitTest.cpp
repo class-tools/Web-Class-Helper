@@ -86,10 +86,10 @@ public:
 		Temp = WCH_CheckConfigValid(L"AutoSave", L"Test");
 		Assert::IsFalse(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"String");
-		Temp = WCH_CheckConfigValid(L"AutoSaveTime", L"2147483647");
+		Temp = WCH_CheckConfigValid(L"AutoSaveInterval", L"2147483647");
 		Assert::IsFalse(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"String");
-		Temp = WCH_CheckConfigValid(L"AutoSaveTime", L"60000");
+		Temp = WCH_CheckConfigValid(L"AutoSaveInterval", L"60000");
 		Assert::IsTrue(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"Number");
 		Temp = WCH_CheckConfigValid(L"Language", L"Test");

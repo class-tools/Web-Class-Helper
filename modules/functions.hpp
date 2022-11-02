@@ -103,7 +103,7 @@ void WCH_message_loop() {
 void WCH_auto_save_loop() {
 	// Check if the data files are changed and save them.
 	while (!WCH_program_end) {
-		WCH_Sleep(stoi(StrToWstr(WCH_Settings["AutoSaveTime"].asString())));
+		WCH_Sleep(stoi(StrToWstr(WCH_Settings["AutoSaveInterval"].asString())));
 		WCH_save_func(false);
 	}
 }
@@ -118,7 +118,7 @@ void WCH_check_task_loop() {
 				WCH_printlog(WCH_LOG_STATUS_INFO, L"Failed to kill \"" + *it + L"\"");
 			}
 		}
-		WCH_Sleep(3000);
+		WCH_Sleep(stoi(StrToWstr(WCH_Settings["AntiIdleKillInterval"].asString())));
 	}
 }
 

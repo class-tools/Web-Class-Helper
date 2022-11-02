@@ -7,11 +7,11 @@ body:
     validations:
       required: true
     attributes:
-      label: 动机
+      label: 原因
       description: |
-        请描述您新建此 PR 的动机与您想通过此 PR 达成什么目标.
+        请描述您新建此 PR 的原因与您想通过此 PR 达成什么目标.
       placeholder: |
-        (动机)
+        (原因)
   - type: textarea
     id: modification
     validations:

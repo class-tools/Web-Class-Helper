@@ -311,8 +311,9 @@ const map<wstring, function<void()>> WCH_command_support = {
 const set<tuple<wstring, wstring, wstring>> WCH_settings_support = {
 	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?"),
 	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"),
+	make_tuple(L"AntiIdleKillInterval", L"Number", L"60000"),
 	make_tuple(L"AutoSave", L"Boolean", L"True"),
-	make_tuple(L"AutoSaveTime", L"Number", L"60000"),
+	make_tuple(L"AutoSaveInterval", L"Number", L"60000"),
 	make_tuple(L"CommandPrompt", L"String", L">>>"),
 	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"),
 	make_tuple(L"Language", L"String", L"en-US"),
