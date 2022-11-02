@@ -326,6 +326,8 @@ const set<wstring> WCH_language_support = {
 	L"PublicPreview",
 	L"ReleaseCandidate",
 	L"Build",
+	L"Show",
+	L"Exit",
 	L"PreviewWarning",
 	L"InputCommandIncorrect",
 	L"FileProcessingFailed",
@@ -367,7 +369,7 @@ wstring WCH_window_title;
 HWND WCH_window_handle;
 HWND WCH_tray_handle;
 HMENU WCH_menu_handle;
-NOTIFYICONDATA WCH_NID;
+NOTIFYICONDATAW WCH_NID;
 ATL::CComPtr<ITaskbarList3> WCH_TBL;
 Json::Value WCH_Settings;
 Json::Value WCH_Language;
@@ -379,7 +381,6 @@ int32_t WCH_task_change;
 int32_t WCH_work_change;
 int32_t WCH_settings_change;
 int32_t WCH_ProgressBarTot;
-int32_t WCH_InputTimes;
 bool WCH_cmd_line = true;
 bool WCH_anti_idle;
 bool WCH_count_down;

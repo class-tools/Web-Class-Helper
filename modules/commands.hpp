@@ -28,7 +28,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
-extern NOTIFYICONDATA WCH_NID;
+extern NOTIFYICONDATAW WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
 extern Json::Value WCH_Language;
@@ -40,7 +40,6 @@ extern int32_t WCH_task_change;
 extern int32_t WCH_work_change;
 extern int32_t WCH_settings_change;
 extern int32_t WCH_ProgressBarTot;
-extern int32_t WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -55,6 +54,7 @@ extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
 
 bool WCH_save_func(bool output);
+void WCH_check_task_loop();
 
 void WCH_clear() {
 	// Clear console information.
@@ -639,20 +639,6 @@ void WCH_count_down_func() {
 	} catch (...) {
 		WCH_InputCommandIncorrect();
 		WCH_count_down = false;
-	}
-}
-
-void WCH_check_task_loop() {
-	// Check if the running task is in the task list. (Another thread)
-	while (WCH_anti_idle && !WCH_program_end) {
-		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
-			if (WCH_TaskKill(*it)) {
-				WCH_printlog(WCH_LOG_STATUS_INFO, L"Successfully killed \"" + *it + L"\"");
-			} else {
-				WCH_printlog(WCH_LOG_STATUS_INFO, L"Failed to kill \"" + *it + L"\"");
-			}
-		}
-		WCH_Sleep(3000);
 	}
 }
 

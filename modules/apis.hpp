@@ -28,7 +28,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
-extern NOTIFYICONDATA WCH_NID;
+extern NOTIFYICONDATAW WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
 extern Json::Value WCH_Language;
@@ -40,7 +40,6 @@ extern int32_t WCH_task_change;
 extern int32_t WCH_work_change;
 extern int32_t WCH_settings_change;
 extern int32_t WCH_ProgressBarTot;
-extern int32_t WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -500,9 +499,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
 			WCH_menu_handle = CreatePopupMenu();
-			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
+			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_SHOW, StrToWstr(WCH_Language["Show"].asString()).c_str());
 			AppendMenuW(WCH_menu_handle, MF_SEPARATOR, 0, NULL);
-			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_EXIT, L"Exit");
+			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_EXIT, StrToWstr(WCH_Language["Exit"].asString()).c_str());
 			break;
 		case WM_USER:
 			if (lParam == WM_LBUTTONDOWN) {

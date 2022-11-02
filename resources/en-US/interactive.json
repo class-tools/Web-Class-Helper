@@ -6,6 +6,8 @@
 	"PublicPreview": "Public Preview",
 	"ReleaseCandidate": "Release Candidate",
 	"Build": "Build",
+	"Show": "Show",
+	"Exit": "Exit",
 	"PreviewWarning": "This version of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: ",
 	"InputCommandIncorrect": "Your input command is incorrect, please check and try again.",
 	"FileProcessingFailed": "File processing failed, please try reinstalling this program.",

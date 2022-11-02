@@ -28,7 +28,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
-extern NOTIFYICONDATA WCH_NID;
+extern NOTIFYICONDATAW WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
 extern Json::Value WCH_Language;
@@ -40,7 +40,6 @@ extern int32_t WCH_task_change;
 extern int32_t WCH_work_change;
 extern int32_t WCH_settings_change;
 extern int32_t WCH_ProgressBarTot;
-extern int32_t WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -163,18 +162,16 @@ void WCH_Init_Loop() {
 	// Initialization for multiple thread loop.
 	thread T1(WCH_check_clock_loop);
 	T1.detach();
-	thread T2(WCH_safety_input_loop);
+	thread T2(WCH_message_loop);
 	T2.detach();
-	thread T3(WCH_message_loop);
-	T3.detach();
 	if (StrToWstr(WCH_Settings["AutoSave"].asString()) == L"True") {
-		thread T4(WCH_AutoSave_loop);
-		T4.detach();
+		thread T3(WCH_auto_save_loop);
+		T3.detach();
 	}
 	wcout << StrToWstr(WCH_Language["DataReading"].asString()) << endl;
 	WCH_ProgressBarTot = 3;
-	thread T5(WCH_ProgressBar);
-	T5.detach();
+	thread T4(WCH_ProgressBar);
+	T4.detach();
 	WCH_Sleep(4000);
 	_wsystem(L"CLS");
 }

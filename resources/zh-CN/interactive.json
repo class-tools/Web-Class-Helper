@@ -6,6 +6,8 @@
 	"PublicPreview": "公共测试版",
 	"ReleaseCandidate": "发布候选版",
 	"Build": "构建",
+	"Show": "显示",
+	"Exit": "退出",
 	"PreviewWarning": "此版本的程序仅可用于测试.\n是否仍然要启动程序?\n编译时间: ",
 	"InputCommandIncorrect": "你的输入信息有误, 请检查后重试.",
 	"FileProcessingFailed": "文件操作失败, 请尝试重新安装此程序.",

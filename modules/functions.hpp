@@ -28,7 +28,7 @@ extern wstring WCH_window_title;
 extern HWND WCH_window_handle;
 extern HWND WCH_tray_handle;
 extern HMENU WCH_menu_handle;
-extern NOTIFYICONDATA WCH_NID;
+extern NOTIFYICONDATAW WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
 extern Json::Value WCH_Language;
@@ -40,7 +40,6 @@ extern int32_t WCH_task_change;
 extern int32_t WCH_work_change;
 extern int32_t WCH_settings_change;
 extern int32_t WCH_ProgressBarTot;
-extern int32_t WCH_InputTimes;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -76,17 +75,6 @@ void WCH_check_clock_loop() {
 	}
 }
 
-void WCH_safety_input_loop() {
-	// Check if the program input causes error.
-	while (!WCH_program_end) {
-		if (WCH_InputTimes >= 2) {
-			raise(SIGINT);
-		}
-		WCH_InputTimes = 0;
-		WCH_Sleep(500);
-	}
-}
-
 void WCH_message_loop() {
 	// Message loop.
 	MSG msg = {};
@@ -112,11 +100,25 @@ void WCH_message_loop() {
 	}
 }
 
-void WCH_AutoSave_loop() {
+void WCH_auto_save_loop() {
 	// Check if the data files are changed and save them.
 	while (!WCH_program_end) {
 		WCH_Sleep(stoi(StrToWstr(WCH_Settings["AutoSaveTime"].asString())));
 		WCH_save_func(false);
+	}
+}
+
+void WCH_check_task_loop() {
+	// Check if the running task is in the task list. (Another thread)
+	while (WCH_anti_idle && !WCH_program_end) {
+		for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+			if (WCH_TaskKill(*it)) {
+				WCH_printlog(WCH_LOG_STATUS_INFO, L"Successfully killed \"" + *it + L"\"");
+			} else {
+				WCH_printlog(WCH_LOG_STATUS_INFO, L"Failed to kill \"" + *it + L"\"");
+			}
+		}
+		WCH_Sleep(3000);
 	}
 }
 
@@ -135,7 +137,6 @@ BEGIN:
 		goto BEGIN;
 	}
 	transform(WCH_command_list[0].begin(), WCH_command_list[0].end(), WCH_command_list[0].begin(), ::tolower);
-	WCH_InputTimes++;
 }
 
 #endif
