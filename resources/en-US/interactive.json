@@ -31,7 +31,7 @@
 	"NumberLose": ".",
 	"Pi": "The picture is in the clipboard and be saved.",
 	"CountDown": "Starting count down timer...",
-	"AntiIdle": "Are you sure to enable anti-idle function? If you want to disable it, press Ctrl + Down. (Y/N): ",
+	"AntiIdle": "Are you sure to enable anti-idle function?\nIf you want to disable it, press Ctrl + Down.",
 	"DataReading": "Reading data...",
 	"DataSaving": "Saving data...",
 	"DataSaved": "Successfully saved all data.",

@@ -662,10 +662,7 @@ void WCH_anti_idle_func() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring ch;
-	wcout << StrToWstr(WCH_Language["AntiIdle"].asString());
-	getline(wcin, ch);
-	if (ch == L"Y" || ch == L"y") {
+	if (MessageBoxW(NULL, StrToWstr(WCH_Language["AntiIdle"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDYES) {
 		WCH_SetWindowStatus(false);
 		WCH_anti_idle = true;
 		WCH_Sleep(500);

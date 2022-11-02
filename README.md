@@ -5,6 +5,9 @@
 <h1 align="center">- Web Class Helper -</h1>
 
 <p align="center">
+<img src="https://img.shields.io/github/license/class-tools/Web-Class-Helper.svg">
+<img src="https://isitmaintained.com/badge/open/class-tools/Web-Class-Helper.svg">
+<img src="https://isitmaintained.com/badge/resolution/class-tools/Web-Class-Helper.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/build.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/clangformat.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codecov.yml/badge.svg">
