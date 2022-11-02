@@ -15,9 +15,9 @@ Contributors: jsh-jsh ren-yc
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
-extern const wstring WCH_progress_bar;
+extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
@@ -35,11 +35,7 @@ extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
-extern int32_t WCH_clock_change;
-extern int32_t WCH_task_change;
-extern int32_t WCH_work_change;
-extern int32_t WCH_settings_change;
-extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -243,15 +239,15 @@ size_t WCH_GetWstrDisplaySize(const wstring& _in) {
 
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
-	ShowWindow(WCH_window_handle, flag);
+	ShowWindow(WCH_window_handle, (flag ? SW_SHOWNORMAL : SW_HIDE));
 	WCH_cmd_line = flag;
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag == true ? L"\"SHOW\"" : L"\"HIDE\"")));
+	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
-	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag == true ? SW_SHOW : SW_HIDE));
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"TRAY\" argument \"STATUS\" was set to {}", (flag == true ? L"\"SHOW\"" : L"\"HIDE\"")));
+	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag ? SW_SHOWNORMAL : SW_HIDE));
+	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"TRAY\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
 
 void WCH_ShowTaskBarError() {
@@ -442,11 +438,11 @@ void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
 	}
 	WCH_PrintColor(0x0A);
 	for (int32_t i = 0; i < _n / 2; i++) {
-		wcout << WCH_progress_bar;
+		wcout << WCH_progress_bar_str;
 	}
 	WCH_PrintColor(0x0C);
 	for (int32_t i = _n / 2; i < 50; i++) {
-		wcout << WCH_progress_bar;
+		wcout << WCH_progress_bar_str;
 	}
 	WCH_PrintColor(0x02);
 	wcout << L" " << _n << L"%";
@@ -460,14 +456,14 @@ void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
 void WCH_ProgressBar() {
 	// Progress bar.
 	bool _cd = WCH_count_down;
-	double _pro = 100.0 / WCH_ProgressBarTot;
-	WCH_PrintProgressBar(WCH_ProgressBarTot, 0, false);
+	double _pro = 100.0 / WCH_progress_bar_duration;
+	WCH_PrintProgressBar(WCH_progress_bar_duration, 0, false);
 	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NORMAL);
 	WCH_TBL->SetProgressValue(WCH_window_handle, 0, 100);
-	for (int32_t i = WCH_ProgressBarTot - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
+	for (int32_t i = WCH_progress_bar_duration - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
 		WCH_Sleep(1000);
-		WCH_PrintProgressBar(i, (int32_t)((WCH_ProgressBarTot - i) * _pro), true);
-		WCH_TBL->SetProgressValue(WCH_window_handle, (uint64_t)(((uint64_t)WCH_ProgressBarTot - (uint64_t)i) * _pro), 100);
+		WCH_PrintProgressBar(i, (int32_t)((WCH_progress_bar_duration - i) * _pro), true);
+		WCH_TBL->SetProgressValue(WCH_window_handle, (uint64_t)(((uint64_t)WCH_progress_bar_duration - (uint64_t)i) * _pro), 100);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
@@ -499,7 +495,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
 			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
 			WCH_menu_handle = CreatePopupMenu();
-			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_SHOW, StrToWstr(WCH_Language["Show"].asString()).c_str());
+			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
 			AppendMenuW(WCH_menu_handle, MF_SEPARATOR, 0, NULL);
 			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_EXIT, StrToWstr(WCH_Language["Exit"].asString()).c_str());
 			break;
@@ -553,8 +549,8 @@ void WCH_ShowBugMessagebox(int32_t errorcode, const wstring& errormsg) {
 	// Show messagebox to inform a bug to user.
 	wcout << L"\a";
 	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_INDETERMINATE);
-	if (MessageBoxW(NULL, (L"Oops! An error occurred.\nPlease inform our developers with the error message by opening a new Issue in our GitHub Repository.\nError message: " + to_wstring(errorcode) + L" " + errormsg + L"\nWould you like to visit the Issues page now?").c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
-		_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/issues/");
+	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["BugMessagebox1"].asString()) + to_wstring(errorcode) + L" " + errormsg + StrToWstr(WCH_Language["BugMessagebox2"].asString())).c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
+		_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/issues/new/choose");
 	}
 	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 }

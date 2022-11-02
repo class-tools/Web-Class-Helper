@@ -7,7 +7,7 @@ Contributors: jsh-jsh ren-yc
 #define WCH_VER_MAIN TEXT("2.1.1")
 #define WCH_VER_TYPE 1
 #if WCH_VER_TYPE != 0
-	#define WCH_VER_BUILD 5
+	#define WCH_VER_BUILD 6
 #endif
 #include "./modules/file-process.hpp"
 #include "./modules/init.hpp"
@@ -19,9 +19,9 @@ Contributors: jsh-jsh ren-yc
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
-extern const wstring WCH_progress_bar;
+extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
@@ -39,11 +39,7 @@ extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
-extern int32_t WCH_clock_change;
-extern int32_t WCH_task_change;
-extern int32_t WCH_work_change;
-extern int32_t WCH_settings_change;
-extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;

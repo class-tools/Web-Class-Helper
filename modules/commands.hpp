@@ -15,9 +15,9 @@ Contributors: jsh-jsh ren-yc hjl2011
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
-extern const wstring WCH_progress_bar;
+extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
@@ -35,11 +35,7 @@ extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
-extern int32_t WCH_clock_change;
-extern int32_t WCH_task_change;
-extern int32_t WCH_work_change;
-extern int32_t WCH_settings_change;
-extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -53,7 +49,7 @@ extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
 
-bool WCH_save_func(bool output);
+void WCH_save();
 void WCH_check_task_loop();
 
 void WCH_clear() {
@@ -86,6 +82,7 @@ void WCH_exit() {
 #else
 	fullver = L"";
 #endif
+	WCH_save();
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Exiting \"Web Class Helper {}{}\"", WCH_VER_MAIN, fullver));
 	WCH_cmd_line = false;
 	WCH_program_end = true;
@@ -98,6 +95,21 @@ void WCH_exit() {
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_IDENT.tmp");
 	SendMessageW(WCH_tray_handle, WM_DESTROY, NULL, NULL);
 	_exit(0);
+}
+
+void WCH_restart() {
+	// Restart.
+	if (WCH_command_list.size() != 1) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	STARTUPINFOW StartUpInfo = {};
+	PROCESS_INFORMATION ProcInfo = {};
+	StartUpInfo.cb = sizeof(STARTUPINFOW);
+	CreateProcessW(_wpgmptr, NULL, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, NULL, &StartUpInfo, &ProcInfo);
+	CloseHandle(ProcInfo.hThread);
+	CloseHandle(ProcInfo.hProcess);
+	WCH_exit();
 }
 
 void WCH_hide() {
@@ -127,7 +139,7 @@ void WCH_update() {
 	}
 	try {
 		wcout << StrToWstr(WCH_Language["CheckUpdate"].asString()) << endl;
-		WCH_ProgressBarTot = 5;
+		WCH_progress_bar_duration = 5;
 		thread T(WCH_ProgressBar);
 		T.detach();
 		wstring FilePath = WCH_path_temp + L"\\WCH_UPD.tmp";
@@ -189,8 +201,16 @@ void WCH_set_config() {
 		return;
 	}
 	WCH_Settings[WstrToStr(WCH_command_list[2])] = WstrToStr(WCH_command_list[3]);
-	WCH_settings_change++;
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[1] + L"\" has been changed to \"" + WCH_command_list[3] + L"\" (Type: \"" + res.second + L"\")");
+	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+		if (get<0>(*it) == WCH_command_list[2] && get<3>(*it)) {
+			MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
+			WCH_command_list.clear();
+			WCH_command_list.push_back(L"restart");
+			wcout << endl;
+			WCH_restart();
+		}
+	}
 }
 
 void WCH_list_config() {
@@ -263,7 +283,6 @@ void WCH_add_clock() {
 			}
 			if (!flag) {
 				WCH_clock_num++;
-				WCH_clock_change++;
 				WCH_clock_list.insert(make_tuple(h, m, Tname));
 			} else {
 				throw runtime_error("");
@@ -290,7 +309,6 @@ void WCH_delete_clock() {
 				WCH_clock_list.erase(it);
 				flag = true;
 				WCH_clock_num--;
-				WCH_clock_change++;
 				break;
 			}
 		}
@@ -310,7 +328,6 @@ void WCH_clear_clock() {
 	}
 	WCH_clock_list.clear();
 	WCH_clock_num = 0;
-	WCH_clock_change++;
 }
 
 void WCH_list_clock() {
@@ -385,7 +402,6 @@ void WCH_add_task() {
 	} else {
 		WCH_task_list.insert(task);
 		WCH_task_num++;
-		WCH_task_change++;
 	}
 }
 
@@ -401,7 +417,6 @@ void WCH_delete_task() {
 	} else {
 		WCH_task_list.erase(task);
 		WCH_task_num--;
-		WCH_task_change++;
 	}
 }
 
@@ -413,7 +428,6 @@ void WCH_clear_task() {
 	}
 	WCH_task_list.clear();
 	WCH_task_num = 0;
-	WCH_task_change++;
 }
 
 void WCH_list_task() {
@@ -470,7 +484,6 @@ void WCH_add_work() {
 	} else {
 		WCH_work_list.insert(make_pair(work, tag));
 		WCH_work_num++;
-		WCH_work_change++;
 	}
 }
 
@@ -487,7 +500,6 @@ void WCH_delete_work() {
 	} else {
 		WCH_work_list.erase(make_pair(work, tag));
 		WCH_work_num--;
-		WCH_work_change++;
 	}
 }
 
@@ -499,7 +511,6 @@ void WCH_clear_work() {
 	}
 	WCH_work_list.clear();
 	WCH_work_num = 0;
-	WCH_work_change++;
 }
 
 void WCH_list_work() {
@@ -630,7 +641,7 @@ void WCH_count_down_func() {
 		}
 		WCH_count_down = true;
 		wcout << StrToWstr(WCH_Language["CountDown"].asString()) << endl;
-		WCH_ProgressBarTot = h * 3600 + m * 60 + s;
+		WCH_progress_bar_duration = h * 3600 + m * 60 + s;
 		WCH_ProgressBar();
 		if (StrToWstr(WCH_Settings["CountDownSoundPrompt"].asString()) == L"True") {
 			wcout << L"\a";
@@ -813,9 +824,9 @@ void WCH_help() {
 				for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++, cnt++) {
 					MAXKN = max(MAXKN, WCH_GetWstrDisplaySize(get<0>(*it)));
 					MAXVT = max(MAXVT, WCH_GetWstrDisplaySize(get<1>(*it)));
-					MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt][0].asString())));
+					MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())));
 					MAXDV = max(MAXDV, WCH_GetWstrDisplaySize(get<2>(*it)));
-					MAXRR = max(MAXRR, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt][1].asString())));
+					MAXRR = max(MAXRR, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString())));
 				}
 				if (MAXKN == 0 && MAXVT == 0 && MAXDE == 0 && MAXDV == 0 && MAXRR == 0) {
 					return;
@@ -850,11 +861,11 @@ void WCH_help() {
 					WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(get<0>(*it)), L' ');
 					wcout << L" | " << get<1>(*it);
 					WCH_PrintChar(MAXVT - WCH_GetWstrDisplaySize(get<1>(*it)), L' ');
-					wcout << L" | " << StrToWstr(valcfg["Content"][cnt][0].asString());
-					WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt][0].asString())), L' ');
+					wcout << L" | " << StrToWstr(valcfg["Content"][cnt].asString());
+					WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())), L' ');
 					wcout << L" | " << get<2>(*it);
 					WCH_PrintChar(MAXDV - WCH_GetWstrDisplaySize(get<2>(*it)), L' ');
-					wcout << L" | " << StrToWstr(valcfg["Content"][cnt][1].asString()) << endl;
+					wcout << L" | " << StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString()) << endl;
 				}
 			}
 		} else {
@@ -865,19 +876,6 @@ void WCH_help() {
 				WCH_InputCommandIncorrect();
 			}
 		}
-	}
-}
-
-void WCH_save_cmd() {
-	// Save data. (Command)
-	if (WCH_command_list.size() != 1) {
-		WCH_InputCommandIncorrect();
-		return;
-	}
-	if (WCH_save_func(true)) {
-		wcout << StrToWstr(WCH_Language["DataSaved"].asString()) << endl;
-	} else {
-		wcout << StrToWstr(WCH_Language["DataNone"].asString()) << endl;
 	}
 }
 

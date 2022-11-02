@@ -15,9 +15,9 @@ Contributors: jsh-jsh ren-yc
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
-extern const wstring WCH_progress_bar;
+extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
@@ -35,11 +35,7 @@ extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
-extern int32_t WCH_clock_change;
-extern int32_t WCH_task_change;
-extern int32_t WCH_work_change;
-extern int32_t WCH_settings_change;
-extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -97,14 +93,6 @@ void WCH_message_loop() {
 	while (GetMessageW(&msg, NULL, 0, 0)) {
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
-	}
-}
-
-void WCH_auto_save_loop() {
-	// Check if the data files are changed and save them.
-	while (!WCH_program_end) {
-		WCH_Sleep(stoi(StrToWstr(WCH_Settings["AutoSaveInterval"].asString())));
-		WCH_save_func(false);
 	}
 }
 

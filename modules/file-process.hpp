@@ -15,9 +15,9 @@ Contributors: jsh-jsh ren-yc
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
-extern const wstring WCH_progress_bar;
+extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
@@ -35,11 +35,7 @@ extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
-extern int32_t WCH_clock_change;
-extern int32_t WCH_task_change;
-extern int32_t WCH_work_change;
-extern int32_t WCH_settings_change;
-extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -304,30 +300,12 @@ void WCH_save_settings() {
 	fout.close();
 }
 
-bool WCH_save_func(bool output) {
-	// Save data. (Function)
-	if (WCH_clock_change != 0 || WCH_task_change != 0 || WCH_work_change != 0 || WCH_settings_change != 0) {
-		if (output) {
-			wcout << StrToWstr(WCH_Language["DataSaving"].asString()) << endl;
-			WCH_ProgressBarTot = WCH_clock_change + WCH_task_change + WCH_work_change + WCH_settings_change;
-		}
-		WCH_clock_change = 0;
-		WCH_task_change = 0;
-		WCH_work_change = 0;
-		WCH_settings_change = 0;
-		WCH_save_clock();
-		WCH_save_task();
-		WCH_save_work();
-		WCH_save_settings();
-		if (output) {
-			thread T(WCH_ProgressBar);
-			T.detach();
-			WCH_Sleep((WCH_ProgressBarTot + 1) * 1000);
-		}
-		return true;
-	} else {
-		return false;
-	}
+void WCH_save() {
+	// Save data.
+	WCH_save_clock();
+	WCH_save_task();
+	WCH_save_work();
+	WCH_save_settings();
 }
 
 #endif

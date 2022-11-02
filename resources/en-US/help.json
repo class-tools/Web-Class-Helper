@@ -47,9 +47,9 @@
 		"  CONFIG SET [Key] [Value] (Set a value of settings)",
 		"  CONFIG LIST (List all values of settings)",
 		"",
-		"  SAVE (Save changes on data)",
+		"  EXIT (Exit this program and save data)",
 		"",
-		"  EXIT (Exit this program without saving data)",
+		"  RESTART (Restart this program and save data)",
 		"",
 		"",
 		"Notice:",
@@ -122,6 +122,15 @@
 		"COUNT-DOWN 1 1 1",
 		"COUNT-DOWN 01 01 01"
 	],
+	"exit": [
+		"Exit this program. (Save data)",
+		"",
+		"Usage:",
+		"",
+		"EXIT",
+		"",
+		"This command has no parameters."
+	],
 	"fate": [
 		"Get fate. (**Need Internet**)",
 		"",
@@ -192,21 +201,12 @@
 		"",
 		"This command has no parameters."
 	],
-	"exit": [
-		"Exit this program. (Without saving data)",
+	"restart": [
+		"Restart this program (Save data).",
 		"",
 		"Usage:",
 		"",
-		"EXIT",
-		"",
-		"This command has no parameters."
-	],
-	"save": [
-		"Save changes on data.",
-		"",
-		"Usage:",
-		"",
-		"SAVE",
+		"RESTART",
 		"",
 		"This command has no parameters."
 	],

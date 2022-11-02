@@ -1,12 +1,10 @@
 {
 	"ProgramName": "网课助手",
 	"Start": "版权所有 (c) 2022 Class Tools Develop Team.\n键入 \"help\", \"update\" 或 \"license\" 获取更多信息.",
-	"AlreadyRunning": "程序已在运行.\n正在退出...",
 	"InternalPreview": "内部测试版",
 	"PublicPreview": "公共测试版",
 	"ReleaseCandidate": "发布候选版",
 	"Build": "构建",
-	"Show": "显示",
 	"Exit": "退出",
 	"PreviewWarning": "此版本的程序仅可用于测试.\n是否仍然要启动程序?\n编译时间: ",
 	"InputCommandIncorrect": "你的输入信息有误, 请检查后重试.",
@@ -16,6 +14,8 @@
 	"CheckUpdate": "正在检查更新...",
 	"FindUpdate": "当前程序版本低于最新正式版本, 正在跳转至发布页面...",
 	"NoUpdate": "当前程序版本大于或等于最新正式版本.",
+	"Yes": "是",
+	"No": "否",
 	"Key": "键值",
 	"Value": "值",
 	"Hour": "小时",
@@ -35,7 +35,7 @@
 	"CountDown": "正在启动倒计时...",
 	"AntiIdle": "确定启用防摸鱼模块?\n如果你想禁用它, 按下 Ctrl + Down.",
 	"DataReading": "正在读取数据...",
-	"DataSaving": "正在保存数据...",
-	"DataSaved": "成功保存所有数据.",
-	"DataNone": "没有需要保存的数据."
+	"WillRestart": "程序即将重启, 按下 OK 继续.",
+	"BugMessagebox1": "哎呀! 发生了一个错误.\n请通过在我们的 GitHub 存储库中新建一个 Issue 并附带此错误代码来告知我们的开发者.\n错误代码: ",
+	"BugMessagebox2": "\n您想现在访问 Issue 界面吗?"
 }

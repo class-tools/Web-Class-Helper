@@ -276,8 +276,8 @@ void WCH_wiki();
 void WCH_license();
 void WCH_clear();
 void WCH_check_config();
-void WCH_save_cmd();
 void WCH_exit();
+void WCH_restart();
 
 const array<wstring, 7> WCH_weekday_list = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
 const array<wstring, 2> WCH_language_list = {L"en-US", L"zh-CN"};
@@ -306,28 +306,24 @@ const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"license", WCH_license),
 	make_pair(L"clear", WCH_clear),
 	make_pair(L"config", WCH_check_config),
-	make_pair(L"save", WCH_save_cmd),
-	make_pair(L"exit", WCH_exit)};
-const set<tuple<wstring, wstring, wstring>> WCH_settings_support = {
-	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?"),
-	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False"),
-	make_tuple(L"AntiIdleKillInterval", L"Number", L"60000"),
-	make_tuple(L"AutoSave", L"Boolean", L"True"),
-	make_tuple(L"AutoSaveInterval", L"Number", L"60000"),
-	make_tuple(L"CommandPrompt", L"String", L">>>"),
-	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False"),
-	make_tuple(L"Language", L"String", L"en-US"),
-	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png"),
-	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")))};
+	make_pair(L"exit", WCH_exit),
+	make_pair(L"restart", WCH_restart)};
+const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support = {
+	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?", false),
+	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False", false),
+	make_tuple(L"AntiIdleKillInterval", L"Number", L"60000", false),
+	make_tuple(L"CommandPrompt", L"String", L">>>", false),
+	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False", false),
+	make_tuple(L"Language", L"String", L"en-US", true),
+	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png", false),
+	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false)};
 const set<wstring> WCH_language_support = {
 	L"ProgramName",
 	L"Start",
-	L"AlreadyRunning",
 	L"InternalPreview",
 	L"PublicPreview",
 	L"ReleaseCandidate",
 	L"Build",
-	L"Show",
 	L"Exit",
 	L"PreviewWarning",
 	L"InputCommandIncorrect",
@@ -337,6 +333,8 @@ const set<wstring> WCH_language_support = {
 	L"CheckUpdate",
 	L"FindUpdate",
 	L"NoUpdate",
+	L"Yes",
+	L"No",
 	L"Key",
 	L"Value",
 	L"Hour",
@@ -356,10 +354,10 @@ const set<wstring> WCH_language_support = {
 	L"CountDown",
 	L"AntiIdle",
 	L"DataReading",
-	L"DataSaving",
-	L"DataSaved",
-	L"DataNone"};
-const wstring WCH_progress_bar = IsWindows10OrGreater() ? L"━" : L"-";
+	L"WillRestart",
+	L"BugMessagebox1",
+	L"BugMessagebox2"};
+const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
 const wstring WCH_path_data = format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
 const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp", _wgetenv(L"USERPROFILE"));
 vector<wstring> WCH_command_list;
@@ -377,11 +375,7 @@ Json::Value WCH_Language;
 int32_t WCH_clock_num;
 int32_t WCH_task_num;
 int32_t WCH_work_num;
-int32_t WCH_clock_change;
-int32_t WCH_task_change;
-int32_t WCH_work_change;
-int32_t WCH_settings_change;
-int32_t WCH_ProgressBarTot;
+int32_t WCH_progress_bar_duration;
 bool WCH_cmd_line = true;
 bool WCH_anti_idle;
 bool WCH_count_down;

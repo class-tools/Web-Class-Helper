@@ -15,9 +15,9 @@ Contributors: jsh-jsh ren-yc hjl2011
 extern const array<wstring, 7> WCH_weekday_list;
 extern const array<wstring, 2> WCH_language_list;
 extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring>> WCH_settings_support;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
 extern const set<wstring> WCH_language_support;
-extern const wstring WCH_progress_bar;
+extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
 extern vector<wstring> WCH_command_list;
@@ -35,11 +35,7 @@ extern Json::Value WCH_Language;
 extern int32_t WCH_clock_num;
 extern int32_t WCH_task_num;
 extern int32_t WCH_work_num;
-extern int32_t WCH_clock_change;
-extern int32_t WCH_task_change;
-extern int32_t WCH_work_change;
-extern int32_t WCH_settings_change;
-extern int32_t WCH_ProgressBarTot;
+extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
 extern bool WCH_anti_idle;
 extern bool WCH_count_down;
@@ -147,13 +143,6 @@ void WCH_Init_Var() {
 
 void WCH_Init_Win() {
 	// Initialization for window.
-	if (FindWindowW(NULL, WCH_window_title.c_str()) != NULL) {
-		WCH_TBL->SetProgressState(WCH_window_handle, TBPF_INDETERMINATE);
-		MessageBoxW(NULL, StrToWstr(WCH_Language["AlreadyRunning"].asString()).c_str(), WCH_window_title.c_str(), MB_ICONERROR | MB_TOPMOST);
-		WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
-		WCH_printlog(WCH_LOG_STATUS_WARN, L"Application is already running");
-		raise(SIGBREAK);
-	}
 	SetConsoleTitleW(WCH_window_title.c_str());
 	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
 }
@@ -164,20 +153,17 @@ void WCH_Init_Loop() {
 	T1.detach();
 	thread T2(WCH_message_loop);
 	T2.detach();
-	if (StrToWstr(WCH_Settings["AutoSave"].asString()) == L"True") {
-		thread T3(WCH_auto_save_loop);
-		T3.detach();
-	}
 	wcout << StrToWstr(WCH_Language["DataReading"].asString()) << endl;
-	WCH_ProgressBarTot = 3;
-	thread T4(WCH_ProgressBar);
-	T4.detach();
+	WCH_progress_bar_duration = 3;
+	thread T3(WCH_ProgressBar);
+	T3.detach();
 	WCH_Sleep(4000);
 	_wsystem(L"CLS");
 }
 
 void WCH_Init() {
 	// Initialize the whole program.
+	_wsystem(L"CLS");
 	WCH_Init_Dir();
 	WCH_Init_Bind();
 	WCH_Init_Log();

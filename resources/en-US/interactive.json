@@ -1,12 +1,10 @@
 {
 	"ProgramName": "Web Class Helper",
 	"Start": "Copyright (c) 2022 Class Tools Develop Team.\nType \"help\", \"update\" or \"license\" for more information.",
-	"AlreadyRunning": "Application is already running.\nExiting...",
 	"InternalPreview": "Internal Preview",
 	"PublicPreview": "Public Preview",
 	"ReleaseCandidate": "Release Candidate",
 	"Build": "Build",
-	"Show": "Show",
 	"Exit": "Exit",
 	"PreviewWarning": "This version of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: ",
 	"InputCommandIncorrect": "Your input command is incorrect, please check and try again.",
@@ -16,6 +14,8 @@
 	"CheckUpdate": "Checking update...",
 	"FindUpdate": "Program version is less than latest formal released version, jumping to releases page...",
 	"NoUpdate": "Program version equals or is greater than latest formal released version.",
+	"Yes": "Yes",
+	"No": "No",
 	"Key": "Key",
 	"Value": "Value",
 	"Hour": "Hour",
@@ -35,7 +35,7 @@
 	"CountDown": "Starting count down timer...",
 	"AntiIdle": "Are you sure to enable anti-idle function?\nIf you want to disable it, press Ctrl + Down.",
 	"DataReading": "Reading data...",
-	"DataSaving": "Saving data...",
-	"DataSaved": "Successfully saved all data.",
-	"DataNone": "No data to save."
+	"WillRestart": "Program will restart now, press OK to continue.",
+	"BugMessagebox1": "Oops! An error occurred.\nPlease inform our developers with the error message by opening a new Issue in our GitHub Repository.\nError message: ",
+	"BugMessagebox2": "\nWould you like to visit the Issues page now?"
 }
