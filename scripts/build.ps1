@@ -1,11 +1,9 @@
-$devenv_path = (& (${env:ProgramFiles(x86)} + "\Microsoft Visual Studio\Installer\vswhere.exe") -latest -nologo -property installationPath -format value) + "\Common7\IDE\devenv.com"
-$solution_path = ".\WCH.sln"
-$run_mode = "/Build"
+$msbuild_path = (& (${env:ProgramFiles(x86)} + "\Microsoft Visual Studio\Installer\vswhere.exe") -latest -nologo -property installationPath -format value) + "\Msbuild\Current\Bin\MSBuild.exe"
 $configarray = "x86", "x64", "ARM", "ARM64"
-if ($args[0] -eq "Debug" -or $args[0] -eq "Release") {
+if ($args[1] -eq $null) {
 	foreach ($config in $configarray) {
-		& $devenv_path $solution_path $run_mode ($args[0] + "|" + $config)
+		& $msbuild_path -m /t:Build ("/p:Configuration=" + $args[0]) ("/p:Platform=" + $config) ".\WCH.sln"
 	}
 } else {
-	& $devenv_path $solution_path $run_mode $args[0]
+	& $msbuild_path -m /t:Build ("/p:Configuration=" + $args[0]) ("/p:Platform=" + $args[1]) ".\WCH.sln"
 }
