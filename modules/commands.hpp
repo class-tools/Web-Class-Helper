@@ -97,21 +97,6 @@ void WCH_exit() {
 	_exit(0);
 }
 
-void WCH_restart() {
-	// Restart.
-	if (WCH_command_list.size() != 1) {
-		WCH_InputCommandIncorrect();
-		return;
-	}
-	STARTUPINFOW StartUpInfo = {};
-	PROCESS_INFORMATION ProcInfo = {};
-	StartUpInfo.cb = sizeof(STARTUPINFOW);
-	CreateProcessW(_wpgmptr, NULL, NULL, NULL, false, NORMAL_PRIORITY_CLASS, NULL, NULL, &StartUpInfo, &ProcInfo);
-	CloseHandle(ProcInfo.hThread);
-	CloseHandle(ProcInfo.hProcess);
-	WCH_exit();
-}
-
 void WCH_hide() {
 	// Hide the window.
 	if (WCH_command_list.size() != 1) {
@@ -204,11 +189,11 @@ void WCH_set_config() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[1] + L"\" has been changed to \"" + WCH_command_list[3] + L"\" (Type: \"" + res.second + L"\")");
 	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
 		if (get<0>(*it) == WCH_command_list[2] && get<3>(*it)) {
-			MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
+			MessageBoxW(NULL, StrToWstr(WCH_Language["WillExit"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
 			WCH_command_list.clear();
-			WCH_command_list.push_back(L"restart");
+			WCH_command_list.push_back(L"exit");
 			wcout << endl;
-			WCH_restart();
+			WCH_exit();
 		}
 	}
 }

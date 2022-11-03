@@ -277,7 +277,6 @@ void WCH_license();
 void WCH_clear();
 void WCH_check_config();
 void WCH_exit();
-void WCH_restart();
 
 const array<wstring, 7> WCH_weekday_list = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
 const array<wstring, 2> WCH_language_list = {L"en-US", L"zh-CN"};
@@ -306,8 +305,7 @@ const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"license", WCH_license),
 	make_pair(L"clear", WCH_clear),
 	make_pair(L"config", WCH_check_config),
-	make_pair(L"exit", WCH_exit),
-	make_pair(L"restart", WCH_restart)};
+	make_pair(L"exit", WCH_exit)};
 const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support = {
 	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?", false),
 	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False", false),
@@ -354,7 +352,7 @@ const set<wstring> WCH_language_support = {
 	L"CountDown",
 	L"AntiIdle",
 	L"DataReading",
-	L"WillRestart",
+	L"WillExit",
 	L"BugMessagebox1",
 	L"BugMessagebox2"};
 const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";

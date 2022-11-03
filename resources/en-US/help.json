@@ -49,8 +49,6 @@
 		"",
 		"  EXIT (Exit this program and save data)",
 		"",
-		"  RESTART (Restart this program and save data)",
-		"",
 		"",
 		"Notice:",
 		"  If you want to get the full information of a command, please input \"HELP [command name]\"."
@@ -198,15 +196,6 @@
 		"Usage:",
 		"",
 		"PI",
-		"",
-		"This command has no parameters."
-	],
-	"restart": [
-		"Restart this program (Save data).",
-		"",
-		"Usage:",
-		"",
-		"RESTART",
 		"",
 		"This command has no parameters."
 	],
