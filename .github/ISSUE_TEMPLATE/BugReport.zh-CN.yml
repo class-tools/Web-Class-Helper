@@ -52,14 +52,15 @@ body:
     validations:
       required: true
     attributes:
-      label: 操作系统版本
+      label: 环境
       description: |
-        请告知我们您的操作系统版本.
+        通过运行 `sysinfo` 命令获取环境信息.
       placeholder: |
         ```plain
         例:
-        Windows 10.0.22623.875
-        Ubuntu 22.04.1
+        操作系统版本: 10.0.22623
+        操作系统架构: x64
+        程序架构: x86
         ```
   - type: textarea
     id: other

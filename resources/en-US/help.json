@@ -47,6 +47,8 @@
 		"  CONFIG SET [Key] [Value] (Set a value of settings)",
 		"  CONFIG LIST (List all values of settings)",
 		"",
+		"  SYSINFO (Get system information)",
+		"",
 		"  EXIT (Exit this program and save data)",
 		"",
 		"",
@@ -196,6 +198,15 @@
 		"Usage:",
 		"",
 		"PI",
+		"",
+		"This command has no parameters."
+	],
+	"sysinfo": [
+		"Get system information.",
+		"",
+		"Usage:",
+		"",
+		"SYSINFO",
 		"",
 		"This command has no parameters."
 	],

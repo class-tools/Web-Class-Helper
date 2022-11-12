@@ -237,6 +237,36 @@ size_t WCH_GetWstrDisplaySize(const wstring& _in) {
 	return _size;
 }
 
+tuple<uint32_t, uint32_t, uint32_t> WCH_GetSystemVersion() {
+	// Get system version.
+	uint32_t _version = 0;
+#pragma warning(suppress : 4996 28159)
+	_version = GetVersion();
+	return make_tuple((uint32_t)(LOBYTE(LOWORD(_version))), (uint32_t)(HIBYTE(LOWORD(_version))), (uint32_t)(HIWORD(_version)));
+}
+
+wstring WCH_GetSystemArchitecture() {
+	// Get system architecture.
+	SYSTEM_INFO _sysinfo = {};
+	GetNativeSystemInfo(&_sysinfo);
+	switch (_sysinfo.wProcessorArchitecture) {
+		case PROCESSOR_ARCHITECTURE_INTEL:
+			return L"x86";
+		case PROCESSOR_ARCHITECTURE_AMD64:
+			return L"x64";
+		case PROCESSOR_ARCHITECTURE_ARM:
+			return L"ARM";
+		case PROCESSOR_ARCHITECTURE_ARM64:
+			return L"ARM64";
+		case PROCESSOR_ARCHITECTURE_IA64:
+			return L"IA64";
+		case PROCESSOR_ARCHITECTURE_UNKNOWN:
+			return L"Unknown";
+		default:
+			return L"Unknown";
+	}
+}
+
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_window_handle, (flag ? SW_SHOWNORMAL : SW_HIDE));

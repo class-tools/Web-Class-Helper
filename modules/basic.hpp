@@ -193,16 +193,14 @@ public:
 			return -1;
 		}
 		Gdiplus::GetImageEncoders(num, size, pImageCodecInfo);
-#pragma warning(push)
-#pragma warning(disable : 6385)
 		for (UINT j = 0; j < num; j++) {
+#pragma warning(suppress : 6385)
 			if (wcscmp(pImageCodecInfo[j].MimeType, format) == 0) {
 				*pClsid = pImageCodecInfo[j].Clsid;
 				ret = j;
 			}
 		}
 		free(pImageCodecInfo);
-#pragma warning(pop)
 		return ret;
 	}
 	void SaveImage(HBITMAP hBitmap, const wchar_t* filename, const wchar_t* format) {
@@ -276,6 +274,7 @@ void WCH_wiki();
 void WCH_license();
 void WCH_clear();
 void WCH_check_config();
+void WCH_sysinfo();
 void WCH_exit();
 
 const array<wstring, 7> WCH_weekday_list = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
@@ -305,6 +304,7 @@ const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"license", WCH_license),
 	make_pair(L"clear", WCH_clear),
 	make_pair(L"config", WCH_check_config),
+	make_pair(L"sysinfo", WCH_sysinfo),
 	make_pair(L"exit", WCH_exit)};
 const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support = {
 	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?", false),
@@ -323,6 +323,9 @@ const set<wstring> WCH_language_support = {
 	L"InputCommandIncorrect",
 	L"FileProcessingFailed",
 	L"NetworkError",
+	L"OSVersion",
+	L"OSArchitecture",
+	L"ProgramArchitecture",
 	L"JumpWiki",
 	L"CheckUpdate",
 	L"FindUpdate",

@@ -52,14 +52,15 @@ body:
     validations:
       required: true
     attributes:
-      label: OS Version
+      label: Environment
       description: |
-        Please tell us your operating system version here.
+        Get your environment information by running command `sysinfo`.
       placeholder: |
         ```plain
         e.g.
-        Windows 10.0.22623.875
-        Ubuntu 22.04.1
+        OS version: 10.0.22623
+        OS architecture: x64
+        Program architecture: x86
         ```
   - type: textarea
     id: other

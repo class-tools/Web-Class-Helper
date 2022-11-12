@@ -174,6 +174,18 @@ void WCH_license() {
 	wfin.close();
 }
 
+void WCH_sysinfo() {
+	// Get system information.
+	if (WCH_command_list.size() != 1) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	tuple<uint32_t, uint32_t, uint32_t> res = WCH_GetSystemVersion();
+	wcout << format(L"{}: {}.{}.{}", StrToWstr(WCH_Language["OSVersion"].asString()), get<0>(res), get<1>(res), get<2>(res)) << endl;
+	wcout << format(L"{}: {}", StrToWstr(WCH_Language["OSArchitecture"].asString()), WCH_GetSystemArchitecture()) << endl;
+	wcout << format(L"{}: {}", StrToWstr(WCH_Language["ProgramArchitecture"].asString()), WCH_Framework) << endl;
+}
+
 void WCH_set_config() {
 	// Set a value of settings.
 	if (WCH_command_list.size() != 4) {
