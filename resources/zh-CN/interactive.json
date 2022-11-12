@@ -1,10 +1,6 @@
 {
 	"ProgramName": "网课助手",
 	"Start": "版权所有 (c) 2022 Class Tools Develop Team.\n键入 \"help\", \"update\" 或 \"license\" 获取更多信息.",
-	"InternalPreview": "内部测试版",
-	"PublicPreview": "公共测试版",
-	"ReleaseCandidate": "发布候选版",
-	"Build": "构建",
 	"Exit": "退出",
 	"PreviewWarning": "此版本的程序仅可用于测试.\n是否仍然要启动程序?\n编译时间: ",
 	"InputCommandIncorrect": "你的输入信息有误, 请检查后重试.",

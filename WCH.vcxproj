@@ -423,6 +423,7 @@
     <ClCompile Include="WCH.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="version.hpp" />
     <ClInclude Include="modules\apis.hpp" />
     <ClInclude Include="modules\commands.hpp" />
     <ClInclude Include="modules\file-process.hpp" />

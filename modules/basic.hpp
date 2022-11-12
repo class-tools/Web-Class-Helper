@@ -318,10 +318,6 @@ const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support = {
 const set<wstring> WCH_language_support = {
 	L"ProgramName",
 	L"Start",
-	L"InternalPreview",
-	L"PublicPreview",
-	L"ReleaseCandidate",
-	L"Build",
 	L"Exit",
 	L"PreviewWarning",
 	L"InputCommandIncorrect",

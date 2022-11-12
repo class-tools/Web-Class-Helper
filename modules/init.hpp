@@ -114,21 +114,17 @@ void WCH_Init_Log() {
 
 void WCH_Init_Var() {
 	// Initialization for variable.
-	wstring vertype = L"";
 	WCH_window_title = StrToWstr(WCH_Language["ProgramName"].asString()) + L" ";
 	WCH_window_title.append(WCH_VER_MAIN);
 #if WCH_VER_TYPE != 0
 	#if WCH_VER_TYPE == 1
-	WCH_window_title.append(L" " + StrToWstr(WCH_Language["InternalPreview"].asString()));
-	vertype = StrToWstr(WCH_Language["InternalPreview"].asString());
+	WCH_window_title.append(L" Alpha");
 	#elif WCH_VER_TYPE == 2
-	WCH_window_title.append(L" " + StrToWstr(WCH_Language["PublicPreview"].asString()));
-	vertype = StrToWstr(WCH_Language["PublicPreview"].asString());
+	WCH_window_title.append(L" Beta");
 	#elif WCH_VER_TYPE == 3
-	WCH_window_title.append(L" " + StrToWstr(WCH_Language["ReleaseCandidate"].asString()));
-	vertype = StrToWstr(WCH_Language["ReleaseCandidate"].asString());
+	WCH_window_title.append(L" Rc");
 	#endif
-	WCH_window_title.append(L" " + StrToWstr(WCH_Language["Build"].asString()) + L" " + to_wstring(WCH_VER_BUILD));
+	WCH_window_title.append(L" " + to_wstring(WCH_VER_BUILD));
 	WCH_SetWindowStatus(false);
 	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["PreviewWarning"].asString()) + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
 		WCH_CheckAndDeleteFile(WCH_path_data + L"\\logs\\latest.log");

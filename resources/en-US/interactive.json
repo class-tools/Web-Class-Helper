@@ -1,10 +1,6 @@
 {
 	"ProgramName": "Web Class Helper",
 	"Start": "Copyright (c) 2022 Class Tools Develop Team.\nType \"help\", \"update\" or \"license\" for more information.",
-	"InternalPreview": "Internal Preview",
-	"PublicPreview": "Public Preview",
-	"ReleaseCandidate": "Release Candidate",
-	"Build": "Build",
 	"Exit": "Exit",
 	"PreviewWarning": "This version of the program is only used for testing.\nAre you sure you want to start the program?\nCompile time: ",
 	"InputCommandIncorrect": "Your input command is incorrect, please check and try again.",

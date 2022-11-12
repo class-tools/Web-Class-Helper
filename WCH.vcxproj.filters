@@ -23,6 +23,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="version.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="modules\apis.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
