@@ -47,13 +47,16 @@
 		"  CONFIG SET [Key] [Value] (Set a value of settings)",
 		"  CONFIG LIST (List all values of settings)",
 		"",
+		"  DEVELOP OPENDATA (Open data folder in AppData)",
+		"  DEVELOP OPENTEMP (Open temp folder in AppData)",
+		"",
 		"  SYSINFO (Get system information)",
 		"",
 		"  EXIT (Exit this program and save data)",
 		"",
 		"",
 		"Notice:",
-		"  If you want to get the full information of a command, please input \"HELP [command name]\"."
+		"  If you want to get the full information of [command], please input \"HELP [command]\"."
 	],
 	"anti-idle": [
 		"Enable anti-idle mode, press Ctrl + Down to disable it.",
@@ -121,6 +124,16 @@
 		"",
 		"COUNT-DOWN 1 1 1",
 		"COUNT-DOWN 01 01 01"
+	],
+	"develop": [
+		"Development commands.",
+		"",
+		"Usage:",
+		"",
+		"DEVELOP OPENDATA",
+		"DEVELOP OPENTEMP",
+		"",
+		"These commands have no parameters."
 	],
 	"exit": [
 		"Exit this program. (Save data)",

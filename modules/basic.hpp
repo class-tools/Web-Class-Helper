@@ -274,6 +274,7 @@ void WCH_wiki();
 void WCH_license();
 void WCH_clear();
 void WCH_check_config();
+void WCH_check_develop();
 void WCH_sysinfo();
 void WCH_exit();
 
@@ -304,6 +305,7 @@ const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"license", WCH_license),
 	make_pair(L"clear", WCH_clear),
 	make_pair(L"config", WCH_check_config),
+	make_pair(L"develop", WCH_check_develop),
 	make_pair(L"sysinfo", WCH_sysinfo),
 	make_pair(L"exit", WCH_exit)};
 const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support = {
@@ -356,7 +358,7 @@ const set<wstring> WCH_language_support = {
 	L"BugMessagebox2"};
 const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
 const wstring WCH_path_data = format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
-const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp", _wgetenv(L"USERPROFILE"));
+const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp\\WCH", _wgetenv(L"USERPROFILE"));
 vector<wstring> WCH_command_list;
 set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
 set<wstring> WCH_task_list;

@@ -47,13 +47,16 @@
 		"  CONFIG SET [Key] [Value] (设置一个键值对应的值)",
 		"  CONFIG LIST (列出设置的所有键值和值)",
 		"",
+		"  DEVELOP OPENDATA (打开在 AppData 中的数据文件夹)",
+		"  DEVELOP OPENTEMP (打开在 AppData 中的临时文件夹)",
+		"",
 		"  SYSINFO (获取系统信息)",
 		"",
 		"  EXIT (退出程序并保存数据)",
 		"",
 		"",
 		"提示:",
-		"  如果你想获取某个命令的完整信息, 请输入 \"HELP [command name]\"."
+		"  如果你想获取 [command] 命令的完整信息, 请输入 \"HELP [command]\"."
 	],
 	"anti-idle": [
 		"启用防摸鱼模块, 按下 Ctrl + Down 退出.",
@@ -121,6 +124,16 @@
 		"",
 		"COUNT-DOWN 1 1 1",
 		"COUNT-DOWN 01 01 01"
+	],
+	"develop": [
+		"开发命令.",
+		"",
+		"用法:",
+		"",
+		"DEVELOP OPENDATA",
+		"DEVELOP OPENTEMP",
+		"",
+		"这些命令没有参数."
 	],
 	"exit": [
 		"退出程序 (保存数据).",

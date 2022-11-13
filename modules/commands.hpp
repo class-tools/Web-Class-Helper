@@ -186,6 +186,40 @@ void WCH_sysinfo() {
 	wcout << format(L"{}: {}", StrToWstr(WCH_Language["ProgramArchitecture"].asString()), WCH_Framework) << endl;
 }
 
+void WCH_opendata_develop() {
+	// Open data folder in AppData.
+	if (WCH_command_list.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	_wsystem((L"EXPLORER \"" + WCH_path_data + L"\"").c_str());
+}
+
+void WCH_opentemp_develop() {
+	// Open temp folder in AppData.
+	if (WCH_command_list.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	_wsystem((L"EXPLORER \"" + WCH_path_temp + L"\"").c_str());
+}
+
+void WCH_check_develop() {
+	// Develop series command input.
+	if (WCH_command_list.size() == 1) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
+	if (WCH_command_list[1] == L"opendata") {
+		WCH_opendata_develop();
+	} else if (WCH_command_list[1] == L"opentemp") {
+		WCH_opentemp_develop();
+	} else {
+		WCH_InputCommandIncorrect();
+	}
+}
+
 void WCH_set_config() {
 	// Set a value of settings.
 	if (WCH_command_list.size() != 4) {

@@ -64,6 +64,9 @@ void WCH_Init_Dir() {
 	if (_waccess((WCH_path_data + L"\\logs").c_str(), 0) != 0) {
 		CreateDirectoryW((WCH_path_data + L"\\logs").c_str(), NULL);
 	}
+	if (_waccess(WCH_path_temp.c_str(), 0) != 0) {
+		CreateDirectoryW(WCH_path_temp.c_str(), NULL);
+	}
 }
 
 void WCH_Init_Bind() {
