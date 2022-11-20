@@ -168,7 +168,7 @@ void WCH_read_settings() {
 			goto ERR;
 		}
 	} else {
-		ERR:
+	ERR:
 		WCH_Settings.clear();
 		WCH_Settings["StartTime"] = "00000000000000";
 		for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
