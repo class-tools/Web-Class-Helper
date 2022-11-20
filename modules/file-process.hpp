@@ -161,11 +161,15 @@ void WCH_read_settings() {
 					throw runtime_error("");
 				}
 			}
+			if (WCH_Settings.size() != WCH_settings_support.size() + 1) {
+				throw runtime_error("");
+			}
 		} catch (...) {
 			goto ERR;
 		}
 	} else {
-	ERR:
+		ERR:
+		WCH_Settings.clear();
 		WCH_Settings["StartTime"] = "00000000000000";
 		for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
 			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(get<2>(*it));
