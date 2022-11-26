@@ -328,7 +328,8 @@ void WCH_wizard_config() {
 			pair<bool, wstring> res = WCH_CheckConfigValid(get<0>(*it), _in);
 			if (!res.first) {
 				WCH_InputCommandIncorrect();
-				wcout << endl << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
+				wcout << endl
+					  << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
 				goto BEGIN;
 			}
 			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(_in);
