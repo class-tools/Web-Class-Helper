@@ -1,5 +1,5 @@
 {
-	"Title": ["Key Name", "Value Type", "Description", "Default Value", "Require Restart"],
+	"Title": ["Key Name", "Value Type", "Description", "Default Value", "Require Restart", "Current Value"],
 	"Content": [
 		"The content in `AntiIdleEndPrompt` messagebox",
 		"Enable prompt when trying to disable anti-idle",

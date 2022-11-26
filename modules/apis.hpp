@@ -72,11 +72,34 @@ void WCH_PrintChar(size_t _times, wchar_t _c) {
 	}
 }
 
+size_t WCH_NewlineCount(const wstring& _in) {
+	// Count newline characters in a wide string.
+	size_t _cnt = 0;
+	for (size_t i = 0; i < _in.size(); i++) {
+		if (_in[i] == L'\n') {
+			_cnt++;
+		}
+	}
+	return _cnt;
+}
+
+void WCH_ClearConsole() {
+	// Clear console.
+	CONSOLE_SCREEN_BUFFER_INFO _csbi = {};
+	COORD _crd = {0, 0};
+	DWORD _nocw = 0;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &_csbi);
+	FillConsoleOutputCharacterW(GetStdHandle(STD_OUTPUT_HANDLE), L' ', _csbi.dwSize.X * _csbi.dwSize.Y, _crd, &_nocw);
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &_csbi);
+	FillConsoleOutputAttribute(GetStdHandle(STD_OUTPUT_HANDLE), _csbi.wAttributes, _csbi.dwSize.X * _csbi.dwSize.Y, _crd, &_nocw);
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), _crd);
+}
+
 wstring StrToWstr(const string& str) {
 	// Convert multiple byte string to wide string.
 	wstring result;
 	int32_t len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), NULL, 0);
-	TCHAR* buffer = new TCHAR[(size_t)len + 1];
+	wchar_t* buffer = new wchar_t[(size_t)len + 1];
 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), buffer, len);
 	buffer[len] = '\0';
 	result.append(buffer);

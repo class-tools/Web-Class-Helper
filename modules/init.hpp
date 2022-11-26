@@ -144,6 +144,7 @@ void WCH_Init_Win() {
 	// Initialization for window.
 	SetConsoleTitleW(WCH_window_title.c_str());
 	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
+	SetWindowLongPtrW(WCH_window_handle, GWL_STYLE, GetWindowLongPtrW(WCH_window_handle, GWL_STYLE) & ~WS_SIZEBOX & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
 }
 
 void WCH_Init_Loop() {

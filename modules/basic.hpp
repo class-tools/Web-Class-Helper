@@ -332,6 +332,7 @@ const set<wstring> WCH_language_support = {
 	L"CheckUpdate",
 	L"FindUpdate",
 	L"NoUpdate",
+	L"ConfigWizardPrompt",
 	L"Yes",
 	L"No",
 	L"Key",

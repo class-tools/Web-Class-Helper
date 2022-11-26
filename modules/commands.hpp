@@ -232,7 +232,7 @@ void WCH_set_config() {
 		return;
 	}
 	WCH_Settings[WstrToStr(WCH_command_list[2])] = WstrToStr(WCH_command_list[3]);
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[1] + L"\" has been changed to \"" + WCH_command_list[3] + L"\" (Type: \"" + res.second + L"\")");
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[2] + L"\" has been changed to \"" + WCH_command_list[3] + L"\" (Type: \"" + res.second + L"\")");
 	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
 		if (get<0>(*it) == WCH_command_list[2] && get<3>(*it)) {
 			MessageBoxW(NULL, StrToWstr(WCH_Language["WillExit"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
@@ -275,6 +275,81 @@ void WCH_list_config() {
 	}
 }
 
+void WCH_wizard_config() {
+	// Wizard to config settings.
+	if (WCH_command_list.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
+	Json::Value valcfg;
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+	fin.open(FilePath);
+	if (!JSON_Reader.parse(fin, valcfg)) {
+		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+		WCH_FileProcessingFailed();
+		return;
+	} else {
+		if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_settings_support.size()) {
+			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+			WCH_FileProcessingFailed();
+			return;
+		}
+	}
+	fin.close();
+	int32_t cnt = 0;
+	bool flag = false;
+	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++, cnt++) {
+		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][0].asString()), get<0>(*it)) << endl;
+		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][1].asString()), get<1>(*it)) << endl;
+		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][2].asString()), StrToWstr(valcfg["Content"][cnt].asString())) << endl;
+		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][3].asString()), get<2>(*it)) << endl;
+		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][4].asString()), StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString())) << endl;
+		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][5].asString()), StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString())) << endl;
+		wcout << StrToWstr(WCH_Language["ConfigWizardPrompt"].asString()) << endl;
+		wstring _in;
+		wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
+		if (cnt == 0) {
+			size_t _nlc = WCH_NewlineCount(get<2>(*it));
+			CONSOLE_SCREEN_BUFFER_INFO _csbi = {};
+			COORD _crd = {};
+			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &_csbi);
+			_crd.X = _csbi.dwCursorPosition.X;
+			_crd.Y = (int16_t)_nlc + 7;
+			WCH_PrintChar((size_t)_csbi.dwSize.Y - _nlc - 8, L'\n');
+			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), _crd);
+		}
+	BEGIN:
+		getline(wcin, _in);
+		if (wcin.eof()) {
+			raise(SIGINT);
+		}
+		if (_in.size() != 0) {
+			pair<bool, wstring> res = WCH_CheckConfigValid(get<0>(*it), _in);
+			if (!res.first) {
+				WCH_InputCommandIncorrect();
+				wcout << endl << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
+				goto BEGIN;
+			}
+			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(_in);
+			WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + get<0>(*it) + L"\" has been changed to \"" + _in + L"\" (Type: \"" + res.second + L"\")");
+			for (auto ite = WCH_settings_support.begin(); ite != WCH_settings_support.end(); ite++) {
+				if (get<0>(*ite) == get<0>(*it) && get<3>(*ite)) {
+					flag = true;
+				}
+			}
+		}
+		WCH_ClearConsole();
+	}
+	if (flag) {
+		MessageBoxW(NULL, StrToWstr(WCH_Language["WillExit"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
+		WCH_command_list.clear();
+		WCH_command_list.push_back(L"exit");
+		wcout << endl;
+		WCH_exit();
+	}
+}
+
 void WCH_check_config() {
 	// Config series command input.
 	if (WCH_command_list.size() == 1) {
@@ -286,6 +361,8 @@ void WCH_check_config() {
 		WCH_set_config();
 	} else if (WCH_command_list[1] == L"list") {
 		WCH_list_config();
+	} else if (WCH_command_list[1] == L"wizard") {
+		WCH_wizard_config();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
@@ -839,7 +916,7 @@ void WCH_help() {
 					WCH_FileProcessingFailed();
 					return;
 				} else {
-					if (valcfg["Title"].size() != 5 || valcfg["Content"].size() != WCH_settings_support.size()) {
+					if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_settings_support.size()) {
 						WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 						WCH_FileProcessingFailed();
 						return;

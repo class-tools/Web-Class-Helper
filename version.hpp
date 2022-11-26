@@ -7,5 +7,5 @@ Contributors: jsh-jsh ren-yc
 #define WCH_VER_MAIN TEXT("2.1.1")
 #define WCH_VER_TYPE 1
 #if WCH_VER_TYPE != 0
-	#define WCH_VER_BUILD 7
+	#define WCH_VER_BUILD 8
 #endif
