@@ -35,7 +35,7 @@
 	"CountDown": "正在启动倒计时...",
 	"Focus": "确定启用专注模式?\n如果你想禁用它, 按下 Ctrl + Down.",
 	"DataReading": "正在读取数据...",
-	"WillExit": "程序将立即退出以使语言设置生效...",
+	"WillRestart": "程序将立即重启以使语言设置生效...",
 	"BugMessagebox1": "哎呀! 发生了一个错误.\n请通过在我们的 GitHub 存储库中新建一个 Issue 并附带此错误代码来告知我们的开发者.\n错误代码: ",
 	"BugMessagebox2": "\n您想现在访问 Issue 界面吗?"
 }
