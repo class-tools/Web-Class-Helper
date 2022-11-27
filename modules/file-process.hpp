@@ -12,8 +12,9 @@ Contributors: jsh-jsh ren-yc
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_list_weekday;
-extern const array<wstring, 2> WCH_list_language;
+extern const vector<wstring> WCH_list_weekday;
+extern const map<wstring, set<wstring>> WCH_choice_settings;
+extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
 extern const set<wstring> WCH_support_language;
@@ -148,11 +149,6 @@ void WCH_read_settings() {
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
 			if (!WCH_Settings.isMember("StartTime")) {
 				throw runtime_error("");
-			}
-			if (WCH_Settings.isMember("Language")) {
-				if (find(WCH_list_language.begin(), WCH_list_language.end(), StrToWstr(WCH_Settings["Language"].asString())) == WCH_list_language.end()) {
-					throw runtime_error("");
-				}
 			}
 			for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
 				if (!WCH_Settings.isMember(WstrToStr(get<0>(*it)))) {

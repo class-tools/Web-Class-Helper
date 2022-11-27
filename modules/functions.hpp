@@ -12,8 +12,9 @@ Contributors: jsh-jsh ren-yc
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_list_weekday;
-extern const array<wstring, 2> WCH_list_language;
+extern const vector<wstring> WCH_list_weekday;
+extern const map<wstring, set<wstring>> WCH_choice_settings;
+extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
 extern const set<wstring> WCH_support_language;
@@ -114,7 +115,7 @@ void WCH_CL_Init() {
 	// Initialize the command line.
 BEGIN:
 	wstring _in;
-	wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
+	wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
 	getline(wcin, _in);
 	if (wcin.eof()) {
 		raise(SIGINT);

@@ -12,8 +12,9 @@ Contributors: jsh-jsh ren-yc
 #include "functions.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_list_weekday;
-extern const array<wstring, 2> WCH_list_language;
+extern const vector<wstring> WCH_list_weekday;
+extern const map<wstring, set<wstring>> WCH_choice_settings;
+extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
 extern const set<wstring> WCH_support_language;
@@ -477,8 +478,13 @@ pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Valu
 	if (!flag) {
 		return make_pair(false, KeyType);
 	}
-	if ((Key == L"ScreenshotSavePath" && Value[Value.size() - 1] != L'\\') || (Key == L"Language" && find(WCH_list_language.begin(), WCH_list_language.end(), Value) == WCH_list_language.end()) || (Key == L"ScreenshotSaveMIME" && WCH_MIME_list.find(Value) == WCH_MIME_list.end())) {
+	if (Key == L"ScreenshotSavePath" && Value[Value.size() - 1] != L'\\') {
 		return make_pair(false, KeyType);
+	}
+	if (WCH_choice_settings.find(Key) != WCH_choice_settings.end()) {
+		if (WCH_choice_settings.find(Key)->second.find(Value) == WCH_choice_settings.find(Key)->second.end()) {
+			return make_pair(false, KeyType);
+		}
 	}
 	return make_pair(true, KeyType);
 }

@@ -33,17 +33,26 @@ public:
 		Assert::AreEqual(UrlEncode("测A试").c_str(), "%E6%B5%8BA%E8%AF%95");
 	}
 	TEST_METHOD(StrSplit) {
-		vector<wstring> Temp;
-		Temp = {L"A", L"BC"};
-		Assert::IsTrue(WCH_split(L"A BC") == Temp);
-		Temp = {L"A B", L"C"};
-		Assert::IsTrue(WCH_split(L"\"A B\" C") == Temp);
-		Temp = { L"A", L"B", L"C"};
-		Assert::IsTrue(WCH_split(L"A B C") == Temp);
-		Temp = {L"你", L"好 啊"};
-		Assert::IsTrue(WCH_split(L"你 \"好 啊\"") == Temp);
-		Temp = {L"Incorrect"};
-		Assert::IsTrue(WCH_split(L"A B C\"") == Temp);
+		Assert::IsTrue(WCH_split(L"A BC") == []() {
+			vector<wstring> _tmp = {L"A", L"BC"};
+			return _tmp;
+		}());
+		Assert::IsTrue(WCH_split(L"\"A B\" C") == []() {
+			vector<wstring> _tmp = {L"A B", L"C"};
+			return _tmp;
+		}());
+		Assert::IsTrue(WCH_split(L"A B C") == []() {
+			vector<wstring> _tmp = {L"A", L"B", L"C"};
+			return _tmp;
+		}());
+		Assert::IsTrue(WCH_split(L"你 \"好 啊\"") == []() {
+			vector<wstring> _tmp = {L"你", L"好 啊"};
+			return _tmp;
+		}());
+		Assert::IsTrue(WCH_split(L"A B C\"") == []() {
+			vector<wstring> _tmp = {L"Incorrect"};
+			return _tmp;
+		}());
 	}
 	TEST_METHOD(StrDisplaySize) {
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"Test"), (size_t)4);

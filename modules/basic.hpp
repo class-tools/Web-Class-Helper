@@ -278,8 +278,17 @@ void WCH_develop();
 void WCH_sysinfo();
 void WCH_exit();
 
-const array<wstring, 7> WCH_list_weekday = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
-const array<wstring, 2> WCH_list_language = {L"en-US", L"zh-CN"};
+const vector<wstring> WCH_list_weekday = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+const map<wstring, set<wstring>> WCH_choice_settings = {
+	make_pair(L"Language", []() {
+		set<wstring> _tmp = {L"en-US", L"zh-CN"};
+		return _tmp;
+	}()),
+	make_pair(L"ScreenshotSaveMIME", []() {
+		set<wstring> _tmp = {L"image/bmp", L"image/gif", L"image/jpeg", L"image/png", L"image/tiff"};
+		return _tmp;
+	}()),
+};
 const map<wstring, wstring> WCH_MIME_list = {
 	make_pair(L"image/bmp", L".bmp"),
 	make_pair(L"image/gif", L".gif"),

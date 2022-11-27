@@ -12,8 +12,9 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_list_weekday;
-extern const array<wstring, 2> WCH_list_language;
+extern const vector<wstring> WCH_list_weekday;
+extern const map<wstring, set<wstring>> WCH_choice_settings;
+extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
 extern const set<wstring> WCH_support_language;
@@ -290,7 +291,7 @@ void WCH_config_wizard() {
 		WCH_FileProcessingFailed();
 		return;
 	} else {
-		if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_support_settings.size()) {
+		if (valcfg["Title"].size() != 7 || valcfg["Content"].size() != WCH_support_settings.size()) {
 			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 			WCH_FileProcessingFailed();
 			return;
@@ -303,14 +304,20 @@ void WCH_config_wizard() {
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][0].asString()), get<0>(*it)) << endl;
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][1].asString()), get<1>(*it)) << endl;
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][2].asString()), StrToWstr(valcfg["Content"][cnt].asString())) << endl;
-		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][3].asString()), get<2>(*it)) << endl;
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][4].asString()), StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString())) << endl;
+		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][3].asString()), get<2>(*it)) << endl;
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][5].asString()), StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString())) << endl;
+		if (WCH_choice_settings.find(get<0>(*it)) != WCH_choice_settings.end()) {
+			wcout << StrToWstr(valcfg["Title"][6].asString()) << L":" << endl;
+			for (auto ite = WCH_choice_settings.find(get<0>(*it))->second.begin(); ite != WCH_choice_settings.find(get<0>(*it))->second.end(); ite++) {
+				wcout << L" - " << *ite << endl;
+			}
+		}
 		wcout << StrToWstr(WCH_Language["ConfigWizardPrompt"].asString()) << endl;
 		wstring _in;
-		wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
+		wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
 		if (cnt == 0) {
-			size_t _nlc = WCH_NewlineCount(get<2>(*it));
+			size_t _nlc = WCH_NewlineCount(get<2>(*it)) + (WCH_choice_settings.find(get<0>(*it)) != WCH_choice_settings.end() ? WCH_choice_settings.find(get<0>(*it))->second.size() + 1 : 0);
 			CONSOLE_SCREEN_BUFFER_INFO _csbi = {};
 			COORD _crd = {};
 			GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &_csbi);
@@ -329,7 +336,7 @@ void WCH_config_wizard() {
 			if (!res.first) {
 				WCH_InputCommandIncorrect();
 				wcout << endl;
-				wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
+				wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
 				goto BEGIN;
 			}
 			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(_in);
@@ -712,7 +719,7 @@ void WCH_game() {
 			break;
 		}
 	}
-	wcout << StrToWstr(WCH_Language["NumberAnswer"].asString()) + L" " << ans;
+	wcout << StrToWstr(WCH_Language["NumberAnswer"].asString()) << L" " << ans;
 	if (flag) {
 		wcout << StrToWstr(WCH_Language["NumberWin"].asString()) << endl;
 	} else {
@@ -917,7 +924,7 @@ void WCH_help() {
 					WCH_FileProcessingFailed();
 					return;
 				} else {
-					if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_support_settings.size()) {
+					if (valcfg["Title"].size() != 7 || valcfg["Content"].size() != WCH_support_settings.size()) {
 						WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 						WCH_FileProcessingFailed();
 						return;
