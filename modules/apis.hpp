@@ -12,33 +12,33 @@ Contributors: jsh-jsh ren-yc
 #include "functions.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_weekday_list;
-extern const array<wstring, 2> WCH_language_list;
-extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
-extern const set<wstring> WCH_language_support;
+extern const array<wstring, 7> WCH_list_weekday;
+extern const array<wstring, 2> WCH_list_language;
+extern const map<wstring, function<void()>> WCH_support_command;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
+extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
-extern vector<wstring> WCH_command_list;
-extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
-extern set<wstring> WCH_task_list;
-extern set<pair<wstring, wstring>> WCH_work_list;
-extern wstring WCH_window_title;
-extern HWND WCH_window_handle;
-extern HWND WCH_tray_handle;
-extern HMENU WCH_menu_handle;
+extern vector<wstring> WCH_list_command;
+extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
+extern set<wstring> WCH_list_task;
+extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_title_window;
+extern HWND WCH_handle_window;
+extern HWND WCH_handle_tray;
+extern HMENU WCH_handle_menu;
 extern NOTIFYICONDATAW WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
 extern Json::Value WCH_Language;
-extern int32_t WCH_clock_num;
-extern int32_t WCH_task_num;
-extern int32_t WCH_work_num;
+extern int32_t WCH_num_clock;
+extern int32_t WCH_num_task;
+extern int32_t WCH_num_work;
 extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
-extern bool WCH_anti_idle;
-extern bool WCH_count_down;
+extern bool WCH_is_focus;
+extern bool WCH_is_countdown;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern ifstream fin;
@@ -292,7 +292,7 @@ wstring WCH_GetSystemArchitecture() {
 
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
-	ShowWindow(WCH_window_handle, (flag ? SW_SHOWNORMAL : SW_HIDE));
+	ShowWindow(WCH_handle_window, (flag ? SW_SHOWNORMAL : SW_HIDE));
 	WCH_cmd_line = flag;
 	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
@@ -305,10 +305,10 @@ void WCH_SetTrayStatus(bool flag) {
 
 void WCH_ShowTaskBarError() {
 	// Show error on task bar icon.
-	WCH_TBL->SetProgressValue(WCH_window_handle, 100, 100);
-	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_ERROR);
+	WCH_TBL->SetProgressValue(WCH_handle_window, 100, 100);
+	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_ERROR);
 	WCH_Sleep(1000);
-	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
+	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_NOPROGRESS);
 }
 
 void WCH_InputCommandIncorrect() {
@@ -338,17 +338,17 @@ void WCH_NetworkError() {
 void WCH_CheckHotkey() {
 	// Check when hot key is pressed.
 	if (!WCH_program_end) {
-		if (WCH_anti_idle) {
-			if (StrToWstr(WCH_Settings["AntiIdleEndPrompt"].asString()) == L"True") {
-				if (MessageBoxW(NULL, StrToWstr(WCH_Settings["AntiIdleEndContent"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
+		if (WCH_is_focus) {
+			if (StrToWstr(WCH_Settings["FocusEndPrompt"].asString()) == L"True") {
+				if (MessageBoxW(NULL, StrToWstr(WCH_Settings["FocusEndContent"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
 					return;
 				}
 			}
-			WCH_anti_idle = false;
+			WCH_is_focus = false;
 			WCH_SetTrayStatus(true);
 		}
-		if (WCH_count_down) {
-			WCH_count_down = false;
+		if (WCH_is_countdown) {
+			WCH_is_countdown = false;
 		}
 		WCH_SetWindowStatus(true);
 	}
@@ -464,7 +464,7 @@ pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Valu
 			}
 		}
 	}
-	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
 		if (Key == get<0>(*it)) {
 			if (KeyType != get<1>(*it)) {
 				return make_pair(false, KeyType);
@@ -477,7 +477,7 @@ pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Valu
 	if (!flag) {
 		return make_pair(false, KeyType);
 	}
-	if ((Key == L"ScreenshotSavePath" && Value[Value.size() - 1] != L'\\') || (Key == L"Language" && find(WCH_language_list.begin(), WCH_language_list.end(), Value) == WCH_language_list.end()) || (Key == L"ScreenshotSaveMIME" && WCH_MIME_list.find(Value) == WCH_MIME_list.end())) {
+	if ((Key == L"ScreenshotSavePath" && Value[Value.size() - 1] != L'\\') || (Key == L"Language" && find(WCH_list_language.begin(), WCH_list_language.end(), Value) == WCH_list_language.end()) || (Key == L"ScreenshotSaveMIME" && WCH_MIME_list.find(Value) == WCH_MIME_list.end())) {
 		return make_pair(false, KeyType);
 	}
 	return make_pair(true, KeyType);
@@ -508,19 +508,19 @@ void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
 
 void WCH_ProgressBar() {
 	// Progress bar.
-	bool _cd = WCH_count_down;
+	bool _cd = WCH_is_countdown;
 	double _pro = 100.0 / WCH_progress_bar_duration;
 	WCH_PrintProgressBar(WCH_progress_bar_duration, 0, false);
-	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NORMAL);
-	WCH_TBL->SetProgressValue(WCH_window_handle, 0, 100);
-	for (int32_t i = WCH_progress_bar_duration - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_count_down); i--) {
+	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_NORMAL);
+	WCH_TBL->SetProgressValue(WCH_handle_window, 0, 100);
+	for (int32_t i = WCH_progress_bar_duration - 1; i > 0 && !WCH_program_end && !(_cd ^ WCH_is_countdown); i--) {
 		WCH_Sleep(1000);
 		WCH_PrintProgressBar(i, (int32_t)((WCH_progress_bar_duration - i) * _pro), true);
-		WCH_TBL->SetProgressValue(WCH_window_handle, (uint64_t)(((uint64_t)WCH_progress_bar_duration - (uint64_t)i) * _pro), 100);
+		WCH_TBL->SetProgressValue(WCH_handle_window, (uint64_t)(((uint64_t)WCH_progress_bar_duration - (uint64_t)i) * _pro), 100);
 	}
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
-	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
+	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_NOPROGRESS);
 	wcout << endl;
 }
 
@@ -545,12 +545,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			WCH_NID.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 			WCH_NID.uCallbackMessage = WM_USER;
 			WCH_NID.hIcon = (HICON)LoadImageW(NULL, (WCH_GetExecDir() + L"\\WCH.ico").c_str(), IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
-			wcscpy(WCH_NID.szTip, WCH_window_title.c_str());
+			wcscpy(WCH_NID.szTip, WCH_title_window.c_str());
 			Shell_NotifyIconW(NIM_ADD, &WCH_NID);
-			WCH_menu_handle = CreatePopupMenu();
-			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
-			AppendMenuW(WCH_menu_handle, MF_SEPARATOR, 0, NULL);
-			AppendMenuW(WCH_menu_handle, MF_STRING, WCH_MENU_EXIT, StrToWstr(WCH_Language["Exit"].asString()).c_str());
+			WCH_handle_menu = CreatePopupMenu();
+			AppendMenuW(WCH_handle_menu, MF_STRING, WCH_MENU_SHOW, L"Ctrl + Down");
+			AppendMenuW(WCH_handle_menu, MF_SEPARATOR, 0, NULL);
+			AppendMenuW(WCH_handle_menu, MF_STRING, WCH_MENU_EXIT, StrToWstr(WCH_Language["Exit"].asString()).c_str());
 			break;
 		case WM_USER:
 			if (lParam == WM_LBUTTONDOWN) {
@@ -563,7 +563,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				int32_t xx;
 				GetCursorPos(&pt);
 				SetForegroundWindow(hWnd);
-				xx = TrackPopupMenu(WCH_menu_handle, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
+				xx = TrackPopupMenu(WCH_handle_menu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
 #ifdef _DEBUG
 				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = " + to_wstring(xx) + L"\"");
 #endif
@@ -601,24 +601,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 void WCH_ShowBugMessagebox(int32_t errorcode, const wstring& errormsg) {
 	// Show messagebox to inform a bug to user.
 	wcout << L"\a";
-	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_INDETERMINATE);
+	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_INDETERMINATE);
 	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["BugMessagebox1"].asString()) + to_wstring(errorcode) + L" " + errormsg + StrToWstr(WCH_Language["BugMessagebox2"].asString())).c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
 		_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/issues/new/choose");
 	}
-	WCH_TBL->SetProgressState(WCH_window_handle, TBPF_NOPROGRESS);
+	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_NOPROGRESS);
 }
 
 void WCH_signalHandler() {
 	// Signal handler.
 	signal(SIGINT, []([[maybe_unused]] int32_t signum) {
-		WCH_command_list.clear();
-		WCH_command_list.push_back(L"exit");
+		WCH_list_command.clear();
+		WCH_list_command.push_back(L"exit");
 		wcout << endl;
 		exit(0);
 	});
 	signal(SIGBREAK, []([[maybe_unused]] int32_t signum) {
-		WCH_command_list.clear();
-		WCH_command_list.push_back(L"exit");
+		WCH_list_command.clear();
+		WCH_list_command.push_back(L"exit");
 		wcout << endl;
 		exit(0);
 	});

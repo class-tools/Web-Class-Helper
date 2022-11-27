@@ -33,7 +33,7 @@
 	"NumberLose": ".",
 	"Pi": "The picture is in the clipboard and be saved.",
 	"CountDown": "Starting count down timer...",
-	"AntiIdle": "Are you sure to enable anti-idle function?\nIf you want to disable it, press Ctrl + Down.",
+	"Focus": "Are you sure to enable focus?\nIf you want to disable it, press Ctrl + Down.",
 	"DataReading": "Reading data...",
 	"WillExit": "The program will exit now to make language settings go into effect...",
 	"BugMessagebox1": "Oops! An error occurred.\nPlease inform our developers with the error message by opening a new Issue in our GitHub Repository.\nError message: ",

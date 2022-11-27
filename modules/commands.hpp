@@ -12,33 +12,33 @@ Contributors: jsh-jsh ren-yc hjl2011
 #include "apis.hpp"
 #include "basic.hpp"
 
-extern const array<wstring, 7> WCH_weekday_list;
-extern const array<wstring, 2> WCH_language_list;
-extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
-extern const set<wstring> WCH_language_support;
+extern const array<wstring, 7> WCH_list_weekday;
+extern const array<wstring, 2> WCH_list_language;
+extern const map<wstring, function<void()>> WCH_support_command;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
+extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
-extern vector<wstring> WCH_command_list;
-extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
-extern set<wstring> WCH_task_list;
-extern set<pair<wstring, wstring>> WCH_work_list;
-extern wstring WCH_window_title;
-extern HWND WCH_window_handle;
-extern HWND WCH_tray_handle;
-extern HMENU WCH_menu_handle;
+extern vector<wstring> WCH_list_command;
+extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
+extern set<wstring> WCH_list_task;
+extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_title_window;
+extern HWND WCH_handle_window;
+extern HWND WCH_handle_tray;
+extern HMENU WCH_handle_menu;
 extern NOTIFYICONDATAW WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
 extern Json::Value WCH_Language;
-extern int32_t WCH_clock_num;
-extern int32_t WCH_task_num;
-extern int32_t WCH_work_num;
+extern int32_t WCH_num_clock;
+extern int32_t WCH_num_task;
+extern int32_t WCH_num_work;
 extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
-extern bool WCH_anti_idle;
-extern bool WCH_count_down;
+extern bool WCH_is_focus;
+extern bool WCH_is_countdown;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern ifstream fin;
@@ -54,18 +54,18 @@ void WCH_check_task_loop();
 
 void WCH_clear() {
 	// Clear console information.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	system("CLS");
-	wcout << WCH_window_title << endl;
+	wcout << WCH_title_window << endl;
 	wcout << StrToWstr(WCH_Language["Start"].asString()) << endl;
 }
 
 void WCH_exit() {
 	// Exit.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -93,13 +93,13 @@ void WCH_exit() {
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_OW.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_FATE.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_IDENT.tmp");
-	SendMessageW(WCH_tray_handle, WM_DESTROY, NULL, NULL);
+	SendMessageW(WCH_handle_tray, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
 
 void WCH_hide() {
 	// Hide the window.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -108,7 +108,7 @@ void WCH_hide() {
 
 void WCH_wiki() {
 	// Visit the wiki page.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -118,7 +118,7 @@ void WCH_wiki() {
 
 void WCH_update() {
 	// Visit the website to update the program.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -158,7 +158,7 @@ void WCH_update() {
 
 void WCH_license() {
 	// Print the license.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -176,7 +176,7 @@ void WCH_license() {
 
 void WCH_sysinfo() {
 	// Get system information.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -186,73 +186,73 @@ void WCH_sysinfo() {
 	wcout << format(L"{}: {}", StrToWstr(WCH_Language["ProgramArchitecture"].asString()), WCH_Framework) << endl;
 }
 
-void WCH_opendata_develop() {
+void WCH_develop_opendata() {
 	// Open data folder in AppData.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	_wsystem((L"EXPLORER \"" + WCH_path_data + L"\"").c_str());
 }
 
-void WCH_opentemp_develop() {
+void WCH_develop_opentemp() {
 	// Open temp folder in AppData.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	_wsystem((L"EXPLORER \"" + WCH_path_temp + L"\"").c_str());
 }
 
-void WCH_check_develop() {
+void WCH_develop() {
 	// Develop series command input.
-	if (WCH_command_list.size() == 1) {
+	if (WCH_list_command.size() == 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-	if (WCH_command_list[1] == L"opendata") {
-		WCH_opendata_develop();
-	} else if (WCH_command_list[1] == L"opentemp") {
-		WCH_opentemp_develop();
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	if (WCH_list_command[1] == L"opendata") {
+		WCH_develop_opendata();
+	} else if (WCH_list_command[1] == L"opentemp") {
+		WCH_develop_opentemp();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
 }
 
-void WCH_set_config() {
+void WCH_config_set() {
 	// Set a value of settings.
-	if (WCH_command_list.size() != 4) {
+	if (WCH_list_command.size() != 4) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	pair<bool, wstring> res = WCH_CheckConfigValid(WCH_command_list[2], WCH_command_list[3]);
+	pair<bool, wstring> res = WCH_CheckConfigValid(WCH_list_command[2], WCH_list_command[3]);
 	if (!res.first) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	WCH_Settings[WstrToStr(WCH_command_list[2])] = WstrToStr(WCH_command_list[3]);
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_command_list[2] + L"\" has been changed to \"" + WCH_command_list[3] + L"\" (Type: \"" + res.second + L"\")");
-	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
-		if (get<0>(*it) == WCH_command_list[2] && get<3>(*it)) {
+	WCH_Settings[WstrToStr(WCH_list_command[2])] = WstrToStr(WCH_list_command[3]);
+	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_list_command[2] + L"\" has been changed to \"" + WCH_list_command[3] + L"\" (Type: \"" + res.second + L"\")");
+	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
+		if (get<0>(*it) == WCH_list_command[2] && get<3>(*it)) {
 			MessageBoxW(NULL, StrToWstr(WCH_Language["WillExit"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
-			WCH_command_list.clear();
-			WCH_command_list.push_back(L"exit");
+			WCH_list_command.clear();
+			WCH_list_command.push_back(L"exit");
 			wcout << endl;
 			WCH_exit();
 		}
 	}
 }
 
-void WCH_list_config() {
+void WCH_config_list() {
 	// List all configs.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	size_t MAXK = 0;
 	size_t MAXV = 0;
-	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
 		MAXK = max(MAXK, get<0>(*it).size());
 		MAXV = max(MAXV, StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString()).size());
 	}
@@ -268,16 +268,16 @@ void WCH_list_config() {
 	wcout << L" | ";
 	WCH_PrintChar(MAXV, L'-');
 	wcout << endl;
-	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++) {
+	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
 		wcout << get<0>(*it);
 		WCH_PrintChar(MAXK - get<0>(*it).size(), L' ');
 		wcout << L" | " << StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString()) << endl;
 	}
 }
 
-void WCH_wizard_config() {
+void WCH_config_wizard() {
 	// Wizard to config settings.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -290,7 +290,7 @@ void WCH_wizard_config() {
 		WCH_FileProcessingFailed();
 		return;
 	} else {
-		if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_settings_support.size()) {
+		if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_support_settings.size()) {
 			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 			WCH_FileProcessingFailed();
 			return;
@@ -299,7 +299,7 @@ void WCH_wizard_config() {
 	fin.close();
 	int32_t cnt = 0;
 	bool flag = false;
-	for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++, cnt++) {
+	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][0].asString()), get<0>(*it)) << endl;
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][1].asString()), get<1>(*it)) << endl;
 		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][2].asString()), StrToWstr(valcfg["Content"][cnt].asString())) << endl;
@@ -328,13 +328,13 @@ void WCH_wizard_config() {
 			pair<bool, wstring> res = WCH_CheckConfigValid(get<0>(*it), _in);
 			if (!res.first) {
 				WCH_InputCommandIncorrect();
-				wcout << endl
-					  << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
+				wcout << endl;
+				wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) + L" ";
 				goto BEGIN;
 			}
 			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(_in);
 			WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + get<0>(*it) + L"\" has been changed to \"" + _in + L"\" (Type: \"" + res.second + L"\")");
-			for (auto ite = WCH_settings_support.begin(); ite != WCH_settings_support.end(); ite++) {
+			for (auto ite = WCH_support_settings.begin(); ite != WCH_support_settings.end(); ite++) {
 				if (get<0>(*ite) == get<0>(*it) && get<3>(*ite)) {
 					flag = true;
 				}
@@ -344,55 +344,55 @@ void WCH_wizard_config() {
 	}
 	if (flag) {
 		MessageBoxW(NULL, StrToWstr(WCH_Language["WillExit"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
-		WCH_command_list.clear();
-		WCH_command_list.push_back(L"exit");
+		WCH_list_command.clear();
+		WCH_list_command.push_back(L"exit");
 		wcout << endl;
 		WCH_exit();
 	}
 }
 
-void WCH_check_config() {
+void WCH_config() {
 	// Config series command input.
-	if (WCH_command_list.size() == 1) {
+	if (WCH_list_command.size() == 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-	if (WCH_command_list[1] == L"set") {
-		WCH_set_config();
-	} else if (WCH_command_list[1] == L"list") {
-		WCH_list_config();
-	} else if (WCH_command_list[1] == L"wizard") {
-		WCH_wizard_config();
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	if (WCH_list_command[1] == L"set") {
+		WCH_config_set();
+	} else if (WCH_list_command[1] == L"list") {
+		WCH_config_list();
+	} else if (WCH_list_command[1] == L"wizard") {
+		WCH_config_wizard();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
 }
 
-void WCH_add_clock() {
+void WCH_clock_add() {
 	// Add a new clock.
-	if (WCH_command_list.size() != 5) {
+	if (WCH_list_command.size() != 5) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	try {
-		int32_t h = stoi(WCH_command_list[2]);
-		int32_t m = stoi(WCH_command_list[3]);
-		wstring Tname = WCH_command_list[4];
-		if (WCH_command_list.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
+		int32_t h = stoi(WCH_list_command[2]);
+		int32_t m = stoi(WCH_list_command[3]);
+		wstring Tname = WCH_list_command[4];
+		if (WCH_list_command.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
 			WCH_InputCommandIncorrect();
 			return;
 		} else {
 			bool flag = false;
-			for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+			for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
 				if (get<0>(*it) == h && get<1>(*it) == m && get<2>(*it) == Tname) {
 					flag = true;
 					break;
 				}
 			}
 			if (!flag) {
-				WCH_clock_num++;
-				WCH_clock_list.insert(make_tuple(h, m, Tname));
+				WCH_num_clock++;
+				WCH_list_clock.insert(make_tuple(h, m, Tname));
 			} else {
 				throw runtime_error("");
 			}
@@ -402,22 +402,22 @@ void WCH_add_clock() {
 	}
 }
 
-void WCH_delete_clock() {
+void WCH_clock_delete() {
 	// Delete a clock.
-	if (WCH_command_list.size() != 5) {
+	if (WCH_list_command.size() != 5) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	try {
-		int32_t h = stoi(WCH_command_list[2]);
-		int32_t m = stoi(WCH_command_list[3]);
-		wstring Tname = WCH_command_list[4];
+		int32_t h = stoi(WCH_list_command[2]);
+		int32_t m = stoi(WCH_list_command[3]);
+		wstring Tname = WCH_list_command[4];
 		bool flag = false;
-		for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+		for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
 			if (get<0>(*it) == h && get<1>(*it) == m && get<2>(*it) == Tname) {
-				WCH_clock_list.erase(it);
+				WCH_list_clock.erase(it);
 				flag = true;
-				WCH_clock_num--;
+				WCH_num_clock--;
 				break;
 			}
 		}
@@ -429,26 +429,26 @@ void WCH_delete_clock() {
 	}
 }
 
-void WCH_clear_clock() {
+void WCH_clock_clear() {
 	// Clear clock list.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	WCH_clock_list.clear();
-	WCH_clock_num = 0;
+	WCH_list_clock.clear();
+	WCH_num_clock = 0;
 }
 
-void WCH_list_clock() {
+void WCH_clock_list() {
 	// List all clocks.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	size_t MAXH = 0;
 	size_t MAXM = 0;
 	size_t MAXT = 0;
-	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+	for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
 		MAXH = max(MAXH, WCH_GetNumDigits((size_t)get<0>(*it)));
 		MAXM = max(MAXM, WCH_GetNumDigits((size_t)get<1>(*it)));
 		MAXT = max(MAXT, WCH_GetWstrDisplaySize(get<2>(*it)));
@@ -470,7 +470,7 @@ void WCH_list_clock() {
 	wcout << L" | ";
 	WCH_PrintChar(MAXT, L'-');
 	wcout << endl;
-	for (auto it = WCH_clock_list.begin(); it != WCH_clock_list.end(); it++) {
+	for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
 		wcout << get<0>(*it);
 		WCH_PrintChar(MAXH - WCH_GetNumDigits(get<0>(*it)), L' ');
 		wcout << L" | " << get<1>(*it);
@@ -479,74 +479,74 @@ void WCH_list_clock() {
 	}
 }
 
-void WCH_check_clock() {
+void WCH_clock() {
 	// Clock series command input.
-	if (WCH_command_list.size() == 1) {
+	if (WCH_list_command.size() == 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-	if (WCH_command_list[1] == L"add") {
-		WCH_add_clock();
-	} else if (WCH_command_list[1] == L"delete") {
-		WCH_delete_clock();
-	} else if (WCH_command_list[1] == L"clear") {
-		WCH_clear_clock();
-	} else if (WCH_command_list[1] == L"list") {
-		WCH_list_clock();
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	if (WCH_list_command[1] == L"add") {
+		WCH_clock_add();
+	} else if (WCH_list_command[1] == L"delete") {
+		WCH_clock_delete();
+	} else if (WCH_list_command[1] == L"clear") {
+		WCH_clock_clear();
+	} else if (WCH_list_command[1] == L"list") {
+		WCH_clock_list();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
 }
 
-void WCH_add_task() {
+void WCH_task_add() {
 	// Add a new task.
-	if (WCH_command_list.size() != 3) {
+	if (WCH_list_command.size() != 3) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring task = WCH_command_list[2];
-	if (WCH_task_list.find(task) != WCH_task_list.end()) {
+	wstring task = WCH_list_command[2];
+	if (WCH_list_task.find(task) != WCH_list_task.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
-		WCH_task_list.insert(task);
-		WCH_task_num++;
+		WCH_list_task.insert(task);
+		WCH_num_task++;
 	}
 }
 
-void WCH_delete_task() {
+void WCH_task_delete() {
 	// Delete a task.
-	if (WCH_command_list.size() != 3) {
+	if (WCH_list_command.size() != 3) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring task = WCH_command_list[2];
-	if (WCH_task_list.find(task) == WCH_task_list.end()) {
+	wstring task = WCH_list_command[2];
+	if (WCH_list_task.find(task) == WCH_list_task.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
-		WCH_task_list.erase(task);
-		WCH_task_num--;
+		WCH_list_task.erase(task);
+		WCH_num_task--;
 	}
 }
 
-void WCH_clear_task() {
+void WCH_task_clear() {
 	// Clear task list.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	WCH_task_list.clear();
-	WCH_task_num = 0;
+	WCH_list_task.clear();
+	WCH_num_task = 0;
 }
 
-void WCH_list_task() {
+void WCH_task_list() {
 	// List all tasks.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	size_t MAX = 0;
-	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+	for (auto it = WCH_list_task.begin(); it != WCH_list_task.end(); it++) {
 		MAX = max(MAX, WCH_GetWstrDisplaySize(*it));
 	}
 	if (MAX == 0) {
@@ -556,81 +556,81 @@ void WCH_list_task() {
 	wcout << StrToWstr(WCH_Language["ProcessName"].asString()) << endl;
 	WCH_PrintChar(MAX, L'-');
 	wcout << endl;
-	for (auto it = WCH_task_list.begin(); it != WCH_task_list.end(); it++) {
+	for (auto it = WCH_list_task.begin(); it != WCH_list_task.end(); it++) {
 		wcout << *it << endl;
 	}
 }
 
-void WCH_check_task() {
+void WCH_task() {
 	// Task series command input.
-	if (WCH_command_list.size() == 1) {
+	if (WCH_list_command.size() == 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	if (WCH_command_list[1] == L"add") {
-		WCH_add_task();
-	} else if (WCH_command_list[1] == L"delete") {
-		WCH_delete_task();
-	} else if (WCH_command_list[1] == L"clear") {
-		WCH_clear_task();
-	} else if (WCH_command_list[1] == L"list") {
-		WCH_list_task();
+	if (WCH_list_command[1] == L"add") {
+		WCH_task_add();
+	} else if (WCH_list_command[1] == L"delete") {
+		WCH_task_delete();
+	} else if (WCH_list_command[1] == L"clear") {
+		WCH_task_clear();
+	} else if (WCH_list_command[1] == L"list") {
+		WCH_task_list();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
 }
 
-void WCH_add_work() {
+void WCH_work_add() {
 	// Add a new work.
-	if (WCH_command_list.size() != 3 && WCH_command_list.size() != 4) {
+	if (WCH_list_command.size() != 3 && WCH_list_command.size() != 4) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring work = WCH_command_list[2];
-	wstring tag = WCH_command_list.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_command_list[3];
-	if (WCH_work_list.find(make_pair(work, tag)) != WCH_work_list.end()) {
+	wstring work = WCH_list_command[2];
+	wstring tag = WCH_list_command.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_list_command[3];
+	if (WCH_list_work.find(make_pair(work, tag)) != WCH_list_work.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
-		WCH_work_list.insert(make_pair(work, tag));
-		WCH_work_num++;
+		WCH_list_work.insert(make_pair(work, tag));
+		WCH_num_work++;
 	}
 }
 
-void WCH_delete_work() {
+void WCH_work_delete() {
 	// Delete a work.
-	if (WCH_command_list.size() != 3 && WCH_command_list.size() != 4) {
+	if (WCH_list_command.size() != 3 && WCH_list_command.size() != 4) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring work = WCH_command_list[2];
-	wstring tag = WCH_command_list.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_command_list[3];
-	if (WCH_work_list.find(make_pair(work, tag)) == WCH_work_list.end()) {
+	wstring work = WCH_list_command[2];
+	wstring tag = WCH_list_command.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_list_command[3];
+	if (WCH_list_work.find(make_pair(work, tag)) == WCH_list_work.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
-		WCH_work_list.erase(make_pair(work, tag));
-		WCH_work_num--;
+		WCH_list_work.erase(make_pair(work, tag));
+		WCH_num_work--;
 	}
 }
 
-void WCH_clear_work() {
+void WCH_work_clear() {
 	// Clear work list.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	WCH_work_list.clear();
-	WCH_work_num = 0;
+	WCH_list_work.clear();
+	WCH_num_work = 0;
 }
 
-void WCH_list_work() {
+void WCH_work_list() {
 	// List all works.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	size_t MAXN = 0;
 	size_t MAXT = 0;
-	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
+	for (auto it = WCH_list_work.begin(); it != WCH_list_work.end(); it++) {
 		MAXN = max(MAXN, WCH_GetWstrDisplaySize(it->first));
 		MAXT = max(MAXT, WCH_GetWstrDisplaySize(it->second));
 	}
@@ -646,28 +646,28 @@ void WCH_list_work() {
 	wcout << L" | ";
 	WCH_PrintChar(MAXT, L'-');
 	wcout << endl;
-	for (auto it = WCH_work_list.begin(); it != WCH_work_list.end(); it++) {
+	for (auto it = WCH_list_work.begin(); it != WCH_list_work.end(); it++) {
 		wcout << it->first;
 		WCH_PrintChar(MAXN - WCH_GetWstrDisplaySize(it->first), L' ');
 		wcout << L" | " << it->second << endl;
 	}
 }
 
-void WCH_check_work() {
+void WCH_work() {
 	// Work series command input.
-	if (WCH_command_list.size() == 1) {
+	if (WCH_list_command.size() == 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-	if (WCH_command_list[1] == L"add") {
-		WCH_add_work();
-	} else if (WCH_command_list[1] == L"delete") {
-		WCH_delete_work();
-	} else if (WCH_command_list[1] == L"clear") {
-		WCH_clear_work();
-	} else if (WCH_command_list[1] == L"list") {
-		WCH_list_work();
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	if (WCH_list_command[1] == L"add") {
+		WCH_work_add();
+	} else if (WCH_list_command[1] == L"delete") {
+		WCH_work_delete();
+	} else if (WCH_list_command[1] == L"clear") {
+		WCH_work_clear();
+	} else if (WCH_list_command[1] == L"list") {
+		WCH_work_list();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
@@ -675,7 +675,7 @@ void WCH_check_work() {
 
 void WCH_game() {
 	// Guessing game.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -722,7 +722,7 @@ void WCH_game() {
 
 void WCH_pi() {
 	// A sequence of function to make a screenshot.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -735,42 +735,42 @@ void WCH_pi() {
 	wcout << StrToWstr(WCH_Language["Pi"].asString()) << endl;
 }
 
-void WCH_count_down_func() {
-	// Start a count-down timer.
-	if (WCH_command_list.size() != 4) {
+void WCH_countdown() {
+	// Start a count down timer.
+	if (WCH_list_command.size() != 4) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	try {
-		int32_t h = stoi(WCH_command_list[1]);
-		int32_t m = stoi(WCH_command_list[2]);
-		int32_t s = stoi(WCH_command_list[3]);
+		int32_t h = stoi(WCH_list_command[1]);
+		int32_t m = stoi(WCH_list_command[2]);
+		int32_t s = stoi(WCH_list_command[3]);
 		if ((h == 0 && m == 0 && s == 0) || (h < 0 || m < 0 || s < 0) || (h >= 24 || m >= 60 || s >= 60)) {
 			throw runtime_error("");
 		}
-		WCH_count_down = true;
+		WCH_is_countdown = true;
 		wcout << StrToWstr(WCH_Language["CountDown"].asString()) << endl;
 		WCH_progress_bar_duration = h * 3600 + m * 60 + s;
 		WCH_ProgressBar();
 		if (StrToWstr(WCH_Settings["CountDownSoundPrompt"].asString()) == L"True") {
 			wcout << L"\a";
 		}
-		WCH_count_down = false;
+		WCH_is_countdown = false;
 	} catch (...) {
 		WCH_InputCommandIncorrect();
-		WCH_count_down = false;
+		WCH_is_countdown = false;
 	}
 }
 
-void WCH_anti_idle_func() {
-	// Enable anti-idle function.
-	if (WCH_command_list.size() != 1) {
+void WCH_focus() {
+	// Enable focus function.
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	if (MessageBoxW(NULL, StrToWstr(WCH_Language["AntiIdle"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDYES) {
+	if (MessageBoxW(NULL, StrToWstr(WCH_Language["Focus"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDYES) {
 		WCH_SetWindowStatus(false);
-		WCH_anti_idle = true;
+		WCH_is_focus = true;
 		WCH_Sleep(500);
 		WCH_SetTrayStatus(false);
 		WCH_Sleep(500);
@@ -781,13 +781,13 @@ void WCH_anti_idle_func() {
 
 void WCH_trans() {
 	// Translate string between Chinese / English.
-	if (WCH_command_list.size() != 2) {
+	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	try {
 		wstring FilePath = WCH_path_temp + L"\\WCH_TRANS.tmp";
-		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WstrToStr((WCH_command_list[1]))))).c_str(), FilePath.c_str(), 0, NULL);
+		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WstrToStr((WCH_list_command[1]))))).c_str(), FilePath.c_str(), 0, NULL);
 		if (WCH_FileIsBlank(FilePath)) {
 			throw runtime_error("");
 		}
@@ -810,7 +810,7 @@ void WCH_trans() {
 
 void WCH_ow() {
 	// Get a random sentence.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -834,7 +834,7 @@ void WCH_ow() {
 
 void WCH_fate() {
 	// Get fate.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -868,7 +868,7 @@ void WCH_fate() {
 
 void WCH_time() {
 	// Print current time.
-	if (WCH_command_list.size() != 1) {
+	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -878,7 +878,7 @@ void WCH_time() {
 
 void WCH_help() {
 	// Print help information.
-	if (WCH_command_list.size() > 2) {
+	if (WCH_list_command.size() > 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
@@ -892,7 +892,7 @@ void WCH_help() {
 		return;
 	}
 	fin.close();
-	if (WCH_command_list.size() == 1) {
+	if (WCH_list_command.size() == 1) {
 		if (val.isMember("index")) {
 			for (auto it = val["index"].begin(); it != val["index"].end(); it++) {
 				wcout << StrToWstr((*it).asString()) << endl;
@@ -902,12 +902,12 @@ void WCH_help() {
 			WCH_FileProcessingFailed();
 		}
 	} else {
-		transform(WCH_command_list[1].begin(), WCH_command_list[1].end(), WCH_command_list[1].begin(), ::tolower);
-		if (val.isMember(WstrToStr(WCH_command_list[1]))) {
-			for (auto it = val[WstrToStr(WCH_command_list[1])].begin(); it != val[WstrToStr(WCH_command_list[1])].end(); it++) {
+		transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+		if (val.isMember(WstrToStr(WCH_list_command[1]))) {
+			for (auto it = val[WstrToStr(WCH_list_command[1])].begin(); it != val[WstrToStr(WCH_list_command[1])].end(); it++) {
 				wcout << StrToWstr((*it).asString()) << endl;
 			}
-			if (WCH_command_list[1] == L"config") {
+			if (WCH_list_command[1] == L"config") {
 				FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 				Json::Value valcfg;
 				WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
@@ -917,7 +917,7 @@ void WCH_help() {
 					WCH_FileProcessingFailed();
 					return;
 				} else {
-					if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_settings_support.size()) {
+					if (valcfg["Title"].size() != 6 || valcfg["Content"].size() != WCH_support_settings.size()) {
 						WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 						WCH_FileProcessingFailed();
 						return;
@@ -930,7 +930,7 @@ void WCH_help() {
 				size_t MAXDV = 0;
 				size_t MAXRR = 0;
 				int32_t cnt = 0;
-				for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++, cnt++) {
+				for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
 					MAXKN = max(MAXKN, WCH_GetWstrDisplaySize(get<0>(*it)));
 					MAXVT = max(MAXVT, WCH_GetWstrDisplaySize(get<1>(*it)));
 					MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())));
@@ -965,7 +965,7 @@ void WCH_help() {
 				WCH_PrintChar(MAXRR, L'-');
 				wcout << endl;
 				cnt = 0;
-				for (auto it = WCH_settings_support.begin(); it != WCH_settings_support.end(); it++, cnt++) {
+				for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
 					wcout << get<0>(*it);
 					WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(get<0>(*it)), L' ');
 					wcout << L" | " << get<1>(*it);
@@ -978,7 +978,7 @@ void WCH_help() {
 				}
 			}
 		} else {
-			if (WCH_command_support.find(WCH_command_list[1]) != WCH_command_support.end()) {
+			if (WCH_support_command.find(WCH_list_command[1]) != WCH_support_command.end()) {
 				WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
 				WCH_FileProcessingFailed();
 			} else {

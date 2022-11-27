@@ -12,33 +12,33 @@ Contributors: jsh-jsh ren-yc
 #include "./modules/apis.hpp"
 #include "./modules/basic.hpp"
 
-extern const array<wstring, 7> WCH_weekday_list;
-extern const array<wstring, 2> WCH_language_list;
-extern const map<wstring, function<void()>> WCH_command_support;
-extern const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support;
-extern const set<wstring> WCH_language_support;
+extern const array<wstring, 7> WCH_list_weekday;
+extern const array<wstring, 2> WCH_list_language;
+extern const map<wstring, function<void()>> WCH_support_command;
+extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
+extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
-extern vector<wstring> WCH_command_list;
-extern set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
-extern set<wstring> WCH_task_list;
-extern set<pair<wstring, wstring>> WCH_work_list;
-extern wstring WCH_window_title;
-extern HWND WCH_window_handle;
-extern HWND WCH_tray_handle;
-extern HMENU WCH_menu_handle;
+extern vector<wstring> WCH_list_command;
+extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
+extern set<wstring> WCH_list_task;
+extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_title_window;
+extern HWND WCH_handle_window;
+extern HWND WCH_handle_tray;
+extern HMENU WCH_handle_menu;
 extern NOTIFYICONDATAW WCH_NID;
 extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
 extern Json::Value WCH_Settings;
 extern Json::Value WCH_Language;
-extern int32_t WCH_clock_num;
-extern int32_t WCH_task_num;
-extern int32_t WCH_work_num;
+extern int32_t WCH_num_clock;
+extern int32_t WCH_num_task;
+extern int32_t WCH_num_work;
 extern int32_t WCH_progress_bar_duration;
 extern bool WCH_cmd_line;
-extern bool WCH_anti_idle;
-extern bool WCH_count_down;
+extern bool WCH_is_focus;
+extern bool WCH_is_countdown;
 extern bool WCH_program_end;
 extern bool WCH_pre_start;
 extern ifstream fin;
@@ -54,8 +54,8 @@ int32_t wmain([[maybe_unused]] int argc, [[maybe_unused]] wchar_t* argv[]) {
 	while (true) {
 		if (WCH_cmd_line) {
 			WCH_CL_Init();
-			if (WCH_command_support.find(WCH_command_list[0]) != WCH_command_support.end()) {
-				WCH_command_support.find(WCH_command_list[0])->second();
+			if (WCH_support_command.find(WCH_list_command[0]) != WCH_support_command.end()) {
+				WCH_support_command.find(WCH_list_command[0])->second();
 			} else {
 				WCH_InputCommandIncorrect();
 			}

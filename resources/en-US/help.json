@@ -6,8 +6,8 @@
 		"  CLOCK LIST (List all clocks)",
 		"  CLOCK CLEAR (Clear clock list)",
 		"",
-		"  TASK ADD [process name] (Add task [process name] to kill when \"anti-idle\" is enabled)",
-		"  TASK DELETE [process name] (Delete task [process name] to kill when \"anti-idle\" is enabled)",
+		"  TASK ADD [process name] (Add task [process name] to kill when focus is enabled)",
+		"  TASK DELETE [process name] (Delete task [process name] to kill when focus is enabled)",
 		"  TASK LIST (List all tasks)",
 		"  TASK CLEAR (Clear task list)",
 		"",
@@ -32,9 +32,9 @@
 		"",
 		"  FATE (Get fate) **Need Internet**",
 		"",
-		"  ANTI-IDLE (Enable anti-idle mode)",
+		"  FOCUS (Enable focus mode)",
 		"",
-		"  COUNT-DOWN [h] [m] [s] (Start a count-down timer which lasts [h] hour(s) [m] minute(s) [s] second(s))",
+		"  COUNTDOWN [h] [m] [s] (Start a count down timer which lasts [h] hour(s) [m] minute(s) [s] second(s))",
 		"",
 		"  UPDATE (Check update for this program) **Need Internet**",
 		"",
@@ -58,15 +58,6 @@
 		"",
 		"Notice:",
 		"  If you want to get the full information of [command], please input \"HELP [command]\"."
-	],
-	"anti-idle": [
-		"Enable anti-idle mode, press Ctrl + Down to disable it.",
-		"",
-		"Usage:",
-		"",
-		"ANTI-IDLE",
-		"",
-		"This command has no parameters."
 	],
 	"clear": [
 		"Clear console window information.",
@@ -114,19 +105,19 @@
 		"List of possible values of [Key]:",
 		""
 	],
-	"count-down": [
-		"Start a count-down timer.",
+	"countdown": [
+		"Start a count down timer.",
 		"",
 		"Usage:",
 		"",
-		"COUNT-DOWN [h] [m] [s]",
+		"COUNTDOWN [h] [m] [s]",
 		"",
 		"You can add a zero in front of [h] / [m] / [s] if it is less than 10. (Not required)",
 		"",
 		"These two commands are same:",
 		"",
-		"COUNT-DOWN 1 1 1",
-		"COUNT-DOWN 01 01 01"
+		"COUNTDOWN 1 1 1",
+		"COUNTDOWN 01 01 01"
 	],
 	"develop": [
 		"Development commands.",
@@ -153,6 +144,15 @@
 		"Usage:",
 		"",
 		"FATE",
+		"",
+		"This command has no parameters."
+	],
+	"focus": [
+		"Enable focus mode, press Ctrl + Down to disable it.",
+		"",
+		"Usage:",
+		"",
+		"FOCUS",
 		"",
 		"This command has no parameters."
 	],

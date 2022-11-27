@@ -51,6 +51,10 @@ public:
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"テスト"), (size_t)6);
 		Assert::AreEqual(WCH_GetWstrDisplaySize(L"T测テ"), (size_t)5);
 	}
+	TEST_METHOD(NewlineCount) {
+		Assert::AreEqual(WCH_NewlineCount(L"\nTest\n"), (size_t)2);
+		Assert::AreEqual(WCH_NewlineCount(L"\n\n\n"), (size_t)3);
+	}
 };
 
 TEST_CLASS(Version) {
@@ -77,16 +81,16 @@ public:
 	}
 	TEST_METHOD(CheckConfigValid) {
 		pair<bool, wstring> Temp;
-		Temp = WCH_CheckConfigValid(L"AntiIdleEndContent", L"Test");
+		Temp = WCH_CheckConfigValid(L"FocusEndContent", L"Test");
 		Assert::IsTrue(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"String");
-		Temp = WCH_CheckConfigValid(L"AntiIdleEndPrompt", L"True");
+		Temp = WCH_CheckConfigValid(L"FocusEndPrompt", L"True");
 		Assert::IsTrue(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"Boolean");
-		Temp = WCH_CheckConfigValid(L"AntiIdleKillInterval", L"2147483647");
+		Temp = WCH_CheckConfigValid(L"FocusKillInterval", L"2147483647");
 		Assert::IsFalse(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"String");
-		Temp = WCH_CheckConfigValid(L"AntiIdleKillInterval", L"60000");
+		Temp = WCH_CheckConfigValid(L"FocusKillInterval", L"60000");
 		Assert::IsTrue(Temp.first);
 		Assert::AreEqual(Temp.second.c_str(), L"Number");
 		Temp = WCH_CheckConfigValid(L"Language", L"Test");

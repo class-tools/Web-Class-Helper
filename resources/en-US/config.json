@@ -1,11 +1,11 @@
 {
 	"Title": ["Key Name", "Value Type", "Description", "Default Value", "Require Restart", "Current Value"],
 	"Content": [
-		"The content in `AntiIdleEndPrompt` messagebox",
-		"Enable prompt when trying to disable anti-idle",
-		"Process killing interval, in milliseconds",
 		"Prompt when inputting command",
 		"Make a sound prompt when count down ends",
+		"Prompt content when trying to disable focus",
+		"Enable prompt when trying to disable focus",
+		"Process killing interval, in milliseconds",
 		"Program language (Support \"en-US\" \"zh-CN\")",
 		"Screenshot image save format (MIME)",
 		"Screenshot image save path"

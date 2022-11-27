@@ -168,10 +168,10 @@ using std::this_thread::sleep_for;
 #define WCH_HOTKEY_SHOW 121
 #define WCH_MENU_SHOW 11461
 #define WCH_MENU_EXIT 11462
-#define WCH_LOG_STATUS_INFO TEXT("[INFO]")
-#define WCH_LOG_STATUS_DEBUG TEXT("[DEBUG]")
-#define WCH_LOG_STATUS_WARN TEXT("[WARN]")
-#define WCH_LOG_STATUS_ERROR TEXT("[ERROR]")
+#define WCH_LOG_STATUS_INFO L"[INFO]"
+#define WCH_LOG_STATUS_DEBUG L"[DEBUG]"
+#define WCH_LOG_STATUS_WARN L"[WARN]"
+#define WCH_LOG_STATUS_ERROR L"[ERROR]"
 
 class GdiplusWrapper {
 public:
@@ -256,9 +256,9 @@ struct WCH_Version {
 	}
 };
 
-void WCH_check_clock();
-void WCH_check_task();
-void WCH_check_work();
+void WCH_clock();
+void WCH_task();
+void WCH_work();
 void WCH_help();
 void WCH_ow();
 void WCH_hide();
@@ -267,29 +267,29 @@ void WCH_time();
 void WCH_pi();
 void WCH_trans();
 void WCH_fate();
-void WCH_anti_idle_func();
-void WCH_count_down_func();
+void WCH_focus();
+void WCH_countdown();
 void WCH_update();
 void WCH_wiki();
 void WCH_license();
 void WCH_clear();
-void WCH_check_config();
-void WCH_check_develop();
+void WCH_config();
+void WCH_develop();
 void WCH_sysinfo();
 void WCH_exit();
 
-const array<wstring, 7> WCH_weekday_list = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
-const array<wstring, 2> WCH_language_list = {L"en-US", L"zh-CN"};
+const array<wstring, 7> WCH_list_weekday = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+const array<wstring, 2> WCH_list_language = {L"en-US", L"zh-CN"};
 const map<wstring, wstring> WCH_MIME_list = {
 	make_pair(L"image/bmp", L".bmp"),
 	make_pair(L"image/gif", L".gif"),
 	make_pair(L"image/jpeg", L".jpg"),
 	make_pair(L"image/png", L".png"),
 	make_pair(L"image/tiff", L".tif")};
-const map<wstring, function<void()>> WCH_command_support = {
-	make_pair(L"clock", WCH_check_clock),
-	make_pair(L"task", WCH_check_task),
-	make_pair(L"work", WCH_check_work),
+const map<wstring, function<void()>> WCH_support_command = {
+	make_pair(L"clock", WCH_clock),
+	make_pair(L"task", WCH_task),
+	make_pair(L"work", WCH_work),
 	make_pair(L"help", WCH_help),
 	make_pair(L"ow", WCH_ow),
 	make_pair(L"hide", WCH_hide),
@@ -298,26 +298,26 @@ const map<wstring, function<void()>> WCH_command_support = {
 	make_pair(L"pi", WCH_pi),
 	make_pair(L"trans", WCH_trans),
 	make_pair(L"fate", WCH_fate),
-	make_pair(L"anti-idle", WCH_anti_idle_func),
-	make_pair(L"count-down", WCH_count_down_func),
+	make_pair(L"focus", WCH_focus),
+	make_pair(L"countdown", WCH_countdown),
 	make_pair(L"update", WCH_update),
 	make_pair(L"wiki", WCH_wiki),
 	make_pair(L"license", WCH_license),
 	make_pair(L"clear", WCH_clear),
-	make_pair(L"config", WCH_check_config),
-	make_pair(L"develop", WCH_check_develop),
+	make_pair(L"config", WCH_config),
+	make_pair(L"develop", WCH_develop),
 	make_pair(L"sysinfo", WCH_sysinfo),
 	make_pair(L"exit", WCH_exit)};
-const set<tuple<wstring, wstring, wstring, bool>> WCH_settings_support = {
-	make_tuple(L"AntiIdleEndContent", L"String", L"Disable anti-idle?", false),
-	make_tuple(L"AntiIdleEndPrompt", L"Boolean", L"False", false),
-	make_tuple(L"AntiIdleKillInterval", L"Number", L"60000", false),
+const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings = {
 	make_tuple(L"CommandPrompt", L"String", L">>>", false),
 	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False", false),
+	make_tuple(L"FocusEndContent", L"String", L"Disable focus?", false),
+	make_tuple(L"FocusEndPrompt", L"Boolean", L"False", false),
+	make_tuple(L"FocusKillInterval", L"Number", L"60000", false),
 	make_tuple(L"Language", L"String", L"en-US", true),
 	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png", false),
 	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false)};
-const set<wstring> WCH_language_support = {
+const set<wstring> WCH_support_language = {
 	L"ProgramName",
 	L"Start",
 	L"Exit",
@@ -352,7 +352,7 @@ const set<wstring> WCH_language_support = {
 	L"NumberLose",
 	L"Pi",
 	L"CountDown",
-	L"AntiIdle",
+	L"Focus",
 	L"DataReading",
 	L"WillExit",
 	L"BugMessagebox1",
@@ -360,25 +360,25 @@ const set<wstring> WCH_language_support = {
 const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
 const wstring WCH_path_data = format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
 const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp\\WCH", _wgetenv(L"USERPROFILE"));
-vector<wstring> WCH_command_list;
-set<tuple<int32_t, int32_t, wstring>> WCH_clock_list;
-set<wstring> WCH_task_list;
-set<pair<wstring, wstring>> WCH_work_list;
-wstring WCH_window_title;
-HWND WCH_window_handle;
-HWND WCH_tray_handle;
-HMENU WCH_menu_handle;
+vector<wstring> WCH_list_command;
+set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
+set<wstring> WCH_list_task;
+set<pair<wstring, wstring>> WCH_list_work;
+wstring WCH_title_window;
+HWND WCH_handle_window;
+HWND WCH_handle_tray;
+HMENU WCH_handle_menu;
 NOTIFYICONDATAW WCH_NID;
 ATL::CComPtr<ITaskbarList3> WCH_TBL;
 Json::Value WCH_Settings;
 Json::Value WCH_Language;
-int32_t WCH_clock_num;
-int32_t WCH_task_num;
-int32_t WCH_work_num;
+int32_t WCH_num_clock;
+int32_t WCH_num_task;
+int32_t WCH_num_work;
 int32_t WCH_progress_bar_duration;
 bool WCH_cmd_line = true;
-bool WCH_anti_idle;
-bool WCH_count_down;
+bool WCH_is_focus;
+bool WCH_is_countdown;
 bool WCH_program_end;
 bool WCH_pre_start = true;
 ifstream fin;
