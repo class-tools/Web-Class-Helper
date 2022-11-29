@@ -139,6 +139,9 @@ void WCH_Init_Var() {
 	WCH_title_window.append(L" (");
 	WCH_title_window.append(WCH_Framework);
 	WCH_title_window.append(L")");
+	wchar_t Path[256];
+	GetModuleFileName(NULL, Path, sizeof(Path) - 1);
+	WCH_path_program = Path;
 }
 
 void WCH_Init_Win() {

@@ -277,6 +277,7 @@ void WCH_config();
 void WCH_develop();
 void WCH_sysinfo();
 void WCH_exit();
+void WCH_restart();
 
 const vector<wstring> WCH_list_weekday = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
 const map<wstring, set<wstring>> WCH_choice_settings = {
@@ -316,7 +317,8 @@ const map<wstring, function<void()>> WCH_support_command = {
 	make_pair(L"config", WCH_config),
 	make_pair(L"develop", WCH_develop),
 	make_pair(L"sysinfo", WCH_sysinfo),
-	make_pair(L"exit", WCH_exit)};
+	make_pair(L"exit", WCH_exit),
+	make_pair(L"restart", WCH_restart)};
 const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings = {
 	make_tuple(L"CommandPrompt", L"String", L">>>", false),
 	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False", false),
@@ -363,7 +365,7 @@ const set<wstring> WCH_support_language = {
 	L"CountDown",
 	L"Focus",
 	L"DataReading",
-	L"WillExit",
+	L"WillRestart",
 	L"BugMessagebox1",
 	L"BugMessagebox2"};
 const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
@@ -397,5 +399,6 @@ wofstream wfout;
 Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
 unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
+wstring WCH_path_program;
 
 #endif
