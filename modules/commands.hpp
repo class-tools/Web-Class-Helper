@@ -53,6 +53,17 @@ extern unique_ptr<Json::StreamWriter> JSON_SW;
 void WCH_save();
 void WCH_check_task_loop();
 
+void WCH_restart() {
+	// Restart the program.
+	if (WCH_list_command.size() != 1) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	wstring wCommand = L"cd " + WCH_path_program.substr(0, WCH_path_program.rfind(L"\\")) + L" && " + L"start " + WCH_path_program.substr(WCH_path_program.rfind(L"\\") + 1, WCH_path_program.length() - 1);
+	_wsystem(wCommand.c_str());
+	WCH_exit();
+}
+
 void WCH_clear() {
 	// Clear console information.
 	if (WCH_list_command.size() != 1) {
@@ -236,11 +247,11 @@ void WCH_config_set() {
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_list_command[2] + L"\" has been changed to \"" + WCH_list_command[3] + L"\" (Type: \"" + res.second + L"\")");
 	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
 		if (get<0>(*it) == WCH_list_command[2] && get<3>(*it)) {
-			MessageBoxW(NULL, StrToWstr(WCH_Language["WillExit"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
+			MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
 			WCH_list_command.clear();
-			WCH_list_command.push_back(L"exit");
+			WCH_list_command.push_back(L"restart");
 			wcout << endl;
-			WCH_exit();
+			WCH_restart();
 		}
 	}
 }
@@ -350,11 +361,11 @@ void WCH_config_wizard() {
 		WCH_ClearConsole();
 	}
 	if (flag) {
-		MessageBoxW(NULL, StrToWstr(WCH_Language["WillExit"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
+		MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
 		WCH_list_command.clear();
-		WCH_list_command.push_back(L"exit");
+		WCH_list_command.push_back(L"restart");
 		wcout << endl;
-		WCH_exit();
+		WCH_restart();
 	}
 }
 
