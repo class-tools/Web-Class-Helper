@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
 extern HWND WCH_handle_tray;
@@ -50,7 +51,8 @@ extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
 
-int32_t wmain([[maybe_unused]] int argc, [[maybe_unused]] wchar_t* argv[]) {
+int32_t wmain([[maybe_unused]] int32_t _argc, wchar_t* _argv[]) {
+	WCH_path_exec = _argv[0];
 	WCH_Init();
 	while (true) {
 		if (WCH_cmd_line) {

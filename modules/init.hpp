@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
 extern HWND WCH_handle_tray;
@@ -139,9 +140,6 @@ void WCH_Init_Var() {
 	WCH_title_window.append(L" (");
 	WCH_title_window.append(WCH_Framework);
 	WCH_title_window.append(L")");
-	wchar_t Path[256];
-	GetModuleFileName(NULL, Path, sizeof(Path) - 1);
-	WCH_path_program = Path;
 }
 
 void WCH_Init_Win() {

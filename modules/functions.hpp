@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
 extern HWND WCH_handle_tray;

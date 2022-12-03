@@ -375,6 +375,7 @@ vector<wstring> WCH_list_command;
 set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 set<wstring> WCH_list_task;
 set<pair<wstring, wstring>> WCH_list_work;
+wstring WCH_path_exec;
 wstring WCH_title_window;
 HWND WCH_handle_window;
 HWND WCH_handle_tray;
@@ -399,6 +400,5 @@ wofstream wfout;
 Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
 unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
-wstring WCH_path_program;
 
 #endif

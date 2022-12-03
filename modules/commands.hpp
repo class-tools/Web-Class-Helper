@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
 extern HWND WCH_handle_tray;
@@ -52,17 +53,6 @@ extern unique_ptr<Json::StreamWriter> JSON_SW;
 
 void WCH_save();
 void WCH_check_task_loop();
-
-void WCH_restart() {
-	// Restart the program.
-	if (WCH_list_command.size() != 1) {
-		WCH_InputCommandIncorrect();
-		return;
-	}
-	wstring wCommand = L"cd " + WCH_path_program.substr(0, WCH_path_program.rfind(L"\\")) + L" && " + L"start " + WCH_path_program.substr(WCH_path_program.rfind(L"\\") + 1, WCH_path_program.length() - 1);
-	_wsystem(wCommand.c_str());
-	WCH_exit();
-}
 
 void WCH_clear() {
 	// Clear console information.
@@ -107,6 +97,16 @@ void WCH_exit() {
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_IDENT.tmp");
 	SendMessageW(WCH_handle_tray, WM_DESTROY, NULL, NULL);
 	_exit(0);
+}
+
+void WCH_restart() {
+	// Restart the program.
+	if (WCH_list_command.size() != 1) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	_wsystem((L"START \"\" \"" + WCH_path_exec + L"\"").c_str());
+	WCH_exit();
 }
 
 void WCH_hide() {
