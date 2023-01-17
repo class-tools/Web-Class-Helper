@@ -8,23 +8,5 @@ Generator: Visual Studio 2022
 #undef APSTUDIO_READONLY_SYMBOLS
 #if !defined(AFX_RESOURCE_DLL)
 #pragma code_page(65001)
-#ifdef APSTUDIO_INVOKED
-1 TEXTINCLUDE
-BEGIN
-    "resource.hpp\0"
-END
-2 TEXTINCLUDE
-BEGIN
-    "#include ""winres.h""\r\n"
-    "\0"
-END
-3 TEXTINCLUDE
-BEGIN
-    "\r\n"
-    "\0"
-END
-#endif
 IDI_ICON ICON "WCH.ico"
-#endif
-#ifndef APSTUDIO_INVOKED
 #endif
