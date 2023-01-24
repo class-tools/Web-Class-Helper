@@ -387,6 +387,9 @@ void WCH_SaveImg() {
 	DeleteDC(hMemDC);
 	DeleteObject(hBitmap);
 	WCH_printlog(WCH_LOG_STATUS_INFO, L"Saving image to \"" + SavePath + L"\"");
+	if (StrToWstr(WCH_Settings["ScreenshotOpen"].asString()) == L"True") {
+		_wsystem(SavePath.c_str());
+	}
 }
 
 void WCH_CheckAndDeleteFile(const wstring& _filename) {

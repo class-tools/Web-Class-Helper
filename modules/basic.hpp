@@ -326,6 +326,7 @@ const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings = {
 	make_tuple(L"FocusEndPrompt", L"Boolean", L"False", false),
 	make_tuple(L"FocusKillInterval", L"Number", L"60000", false),
 	make_tuple(L"Language", L"String", L"en-US", true),
+	make_tuple(L"ScreenshotOpen", L"Boolean", L"False", false),
 	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png", false),
 	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false)};
 const set<wstring> WCH_support_language = {

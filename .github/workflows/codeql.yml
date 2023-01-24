@@ -24,7 +24,7 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:arm-windows-static
+          vcpkg install jsoncpp:x64-windows-static
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:

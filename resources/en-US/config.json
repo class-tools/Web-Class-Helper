@@ -7,6 +7,7 @@
 		"Enable prompt when trying to disable focus",
 		"Process killing interval, in milliseconds",
 		"Program language",
+		"Open screenshot after saving",
 		"Screenshot image save format (MIME)",
 		"Screenshot image save path"
 	]
