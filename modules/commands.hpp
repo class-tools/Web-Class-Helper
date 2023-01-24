@@ -738,7 +738,7 @@ void WCH_game() {
 	}
 }
 
-void WCH_pi() {
+void WCH_prtscn() {
 	// A sequence of function to make a screenshot.
 	if (WCH_list_command.size() != 1) {
 		WCH_InputCommandIncorrect();
@@ -750,7 +750,7 @@ void WCH_pi() {
 	WCH_SaveImg();
 	WCH_Sleep(500);
 	WCH_SetWindowStatus(true);
-	wcout << StrToWstr(WCH_Language["Pi"].asString()) << endl;
+	wcout << StrToWstr(WCH_Language["Prtscn"].asString()) << endl;
 }
 
 void WCH_countdown() {

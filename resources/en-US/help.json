@@ -26,7 +26,7 @@
 		"",
 		"  TIME (Get time at once)",
 		"",
-		"  PI (Make a screenshot and save)",
+		"  PRTSCN (Make a screenshot and save)",
 		"",
 		"  TRANS [info] (Translate a sentence between English / Chinese) **Need Internet**",
 		"",
@@ -210,12 +210,12 @@
 		"",
 		"This command has no parameters."
 	],
-	"pi": [
+	"prtscn": [
 		"Copy and save screenshot into `ScreenshotSavePath`.",
 		"",
 		"Usage:",
 		"",
-		"PI",
+		"PRTSCN",
 		"",
 		"This command has no parameters."
 	],

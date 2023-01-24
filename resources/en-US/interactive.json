@@ -31,7 +31,7 @@
 	"NumberAnswer": "The number is",
 	"NumberWin": ". You WIN!",
 	"NumberLose": ".",
-	"Pi": "The picture is in the clipboard and be saved.",
+	"Prtscn": "The picture is in the clipboard and be saved.",
 	"CountDown": "Starting count down timer...",
 	"Focus": "Are you sure to enable focus?\nIf you want to disable it, press Ctrl + Down.",
 	"DataReading": "Reading data...",

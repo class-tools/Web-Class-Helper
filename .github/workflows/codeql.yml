@@ -31,6 +31,7 @@ jobs:
           languages: ${{ matrix.language }}
           config-file: .\.github\codeql\codeql-config.yml
       - name: Build solution
-        uses: github/codeql-action/autobuild@v2
+        run: |
+          .\scripts\build.ps1 Release x64
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2

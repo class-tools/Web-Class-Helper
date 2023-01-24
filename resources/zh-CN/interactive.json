@@ -31,7 +31,7 @@
 	"NumberAnswer": "答案是",
 	"NumberWin": ". 你赢了！",
 	"NumberLose": ".",
-	"Pi": "截图已复制到剪贴板并保存.",
+	"Prtscn": "截图已复制到剪贴板并保存.",
 	"CountDown": "正在启动倒计时...",
 	"Focus": "确定启用专注模式?\n如果你想禁用它, 按下 Ctrl + Down.",
 	"DataReading": "正在读取数据...",

@@ -264,7 +264,7 @@ void WCH_ow();
 void WCH_hide();
 void WCH_game();
 void WCH_time();
-void WCH_pi();
+void WCH_prtscn();
 void WCH_trans();
 void WCH_fate();
 void WCH_focus();
@@ -305,7 +305,7 @@ const map<wstring, function<void()>> WCH_support_command = {
 	make_pair(L"hide", WCH_hide),
 	make_pair(L"game", WCH_game),
 	make_pair(L"time", WCH_time),
-	make_pair(L"pi", WCH_pi),
+	make_pair(L"prtscn", WCH_prtscn),
 	make_pair(L"trans", WCH_trans),
 	make_pair(L"fate", WCH_fate),
 	make_pair(L"focus", WCH_focus),
@@ -361,7 +361,7 @@ const set<wstring> WCH_support_language = {
 	L"NumberAnswer",
 	L"NumberWin",
 	L"NumberLose",
-	L"Pi",
+	L"Prtscn",
 	L"CountDown",
 	L"Focus",
 	L"DataReading",
