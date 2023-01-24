@@ -19,7 +19,7 @@
 <img src="https://img.shields.io/badge/support-Windows%208%20%2F%208.1%20%2F%2010%20%2F%2011-blue?logo=Windows">
 </p>
 
-一个在网课期间命令行小工具。
+一个在网课期间的命令行小工具。
 
 [English](./README.md) | **简体中文**
 

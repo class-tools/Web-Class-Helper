@@ -58,7 +58,9 @@ void WCH_check_clock_loop() {
 		WCH_Time NOW = WCH_GetTime();
 		for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
 			if (get<0>(*it) == NOW.Hour && get<1>(*it) == NOW.Minute && get<2>(*it).size() > 0) {
-				wcout << L"\a";
+				if (StrToWstr(WCH_Settings["CountDownSoundPrompt"].asString()) == L"True") {
+					wcout << L"\a";
+				}
 				bool _tmp = WCH_cmd_line;
 				if (_tmp) {
 					WCH_SetWindowStatus(false);

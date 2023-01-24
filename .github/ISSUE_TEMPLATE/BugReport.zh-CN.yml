@@ -20,7 +20,7 @@ body:
     attributes:
       label: 细节信息
       description: |
-        请加入在这里屏幕截图, 控制台输出和日志文件.
+        请在这里加入屏幕截图, 控制台输出和日志文件.
       placeholder: |
         (屏幕截图)
 

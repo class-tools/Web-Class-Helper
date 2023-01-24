@@ -26,4 +26,4 @@
 
 请使用非公开的方式联系本项目的维护者，如 E-mail。
 
-请不要使用公开的方式如 GitHub Issues！
+请不要使用公开的方式，如 GitHub Issues！

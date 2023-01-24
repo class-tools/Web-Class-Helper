@@ -1,6 +1,6 @@
 ## 贡献
 
-[English](./CONTRIBUTING.zh-CN.md) | **简体中文**
+[English](./CONTRIBUTING.md) | **简体中文**
 
 欢迎来到 Web Class Helper！
 
