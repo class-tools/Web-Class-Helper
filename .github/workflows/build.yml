@@ -18,7 +18,7 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:x86-windows jsoncpp:x86-windows-static
+          vcpkg install jsoncpp:x86-windows-static
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release x86
@@ -31,7 +31,7 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:x64-windows jsoncpp:x64-windows-static
+          vcpkg install jsoncpp:x64-windows-static
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release x64
@@ -44,7 +44,7 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:ARM-windows jsoncpp:ARM-windows-static
+          vcpkg install jsoncpp:arm-windows-static
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release ARM
@@ -57,7 +57,7 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:ARM64-windows jsoncpp:ARM64-windows-static
+          vcpkg install jsoncpp:arm64-windows-static
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release ARM64

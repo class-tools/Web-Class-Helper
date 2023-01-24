@@ -18,7 +18,7 @@ jobs:
       - name: Initialize vcpkg
         run: |
           vcpkg integrate install
-          vcpkg install jsoncpp:x64-windows jsoncpp:x64-windows-static
+          vcpkg install jsoncpp:x64-windows-static
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release x64
