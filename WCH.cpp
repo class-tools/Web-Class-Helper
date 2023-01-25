@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_version;
 extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
@@ -50,10 +51,15 @@ extern wofstream wfout;
 extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
+extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
+extern shared_ptr<spdlog::logger> LOG_logger;
 
-int32_t wmain([[maybe_unused]] int32_t _argc, wchar_t* _argv[]) {
-	WCH_path_exec = _argv[0];
+int32_t wmain(int32_t _argc, wchar_t* _argv[]) {
 	WCH_Init();
+	if (_argc > 1) {
+		SPDLOG_WARN(format(L"Number of redundant command line arguments: {}.", _argc - 1));
+	}
+	WCH_path_exec = _argv[0];
 	while (true) {
 		if (WCH_cmd_line) {
 			WCH_CL_Init();

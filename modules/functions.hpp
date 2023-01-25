@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_version;
 extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
@@ -50,6 +51,8 @@ extern wofstream wfout;
 extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
+extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
+extern shared_ptr<spdlog::logger> LOG_logger;
 
 void WCH_check_clock_loop() {
 	// Check if the time equals to the clock. (Another thread)
@@ -105,9 +108,9 @@ void WCH_check_task_loop() {
 	while (WCH_is_focus && !WCH_program_end) {
 		for (auto it = WCH_list_task.begin(); it != WCH_list_task.end(); it++) {
 			if (WCH_TaskKill(*it)) {
-				WCH_printlog(WCH_LOG_STATUS_INFO, L"Successfully killed \"" + *it + L"\"");
+				SPDLOG_INFO(format(L"Successfully killed \"{}\"", *it));
 			} else {
-				WCH_printlog(WCH_LOG_STATUS_INFO, L"Failed to kill \"" + *it + L"\"");
+				SPDLOG_INFO(format(L"Failed to kill \"{}\"", *it));
 			}
 		}
 		WCH_Sleep(stoi(StrToWstr(WCH_Settings["FocusKillInterval"].asString())));

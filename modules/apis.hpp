@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_version;
 extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
@@ -50,8 +51,8 @@ extern wofstream wfout;
 extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
-
-void WCH_printlog(wstring _mode, wstring _info);
+extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
+extern shared_ptr<spdlog::logger> LOG_logger;
 
 void WCH_Sleep(int32_t _ms) {
 	// Sleep.
@@ -172,14 +173,14 @@ vector<wstring> WCH_split(const wstring& _in) {
 	}
 	if (_res.size() != 0) {
 		if (_res.size() != 1) {
-			wstring _debug = L"Input command array: \"" + _res[0] + L"\", ";
+			wstring _debug = format(L"Input command array: \"{}\", ", _res[0]);
 			for (size_t i = 1; i < _res.size() - 1; i++) {
-				_debug.append(L"\"" + _res[i] + L"\", ");
+				_debug.append(format(L"\"{}\", ", _res[i]));
 			}
-			_debug.append(L"\"" + _res[_res.size() - 1] + L"\"");
-			WCH_printlog(WCH_LOG_STATUS_INFO, _debug);
+			_debug.append(format(L"\"{}\"", _res[_res.size() - 1]));
+			SPDLOG_INFO(_debug);
 		} else {
-			WCH_printlog(WCH_LOG_STATUS_INFO, L"Input command array: \"" + _res[0] + L"\"");
+			SPDLOG_INFO(format(L"Input command array: \"{}\"", _res[0]));
 		}
 	}
 	return _res;
@@ -296,13 +297,13 @@ void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_handle_window, (flag ? SW_SHOWNORMAL : SW_HIDE));
 	WCH_cmd_line = flag;
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
+	SPDLOG_INFO(format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag ? SW_SHOWNORMAL : SW_HIDE));
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"\"TRAY\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
+	SPDLOG_INFO(format(L"\"TRAY\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
 
 void WCH_ShowTaskBarError() {
@@ -315,7 +316,7 @@ void WCH_ShowTaskBarError() {
 
 void WCH_InputCommandIncorrect() {
 	// Print text for incorrect inputs.
-	WCH_printlog(WCH_LOG_STATUS_WARN, L"Your input code is incorrect, please check and try again");
+	SPDLOG_WARN(L"Your input code is incorrect, please check and try again");
 	wcout << StrToWstr(WCH_Language["InputCommandIncorrect"].asString()) << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
@@ -323,7 +324,7 @@ void WCH_InputCommandIncorrect() {
 
 void WCH_FileProcessingFailed() {
 	// Print text for failed file processings.
-	WCH_printlog(WCH_LOG_STATUS_ERROR, L"File processing failed. Please try reinstalling this program");
+	SPDLOG_ERROR(L"File processing failed. Please try reinstalling this program");
 	wcout << StrToWstr(WCH_Language["FileProcessingFailed"].asString()) << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
@@ -331,7 +332,7 @@ void WCH_FileProcessingFailed() {
 
 void WCH_NetworkError() {
 	// Print text for network errors.
-	WCH_printlog(WCH_LOG_STATUS_ERROR, L"An network error occurred, please check your network connection and try to update this program");
+	SPDLOG_ERROR(L"An network error occurred, please check your network connection and try to update this program");
 	wcout << StrToWstr(WCH_Language["NetworkError"].asString()) << endl;
 	thread T(WCH_ShowTaskBarError);
 	T.detach();
@@ -360,7 +361,7 @@ void WCH_PutPicture() {
 	// Press PrintScreen. (Keyboard)
 	keybd_event(VK_SNAPSHOT, 0, 0, 0);
 	keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Copying screenshot to clipboard");
+	SPDLOG_INFO(L"Copying screenshot to clipboard");
 }
 
 void WCH_SaveImg() {
@@ -386,7 +387,7 @@ void WCH_SaveImg() {
 	DeleteDC(hdcScreen);
 	DeleteDC(hMemDC);
 	DeleteObject(hBitmap);
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Saving image to \"" + SavePath + L"\"");
+	SPDLOG_INFO(format(L"Saving image to \"{}\"", SavePath));
 	if (StrToWstr(WCH_Settings["ScreenshotOpen"].asString()) == L"True") {
 		_wsystem(SavePath.c_str());
 	}
@@ -538,17 +539,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	// Window processing module.
 	switch (message) {
 		case WM_HOTKEY:
-#ifdef _DEBUG
-			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_HOTKEY\" & \"wParam = " + to_wstring(wParam) + L"\" & \"lParam = " + to_wstring(lParam) + L"\"");
-#endif
+			SPDLOG_DEBUG(format(L"Entering \"WndProc()\": \"WM_HOTKEY\" & \"wParam = {}\" & \"lParam = {}\"", wParam, lParam));
 			if (wParam == WCH_HOTKEY_SHOW) {
 				WCH_CheckHotkey();
 			}
 			break;
 		case WM_CREATE:
-#ifdef _DEBUG
-			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_CREATE\"");
-#endif
+			SPDLOG_DEBUG(L"Entering \"WndProc()\": \"WM_CREATE\"");
 			WCH_NID.cbSize = sizeof(WCH_NID);
 			WCH_NID.hWnd = hWnd;
 			WCH_NID.uID = 0;
@@ -564,9 +561,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			break;
 		case WM_USER:
 			if (lParam == WM_LBUTTONDOWN) {
-#ifdef _DEBUG
-				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_LBUTTONDOWN\"");
-#endif
+				SPDLOG_DEBUG(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_LBUTTONDOWN\"");
 				WCH_CheckHotkey();
 			} else if (lParam == WM_RBUTTONDOWN) {
 				POINT pt;
@@ -574,18 +569,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				GetCursorPos(&pt);
 				SetForegroundWindow(hWnd);
 				xx = TrackPopupMenu(WCH_handle_menu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
-#ifdef _DEBUG
-				WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = " + to_wstring(xx) + L"\"");
-#endif
+				SPDLOG_DEBUG(format(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = {}\"", to_wstring(xx)));
 				if (xx == WCH_MENU_SHOW) {
-#ifdef _DEBUG
-					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_SHOW\"");
-#endif
+					SPDLOG_DEBUG(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_SHOW\"");
 					WCH_CheckHotkey();
 				} else if (xx == WCH_MENU_EXIT) {
-#ifdef _DEBUG
-					WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_EXIT\"");
-#endif
+					SPDLOG_DEBUG(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_EXIT\"");
 					raise(SIGBREAK);
 				} else if (xx == 0) {
 					PostMessageW(hWnd, WM_LBUTTONDOWN, NULL, NULL);
@@ -593,9 +582,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 			}
 			break;
 		case WM_DESTROY:
-#ifdef _DEBUG
-			WCH_printlog(WCH_LOG_STATUS_DEBUG, L"Entering \"WndProc()\": \"WM_DESTROY\"");
-#endif
+			SPDLOG_DEBUG(L"Entering \"WndProc()\": \"WM_DESTROY\"");
 			Shell_NotifyIconW(NIM_DELETE, &WCH_NID);
 			PostQuitMessage(0);
 			break;
@@ -637,7 +624,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		wcout << endl;
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Signal " + to_wstring(signum) + L" detected (Program aborted)");
+		SPDLOG_CRITICAL(format(L"Signal {} detected (Program aborted)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Program aborted");
@@ -648,7 +635,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		wcout << endl;
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Signal " + to_wstring(signum) + L" detected (Operation overflow)");
+		SPDLOG_CRITICAL(format(L"Signal {} detected (Operation overflow)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Operation overflow");
@@ -659,7 +646,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		wcout << endl;
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Signal " + to_wstring(signum) + L" detected (Illegal instruction)");
+		SPDLOG_CRITICAL(format(L"Signal {} detected (Illegal instruction)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Illegal instruction");
@@ -670,7 +657,7 @@ void WCH_signalHandler() {
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
 		wcout << endl;
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Signal " + to_wstring(signum) + L" detected (Access to illegal memory)");
+		SPDLOG_CRITICAL(format(L"Signal {} detected (Access to illegal memory)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Access to illegal memory");

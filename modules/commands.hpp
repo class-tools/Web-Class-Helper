@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_version;
 extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
@@ -50,6 +51,8 @@ extern wofstream wfout;
 extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
+extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
+extern shared_ptr<spdlog::logger> LOG_logger;
 
 void WCH_save();
 void WCH_check_task_loop();
@@ -71,21 +74,8 @@ void WCH_exit() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring fullver = L" ";
-#if WCH_VER_TYPE != 0
-	#if WCH_VER_TYPE == 1
-	fullver += L"Internal Preview";
-	#elif WCH_VER_TYPE == 2
-	fullver += L"Public Preview";
-	#elif WCH_VER_TYPE == 3
-	fullver += L"Release Candidate";
-	#endif
-	fullver += L" Build " + to_wstring(WCH_VER_BUILD);
-#else
-	fullver = L"";
-#endif
 	WCH_save();
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Exiting \"Web Class Helper {}{}\"", WCH_VER_MAIN, fullver));
+	SPDLOG_INFO(format(L"Exiting \"Web Class Helper {}\"", WCH_version));
 	WCH_cmd_line = false;
 	WCH_program_end = true;
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_SYSTEM_NORMAL.tmp");
@@ -156,10 +146,10 @@ void WCH_update() {
 		if (WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)) {
 			wcout << StrToWstr(WCH_Language["FindUpdate"].asString()) << endl;
 			_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
-			WCH_printlog(WCH_LOG_STATUS_INFO, L"Updating to version \"" + res + L"\"");
+			SPDLOG_INFO(format(L"Updating to version \"{}\"", res));
 		} else {
 			wcout << StrToWstr(WCH_Language["NoUpdate"].asString()) << endl;
-			WCH_printlog(WCH_LOG_STATUS_INFO, L"Program version equals or is greater than \"" + res + L"\"");
+			SPDLOG_INFO(format(L"Program version equals or is greater than \"{}\"", res));
 		}
 		DeleteFileW(FilePath.c_str());
 	} catch (...) {
@@ -244,7 +234,7 @@ void WCH_config_set() {
 		return;
 	}
 	WCH_Settings[WstrToStr(WCH_list_command[2])] = WstrToStr(WCH_list_command[3]);
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + WCH_list_command[2] + L"\" has been changed to \"" + WCH_list_command[3] + L"\" (Type: \"" + res.second + L"\")");
+	SPDLOG_INFO(format(L"The value of settings key \"{}\" has been changed to \"{}\" (Type: \"{}\")", WCH_list_command[2], WCH_list_command[3], res.second));
 	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
 		if (get<0>(*it) == WCH_list_command[2] && get<3>(*it)) {
 			MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
@@ -295,15 +285,15 @@ void WCH_config_wizard() {
 	}
 	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 	Json::Value valcfg;
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
 	fin.open(FilePath);
 	if (!JSON_Reader.parse(fin, valcfg)) {
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
 		return;
 	} else {
 		if (valcfg["Title"].size() != 7 || valcfg["Content"].size() != WCH_support_settings.size()) {
-			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+			SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 			WCH_FileProcessingFailed();
 			return;
 		}
@@ -351,7 +341,7 @@ void WCH_config_wizard() {
 				goto BEGIN;
 			}
 			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(_in);
-			WCH_printlog(WCH_LOG_STATUS_INFO, L"The value of settings key \"" + get<0>(*it) + L"\" has been changed to \"" + _in + L"\" (Type: \"" + res.second + L"\")");
+			SPDLOG_INFO(format(L"The value of settings key \"{}\" has been changed to \"{}\" (Type: \"{}\")", get<0>(*it), _in, res.second));
 			for (auto ite = WCH_support_settings.begin(); ite != WCH_support_settings.end(); ite++) {
 				if (get<0>(*ite) == get<0>(*it) && get<3>(*ite)) {
 					flag = true;
@@ -902,10 +892,10 @@ void WCH_help() {
 	}
 	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\help.json";
 	Json::Value val;
-	WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
 	fin.open(FilePath);
 	if (!JSON_Reader.parse(fin, val)) {
-		WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
 		return;
 	}
@@ -916,7 +906,7 @@ void WCH_help() {
 				wcout << StrToWstr((*it).asString()) << endl;
 			}
 		} else {
-			WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+			SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 			WCH_FileProcessingFailed();
 		}
 	} else {
@@ -928,15 +918,15 @@ void WCH_help() {
 			if (WCH_list_command[1] == L"config") {
 				FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 				Json::Value valcfg;
-				WCH_printlog(WCH_LOG_STATUS_INFO, L"Reading file \"" + FilePath + L"\"");
+				SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
 				fin.open(FilePath);
 				if (!JSON_Reader.parse(fin, valcfg)) {
-					WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+					SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 					WCH_FileProcessingFailed();
 					return;
 				} else {
 					if (valcfg["Title"].size() != 7 || valcfg["Content"].size() != WCH_support_settings.size()) {
-						WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+						SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 						WCH_FileProcessingFailed();
 						return;
 					}
@@ -997,7 +987,7 @@ void WCH_help() {
 			}
 		} else {
 			if (WCH_support_command.find(WCH_list_command[1]) != WCH_support_command.end()) {
-				WCH_printlog(WCH_LOG_STATUS_ERROR, L"Data in file \"" + FilePath + L"\" corrupted");
+				SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 				WCH_FileProcessingFailed();
 			} else {
 				WCH_InputCommandIncorrect();

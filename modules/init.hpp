@@ -25,6 +25,7 @@ extern vector<wstring> WCH_list_command;
 extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 extern set<wstring> WCH_list_task;
 extern set<pair<wstring, wstring>> WCH_list_work;
+extern wstring WCH_version;
 extern wstring WCH_path_exec;
 extern wstring WCH_title_window;
 extern HWND WCH_handle_window;
@@ -50,6 +51,8 @@ extern wofstream wfout;
 extern Json::Reader JSON_Reader;
 extern Json::StreamWriterBuilder JSON_SWB;
 extern unique_ptr<Json::StreamWriter> JSON_SW;
+extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
+extern shared_ptr<spdlog::logger> LOG_logger;
 
 void WCH_read();
 void WCH_read_settings();
@@ -99,37 +102,38 @@ void WCH_Init_Log() {
 		ignore = _wrename((WCH_path_data + L"\\logs\\latest.log").c_str(), (WCH_path_data + L"\\logs\\" + StrToWstr(WCH_Settings["StartTime"].asString()) + L".log").c_str());
 	}
 	WCH_Settings["StartTime"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
+	LOG_sink = make_shared<spdlog::sinks::basic_file_sink_mt>(WCH_path_data + L"\\logs\\latest.log");
+	LOG_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%@ %!] [PID %P] [Thread %t]: %v.");
+#ifdef _DEBUG
+	LOG_sink->set_level(spdlog::level::debug);
+#else
+	LOG_sink->set_level(spdlog::level::info);
+#endif
+	LOG_logger = make_shared<spdlog::logger>("WCH Logger", LOG_sink);
+	LOG_logger->flush_on(spdlog::level::debug);
+	spdlog::register_logger(LOG_logger);
+	spdlog::set_default_logger(LOG_logger);
 	WCH_save_settings();
 	WCH_pre_start = false;
-	wstring fullver = L" ";
+	WCH_version = WCH_VER_MAIN;
 #if WCH_VER_TYPE != 0
 	#if WCH_VER_TYPE == 1
-	fullver += L"Internal Preview";
+	WCH_version.append(L" Alpha");
 	#elif WCH_VER_TYPE == 2
-	fullver += L"Public Preview";
+	WCH_version.append(L" Beta");
 	#elif WCH_VER_TYPE == 3
-	fullver += L"Release Candidate";
+	WCH_version.append(L" Rc");
 	#endif
-	fullver += L" Build " + to_wstring(WCH_VER_BUILD);
-#else
-	fullver = L"";
+	WCH_version.append(format(L" {}", WCH_VER_BUILD));
 #endif
-	WCH_printlog(WCH_LOG_STATUS_INFO, format(L"Starting \"Web Class Helper {}{}\"", WCH_VER_MAIN, fullver));
+	WCH_version.append(format(L" ({})", WCH_Framework));
+	SPDLOG_INFO(format(L"Starting \"Web Class Helper {}\"", WCH_version));
 }
 
 void WCH_Init_Var() {
 	// Initialization for variable.
-	WCH_title_window = StrToWstr(WCH_Language["ProgramName"].asString()) + L" ";
-	WCH_title_window.append(WCH_VER_MAIN);
+	WCH_title_window = format(L"{} {}", StrToWstr(WCH_Language["ProgramName"].asString()), WCH_version);
 #if WCH_VER_TYPE != 0
-	#if WCH_VER_TYPE == 1
-	WCH_title_window.append(L" Alpha");
-	#elif WCH_VER_TYPE == 2
-	WCH_title_window.append(L" Beta");
-	#elif WCH_VER_TYPE == 3
-	WCH_title_window.append(L" Rc");
-	#endif
-	WCH_title_window.append(L" " + to_wstring(WCH_VER_BUILD));
 	WCH_SetWindowStatus(false);
 	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["PreviewWarning"].asString()) + WCH_GetCompileTime()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_YESNO | MB_TOPMOST) == IDNO) {
 		WCH_CheckAndDeleteFile(WCH_path_data + L"\\logs\\latest.log");
@@ -137,9 +141,6 @@ void WCH_Init_Var() {
 	}
 	WCH_SetWindowStatus(true);
 #endif
-	WCH_title_window.append(L" (");
-	WCH_title_window.append(WCH_Framework);
-	WCH_title_window.append(L")");
 }
 
 void WCH_Init_Win() {

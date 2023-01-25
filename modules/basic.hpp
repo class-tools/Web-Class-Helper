@@ -113,12 +113,24 @@ Contributors: jsh-jsh ren-yc
 #include <gdiplus.h>
 #include <atlbase.h>
 #include <fcntl.h>
+
+#pragma warning(push)
+#pragma warning(disable : 26437 26451 26495 26498 26800)
+#define SPDLOG_WCHAR_TO_UTF8_SUPPORT
+#define SPDLOG_WCHAR_FILENAMES
 #include "json/json.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#pragma warning(pop)
 
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "gdiplus.lib")
 #pragma comment(lib, "urlmon.lib")
 #pragma comment(lib, "ole32.lib")
+
+#define WCH_HOTKEY_SHOW 121
+#define WCH_MENU_SHOW 11461
+#define WCH_MENU_EXIT 11462
 
 using std::ignore;
 using std::cin;
@@ -145,6 +157,7 @@ using std::wifstream;
 using std::ofstream;
 using std::wofstream;
 using std::unique_ptr;
+using std::shared_ptr;
 using std::locale;
 using std::array;
 using std::map;
@@ -162,16 +175,9 @@ using std::mt19937;
 using std::chrono::milliseconds;
 using std::make_pair;
 using std::make_tuple;
+using std::make_shared;
 using std::get;
 using std::this_thread::sleep_for;
-
-#define WCH_HOTKEY_SHOW 121
-#define WCH_MENU_SHOW 11461
-#define WCH_MENU_EXIT 11462
-#define WCH_LOG_STATUS_INFO L"[INFO]"
-#define WCH_LOG_STATUS_DEBUG L"[DEBUG]"
-#define WCH_LOG_STATUS_WARN L"[WARN]"
-#define WCH_LOG_STATUS_ERROR L"[ERROR]"
 
 class GdiplusWrapper {
 public:
@@ -376,6 +382,7 @@ vector<wstring> WCH_list_command;
 set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
 set<wstring> WCH_list_task;
 set<pair<wstring, wstring>> WCH_list_work;
+wstring WCH_version;
 wstring WCH_path_exec;
 wstring WCH_title_window;
 HWND WCH_handle_window;
@@ -401,5 +408,7 @@ wofstream wfout;
 Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
 unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
+shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
+shared_ptr<spdlog::logger> LOG_logger;
 
 #endif
