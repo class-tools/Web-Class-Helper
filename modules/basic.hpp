@@ -118,6 +118,7 @@ Contributors: jsh-jsh ren-yc
 #pragma warning(disable : 26437 26451 26495 26498 26800)
 #define SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #define SPDLOG_WCHAR_FILENAMES
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 #include "json/json.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"

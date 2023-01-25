@@ -103,15 +103,15 @@ void WCH_Init_Log() {
 	}
 	WCH_Settings["StartTime"] = WstrToStr(format(L"{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second));
 	LOG_sink = make_shared<spdlog::sinks::basic_file_sink_mt>(WCH_path_data + L"\\logs\\latest.log");
-	LOG_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%@ %!] [PID %P] [Thread %t]: %v.");
-#ifdef _DEBUG
-	LOG_sink->set_level(spdlog::level::debug);
-#else
-	LOG_sink->set_level(spdlog::level::info);
-#endif
-	LOG_logger = make_shared<spdlog::logger>("WCH Logger", LOG_sink);
+	LOG_sink->set_pattern("[%Y-%m-%d %H:%M:%S.%f] [%l] [%s:%# %!] [Process %P] [Thread %t]: %v.");
+	LOG_logger = make_shared<spdlog::logger>("WCH", LOG_sink);
 	LOG_logger->flush_on(spdlog::level::debug);
 	spdlog::register_logger(LOG_logger);
+#ifdef _DEBUG
+	spdlog::set_level(spdlog::level::debug);
+#else
+	spdlog::set_level(spdlog::level::info);
+#endif
 	spdlog::set_default_logger(LOG_logger);
 	WCH_save_settings();
 	WCH_pre_start = false;
