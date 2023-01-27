@@ -1,4 +1,4 @@
-Web Class Helper 网课助手——一个在网课期间实用的命令行工具。
+Web Class Helper 网课助手——一个在网课期间的命令行小工具。
 
 作者：Class Tools Develop Team - ren-yc (Yuchen Ren) & jsh-jsh (jinshuhang)。
 
