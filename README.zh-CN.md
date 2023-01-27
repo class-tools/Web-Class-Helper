@@ -13,6 +13,7 @@
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codecov.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codeql.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/gitmsg.yml/badge.svg">
+<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/wiki.yml/badge.svg">
 <img src="https://codecov.io/gh/class-tools/Web-Class-Helper/branch/master/graph/badge.svg?token=VaaOrygZkX">
 <img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
 <img src="https://img.shields.io/github/downloads/class-tools/Web-Class-Helper/total?label=GitHub%20Downloads">
