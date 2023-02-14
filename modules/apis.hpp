@@ -293,15 +293,14 @@ wstring WCH_GetSystemArchitecture() {
 }
 
 wstring WCH_GetFileHash(wstring _in) {
-	// Get SHA256 hash of file.
+	// Get SHA512 hash of file.
 	wstring FilePath = WCH_path_temp + L"\\WCH_HASH.tmp";
 	wstring _res = L"";
-	_wsystem((L"CERTUTIL -HASHFILE \"" + _in + L"\" SHA512 > \"" + FilePath + L"\"").c_str());
+	_wsystem((L"POWERSHELL -COMMAND \"$env:PSModulePath = \\\"$PSHOME/Modules\\\"; (Get-FileHash \\\"" + _in + L"\\\" -Algorithm SHA512).Hash | Out-File \"" + FilePath + L"\" -Encoding ASCII").c_str());
 	wfin.open(FilePath);
-	getline(wfin, _res);
-	getline(wfin, _res);
+	wfin >> _res;
 	wfin.close();
-	transform(_res.begin(), _res.end(), _res.begin(), ::towupper);
+	DeleteFileW(FilePath.c_str());
 	return _res;
 }
 

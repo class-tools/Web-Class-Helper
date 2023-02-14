@@ -230,7 +230,7 @@
       <AdditionalManifestFiles>WCH.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -259,7 +259,7 @@
       <AdditionalManifestFiles>WCH.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -289,7 +289,7 @@
       <ResourceOutputFileName />
     </ManifestResourceCompile>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -318,7 +318,7 @@
       <AdditionalManifestFiles>WCH.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -350,7 +350,7 @@
       </ResourceOutputFileName>
     </ManifestResourceCompile>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -379,7 +379,7 @@
       <AdditionalManifestFiles>WCH.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -411,7 +411,7 @@
       </ResourceOutputFileName>
     </ManifestResourceCompile>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
@@ -440,7 +440,7 @@
       <AdditionalManifestFiles>WCH.manifest %(AdditionalManifestFiles)</AdditionalManifestFiles>
     </Manifest>
     <PreBuildEvent>
-      <Command>pwsh -File .\scripts\shasum.ps1</Command>
+      <Command>powershell -File .\scripts\shasum.ps1</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

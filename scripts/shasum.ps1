@@ -5,10 +5,10 @@
 $languages = "enUS", "zhCN"
 $langfull = @{enUS = "en-US"; zhCN = "zh-CN"}
 $types = "config", "help", "interactive"
-$content = Get-Content .\shasum.hpp
+$content = Get-Content .\shasum.hpp -Encoding ASCII
 foreach ($itemlang in $languages) {
 	foreach ($itemtype in $types) {
 		$content = $content -replace ("#define SHASUM_" + $itemlang + "_$itemtype L`"([^`"]*)`""), ("#define SHASUM_" + $itemlang + "_$itemtype L`"" + (Get-FileHash (".\resources\" + $langfull[$itemlang] + "\" + $itemtype + ".json") -Algorithm SHA512).Hash + "`"")
 	}
 }
-$content | Out-File .\shasum.hpp
+$content | Out-File .\shasum.hpp -Encoding ASCII

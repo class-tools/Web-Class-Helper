@@ -8,7 +8,16 @@
 
 * PowerShell
 
-* `vcpkg` （需安装对应架构的静态 `jsoncpp` 和 `spdlog` 库）
+* vcpkg
+
+### 依赖
+
+vcpkg 依赖库安装流程如下：
+
+```
+vcpkg integrate install
+vcpkg install jsoncpp:${arch}-windows-static spdlog:${arch}-windows-static
+```
 
 ### 配置
 
