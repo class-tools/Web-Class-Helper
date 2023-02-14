@@ -1,10 +1,11 @@
 /*
-Web Class Helper Main File 2.1.1
+Web Class Helper Main File 2.1.2
 This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
+Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #include "version.hpp"
+#include "shasum.hpp"
 #include "./modules/file-process.hpp"
 #include "./modules/init.hpp"
 #include "./modules/commands.hpp"
@@ -17,7 +18,6 @@ extern const map<wstring, set<wstring>> WCH_choice_settings;
 extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;

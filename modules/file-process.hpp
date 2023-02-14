@@ -1,7 +1,7 @@
 /*
-Web Class Helper File Processing Module Header File 2.1.1
+Web Class Helper File Processing Module Header File 2.1.2
 This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
+Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #ifndef FILE_PROCESS_H
@@ -17,7 +17,6 @@ extern const map<wstring, set<wstring>> WCH_choice_settings;
 extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
@@ -177,26 +176,12 @@ void WCH_read_language() {
 	// Read language data.
 	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\interactive.json";
 	fin.open(FilePath);
-	if (!fin.is_open()) {
-		goto ERR;
-	}
-	if (JSON_Reader.parse(fin, WCH_Language)) {
-		try {
-			SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
-			for (auto it = WCH_support_language.begin(); it != WCH_support_language.end(); it++) {
-				if (!WCH_Language.isMember(WstrToStr(*it))) {
-					throw runtime_error("");
-				}
-			}
-		} catch (...) {
-			goto ERR;
-		}
-	} else {
-	ERR:
+	if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_interactive : SHASUM_zhCN_interactive)) {
 		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
 		raise(SIGBREAK);
 	}
+	ignore = JSON_Reader.parse(fin, WCH_Language);
 	fin.close();
 }
 

@@ -1,7 +1,7 @@
 /*
-Web Class Helper Functions Module Header File 2.1.1
+Web Class Helper Functions Module Header File 2.1.2
 This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
+Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #ifndef FUNCTIONS_H
@@ -17,7 +17,6 @@ extern const map<wstring, set<wstring>> WCH_choice_settings;
 extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
@@ -131,7 +130,7 @@ BEGIN:
 		wcout << endl;
 		goto BEGIN;
 	}
-	transform(WCH_list_command[0].begin(), WCH_list_command[0].end(), WCH_list_command[0].begin(), ::tolower);
+	transform(WCH_list_command[0].begin(), WCH_list_command[0].end(), WCH_list_command[0].begin(), ::towlower);
 }
 
 #endif

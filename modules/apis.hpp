@@ -1,7 +1,7 @@
 /*
-Web Class Helper APIs Module Header File 2.1.1
+Web Class Helper APIs Module Header File 2.1.2
 This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
+Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #ifndef APIS_H
@@ -17,7 +17,6 @@ extern const map<wstring, set<wstring>> WCH_choice_settings;
 extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
@@ -291,6 +290,19 @@ wstring WCH_GetSystemArchitecture() {
 		default:
 			return L"Unknown";
 	}
+}
+
+wstring WCH_GetFileHash(wstring _in) {
+	// Get SHA256 hash of file.
+	wstring FilePath = WCH_path_temp + L"\\WCH_HASH.tmp";
+	wstring _res = L"";
+	_wsystem((L"CERTUTIL -HASHFILE \"" + _in + L"\" SHA512 > \"" + FilePath + L"\"").c_str());
+	wfin.open(FilePath);
+	getline(wfin, _res);
+	getline(wfin, _res);
+	wfin.close();
+	transform(_res.begin(), _res.end(), _res.begin(), ::towupper);
+	return _res;
 }
 
 void WCH_SetWindowStatus(bool flag) {

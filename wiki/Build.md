@@ -6,6 +6,8 @@
 
 * Visual Studio 2022
 
+* PowerShell
+
 * `vcpkg` （需安装对应架构的静态 `jsoncpp` 和 `spdlog` 库）
 
 ### 配置
@@ -21,5 +23,14 @@
 ### 调试
 
 在相应位置标记断点后选择 Visual Studio 工具顶栏的调试器即可。
+
+
+### 问题
+
+若在构建过程中出现 PowerShell 脚本返回值不为零的情况，请尝试以管理员身份运行 PowerShell 并执行下列命令：
+
+```
+Set-ExecutionPolicy RemoteSigned
+```
 
 _**若有任何问题欢迎与项目维护人员联系！**_

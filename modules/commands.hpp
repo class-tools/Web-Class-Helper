@@ -1,7 +1,7 @@
 /*
-Web Class Helper Commands Module Header File 2.1.1
+Web Class Helper Commands Module Header File 2.1.2
 This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
+Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc hjl2011
 */
 #ifndef COMMANDS_H
@@ -17,7 +17,6 @@ extern const map<wstring, set<wstring>> WCH_choice_settings;
 extern const map<wstring, wstring> WCH_MIME_list;
 extern const map<wstring, function<void()>> WCH_support_command;
 extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const set<wstring> WCH_support_language;
 extern const wstring WCH_progress_bar_str;
 extern const wstring WCH_path_data;
 extern const wstring WCH_path_temp;
@@ -85,6 +84,7 @@ void WCH_exit() {
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_OW.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_FATE.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_IDENT.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_HASH.tmp");
 	SendMessageW(WCH_handle_tray, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
@@ -212,7 +212,7 @@ void WCH_develop() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
 	if (WCH_list_command[1] == L"opendata") {
 		WCH_develop_opendata();
 	} else if (WCH_list_command[1] == L"opentemp") {
@@ -287,17 +287,12 @@ void WCH_config_wizard() {
 	Json::Value valcfg;
 	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
 	fin.open(FilePath);
-	if (!JSON_Reader.parse(fin, valcfg)) {
+	if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
 		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
-		return;
-	} else {
-		if (valcfg["Title"].size() != 7 || valcfg["Content"].size() != WCH_support_settings.size()) {
-			SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
-			WCH_FileProcessingFailed();
-			return;
-		}
+		raise(SIGBREAK);
 	}
+	ignore = JSON_Reader.parse(fin, valcfg);
 	fin.close();
 	int32_t cnt = 0;
 	bool flag = false;
@@ -365,7 +360,7 @@ void WCH_config() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
 	if (WCH_list_command[1] == L"set") {
 		WCH_config_set();
 	} else if (WCH_list_command[1] == L"list") {
@@ -493,7 +488,7 @@ void WCH_clock() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
 	if (WCH_list_command[1] == L"add") {
 		WCH_clock_add();
 	} else if (WCH_list_command[1] == L"delete") {
@@ -667,7 +662,7 @@ void WCH_work() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
 	if (WCH_list_command[1] == L"add") {
 		WCH_work_add();
 	} else if (WCH_list_command[1] == L"delete") {
@@ -894,103 +889,89 @@ void WCH_help() {
 	Json::Value val;
 	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
 	fin.open(FilePath);
-	if (!JSON_Reader.parse(fin, val)) {
+	if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_help : SHASUM_zhCN_help)) {
 		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
-		return;
+		raise(SIGBREAK);
 	}
+	ignore = JSON_Reader.parse(fin, val);
 	fin.close();
 	if (WCH_list_command.size() == 1) {
-		if (val.isMember("index")) {
-			for (auto it = val["index"].begin(); it != val["index"].end(); it++) {
-				wcout << StrToWstr((*it).asString()) << endl;
-			}
-		} else {
-			SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
-			WCH_FileProcessingFailed();
+		for (auto it = val["index"].begin(); it != val["index"].end(); it++) {
+			wcout << StrToWstr((*it).asString()) << endl;
 		}
 	} else {
-		transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::tolower);
-		if (val.isMember(WstrToStr(WCH_list_command[1]))) {
-			for (auto it = val[WstrToStr(WCH_list_command[1])].begin(); it != val[WstrToStr(WCH_list_command[1])].end(); it++) {
-				wcout << StrToWstr((*it).asString()) << endl;
-			}
-			if (WCH_list_command[1] == L"config") {
-				FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
-				Json::Value valcfg;
-				SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
-				fin.open(FilePath);
-				if (!JSON_Reader.parse(fin, valcfg)) {
-					SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
-					WCH_FileProcessingFailed();
-					return;
-				} else {
-					if (valcfg["Title"].size() != 7 || valcfg["Content"].size() != WCH_support_settings.size()) {
-						SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
-						WCH_FileProcessingFailed();
-						return;
-					}
-				}
-				fin.close();
-				size_t MAXKN = 0;
-				size_t MAXVT = 0;
-				size_t MAXDE = 0;
-				size_t MAXDV = 0;
-				size_t MAXRR = 0;
-				int32_t cnt = 0;
-				for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
-					MAXKN = max(MAXKN, WCH_GetWstrDisplaySize(get<0>(*it)));
-					MAXVT = max(MAXVT, WCH_GetWstrDisplaySize(get<1>(*it)));
-					MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())));
-					MAXDV = max(MAXDV, WCH_GetWstrDisplaySize(get<2>(*it)));
-					MAXRR = max(MAXRR, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString())));
-				}
-				if (MAXKN == 0 && MAXVT == 0 && MAXDE == 0 && MAXDV == 0 && MAXRR == 0) {
-					return;
-				}
-				MAXKN = max(MAXKN, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][0].asString())));
-				MAXVT = max(MAXVT, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][1].asString())));
-				MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][2].asString())));
-				MAXDV = max(MAXDV, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][3].asString())));
-				MAXRR = max(MAXRR, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][4].asString())));
-				wcout << StrToWstr(valcfg["Title"][0].asString());
-				WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][0].asString())), L' ');
-				wcout << L" | " + StrToWstr(valcfg["Title"][1].asString());
-				WCH_PrintChar(MAXVT - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][1].asString())), L' ');
-				wcout << L" | " + StrToWstr(valcfg["Title"][2].asString());
-				WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][2].asString())), L' ');
-				wcout << L" | " + StrToWstr(valcfg["Title"][3].asString());
-				WCH_PrintChar(MAXDV - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][3].asString())), L' ');
-				wcout << L" | " + StrToWstr(valcfg["Title"][4].asString()) << endl;
-				WCH_PrintChar(MAXKN, L'-');
-				wcout << L" | ";
-				WCH_PrintChar(MAXVT, L'-');
-				wcout << L" | ";
-				WCH_PrintChar(MAXDE, L'-');
-				wcout << L" | ";
-				WCH_PrintChar(MAXDV, L'-');
-				wcout << L" | ";
-				WCH_PrintChar(MAXRR, L'-');
-				wcout << endl;
-				cnt = 0;
-				for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
-					wcout << get<0>(*it);
-					WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(get<0>(*it)), L' ');
-					wcout << L" | " << get<1>(*it);
-					WCH_PrintChar(MAXVT - WCH_GetWstrDisplaySize(get<1>(*it)), L' ');
-					wcout << L" | " << StrToWstr(valcfg["Content"][cnt].asString());
-					WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())), L' ');
-					wcout << L" | " << get<2>(*it);
-					WCH_PrintChar(MAXDV - WCH_GetWstrDisplaySize(get<2>(*it)), L' ');
-					wcout << L" | " << StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString()) << endl;
-				}
-			}
-		} else {
-			if (WCH_support_command.find(WCH_list_command[1]) != WCH_support_command.end()) {
+		if (WCH_support_command.find(WCH_list_command[1]) == WCH_support_command.end()) {
+			WCH_InputCommandIncorrect();
+			return;
+		}
+		transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
+		for (auto it = val[WstrToStr(WCH_list_command[1])].begin(); it != val[WstrToStr(WCH_list_command[1])].end(); it++) {
+			wcout << StrToWstr((*it).asString()) << endl;
+		}
+		if (WCH_list_command[1] == L"config") {
+			FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
+			Json::Value valcfg;
+			SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
+			fin.open(FilePath);
+			if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
 				SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
 				WCH_FileProcessingFailed();
-			} else {
-				WCH_InputCommandIncorrect();
+				raise(SIGBREAK);
+			}
+			ignore = JSON_Reader.parse(fin, valcfg);
+			fin.close();
+			size_t MAXKN = 0;
+			size_t MAXVT = 0;
+			size_t MAXDE = 0;
+			size_t MAXDV = 0;
+			size_t MAXRR = 0;
+			int32_t cnt = 0;
+			for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
+				MAXKN = max(MAXKN, WCH_GetWstrDisplaySize(get<0>(*it)));
+				MAXVT = max(MAXVT, WCH_GetWstrDisplaySize(get<1>(*it)));
+				MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())));
+				MAXDV = max(MAXDV, WCH_GetWstrDisplaySize(get<2>(*it)));
+				MAXRR = max(MAXRR, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString())));
+			}
+			if (MAXKN == 0 && MAXVT == 0 && MAXDE == 0 && MAXDV == 0 && MAXRR == 0) {
+				return;
+			}
+			MAXKN = max(MAXKN, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][0].asString())));
+			MAXVT = max(MAXVT, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][1].asString())));
+			MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][2].asString())));
+			MAXDV = max(MAXDV, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][3].asString())));
+			MAXRR = max(MAXRR, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][4].asString())));
+			wcout << StrToWstr(valcfg["Title"][0].asString());
+			WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][0].asString())), L' ');
+			wcout << L" | " + StrToWstr(valcfg["Title"][1].asString());
+			WCH_PrintChar(MAXVT - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][1].asString())), L' ');
+			wcout << L" | " + StrToWstr(valcfg["Title"][2].asString());
+			WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][2].asString())), L' ');
+			wcout << L" | " + StrToWstr(valcfg["Title"][3].asString());
+			WCH_PrintChar(MAXDV - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][3].asString())), L' ');
+			wcout << L" | " + StrToWstr(valcfg["Title"][4].asString()) << endl;
+			WCH_PrintChar(MAXKN, L'-');
+			wcout << L" | ";
+			WCH_PrintChar(MAXVT, L'-');
+			wcout << L" | ";
+			WCH_PrintChar(MAXDE, L'-');
+			wcout << L" | ";
+			WCH_PrintChar(MAXDV, L'-');
+			wcout << L" | ";
+			WCH_PrintChar(MAXRR, L'-');
+			wcout << endl;
+			cnt = 0;
+			for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
+				wcout << get<0>(*it);
+				WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(get<0>(*it)), L' ');
+				wcout << L" | " << get<1>(*it);
+				WCH_PrintChar(MAXVT - WCH_GetWstrDisplaySize(get<1>(*it)), L' ');
+				wcout << L" | " << StrToWstr(valcfg["Content"][cnt].asString());
+				WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())), L' ');
+				wcout << L" | " << get<2>(*it);
+				WCH_PrintChar(MAXDV - WCH_GetWstrDisplaySize(get<2>(*it)), L' ');
+				wcout << L" | " << StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString()) << endl;
 			}
 		}
 	}

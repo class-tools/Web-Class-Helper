@@ -1,7 +1,7 @@
 /*
-Web Class Helper Basic Module Header File 2.1.1
+Web Class Helper Basic Module Header File 2.1.2
 This source code file is under MIT License.
-Copyright (c) 2022 Class Tools Develop Team
+Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
 #ifndef BASIC_H
@@ -336,46 +336,6 @@ const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings = {
 	make_tuple(L"ScreenshotOpen", L"Boolean", L"False", false),
 	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png", false),
 	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false)};
-const set<wstring> WCH_support_language = {
-	L"ProgramName",
-	L"Start",
-	L"Exit",
-	L"PreviewWarning",
-	L"InputCommandIncorrect",
-	L"FileProcessingFailed",
-	L"NetworkError",
-	L"OSVersion",
-	L"OSArchitecture",
-	L"ProgramArchitecture",
-	L"JumpWiki",
-	L"CheckUpdate",
-	L"FindUpdate",
-	L"NoUpdate",
-	L"ConfigWizardPrompt",
-	L"Yes",
-	L"No",
-	L"Key",
-	L"Value",
-	L"Hour",
-	L"Minute",
-	L"Name",
-	L"ProcessName",
-	L"Tag",
-	L"Unclassified",
-	L"InputNumber",
-	L"NumberOutOfRange",
-	L"NumberSmaller",
-	L"NumberBigger",
-	L"NumberAnswer",
-	L"NumberWin",
-	L"NumberLose",
-	L"Prtscn",
-	L"CountDown",
-	L"Focus",
-	L"DataReading",
-	L"WillRestart",
-	L"BugMessagebox1",
-	L"BugMessagebox2"};
 const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
 const wstring WCH_path_data = format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
 const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp\\WCH", _wgetenv(L"USERPROFILE"));

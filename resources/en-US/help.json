@@ -108,7 +108,7 @@
 		""
 	],
 	"countdown": [
-		"Start a count down timer.",
+		"Start a count down timer, press Ctrl + Down to break.",
 		"",
 		"Usage:",
 		"",
@@ -150,7 +150,7 @@
 		"This command has no parameters."
 	],
 	"focus": [
-		"Enable focus mode, press Ctrl + Down to disable it.",
+		"Enable focus mode, press Ctrl + Down to disable.",
 		"",
 		"Usage:",
 		"",
@@ -184,7 +184,7 @@
 		"HELP CLOCK"
 	],
 	"hide": [
-		"Hide the main console window, press Ctrl + Down to recovery.",
+		"Hide the main console window, press Ctrl + Down to recover.",
 		"",
 		"Usage:",
 		"",
