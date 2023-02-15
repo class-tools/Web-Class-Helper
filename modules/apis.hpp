@@ -296,7 +296,7 @@ bool WCH_GetPowerShellCompatibility() {
 	// Get compatibility of PowerShell.
 	wstring FilePath = WCH_path_temp + L"\\WCH_PWSH.tmp";
 	wstring _res = L"";
-	_wsystem((L"PWSH -? > NUL && ECHO %ERRORLEVEL% > \"" + FilePath + L"\"").c_str());
+	_wsystem((L"PWSH -? > NUL 2> NUL && ECHO %ERRORLEVEL% > \"" + FilePath + L"\"").c_str());
 	wfin.open(FilePath);
 	wfin >> _res;
 	wfin.close();
