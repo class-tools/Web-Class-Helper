@@ -85,6 +85,7 @@ void WCH_exit() {
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_FATE.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_IDENT.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_HASH.tmp");
+	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_PWSH.tmp");
 	SendMessageW(WCH_handle_tray, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }

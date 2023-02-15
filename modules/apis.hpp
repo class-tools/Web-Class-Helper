@@ -292,11 +292,23 @@ wstring WCH_GetSystemArchitecture() {
 	}
 }
 
+bool WCH_GetPowerShellCompatibility() {
+	// Get compatibility of PowerShell.
+	wstring FilePath = WCH_path_temp + L"\\WCH_PWSH.tmp";
+	wstring _res = L"";
+	_wsystem((L"PWSH -? > NUL && ECHO %ERRORLEVEL% > \"" + FilePath + L"\"").c_str());
+	wfin.open(FilePath);
+	wfin >> _res;
+	wfin.close();
+	DeleteFileW(FilePath.c_str());
+	return _res == L"0";
+}
+
 wstring WCH_GetFileHash(wstring _in) {
 	// Get SHA512 hash of file.
 	wstring FilePath = WCH_path_temp + L"\\WCH_HASH.tmp";
 	wstring _res = L"";
-	_wsystem((L"POWERSHELL -COMMAND \"$env:PSModulePath = \\\"$PSHOME/Modules\\\"; (Get-FileHash \\\"" + _in + L"\\\" -Algorithm SHA512).Hash | Out-File \"" + FilePath + L"\" -Encoding ASCII").c_str());
+	_wsystem(((WCH_GetPowerShellCompatibility() ? L"PWSH" : L"POWERSHELL") + (L" -COMMAND \"(Get-FileHash \\\"" + _in) + L"\\\" -Algorithm SHA512).Hash | Out-File \"" + FilePath + L"\" -Encoding ASCII").c_str());
 	wfin.open(FilePath);
 	wfin >> _res;
 	wfin.close();
