@@ -268,6 +268,7 @@ void WCH_task();
 void WCH_work();
 void WCH_help();
 void WCH_ow();
+void WCH_open();
 void WCH_hide();
 void WCH_game();
 void WCH_time();
@@ -277,7 +278,6 @@ void WCH_fate();
 void WCH_focus();
 void WCH_countdown();
 void WCH_update();
-void WCH_wiki();
 void WCH_license();
 void WCH_clear();
 void WCH_config();
@@ -309,6 +309,7 @@ const map<wstring, function<void()>> WCH_support_command = {
 	make_pair(L"work", WCH_work),
 	make_pair(L"help", WCH_help),
 	make_pair(L"ow", WCH_ow),
+	make_pair(L"open", WCH_open),
 	make_pair(L"hide", WCH_hide),
 	make_pair(L"game", WCH_game),
 	make_pair(L"time", WCH_time),
@@ -318,7 +319,6 @@ const map<wstring, function<void()>> WCH_support_command = {
 	make_pair(L"focus", WCH_focus),
 	make_pair(L"countdown", WCH_countdown),
 	make_pair(L"update", WCH_update),
-	make_pair(L"wiki", WCH_wiki),
 	make_pair(L"license", WCH_license),
 	make_pair(L"clear", WCH_clear),
 	make_pair(L"config", WCH_config),
