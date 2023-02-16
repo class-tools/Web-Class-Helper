@@ -18,6 +18,11 @@
 		"",
 		"  HELP (Get help output)",
 		"",
+		"  OPEN CODE (Jump to program main page in default browser) **Need Internet**",
+		"  OPEN PICFOLDER (Open pictures folder)",
+		"  OPEN RELEASES (Jump to program releases page in default browser) **Need Internet**",
+		"  OPEN WIKI (Jump to program wiki page in default browser) **Need Internet**",
+		"",
 		"  OW (Get a random sentence) **Need Internet**",
 		"",
 		"  HIDE (Hide console window)",
@@ -37,8 +42,6 @@
 		"  COUNTDOWN [h] [m] [s] (Start a count down timer which lasts [h] hour(s) [m] minute(s) [s] second(s))",
 		"",
 		"  UPDATE (Check update for this program) **Need Internet**",
-		"",
-		"  WIKI (Jump to program wiki page in default browser) **Need Internet**",
 		"",
 		"  LICENSE (Print license information)",
 		"",
@@ -210,6 +213,18 @@
 		"",
 		"This command has no parameters."
 	],
+	"open": [
+		"Open something.",
+		"",
+		"Usage:",
+		"",
+		"OPEN CODE",
+		"OPEN PICFOLDER",
+		"OPEN RELEASES",
+		"OPEN WIKI",
+		"",
+		"These commands have no parameters."
+	],
 	"prtscn": [
 		"Copy and save screenshot into `ScreenshotSavePath`.",
 		"",
@@ -287,15 +302,6 @@
 		"Usage:",
 		"",
 		"UPDATE",
-		"",
-		"This command has no parameters."
-	],
-	"wiki": [
-		"Jump to program wiki page in default browser. (**Need Internet**)",
-		"",
-		"Usage:",
-		"",
-		"WIKI",
 		"",
 		"This command has no parameters."
 	],

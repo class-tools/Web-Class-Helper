@@ -56,6 +56,66 @@ extern shared_ptr<spdlog::logger> LOG_logger;
 void WCH_save();
 void WCH_check_task_loop();
 
+void WCH_open_wiki() {
+	// Visit the wiki page.
+	if (WCH_list_command.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	wcout << StrToWstr(WCH_Language["JumpWiki"].asString()) << endl;
+	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/wiki/");
+}
+
+void WCH_open_releases() {
+	// Visit the releases page.
+	if (WCH_list_command.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	wcout << StrToWstr(WCH_Language["JumpReleases"].asString()) << endl;
+	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/");
+}
+
+void WCH_open_code() {
+	// Visit the code page (main page).
+	if (WCH_list_command.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	wcout << StrToWstr(WCH_Language["JumpCode"].asString()) << endl;
+	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/");
+}
+
+void WCH_open_picfolder() {
+	// Open the picture folder.
+	if (WCH_list_command.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	wcout << StrToWstr(WCH_Language["OpenPicfolder"].asString()) << endl;
+	_wsystem(wstring(L"START " + StrToWstr(WCH_Settings["ScreenshotSavePath"].asString())).c_str());
+}
+
+void WCH_open() {
+	// Open series command input.
+	if (WCH_list_command.size() == 1) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
+	if (WCH_list_command[1] == L"wiki") {
+		WCH_open_wiki();
+	} else if (WCH_list_command[1] == L"releases") {
+		WCH_open_releases();
+	} else if (WCH_list_command[1] == L"code") {
+		WCH_open_code();
+	} else if (WCH_list_command[1] == L"picfolder") {
+		WCH_open_picfolder();
+	} else {
+		WCH_InputCommandIncorrect();
+	}
+}
+
 void WCH_clear() {
 	// Clear console information.
 	if (WCH_list_command.size() != 1) {
@@ -107,16 +167,6 @@ void WCH_hide() {
 		return;
 	}
 	WCH_SetWindowStatus(false);
-}
-
-void WCH_wiki() {
-	// Visit the wiki page.
-	if (WCH_list_command.size() != 1) {
-		WCH_InputCommandIncorrect();
-		return;
-	}
-	wcout << StrToWstr(WCH_Language["JumpWiki"].asString()) << endl;
-	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/wiki/");
 }
 
 void WCH_update() {
