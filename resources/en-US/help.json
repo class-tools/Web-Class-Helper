@@ -19,7 +19,7 @@
 		"  HELP (Get help output)",
 		"",
 		"  OPEN CODE (Jump to program main page in default browser) **Need Internet**",
-		"  OPEN PICFOLDER (Open pictures folder)",
+		"  OPEN SCREENSHOT (Open screenshot save folder)",
 		"  OPEN RELEASES (Jump to program releases page in default browser) **Need Internet**",
 		"  OPEN WIKI (Jump to program wiki page in default browser) **Need Internet**",
 		"",
@@ -204,6 +204,18 @@
 		"",
 		"This command has no parameters."
 	],
+	"open": [
+		"Open something (**Partial Need Internet**).",
+		"",
+		"Usage:",
+		"",
+		"OPEN CODE",
+		"OPEN SCREENSHOT",
+		"OPEN RELEASES",
+		"OPEN WIKI",
+		"",
+		"These commands have no parameters."
+	],
 	"ow": [
 		"Print a random sentence. (**Need Internet**)",
 		"",
@@ -212,18 +224,6 @@
 		"OW",
 		"",
 		"This command has no parameters."
-	],
-	"open": [
-		"Open something.",
-		"",
-		"Usage:",
-		"",
-		"OPEN CODE",
-		"OPEN PICFOLDER",
-		"OPEN RELEASES",
-		"OPEN WIKI",
-		"",
-		"These commands have no parameters."
 	],
 	"prtscn": [
 		"Copy and save screenshot into `ScreenshotSavePath`.",

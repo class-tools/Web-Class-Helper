@@ -86,14 +86,14 @@ void WCH_open_code() {
 	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/");
 }
 
-void WCH_open_picfolder() {
-	// Open the picture folder.
+void WCH_open_screenshot() {
+	// Open screenshot save folder.
 	if (WCH_list_command.size() != 2) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wcout << StrToWstr(WCH_Language["OpenPicfolder"].asString()) << endl;
-	_wsystem(wstring(L"START " + StrToWstr(WCH_Settings["ScreenshotSavePath"].asString())).c_str());
+	wcout << StrToWstr(WCH_Language["OpenScreenshotSaveFolder"].asString()) << endl;
+	_wsystem((L"START \"\" \"" + StrToWstr(WCH_Settings["ScreenshotSavePath"].asString()) + L"\"").c_str());
 }
 
 void WCH_open() {
@@ -109,8 +109,8 @@ void WCH_open() {
 		WCH_open_releases();
 	} else if (WCH_list_command[1] == L"code") {
 		WCH_open_code();
-	} else if (WCH_list_command[1] == L"picfolder") {
-		WCH_open_picfolder();
+	} else if (WCH_list_command[1] == L"screenshot") {
+		WCH_open_screenshot();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
