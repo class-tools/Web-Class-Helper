@@ -405,6 +405,28 @@ void WCH_config_wizard() {
 	}
 }
 
+void WCH_config_reset() {
+	// Reset configuration to default.
+	if (WCH_list_command.size() != 2) {
+		WCH_InputCommandIncorrect();
+		return;
+	}
+	bool flag = false;
+	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
+		if (get<0>(*it) == L"Language" && StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString()) != get<2>(*it)) {
+			flag = true;
+		}
+		WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(get<2>(*it));
+	}
+	if (flag) {
+		MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
+		WCH_list_command.clear();
+		WCH_list_command.push_back(L"restart");
+		wcout << endl;
+		WCH_restart();
+	}
+}
+
 void WCH_config() {
 	// Config series command input.
 	if (WCH_list_command.size() == 1) {
@@ -418,6 +440,8 @@ void WCH_config() {
 		WCH_config_list();
 	} else if (WCH_list_command[1] == L"wizard") {
 		WCH_config_wizard();
+	} else if (WCH_list_command[1] == L"reset") {
+		WCH_config_reset();
 	} else {
 		WCH_InputCommandIncorrect();
 	}
