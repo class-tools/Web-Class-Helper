@@ -15,9 +15,11 @@
 vcpkg 依赖库安装流程如下：
 
 ```
-vcpkg integrate install
 vcpkg install jsoncpp:${arch}-windows-static spdlog:${arch}-windows-static
+vcpkg integrate install
 ```
+
+其中 `${arch}` 为构建的程序架构，可为 `x64` / `x86` / `ARM` / `ARM64`。
 
 ### 配置
 
