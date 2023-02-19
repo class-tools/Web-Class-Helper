@@ -140,11 +140,29 @@ string UrlEncode(const string& _in) {
 	return _res;
 }
 
-vector<wstring> WCH_split(const wstring& _in) {
+vector<wstring> WCH_split(const wstring& _input) {
 	// Split CLI string.
 	vector<wstring> _res;
-	wstring _tmp;
+	wstring _tmp, _in;
 	bool _flag = false;
+	wchar_t last_ch;
+	for (auto cur : _input) {
+		if (cur == '"') {
+			_flag = true;
+		} else if (_flag) {
+			_in.push_back(cur);
+		} else if (cur != ' ') {
+			_in.push_back(cur);
+		} else {
+			if (_in.empty()) {
+				last_ch = ' ';
+			} else {
+				last_ch = _in.back();
+			}
+			if (last_ch != ' ') _in.push_back(cur);
+		}
+	}
+	_flag = false;
 	for (size_t i = 0; i < _in.size(); i++) {
 		if (_in[i] == L' ' && !_flag && i != 0) {
 			if (_in[i - 1] != L'"') {
