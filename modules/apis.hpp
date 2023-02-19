@@ -146,22 +146,26 @@ vector<wstring> WCH_split(const wstring& _input) {
 	wstring _tmp, _in;
 	bool _flag = false;
 	wchar_t last_ch;
-	for (auto cur : _input) {
-		if (cur == '"') {
+	for (size_t i = 0; i < _input.size(); i++) {
+		if (_input[i] == L'"') {
 			_flag = true;
-			_in.push_back(cur);
+			_in.push_back(_input[i]);
 		} else if (_flag) {
-			if (cur == '"') _flag = false;
-			_in.push_back(cur);
-		} else if (cur != ' ') {
-			_in.push_back(cur);
+			if (_input[i] == L'"') {
+				_flag = false;
+			}
+			_in.push_back(_input[i]);
+		} else if (_input[i] != L' ') {
+			_in.push_back(_input[i]);
 		} else {
 			if (_in.empty()) {
-				last_ch = ' ';
+				last_ch = L' ';
 			} else {
 				last_ch = _in.back();
 			}
-			if (last_ch != ' ') _in.push_back(cur);
+			if (last_ch != L' ') {
+				_in.push_back(_input[i]);
+			}
 		}
 	}
 	_flag = false;
@@ -315,7 +319,7 @@ wstring WCH_GetSystemArchitecture() {
 bool WCH_GetPowerShellCompatibility() {
 	// Get compatibility of PowerShell.
 	wstring FilePath = WCH_path_temp + L"\\WCH_PWSH.tmp";
-	wstring _res = L"";
+	wstring _res;
 	_wsystem((L"PWSH -? > NUL 2> NUL && ECHO %ERRORLEVEL% > \"" + FilePath + L"\"").c_str());
 	wfin.open(FilePath);
 	wfin >> _res;
@@ -327,7 +331,7 @@ bool WCH_GetPowerShellCompatibility() {
 wstring WCH_GetFileHash(wstring _in) {
 	// Get SHA512 hash of file.
 	wstring FilePath = WCH_path_temp + L"\\WCH_HASH.tmp";
-	wstring _res = L"";
+	wstring _res;
 	_wsystem(((WCH_GetPowerShellCompatibility() ? L"PWSH" : L"POWERSHELL") + (L" -COMMAND \"(Get-FileHash \\\"" + _in) + L"\\\" -Algorithm SHA512).Hash | Out-File \"" + FilePath + L"\" -Encoding ASCII").c_str());
 	wfin.open(FilePath);
 	wfin >> _res;
