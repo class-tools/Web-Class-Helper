@@ -146,7 +146,6 @@ void WCH_exit() {
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_IDENT.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_HASH.tmp");
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_PWSH.tmp");
-	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_UPDATE.zip");
 	SendMessageW(WCH_handle_tray, WM_DESTROY, NULL, NULL);
 	_exit(0);
 }
@@ -183,42 +182,23 @@ void WCH_update() {
 		random_device rd;
 		mt19937 mtrand(rd());
 		url.append(to_wstring(mtrand()));
-		bool _ok = WCH_DownloadFile(url, FilePath, 5);
-		if (!_ok) {
-			throw runtime_error("");
-		}
+		URLDownloadToFileW(0, url.c_str(), FilePath.c_str(), 0, 0);
 		wstring res;
 		wfin.open(FilePath);
 		getline(wfin, res);
 		wfin.close();
-		DeleteFileW(FilePath.c_str());
-		if (/* WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)*/ true) {
+		if (WCH_FileIsBlank(FilePath)) {
+			throw runtime_error("");
+		}
+		if (WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)) {
+			wcout << StrToWstr(WCH_Language["FindUpdate"].asString()) << endl;
+			_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
 			SPDLOG_INFO(format(L"Updating to version \"{}\"", res));
-			wcout << StrToWstr(WCH_Language["WillUpdate"].asString());
-			if (StrToWstr(WCH_Settings["UpdateAutomation"].asString()) == L"False") {
-				wcout << StrToWstr(WCH_Language["UpdateOpenRelease"].asString()) << endl;
-				_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
-				return;
-			}
-			wcout << StrToWstr(WCH_Language["DownloadingUpdate"].asString()) << endl;
-			url = L"https://github.com/class-tools/Web-Class-Helper/releases/download/v" + res + L"/WCH_v" + res + L"_" + WCH_GetSystemArchitecture() + L".zip";
-			FilePath = WCH_path_temp + L"\\WCH_UPDATE.zip";
-			_ok = WCH_DownloadFile(url, FilePath, 5);
-			if (!_ok) {
-				throw runtime_error("");
-			}
-			WCH_Unzip_File(FilePath, WCH_GetExecDir() + L"_UPDATE_TMP\\");
-			DeleteFileW(FilePath.c_str());
-			RemoveDirectoryW((WCH_GetExecDir() + L"\\").c_str());
-			MoveFileW((WCH_GetExecDir() + L"_UPDATE_TMP\\").c_str(), (WCH_GetExecDir() + L"\\").c_str());
-			WCH_list_command.clear();
-			WCH_list_command.push_back(L"restart");
-			wcout << endl;
-			WCH_restart();
 		} else {
 			wcout << StrToWstr(WCH_Language["NoUpdate"].asString()) << endl;
 			SPDLOG_INFO(format(L"Program version equals or is greater than \"{}\"", res));
 		}
+		DeleteFileW(FilePath.c_str());
 	} catch (...) {
 		WCH_NetworkError();
 		return;

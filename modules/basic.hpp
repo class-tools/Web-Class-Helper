@@ -335,8 +335,7 @@ const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings = {
 	make_tuple(L"Language", L"String", L"en-US", true),
 	make_tuple(L"ScreenshotOpen", L"Boolean", L"False", false),
 	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png", false),
-	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false),
-	make_tuple(L"UpdateAutomation", L"Boolean", L"True", false)};
+	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false)};
 const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
 const wstring WCH_path_data = format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
 const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp\\WCH", _wgetenv(L"USERPROFILE"));

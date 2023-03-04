@@ -53,25 +53,6 @@ extern unique_ptr<Json::StreamWriter> JSON_SW;
 extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
 extern shared_ptr<spdlog::logger> LOG_logger;
 
-bool WCH_GetPowerShellCompatibility();
-
-void WCH_Unzip_File(wstring _zipfile_path, wstring _unzip_path) {
-	// Use powershell to unzip file.
-	wstring powershell_command = L"Expand-Archive -Path '" + _zipfile_path + L"' -DestinationPath '" + _unzip_path + L"' -Force";
-	wstring cmd_command = (WCH_GetPowerShellCompatibility() ? L"PWSH" : L"POWERSHELL");
-	cmd_command += L" -COMMAND \"" + powershell_command + L"\"";
-	_wsystem(cmd_command.c_str());
-}
-
-bool WCH_DownloadFile(wstring _fileurl, wstring _filepath, int16_t _timeoutsec) {
-	// Use powershell to download file and returns whether the download is successful.
-	wstring powershell_command = L"try {Invoke-WebRequest -Uri '" + _fileurl + L"' -OutFile '" + _filepath + L"' -TimeoutSec 10} catch {}";
-	wstring cmd_command = (WCH_GetPowerShellCompatibility() ? L"PWSH" : L"POWERSHELL");
-	cmd_command += L" -COMMAND \"" + powershell_command + L"\"";
-	_wsystem(cmd_command.c_str());
-	return !_waccess(_filepath.c_str(), 0);
-}
-
 void WCH_Sleep(int32_t _ms) {
 	// Sleep.
 	while (_ms > 0 && !WCH_program_end) {
@@ -335,7 +316,7 @@ wstring WCH_GetSystemArchitecture() {
 	}
 }
 
-bool WCH_GetPowerShellCompatibility() {
+wstring WCH_PowerShellExecName() {
 	// Get compatibility of PowerShell.
 	wstring FilePath = WCH_path_temp + L"\\WCH_PWSH.tmp";
 	wstring _res;
@@ -344,14 +325,14 @@ bool WCH_GetPowerShellCompatibility() {
 	wfin >> _res;
 	wfin.close();
 	DeleteFileW(FilePath.c_str());
-	return _res == L"0";
+	return _res == L"0" ? L"PWSH" : L"POWERSHELL";
 }
 
 wstring WCH_GetFileHash(wstring _in) {
 	// Get SHA512 hash of file.
 	wstring FilePath = WCH_path_temp + L"\\WCH_HASH.tmp";
 	wstring _res;
-	_wsystem(((WCH_GetPowerShellCompatibility() ? L"PWSH" : L"POWERSHELL") + (L" -COMMAND \"(Get-FileHash \\\"" + _in) + L"\\\" -Algorithm SHA512).Hash | Out-File \"" + FilePath + L"\" -Encoding ASCII").c_str());
+	_wsystem((WCH_PowerShellExecName() + (L" -COMMAND \"(Get-FileHash \\\"" + _in) + L"\\\" -Algorithm SHA512).Hash | Out-File \"" + FilePath + L"\" -Encoding ASCII").c_str());
 	wfin.open(FilePath);
 	wfin >> _res;
 	wfin.close();
@@ -558,6 +539,12 @@ pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Valu
 		}
 	}
 	return make_pair(true, KeyType);
+}
+
+void WCH_PowerShellCommandExec(wstring _command) {
+	// Use PowerShell commands.
+	wcout << _command << endl;
+	_wsystem((WCH_PowerShellExecName() + L" -COMMAND \"" + _command + L"\"").c_str());
 }
 
 void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
