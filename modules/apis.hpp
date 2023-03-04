@@ -53,6 +53,25 @@ extern unique_ptr<Json::StreamWriter> JSON_SW;
 extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
 extern shared_ptr<spdlog::logger> LOG_logger;
 
+bool WCH_GetPowerShellCompatibility();
+
+void WCH_Unzip_File(wstring _zipfile_path, wstring _unzip_path) {
+	// Use powershell to unzip file.
+	wstring powershell_command = L"Expand-Archive -Path '" + _zipfile_path + L"' -DestinationPath '" + _unzip_path + L"' -Force";
+	wstring cmd_command = (WCH_GetPowerShellCompatibility() ? L"PWSH" : L"POWERSHELL");
+	cmd_command += L" -COMMAND \"" + powershell_command + L"\"";
+	_wsystem(cmd_command.c_str());
+}
+
+bool WCH_DownloadFile(wstring _fileurl, wstring _filepath, int16_t _timeoutsec) {
+	// Use powershell to download file and returns whether the download is successful.
+	wstring powershell_command = L"try {Invoke-WebRequest -Uri '" + _fileurl + L"' -OutFile '" + _filepath + L"' -TimeoutSec 10} catch {}";
+	wstring cmd_command = (WCH_GetPowerShellCompatibility() ? L"PWSH" : L"POWERSHELL");
+	cmd_command += L" -COMMAND \"" + powershell_command + L"\"";
+	_wsystem(cmd_command.c_str());
+	return !_waccess(_filepath.c_str(), 0);
+}
+
 void WCH_Sleep(int32_t _ms) {
 	// Sleep.
 	while (_ms > 0 && !WCH_program_end) {
