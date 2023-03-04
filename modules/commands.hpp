@@ -192,7 +192,7 @@ void WCH_update() {
 		getline(wfin, res);
 		wfin.close();
 		DeleteFileW(FilePath.c_str());
-		if (/* WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)*/true) {
+		if (/* WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)*/ true) {
 			SPDLOG_INFO(format(L"Updating to version \"{}\"", res));
 			wcout << StrToWstr(WCH_Language["WillUpdate"].asString());
 			if (StrToWstr(WCH_Settings["UpdateAutomation"].asString()) == L"False") {
