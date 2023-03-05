@@ -8,3 +8,4 @@
 /UnitTest/ARM64/
 /.vscode/
 /.vs/
+/vcpkg_installed/

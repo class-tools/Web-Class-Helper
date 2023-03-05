@@ -16,9 +16,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Initialize vcpkg
-        run: |
-          vcpkg integrate install
-          vcpkg install jsoncpp:x86-windows-static spdlog:x86-windows-static
+        uses: johnwason/vcpkg-action@v4
+        with:
+          triplet: 'x86-windows-static'
+          cache-key: 'x86'
+          token: ${{ github.token }}
+          manifest-dir: '.'
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release x86
@@ -29,9 +32,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Initialize vcpkg
-        run: |
-          vcpkg integrate install
-          vcpkg install jsoncpp:x64-windows-static spdlog:x64-windows-static
+        uses: johnwason/vcpkg-action@v4
+        with:
+          triplet: 'x64-windows-static'
+          cache-key: 'x64'
+          token: ${{ github.token }}
+          manifest-dir: '.'
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release x64
@@ -42,9 +48,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Initialize vcpkg
-        run: |
-          vcpkg integrate install
-          vcpkg install jsoncpp:arm-windows-static spdlog:arm-windows-static
+        uses: johnwason/vcpkg-action@v4
+        with:
+          triplet: 'arm-windows-static'
+          cache-key: 'arm'
+          token: ${{ github.token }}
+          manifest-dir: '.'
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release ARM
@@ -55,9 +64,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Initialize vcpkg
-        run: |
-          vcpkg integrate install
-          vcpkg install jsoncpp:arm64-windows-static spdlog:arm64-windows-static
+        uses: johnwason/vcpkg-action@v4
+        with:
+          triplet: 'arm64-windows-static'
+          cache-key: 'arm64'
+          token: ${{ github.token }}
+          manifest-dir: '.'
       - name: Build solution
         run: |
           .\scripts\build.ps1 Release ARM64
