@@ -18,12 +18,13 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          triplet: 'x86-windows-static'
-          cache-key: 'x86'
+          pkgs: jsoncpp spdlog
+          triplet: x86-windows-static
+          cache-key: x86
           token: ${{ github.token }}
-          manifest-dir: '.'
       - name: Build solution
         run: |
+          .\vcpkg\vcpkg integrate install
           .\scripts\build.ps1 Release x86
   build-x64:
     name: Build x64
@@ -34,12 +35,13 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          triplet: 'x64-windows-static'
-          cache-key: 'x64'
+          pkgs: jsoncpp spdlog
+          triplet: x64-windows-static
+          cache-key: x64
           token: ${{ github.token }}
-          manifest-dir: '.'
       - name: Build solution
         run: |
+          .\vcpkg\vcpkg integrate install
           .\scripts\build.ps1 Release x64
   build-arm:
     name: Build ARM
@@ -50,12 +52,13 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          triplet: 'arm-windows-static'
-          cache-key: 'arm'
+          pkgs: jsoncpp spdlog
+          triplet: arm-windows-static
+          cache-key: arm
           token: ${{ github.token }}
-          manifest-dir: '.'
       - name: Build solution
         run: |
+          .\vcpkg\vcpkg integrate install
           .\scripts\build.ps1 Release ARM
   build-arm64:
     name: Build ARM64
@@ -66,10 +69,11 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          triplet: 'arm64-windows-static'
-          cache-key: 'arm64'
+          pkgs: jsoncpp spdlog
+          triplet: arm64-windows-static
+          cache-key: arm64
           token: ${{ github.token }}
-          manifest-dir: '.'
       - name: Build solution
         run: |
+          .\vcpkg\vcpkg integrate install
           .\scripts\build.ps1 Release ARM64

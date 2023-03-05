@@ -18,12 +18,13 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          triplet: 'x64-windows-static'
-          cache-key: 'x64'
+          pkgs: jsoncpp spdlog
+          triplet: x64-windows-static
+          cache-key: x64
           token: ${{ github.token }}
-          manifest-dir: '.'
       - name: Build solution
         run: |
+          .\vcpkg\vcpkg integrate install
           .\scripts\build.ps1 Release x64
       - name: Setup VSTest and add to PATH
         uses: darenm/Setup-VSTest@v1
