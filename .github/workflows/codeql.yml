@@ -32,6 +32,5 @@ jobs:
         run: |
           .\vcpkg\vcpkg integrate install
           .\scripts\build.ps1 Release x64
-          Remove-Item -Path .\vcpkg -Recurse -Force
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2
