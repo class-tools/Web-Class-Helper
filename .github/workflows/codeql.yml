@@ -14,10 +14,6 @@ jobs:
     runs-on: windows-latest
     permissions:
       security-events: write
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'cpp' ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -30,7 +26,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: ${{ matrix.language }}
+          languages: cpp
           config-file: .\.github\codeql\codeql-config.yml
       - name: Build solution
         run: |
