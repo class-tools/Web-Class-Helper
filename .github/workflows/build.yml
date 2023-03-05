@@ -20,7 +20,6 @@ jobs:
         with:
           pkgs: jsoncpp spdlog
           triplet: x86-windows-static
-          cache-key: x86
           token: ${{ github.token }}
       - name: Build solution
         run: |
@@ -37,7 +36,6 @@ jobs:
         with:
           pkgs: jsoncpp spdlog
           triplet: x64-windows-static
-          cache-key: x64
           token: ${{ github.token }}
       - name: Build solution
         run: |
@@ -54,7 +52,6 @@ jobs:
         with:
           pkgs: jsoncpp spdlog
           triplet: arm-windows-static
-          cache-key: arm
           token: ${{ github.token }}
       - name: Build solution
         run: |
@@ -71,7 +68,6 @@ jobs:
         with:
           pkgs: jsoncpp spdlog
           triplet: arm64-windows-static
-          cache-key: arm64
           token: ${{ github.token }}
       - name: Build solution
         run: |

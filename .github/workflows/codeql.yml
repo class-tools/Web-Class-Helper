@@ -26,7 +26,6 @@ jobs:
         with:
           pkgs: jsoncpp spdlog
           triplet: x64-windows-static
-          cache-key: x64
           token: ${{ github.token }}
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
