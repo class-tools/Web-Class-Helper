@@ -4,7 +4,7 @@ name: "Wiki"
 
 on:
   push:
-    branches: [ "master" ]
+    branches: master
 
 jobs:
   update-wiki:
