@@ -4,7 +4,8 @@ This source code file is under MIT License.
 Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: ren-yc
 */
-#include "../WCH.cpp"
+#include "../version.hpp"
+#include "../shasum.hpp"
 #include "../modules/file-process.hpp"
 #include "../modules/init.hpp"
 #include "../modules/commands.hpp"

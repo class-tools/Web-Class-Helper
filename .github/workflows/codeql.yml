@@ -27,10 +27,11 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: cpp
-          config-file: .\.github\codeql\codeql-config.yml
+          queries: security-and-quality
       - name: Build solution
         run: |
           .\vcpkg\vcpkg integrate install
           .\scripts\build.ps1 Release x64
+          Remove-Item -Path .\vcpkg -Recurse -Force
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2
