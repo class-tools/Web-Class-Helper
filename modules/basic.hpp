@@ -119,9 +119,10 @@ Contributors: jsh-jsh ren-yc
 #define SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #define SPDLOG_WCHAR_FILENAMES
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
-#include "json/json.h"
-#include "spdlog/spdlog.h"
-#include "spdlog/sinks/basic_file_sink.h"
+#include <json/json.h>
+#include <openssl/sha.h>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 #pragma warning(pop)
 
 #pragma comment(lib, "winmm.lib")

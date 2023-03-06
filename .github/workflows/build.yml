@@ -14,7 +14,7 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          pkgs: jsoncpp spdlog
+          pkgs: jsoncpp openssl spdlog
           triplet: x86-windows-static
           token: ${{ github.token }}
       - name: Build solution
@@ -30,7 +30,7 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          pkgs: jsoncpp spdlog
+          pkgs: jsoncpp openssl spdlog
           triplet: x64-windows-static
           token: ${{ github.token }}
       - name: Build solution
@@ -46,7 +46,7 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          pkgs: jsoncpp spdlog
+          pkgs: jsoncpp openssl spdlog
           triplet: arm-windows-static
           token: ${{ github.token }}
       - name: Build solution
@@ -62,7 +62,7 @@ jobs:
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          pkgs: jsoncpp spdlog
+          pkgs: jsoncpp openssl spdlog
           triplet: arm64-windows-static
           token: ${{ github.token }}
       - name: Build solution
