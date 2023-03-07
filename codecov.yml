@@ -2,13 +2,13 @@ coverage:
   status:
     project:
       default:
-        target: auto
-        threshold: 50%
+        target: 50%
+        threshold: 100%
         base: auto
     patch:
       default:
-        target: auto
-        threshold: 50%
+        target: 50%
+        threshold: 100%
         base: auto
         if_ci_failed: error
         only_pulls: true

@@ -316,28 +316,30 @@ wstring WCH_GetSystemArchitecture() {
 	}
 }
 
-wstring WCH_PowerShellExecName() {
-	// Get compatibility of PowerShell.
-	wstring FilePath = WCH_path_temp + L"\\WCH_PWSH.tmp";
-	wstring _res;
-	_wsystem((L"PWSH -? > NUL 2> NUL && ECHO %ERRORLEVEL% > \"" + FilePath + L"\"").c_str());
-	wfin.open(FilePath);
-	wfin >> _res;
-	wfin.close();
-	DeleteFileW(FilePath.c_str());
-	return _res == L"0" ? L"PWSH" : L"POWERSHELL";
-}
-
-wstring WCH_GetFileHash(wstring _in) {
+wstring WCH_GetFileHash(const wstring& FilePath) {
 	// Get SHA512 hash of file.
-	wstring FilePath = WCH_path_temp + L"\\WCH_HASH.tmp";
-	wstring _res;
-	_wsystem((WCH_PowerShellExecName() + (L" -COMMAND \"(Get-FileHash \\\"" + _in) + L"\\\" -Algorithm SHA512).Hash | Out-File \"" + FilePath + L"\" -Encoding ASCII").c_str());
-	wfin.open(FilePath);
-	wfin >> _res;
-	wfin.close();
-	DeleteFileW(FilePath.c_str());
-	return _res;
+	FILE* FileHandle = _wfopen(FilePath.c_str(), L"rb");
+	if (FileHandle == nullptr) {
+		return L"";
+	}
+	unsigned char buf[4096] = {};
+	unsigned char digest[64] = {};
+	SHA512_CTX hashContext = {};
+	size_t readBytes = 0;
+	wstring res;
+#pragma warning(push)
+#pragma warning(disable : 4996)
+	SHA512_Init(&hashContext);
+	while ((readBytes = fread(buf, 1, 4096, FileHandle)) != 0) {
+		SHA512_Update(&hashContext, buf, readBytes);
+	}
+	fclose(FileHandle);
+	SHA512_Final(digest, &hashContext);
+#pragma warning(pop)
+	for (size_t i = 0; i < 64; i++) {
+		res += format(L"{:02X}", digest[i]);
+	}
+	return res;
 }
 
 void WCH_SetWindowStatus(bool flag) {
@@ -539,12 +541,6 @@ pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Valu
 		}
 	}
 	return make_pair(true, KeyType);
-}
-
-void WCH_PowerShellCommandExec(wstring _command) {
-	// Use PowerShell commands.
-	wcout << _command << endl;
-	_wsystem((WCH_PowerShellExecName() + L" -COMMAND \"" + _command + L"\"").c_str());
 }
 
 void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
