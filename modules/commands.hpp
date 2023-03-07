@@ -333,12 +333,12 @@ void WCH_config_wizard() {
 	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 	Json::Value valcfg;
 	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
-	fin.open(FilePath);
-	if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
-		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+	if (!WCH_CheckFileHash(FilePath, StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
+		SPDLOG_CRITICAL(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
 		raise(SIGBREAK);
 	}
+	fin.open(FilePath);
 	ignore = JSON_Reader.parse(fin, valcfg);
 	fin.close();
 	int32_t cnt = 0;
@@ -959,12 +959,12 @@ void WCH_help() {
 	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\help.json";
 	Json::Value val;
 	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
-	fin.open(FilePath);
-	if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_help : SHASUM_zhCN_help)) {
-		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+	if (!WCH_CheckFileHash(FilePath, StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_help : SHASUM_zhCN_help)) {
+		SPDLOG_CRITICAL(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
 		raise(SIGBREAK);
 	}
+	fin.open(FilePath);
 	ignore = JSON_Reader.parse(fin, val);
 	fin.close();
 	if (WCH_list_command.size() == 1) {
@@ -984,12 +984,12 @@ void WCH_help() {
 			FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 			Json::Value valcfg;
 			SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
-			fin.open(FilePath);
-			if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
-				SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+			if (!WCH_CheckFileHash(FilePath, StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
+				SPDLOG_CRITICAL(format(L"Data in file \"{}\" corrupted", FilePath));
 				WCH_FileProcessingFailed();
 				raise(SIGBREAK);
 			}
+			fin.open(FilePath);
 			ignore = JSON_Reader.parse(fin, valcfg);
 			fin.close();
 			size_t MAXKN = 0;

@@ -75,7 +75,7 @@ void WCH_read_clock() {
 		}
 	} else {
 	ERR:
-		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+		SPDLOG_WARN(format(L"Data in file \"{}\" corrupted", FilePath));
 	}
 	fin.close();
 }
@@ -100,7 +100,7 @@ void WCH_read_task() {
 		}
 	} else {
 	ERR:
-		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+		SPDLOG_WARN(format(L"Data in file \"{}\" corrupted", FilePath));
 	}
 	fin.close();
 }
@@ -125,7 +125,7 @@ void WCH_read_work() {
 		}
 	} else {
 	ERR:
-		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+		SPDLOG_WARN(format(L"Data in file \"{}\" corrupted", FilePath));
 	}
 	fin.close();
 }
@@ -166,7 +166,7 @@ void WCH_read_settings() {
 			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(get<2>(*it));
 		}
 		if (!WCH_pre_start) {
-			SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+			SPDLOG_WARN(format(L"Data in file \"{}\" corrupted", FilePath));
 		}
 	}
 	fin.close();
@@ -175,12 +175,12 @@ void WCH_read_settings() {
 void WCH_read_language() {
 	// Read language data.
 	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\interactive.json";
-	fin.open(FilePath);
-	if (!fin.is_open() || WCH_GetFileHash(FilePath) != (StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_interactive : SHASUM_zhCN_interactive)) {
-		SPDLOG_ERROR(format(L"Data in file \"{}\" corrupted", FilePath));
+	if (!WCH_CheckFileHash(FilePath, StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_interactive : SHASUM_zhCN_interactive)) {
+		SPDLOG_CRITICAL(format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
 		raise(SIGBREAK);
 	}
+	fin.open(FilePath);
 	ignore = JSON_Reader.parse(fin, WCH_Language);
 	fin.close();
 }

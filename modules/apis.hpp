@@ -342,6 +342,18 @@ wstring WCH_GetFileHash(const wstring& FilePath) {
 	return res;
 }
 
+bool WCH_CheckFileHash(const wstring& FilePath, const wstring& ExpectedHash) {
+	// Check whether the SHA512 hash of file is valid.
+	wstring ActualHash = WCH_GetFileHash(FilePath);
+	if (ActualHash != ExpectedHash) {
+		SPDLOG_CRITICAL(format(L"Actual SHA512 hash: \"{}\"; expected SHA512 hash: \"{}\"", ActualHash, ExpectedHash));
+		return false;
+	} else {
+		SPDLOG_INFO(format(L"SHA512 hash: \"{}\"", ExpectedHash));
+		return true;
+	}
+}
+
 void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_handle_window, (flag ? SW_SHOWNORMAL : SW_HIDE));
