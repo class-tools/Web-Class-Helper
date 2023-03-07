@@ -15,7 +15,7 @@
 vcpkg 依赖库安装流程如下：
 
 ```
-vcpkg install jsoncpp:${arch}-windows-static spdlog:${arch}-windows-static
+vcpkg install jsoncpp:${arch}-windows-static openssl:${arch}-windows-static spdlog:${arch}-windows-static
 vcpkg integrate install
 ```
 

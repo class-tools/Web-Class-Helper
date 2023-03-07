@@ -32,6 +32,14 @@ Arguments:
 
 #
 
+[**`scripts/shasum.ps1`**](https://github.com/class-tools/Web-Class-Helper/blob/master/scripts/shasum.ps1)
+
+```
+Usage: shasum.ps1
+```
+
+#
+
 [**`scripts/sign.ps1`**](https://github.com/class-tools/Web-Class-Helper/blob/master/scripts/sign.ps1)
 
 ```
