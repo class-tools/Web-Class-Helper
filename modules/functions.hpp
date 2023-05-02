@@ -4,55 +4,6 @@ This source code file is under MIT License.
 Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
-#include "file-process.hpp"
-#include "init.hpp"
-#include "commands.hpp"
-#include "apis.hpp"
-#include "basic.hpp"
-
-extern const vector<wstring> WCH_list_weekday;
-extern const map<wstring, set<wstring>> WCH_choice_settings;
-extern const map<wstring, wstring> WCH_MIME_list;
-extern const map<wstring, function<void()>> WCH_support_command;
-extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const wstring WCH_progress_bar_str;
-extern const wstring WCH_path_data;
-extern const wstring WCH_path_temp;
-extern vector<wstring> WCH_list_command;
-extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
-extern set<wstring> WCH_list_task;
-extern set<pair<wstring, wstring>> WCH_list_work;
-extern wstring WCH_version;
-extern wstring WCH_path_exec;
-extern wstring WCH_title_window;
-extern HWND WCH_handle_window;
-extern HWND WCH_handle_tray;
-extern HMENU WCH_handle_menu;
-extern NOTIFYICONDATAW WCH_NID;
-extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
-extern Json::Value WCH_Settings;
-extern Json::Value WCH_Language;
-extern int32_t WCH_num_clock;
-extern int32_t WCH_num_task;
-extern int32_t WCH_num_work;
-extern int32_t WCH_progress_bar_duration;
-extern bool WCH_cmd_line;
-extern bool WCH_is_focus;
-extern bool WCH_is_countdown;
-extern bool WCH_program_end;
-extern bool WCH_pre_start;
-extern ifstream fin;
-extern wifstream wfin;
-extern ofstream fout;
-extern wofstream wfout;
-extern Json::Reader JSON_Reader;
-extern Json::StreamWriterBuilder JSON_SWB;
-extern unique_ptr<Json::StreamWriter> JSON_SW;
-extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
-extern shared_ptr<spdlog::logger> LOG_logger;
-
 void WCH_check_clock_loop() {
 	// Check if the time equals to the clock. (Another thread)
 	WCH_Sleep((60 - WCH_GetTime().Second) * 1000);
@@ -61,7 +12,7 @@ void WCH_check_clock_loop() {
 		for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
 			if (get<0>(*it) == NOW.Hour && get<1>(*it) == NOW.Minute && get<2>(*it).size() > 0) {
 				if (StrToWstr(WCH_Settings["CountDownSoundPrompt"].asString()) == L"True") {
-					wcout << L"\a";
+					std::wcout << L"\a";
 				}
 				bool _tmp = WCH_cmd_line;
 				if (_tmp) {
@@ -107,9 +58,9 @@ void WCH_check_task_loop() {
 	while (WCH_is_focus && !WCH_program_end) {
 		for (auto it = WCH_list_task.begin(); it != WCH_list_task.end(); it++) {
 			if (WCH_TaskKill(*it)) {
-				SPDLOG_INFO(format(L"Successfully killed \"{}\"", *it));
+				SPDLOG_INFO(fmt::format(L"Successfully killed \"{}\"", *it));
 			} else {
-				SPDLOG_INFO(format(L"Failed to kill \"{}\"", *it));
+				SPDLOG_INFO(fmt::format(L"Failed to kill \"{}\"", *it));
 			}
 		}
 		WCH_Sleep(stoi(StrToWstr(WCH_Settings["FocusKillInterval"].asString())));
@@ -119,18 +70,16 @@ void WCH_check_task_loop() {
 void WCH_CL_Init() {
 	// Initialize the command line.
 BEGIN:
-	wstring _in;
-	wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
-	getline(wcin, _in);
-	if (wcin.eof()) {
+	std::wstring _in;
+	std::wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
+	std::getline(std::wcin, _in);
+	if (std::wcin.eof()) {
 		raise(SIGINT);
 	}
 	WCH_list_command = WCH_split(_in);
 	if (WCH_list_command.size() == 0) {
-		wcout << endl;
+		std::wcout << std::endl;
 		goto BEGIN;
 	}
 	transform(WCH_list_command[0].begin(), WCH_list_command[0].end(), WCH_list_command[0].begin(), ::towlower);
 }
-
-#endif

@@ -10,11 +10,9 @@
 <img src="https://img.shields.io/github/issues-raw/class-tools/Web-Class-Helper.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/build.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/clangformat.yml/badge.svg">
-<img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codecov.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/codeql.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/gitmsg.yml/badge.svg">
 <img src="https://github.com/class-tools/Web-Class-Helper/actions/workflows/wiki.yml/badge.svg">
-<img src="https://codecov.io/gh/class-tools/Web-Class-Helper/branch/master/graph/badge.svg?token=VaaOrygZkX">
 <img src="https://img.shields.io/github/v/release/class-tools/Web-Class-Helper.svg?logo=iCloud">
 <img src="https://img.shields.io/github/downloads/class-tools/Web-Class-Helper/total?label=GitHub%20Downloads">
 <img src="https://img.shields.io/badge/support-Windows%208%20%2F%208.1%20%2F%2010%20%2F%2011-blue?logo=Windows">

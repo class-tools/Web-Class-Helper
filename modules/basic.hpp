@@ -4,107 +4,23 @@ This source code file is under MIT License.
 Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#ifndef BASIC_H
-#define BASIC_H
-#include <cassert>
-#include <cctype>
-#include <cerrno>
-#include <cfloat>
-#include <climits>
-#include <clocale>
-#include <cmath>
-#include <codecvt>
-#include <csetjmp>
 #include <csignal>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cwchar>
-#include <cwctype>
-#include <ccomplex>
-#include <cfenv>
-#include <cinttypes>
-#include <cstdalign>
-#include <cstdbool>
 #include <cstdint>
-#include <ctgmath>
-#include <cuchar>
-#include <algorithm>
-#include <bitset>
-#include <complex>
-#include <deque>
-#include <exception>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <ios>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <iterator>
-#include <limits>
-#include <list>
-#include <locale>
-#include <map>
-#include <memory>
-#include <new>
-#include <numeric>
-#include <ostream>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <stdexcept>
-#include <streambuf>
-#include <string>
-#include <string_view>
-#include <typeinfo>
-#include <utility>
-#include <valarray>
-#include <vector>
-#include <array>
-#include <atomic>
+#include <cstdlib>
 #include <chrono>
-#include <codecvt>
-#include <condition_variable>
-#include <forward_list>
-#include <future>
-#include <initializer_list>
-#include <mutex>
-#include <random>
-#include <ratio>
-#include <regex>
-#include <scoped_allocator>
-#include <system_error>
-#include <thread>
-#include <tuple>
-#include <typeindex>
-#include <type_traits>
-#include <unordered_map>
-#include <unordered_set>
-#include <shared_mutex>
-#include <any>
-#include <charconv>
+#include <locale>
+#include <utility>
 #include <filesystem>
-#include <optional>
-#include <memory_resource>
-#include <string_view>
-#include <variant>
-#include <bit>
-#include <compare>
-#include <concepts>
-#include <coroutine>
-#include <numbers>
-#include <ranges>
-#include <span>
-#include <stop_token>
-#include <version>
+#include <ios>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <set>
+#include <tuple>
+#include <vector>
+#include <thread>
+#include <random>
 #include <io.h>
-#include <conio.h>
-#include <direct.h>
 #include <Windows.h>
 #include <WinInet.h>
 #include <TLHelp32.h>
@@ -116,9 +32,9 @@ Contributors: jsh-jsh ren-yc
 
 #pragma warning(push)
 #pragma warning(disable : 26437 26451 26495 26498 26800)
-#define SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #define SPDLOG_WCHAR_FILENAMES
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+#include <fmt/format.h>
 #include <json/json.h>
 #include <openssl/sha.h>
 #include <spdlog/spdlog.h>
@@ -133,53 +49,6 @@ Contributors: jsh-jsh ren-yc
 #define WCH_HOTKEY_SHOW 121
 #define WCH_MENU_SHOW 11461
 #define WCH_MENU_EXIT 11462
-
-using std::ignore;
-using std::cin;
-using std::wcin;
-using std::cout;
-using std::wcout;
-using std::cerr;
-using std::wcerr;
-using std::endl;
-using std::format;
-using std::vformat;
-using std::getline;
-using std::find;
-using std::to_string;
-using std::to_wstring;
-using std::string;
-using std::string_view;
-using std::wstring;
-using std::wstring_view;
-using std::stringstream;
-using std::wstringstream;
-using std::ifstream;
-using std::wifstream;
-using std::ofstream;
-using std::wofstream;
-using std::unique_ptr;
-using std::shared_ptr;
-using std::locale;
-using std::array;
-using std::map;
-using std::set;
-using std::vector;
-using std::tuple;
-using std::function;
-using std::pair;
-using std::thread;
-using std::runtime_error;
-using std::exception;
-using std::ios;
-using std::random_device;
-using std::mt19937;
-using std::chrono::milliseconds;
-using std::make_pair;
-using std::make_tuple;
-using std::make_shared;
-using std::get;
-using std::this_thread::sleep_for;
 
 class GdiplusWrapper {
 public:
@@ -287,66 +156,66 @@ void WCH_sysinfo();
 void WCH_exit();
 void WCH_restart();
 
-const vector<wstring> WCH_list_weekday = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
-const map<wstring, set<wstring>> WCH_choice_settings = {
+const std::vector<std::wstring> WCH_list_weekday = {L"Sunday", L"Monday", L"Tuesday", L"Wednesday", L"Thursday", L"Friday", L"Saturday"};
+const std::map<std::wstring, std::set<std::wstring>> WCH_choice_settings = {
 	make_pair(L"Language", []() {
-		set<wstring> _tmp = {L"en-US", L"zh-CN"};
+		std::set<std::wstring> _tmp = {L"en-US", L"zh-CN"};
 		return _tmp;
 	}()),
 	make_pair(L"ScreenshotSaveMIME", []() {
-		set<wstring> _tmp = {L"image/bmp", L"image/gif", L"image/jpeg", L"image/png", L"image/tiff"};
+		std::set<std::wstring> _tmp = {L"image/bmp", L"image/gif", L"image/jpeg", L"image/png", L"image/tiff"};
 		return _tmp;
 	}()),
 };
-const map<wstring, wstring> WCH_MIME_list = {
-	make_pair(L"image/bmp", L".bmp"),
-	make_pair(L"image/gif", L".gif"),
-	make_pair(L"image/jpeg", L".jpg"),
-	make_pair(L"image/png", L".png"),
-	make_pair(L"image/tiff", L".tif")};
-const map<wstring, function<void()>> WCH_support_command = {
-	make_pair(L"clock", WCH_clock),
-	make_pair(L"task", WCH_task),
-	make_pair(L"work", WCH_work),
-	make_pair(L"help", WCH_help),
-	make_pair(L"open", WCH_open),
-	make_pair(L"ow", WCH_ow),
-	make_pair(L"hide", WCH_hide),
-	make_pair(L"game", WCH_game),
-	make_pair(L"time", WCH_time),
-	make_pair(L"prtscn", WCH_prtscn),
-	make_pair(L"trans", WCH_trans),
-	make_pair(L"fate", WCH_fate),
-	make_pair(L"focus", WCH_focus),
-	make_pair(L"countdown", WCH_countdown),
-	make_pair(L"update", WCH_update),
-	make_pair(L"license", WCH_license),
-	make_pair(L"clear", WCH_clear),
-	make_pair(L"config", WCH_config),
-	make_pair(L"develop", WCH_develop),
-	make_pair(L"sysinfo", WCH_sysinfo),
-	make_pair(L"exit", WCH_exit),
-	make_pair(L"restart", WCH_restart)};
-const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings = {
-	make_tuple(L"CommandPrompt", L"String", L">>>", false),
-	make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False", false),
-	make_tuple(L"FocusEndContent", L"String", L"Disable focus?", false),
-	make_tuple(L"FocusEndPrompt", L"Boolean", L"False", false),
-	make_tuple(L"FocusKillInterval", L"Number", L"60000", false),
-	make_tuple(L"Language", L"String", L"en-US", true),
-	make_tuple(L"ScreenshotOpen", L"Boolean", L"False", false),
-	make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png", false),
-	make_tuple(L"ScreenshotSavePath", L"String", format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false)};
-const wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
-const wstring WCH_path_data = format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
-const wstring WCH_path_temp = format(L"{}\\AppData\\Local\\Temp\\WCH", _wgetenv(L"USERPROFILE"));
-vector<wstring> WCH_list_command;
-set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
-set<wstring> WCH_list_task;
-set<pair<wstring, wstring>> WCH_list_work;
-wstring WCH_version;
-wstring WCH_path_exec;
-wstring WCH_title_window;
+const std::map<std::wstring, std::wstring> WCH_MIME_list = {
+	std::make_pair(L"image/bmp", L".bmp"),
+	std::make_pair(L"image/gif", L".gif"),
+	std::make_pair(L"image/jpeg", L".jpg"),
+	std::make_pair(L"image/png", L".png"),
+	std::make_pair(L"image/tiff", L".tif")};
+const std::map<std::wstring, std::function<void()>> WCH_support_command = {
+	std::make_pair(L"clock", WCH_clock),
+	std::make_pair(L"task", WCH_task),
+	std::make_pair(L"work", WCH_work),
+	std::make_pair(L"help", WCH_help),
+	std::make_pair(L"open", WCH_open),
+	std::make_pair(L"ow", WCH_ow),
+	std::make_pair(L"hide", WCH_hide),
+	std::make_pair(L"game", WCH_game),
+	std::make_pair(L"time", WCH_time),
+	std::make_pair(L"prtscn", WCH_prtscn),
+	std::make_pair(L"trans", WCH_trans),
+	std::make_pair(L"fate", WCH_fate),
+	std::make_pair(L"focus", WCH_focus),
+	std::make_pair(L"countdown", WCH_countdown),
+	std::make_pair(L"update", WCH_update),
+	std::make_pair(L"license", WCH_license),
+	std::make_pair(L"clear", WCH_clear),
+	std::make_pair(L"config", WCH_config),
+	std::make_pair(L"develop", WCH_develop),
+	std::make_pair(L"sysinfo", WCH_sysinfo),
+	std::make_pair(L"exit", WCH_exit),
+	std::make_pair(L"restart", WCH_restart)};
+const std::set<std::tuple<std::wstring, std::wstring, std::wstring, bool>> WCH_support_settings = {
+	std::make_tuple(L"CommandPrompt", L"String", L">>>", false),
+	std::make_tuple(L"CountDownSoundPrompt", L"Boolean", L"False", false),
+	std::make_tuple(L"FocusEndContent", L"String", L"Disable focus?", false),
+	std::make_tuple(L"FocusEndPrompt", L"Boolean", L"False", false),
+	std::make_tuple(L"FocusKillInterval", L"Number", L"60000", false),
+	std::make_tuple(L"Language", L"String", L"en-US", true),
+	std::make_tuple(L"ScreenshotOpen", L"Boolean", L"False", false),
+	std::make_tuple(L"ScreenshotSaveMIME", L"String", L"image/png", false),
+	std::make_tuple(L"ScreenshotSavePath", L"String", fmt::format(L"{}\\Pictures\\", _wgetenv(L"USERPROFILE")), false)};
+const std::wstring WCH_progress_bar_str = IsWindows10OrGreater() ? L"━" : L"-";
+const std::wstring WCH_path_data = fmt::format(L"{}\\AppData\\Local\\WCH", _wgetenv(L"USERPROFILE"));
+const std::wstring WCH_path_temp = fmt::format(L"{}\\WCH", std::filesystem::temp_directory_path().c_str());
+std::vector<std::wstring> WCH_list_command;
+std::set<std::tuple<int32_t, int32_t, std::wstring>> WCH_list_clock;
+std::set<std::wstring> WCH_list_task;
+std::set<std::pair<std::wstring, std::wstring>> WCH_list_work;
+std::wstring WCH_version;
+std::wstring WCH_path_exec;
+std::wstring WCH_title_window;
 HWND WCH_handle_window;
 HWND WCH_handle_tray;
 HMENU WCH_handle_menu;
@@ -363,14 +232,12 @@ bool WCH_is_focus;
 bool WCH_is_countdown;
 bool WCH_program_end;
 bool WCH_pre_start = true;
-ifstream fin;
-wifstream wfin;
-ofstream fout;
-wofstream wfout;
+std::ifstream fin;
+std::wifstream wfin;
+std::ofstream fout;
+std::wofstream wfout;
 Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
-unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
-shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
-shared_ptr<spdlog::logger> LOG_logger;
-
-#endif
+std::unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
+std::shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
+std::shared_ptr<spdlog::logger> LOG_logger;

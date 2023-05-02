@@ -4,59 +4,10 @@ This source code file is under MIT License.
 Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc
 */
-#ifndef APIS_H
-#define APIS_H
-#include "file-process.hpp"
-#include "init.hpp"
-#include "commands.hpp"
-#include "functions.hpp"
-#include "basic.hpp"
-
-extern const vector<wstring> WCH_list_weekday;
-extern const map<wstring, set<wstring>> WCH_choice_settings;
-extern const map<wstring, wstring> WCH_MIME_list;
-extern const map<wstring, function<void()>> WCH_support_command;
-extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const wstring WCH_progress_bar_str;
-extern const wstring WCH_path_data;
-extern const wstring WCH_path_temp;
-extern vector<wstring> WCH_list_command;
-extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
-extern set<wstring> WCH_list_task;
-extern set<pair<wstring, wstring>> WCH_list_work;
-extern wstring WCH_version;
-extern wstring WCH_path_exec;
-extern wstring WCH_title_window;
-extern HWND WCH_handle_window;
-extern HWND WCH_handle_tray;
-extern HMENU WCH_handle_menu;
-extern NOTIFYICONDATAW WCH_NID;
-extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
-extern Json::Value WCH_Settings;
-extern Json::Value WCH_Language;
-extern int32_t WCH_num_clock;
-extern int32_t WCH_num_task;
-extern int32_t WCH_num_work;
-extern int32_t WCH_progress_bar_duration;
-extern bool WCH_cmd_line;
-extern bool WCH_is_focus;
-extern bool WCH_is_countdown;
-extern bool WCH_program_end;
-extern bool WCH_pre_start;
-extern ifstream fin;
-extern wifstream wfin;
-extern ofstream fout;
-extern wofstream wfout;
-extern Json::Reader JSON_Reader;
-extern Json::StreamWriterBuilder JSON_SWB;
-extern unique_ptr<Json::StreamWriter> JSON_SW;
-extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
-extern shared_ptr<spdlog::logger> LOG_logger;
-
 void WCH_Sleep(int32_t _ms) {
 	// Sleep.
 	while (_ms > 0 && !WCH_program_end) {
-		sleep_for(milliseconds(100));
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		_ms -= 100;
 	}
 }
@@ -70,11 +21,11 @@ void WCH_PrintChar(size_t _times, wchar_t _c) {
 	// Print characters.
 	while (_times > 0 && !WCH_program_end) {
 		_times--;
-		wcout << _c;
+		std::wcout << _c;
 	}
 }
 
-size_t WCH_NewlineCount(const wstring& _in) {
+size_t WCH_NewlineCount(const std::wstring& _in) {
 	// Count newline characters in a wide string.
 	size_t _cnt = 0;
 	for (size_t i = 0; i < _in.size(); i++) {
@@ -97,9 +48,9 @@ void WCH_ClearConsole() {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), _crd);
 }
 
-wstring StrToWstr(const string& str) {
+std::wstring StrToWstr(const std::string& str) {
 	// Convert multiple byte string to wide string.
-	wstring result;
+	std::wstring result;
 	int32_t len = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), NULL, 0);
 	wchar_t* buffer = new wchar_t[(size_t)len + 1];
 	MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int32_t)str.size(), buffer, len);
@@ -109,9 +60,9 @@ wstring StrToWstr(const string& str) {
 	return result;
 }
 
-string WstrToStr(const wstring& wstr) {
+std::string WstrToStr(const std::wstring& wstr) {
 	// Convert wide string to multiple byte string.
-	string result;
+	std::string result;
 	int32_t len = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int32_t)wstr.size(), NULL, 0, NULL, NULL);
 	char* buffer = new char[(size_t)len + 1];
 	WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int32_t)wstr.size(), buffer, len, NULL, NULL);
@@ -121,9 +72,9 @@ string WstrToStr(const wstring& wstr) {
 	return result;
 }
 
-string UrlEncode(const string& _in) {
+std::string UrlEncode(const std::string& _in) {
 	// Get URL encode result.
-	string _res = "";
+	std::string _res = "";
 	for (size_t i = 0; i < _in.size(); i++) {
 		if (isalnum((uint8_t)_in[i]) || _in[i] == '-' || _in[i] == '_' || _in[i] == '.' || _in[i] == '~') {
 			_res += _in[i];
@@ -140,10 +91,10 @@ string UrlEncode(const string& _in) {
 	return _res;
 }
 
-vector<wstring> WCH_split(const wstring& _input) {
+std::vector<std::wstring> WCH_split(const std::wstring& _input) {
 	// Split CLI string.
-	vector<wstring> _res;
-	wstring _tmp, _in;
+	std::vector<std::wstring> _res;
+	std::wstring _tmp, _in;
 	bool _flag = false;
 	wchar_t last_ch;
 	for (size_t i = 0; i < _input.size(); i++) {
@@ -190,20 +141,20 @@ vector<wstring> WCH_split(const wstring& _input) {
 	if (_tmp != L"") {
 		_res.push_back(_tmp);
 	}
-	if (_flag || find(_res.begin(), _res.end(), L"") != _res.end()) {
+	if (_flag || std::find(_res.begin(), _res.end(), L"") != _res.end()) {
 		_res.clear();
 		_res.push_back(L"Incorrect");
 	}
 	if (_res.size() != 0) {
 		if (_res.size() != 1) {
-			wstring _debug = format(L"Input command array: \"{}\", ", _res[0]);
+			std::wstring _debug = fmt::format(L"Input command array: \"{}\", ", _res[0]);
 			for (size_t i = 1; i < _res.size() - 1; i++) {
-				_debug.append(format(L"\"{}\", ", _res[i]));
+				_debug.append(fmt::format(L"\"{}\", ", _res[i]));
 			}
-			_debug.append(format(L"\"{}\"", _res[_res.size() - 1]));
+			_debug.append(fmt::format(L"\"{}\"", _res[_res.size() - 1]));
 			SPDLOG_INFO(_debug);
 		} else {
-			SPDLOG_INFO(format(L"Input command array: \"{}\"", _res[0]));
+			SPDLOG_INFO(fmt::format(L"Input command array: \"{}\"", _res[0]));
 		}
 	}
 	return _res;
@@ -225,10 +176,10 @@ WCH_Time WCH_GetTime() {
 	return NowTime;
 }
 
-wstring WCH_GetCompileTime() {
+std::wstring WCH_GetCompileTime() {
 	// Get program compile time.
-	wstring spi = StrToWstr(__DATE__);
-	map<wstring, int32_t> mon;
+	std::wstring spi = StrToWstr(__DATE__);
+	std::map<std::wstring, int32_t> mon;
 	mon[L"Jan"] = 1;
 	mon[L"Feb"] = 2;
 	mon[L"Mar"] = 3;
@@ -241,12 +192,12 @@ wstring WCH_GetCompileTime() {
 	mon[L"Oct"] = 10;
 	mon[L"Nov"] = 11;
 	mon[L"Dec"] = 12;
-	return format(L"{}/{:02}/{:02} {}", spi.substr(7, 4), mon[spi.substr(0, 3)], stoi(spi[4] == L' ' ? spi.substr(5, 1) : spi.substr(4, 2)), StrToWstr(__TIME__));
+	return fmt::format(L"{}/{:02}/{:02} {}", spi.substr(7, 4), mon[spi.substr(0, 3)], stoi(spi[4] == L' ' ? spi.substr(5, 1) : spi.substr(4, 2)), StrToWstr(__TIME__));
 }
 
-wstring WCH_GetExecDir() {
+std::wstring WCH_GetExecDir() {
 	// Get program executable directory.
-	wstring _res = _wpgmptr;
+	std::wstring _res = _wpgmptr;
 	size_t _pos = 0;
 	for (size_t i = 0; i < _res.size(); i++) {
 		if (_res[i] == L'\\') {
@@ -256,10 +207,10 @@ wstring WCH_GetExecDir() {
 	return _res.substr(0, _pos);
 }
 
-wstring WCH_GetUniIdent() {
+std::wstring WCH_GetUniIdent() {
 	// Get unique identification. (Public IP)
-	wstring FilePath = WCH_path_temp + L"\\WCH_IDENT.tmp";
-	wstring _in, _res;
+	std::wstring FilePath = WCH_path_temp + L"\\WCH_IDENT.tmp";
+	std::wstring _in, _res;
 	URLDownloadToFileW(NULL, L"https://api.ipify.org", FilePath.c_str(), 0, NULL);
 	wfin.open(FilePath);
 	wfin >> _in;
@@ -270,10 +221,10 @@ wstring WCH_GetUniIdent() {
 			_res.push_back(_in[i]);
 		}
 	}
-	return L"11111" + to_wstring(stoll(_res) % 99991);
+	return L"11111" + std::to_wstring(stoll(_res) % 99991);
 }
 
-size_t WCH_GetWstrDisplaySize(const wstring& _in) {
+size_t WCH_GetWstrDisplaySize(const std::wstring& _in) {
 	// Get display length of wide string.
 	size_t _size = 0;
 	for (size_t i = 0; i < _in.size(); i++) {
@@ -286,15 +237,15 @@ size_t WCH_GetWstrDisplaySize(const wstring& _in) {
 	return _size;
 }
 
-tuple<uint32_t, uint32_t, uint32_t> WCH_GetSystemVersion() {
+std::tuple<uint32_t, uint32_t, uint32_t> WCH_GetSystemVersion() {
 	// Get system version.
 	uint32_t _version = 0;
 #pragma warning(suppress : 4996 28159)
 	_version = GetVersion();
-	return make_tuple((uint32_t)(LOBYTE(LOWORD(_version))), (uint32_t)(HIBYTE(LOWORD(_version))), (uint32_t)(HIWORD(_version)));
+	return std::make_tuple((uint32_t)(LOBYTE(LOWORD(_version))), (uint32_t)(HIBYTE(LOWORD(_version))), (uint32_t)(HIWORD(_version)));
 }
 
-wstring WCH_GetSystemArchitecture() {
+std::wstring WCH_GetSystemArchitecture() {
 	// Get system architecture.
 	SYSTEM_INFO _sysinfo = {};
 	GetNativeSystemInfo(&_sysinfo);
@@ -316,7 +267,7 @@ wstring WCH_GetSystemArchitecture() {
 	}
 }
 
-wstring WCH_GetFileHash(const wstring& FilePath) {
+std::wstring WCH_GetFileHash(const std::wstring& FilePath) {
 	// Get SHA512 hash of file.
 	FILE* FileHandle = _wfopen(FilePath.c_str(), L"rb");
 	if (FileHandle == nullptr) {
@@ -326,7 +277,7 @@ wstring WCH_GetFileHash(const wstring& FilePath) {
 	unsigned char digest[64] = {};
 	SHA512_CTX hashContext = {};
 	size_t readBytes = 0;
-	wstring res;
+	std::wstring res;
 #pragma warning(push)
 #pragma warning(disable : 4996)
 	SHA512_Init(&hashContext);
@@ -337,19 +288,19 @@ wstring WCH_GetFileHash(const wstring& FilePath) {
 	SHA512_Final(digest, &hashContext);
 #pragma warning(pop)
 	for (size_t i = 0; i < 64; i++) {
-		res += format(L"{:02X}", digest[i]);
+		res += fmt::format(L"{:02X}", digest[i]);
 	}
 	return res;
 }
 
-bool WCH_CheckFileHash(const wstring& FilePath, const wstring& ExpectedHash) {
+bool WCH_CheckFileHash(const std::wstring& FilePath, const std::wstring& ExpectedHash) {
 	// Check whether the SHA512 hash of file is valid.
-	wstring ActualHash = WCH_GetFileHash(FilePath);
+	std::wstring ActualHash = WCH_GetFileHash(FilePath);
 	if (ActualHash != ExpectedHash) {
-		SPDLOG_CRITICAL(format(L"Actual SHA512 hash: \"{}\"; expected SHA512 hash: \"{}\"", ActualHash, ExpectedHash));
+		SPDLOG_CRITICAL(fmt::format(L"Actual SHA512 hash: \"{}\"; expected SHA512 hash: \"{}\"", ActualHash, ExpectedHash));
 		return false;
 	} else {
-		SPDLOG_INFO(format(L"SHA512 hash: \"{}\"", ExpectedHash));
+		SPDLOG_INFO(fmt::format(L"SHA512 hash: \"{}\"", ExpectedHash));
 		return true;
 	}
 }
@@ -358,13 +309,13 @@ void WCH_SetWindowStatus(bool flag) {
 	// Set the window status by Windows API.
 	ShowWindow(WCH_handle_window, (flag ? SW_SHOWNORMAL : SW_HIDE));
 	WCH_cmd_line = flag;
-	SPDLOG_INFO(format(L"\"CONSOLE\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
+	SPDLOG_INFO(fmt::format(L"\"CONSOLE\" argument \"STATUS\" was std::set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
 
 void WCH_SetTrayStatus(bool flag) {
 	// Set the tray status by Windows API.
 	ShowWindow(FindWindowW(L"Shell_trayWnd", NULL), (flag ? SW_SHOWNORMAL : SW_HIDE));
-	SPDLOG_INFO(format(L"\"TRAY\" argument \"STATUS\" was set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
+	SPDLOG_INFO(fmt::format(L"\"TRAY\" argument \"STATUS\" was std::set to {}", (flag ? L"\"SHOW\"" : L"\"HIDE\"")));
 }
 
 void WCH_ShowTaskBarError() {
@@ -378,24 +329,24 @@ void WCH_ShowTaskBarError() {
 void WCH_InputCommandIncorrect() {
 	// Print text for incorrect inputs.
 	SPDLOG_WARN(L"Your input code is incorrect, please check and try again");
-	wcout << StrToWstr(WCH_Language["InputCommandIncorrect"].asString()) << endl;
-	thread T(WCH_ShowTaskBarError);
+	std::wcout << StrToWstr(WCH_Language["InputCommandIncorrect"].asString()) << std::endl;
+	std::thread T(WCH_ShowTaskBarError);
 	T.detach();
 }
 
 void WCH_FileProcessingFailed() {
 	// Print text for failed file processings.
 	SPDLOG_ERROR(L"File processing failed. Please try reinstalling this program");
-	wcout << StrToWstr(WCH_Language["FileProcessingFailed"].asString()) << endl;
-	thread T(WCH_ShowTaskBarError);
+	std::wcout << StrToWstr(WCH_Language["FileProcessingFailed"].asString()) << std::endl;
+	std::thread T(WCH_ShowTaskBarError);
 	T.detach();
 }
 
 void WCH_NetworkError() {
 	// Print text for network errors.
 	SPDLOG_ERROR(L"An network error occurred, please check your network connection and try to update this program");
-	wcout << StrToWstr(WCH_Language["NetworkError"].asString()) << endl;
-	thread T(WCH_ShowTaskBarError);
+	std::wcout << StrToWstr(WCH_Language["NetworkError"].asString()) << std::endl;
+	std::thread T(WCH_ShowTaskBarError);
 	T.detach();
 }
 
@@ -428,10 +379,10 @@ void WCH_PutPicture() {
 void WCH_SaveImg() {
 	// Save screenshot to file.
 	WCH_Time now = WCH_GetTime();
-	wstring SavePathDir = StrToWstr(WCH_Settings["ScreenshotSavePath"].asString());
-	wstring SavePath = format(L"{}{:04}{:02}{:02}{:02}{:02}{:02}{}", SavePathDir, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, WCH_MIME_list.find(StrToWstr(WCH_Settings["ScreenshotSaveMIME"].asString()))->second);
-	if (_waccess(SavePathDir.c_str(), 0) != 0) {
-		CreateDirectoryW(SavePathDir.c_str(), NULL);
+	std::wstring SavePathDir = StrToWstr(WCH_Settings["ScreenshotSavePath"].asString());
+	std::wstring SavePath = fmt::format(L"{}{:04}{:02}{:02}{:02}{:02}{:02}{}", SavePathDir, now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, WCH_MIME_list.find(StrToWstr(WCH_Settings["ScreenshotSaveMIME"].asString()))->second);
+	if (!std::filesystem::is_directory(SavePathDir)) {
+		std::filesystem::create_directory(SavePathDir);
 	}
 	HDC hdcScreen = ::GetDC(NULL);
 	double dDpi = (double)GetDeviceCaps(GetDC(GetDesktopWindow()), DESKTOPHORZRES) / GetSystemMetrics(SM_CXSCREEN);
@@ -448,25 +399,25 @@ void WCH_SaveImg() {
 	DeleteDC(hdcScreen);
 	DeleteDC(hMemDC);
 	DeleteObject(hBitmap);
-	SPDLOG_INFO(format(L"Saving image to \"{}\"", SavePath));
+	SPDLOG_INFO(fmt::format(L"Saving image to \"{}\"", SavePath));
 	if (StrToWstr(WCH_Settings["ScreenshotOpen"].asString()) == L"True") {
 		_wsystem(SavePath.c_str());
 	}
 }
 
-void WCH_CheckAndDeleteFile(const wstring& _filename) {
+void WCH_CheckAndDeleteFile(const std::wstring& _filename) {
 	// Delete a file if it exists.
-	if (_waccess(_filename.c_str(), 0) != -1) {
-		DeleteFileW(_filename.c_str());
+	if (std::filesystem::is_regular_file(_filename)) {
+		std::filesystem::remove(_filename);
 	}
 }
 
-bool WCH_FileIsBlank(const wstring& _filename) {
+bool WCH_FileIsBlank(const std::wstring& _filename) {
 	// Check if a file is blank.
-	if (_waccess(_filename.c_str(), 0) != -1) {
-		wfin.open(_filename, ios::in);
-		wstring _line;
-		while (getline(wfin, _line)) {
+	if (std::filesystem::is_regular_file(_filename)) {
+		wfin.open(_filename, std::ios::in);
+		std::wstring _line;
+		while (std::getline(wfin, _line)) {
 			if (_line.size() != 0) {
 				wfin.close();
 				return false;
@@ -477,27 +428,27 @@ bool WCH_FileIsBlank(const wstring& _filename) {
 	return true;
 }
 
-bool WCH_TaskKill(const wstring& name) {
+bool WCH_TaskKill(const std::wstring& name) {
 	// Kill a task by system command.
-	wstring FilePathNormal = WCH_path_temp + L"\\WCH_SYSTEM_NORMAL.tmp";
-	wstring FilePathError = WCH_path_temp + L"\\WCH_SYSTEM_ERROR.tmp";
-	_wsystem(format(L"TASKKILL /F /IM {} > \"{}\" 2> \"{}\"", name, FilePathNormal, FilePathError).c_str());
+	std::wstring FilePathNormal = WCH_path_temp + L"\\WCH_SYSTEM_NORMAL.tmp";
+	std::wstring FilePathError = WCH_path_temp + L"\\WCH_SYSTEM_ERROR.tmp";
+	_wsystem(fmt::format(L"TASKKILL /F /IM {} > \"{}\" 2> \"{}\"", name, FilePathNormal, FilePathError).c_str());
 	bool _res = (!WCH_FileIsBlank(FilePathNormal) && WCH_FileIsBlank(FilePathError));
 	DeleteFileW(FilePathNormal.c_str());
 	DeleteFileW(FilePathError.c_str());
 	return _res;
 }
 
-WCH_Version WCH_GetVersion(wstring _in) {
+WCH_Version WCH_GetVersion(std::wstring _in) {
 	// Get version from string.
 	WCH_Version _res;
 	size_t _pos = _in.find(L".");
-	if (_pos != wstring::npos) {
+	if (_pos != std::wstring::npos) {
 		_res.X = stoi(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
 	_pos = _in.find(L".");
-	if (_pos != wstring::npos) {
+	if (_pos != std::wstring::npos) {
 		_res.Y = stoi(_in.substr(0, _pos));
 		_in = _in.substr(_pos + 1);
 	}
@@ -514,9 +465,9 @@ size_t WCH_GetNumDigits(size_t _n) {
 	return _cnt;
 }
 
-pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Value) {
+std::pair<bool, std::wstring> WCH_CheckConfigValid(const std::wstring& Key, const std::wstring& Value) {
 	// Check if the settings key and the value of it match.
-	wstring KeyType = L"String";
+	std::wstring KeyType = L"String";
 	bool flag = false;
 	if (Value == L"True" || Value == L"False") {
 		KeyType = L"Boolean";
@@ -557,24 +508,24 @@ pair<bool, wstring> WCH_CheckConfigValid(const wstring& Key, const wstring& Valu
 
 void WCH_PrintProgressBar(int32_t _sur, int32_t _n, bool _flag) {
 	// Print a progress bar.
-	wstring _ETAStr = format(L"{:02}:{:02}:{:02}", (int32_t)(_sur / 3600), (int32_t)((_sur % 3600) / 60), (int32_t)(_sur % 60));
+	std::wstring _ETAStr = fmt::format(L"{:02}:{:02}:{:02}", (int32_t)(_sur / 3600), (int32_t)((_sur % 3600) / 60), (int32_t)(_sur % 60));
 	if (_flag) {
-		wcout << "\r";
+		std::wcout << "\r";
 	}
 	WCH_PrintColor(0x0A);
 	for (int32_t i = 0; i < _n / 2; i++) {
-		wcout << WCH_progress_bar_str;
+		std::wcout << WCH_progress_bar_str;
 	}
 	WCH_PrintColor(0x0C);
 	for (int32_t i = _n / 2; i < 50; i++) {
-		wcout << WCH_progress_bar_str;
+		std::wcout << WCH_progress_bar_str;
 	}
 	WCH_PrintColor(0x02);
-	wcout << L" " << _n << L"%";
+	std::wcout << L" " << _n << L"%";
 	WCH_PrintColor(0x07);
-	wcout << L" ETA ";
+	std::wcout << L" ETA ";
 	WCH_PrintColor(0x09);
-	wcout << _ETAStr;
+	std::wcout << _ETAStr;
 	WCH_PrintColor(0x07);
 }
 
@@ -593,14 +544,14 @@ void WCH_ProgressBar() {
 	WCH_Sleep(1000);
 	WCH_PrintProgressBar(0, 100, true);
 	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_NOPROGRESS);
-	wcout << endl;
+	std::wcout << std::endl;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
 	// Window processing module.
 	switch (message) {
 		case WM_HOTKEY:
-			SPDLOG_DEBUG(format(L"Entering \"WndProc()\": \"WM_HOTKEY\" & \"wParam = {}\" & \"lParam = {}\"", wParam, lParam));
+			SPDLOG_DEBUG(fmt::format(L"Entering \"WndProc()\": \"WM_HOTKEY\" & \"wParam = {}\" & \"lParam = {}\"", wParam, lParam));
 			if (wParam == WCH_HOTKEY_SHOW) {
 				WCH_CheckHotkey();
 			}
@@ -630,13 +581,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 				GetCursorPos(&pt);
 				SetForegroundWindow(hWnd);
 				xx = TrackPopupMenu(WCH_handle_menu, TPM_RETURNCMD, pt.x, pt.y, NULL, hWnd, NULL);
-				SPDLOG_DEBUG(format(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = {}\"", to_wstring(xx)));
+				SPDLOG_DEBUG(fmt::format(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"xx = {}\"", std::to_wstring(xx)));
 				if (xx == WCH_MENU_SHOW) {
 					SPDLOG_DEBUG(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_SHOW\"");
 					WCH_CheckHotkey();
 				} else if (xx == WCH_MENU_EXIT) {
 					SPDLOG_DEBUG(L"Entering \"WndProc()\": \"WM_USER\" & \"WM_RBUTTONDOWN\" & \"WCH_MENU_EXIT\"");
-					raise(SIGBREAK);
+					raise(SIGINT);
 				} else if (xx == 0) {
 					PostMessageW(hWnd, WM_LBUTTONDOWN, NULL, NULL);
 				}
@@ -656,11 +607,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 	return DefWindowProcW(hWnd, message, wParam, lParam);
 }
 
-void WCH_ShowBugMessagebox(int32_t errorcode, const wstring& errormsg) {
+void WCH_ShowBugMessagebox(int32_t errorcode, const std::wstring& errormsg) {
 	// Show messagebox to inform a bug to user.
-	wcout << L"\a";
+	std::wcout << L"\a";
 	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_INDETERMINATE);
-	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["BugMessagebox1"].asString()) + to_wstring(errorcode) + L" " + errormsg + StrToWstr(WCH_Language["BugMessagebox2"].asString())).c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
+	if (MessageBoxW(NULL, (StrToWstr(WCH_Language["BugMessagebox1"].asString()) + std::to_wstring(errorcode) + L" " + errormsg + StrToWstr(WCH_Language["BugMessagebox2"].asString())).c_str(), L"WCH ERROR", MB_ICONERROR | MB_YESNO) == IDYES) {
 		_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/issues/new/choose");
 	}
 	WCH_TBL->SetProgressState(WCH_handle_window, TBPF_NOPROGRESS);
@@ -671,21 +622,15 @@ void WCH_signalHandler() {
 	signal(SIGINT, []([[maybe_unused]] int32_t signum) {
 		WCH_list_command.clear();
 		WCH_list_command.push_back(L"exit");
-		wcout << endl;
-		exit(0);
-	});
-	signal(SIGBREAK, []([[maybe_unused]] int32_t signum) {
-		WCH_list_command.clear();
-		WCH_list_command.push_back(L"exit");
-		wcout << endl;
+		std::wcout << std::endl;
 		exit(0);
 	});
 	signal(SIGABRT, [](int32_t signum) {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
-		wcout << endl;
-		SPDLOG_CRITICAL(format(L"Signal {} detected (Program aborted)", signum));
+		std::wcout << std::endl;
+		SPDLOG_CRITICAL(fmt::format(L"Signal {} detected (Program aborted)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Program aborted");
@@ -695,8 +640,8 @@ void WCH_signalHandler() {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
-		wcout << endl;
-		SPDLOG_CRITICAL(format(L"Signal {} detected (Operation overflow)", signum));
+		std::wcout << std::endl;
+		SPDLOG_CRITICAL(fmt::format(L"Signal {} detected (Operation overflow)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Operation overflow");
@@ -706,8 +651,8 @@ void WCH_signalHandler() {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
-		wcout << endl;
-		SPDLOG_CRITICAL(format(L"Signal {} detected (Illegal instruction)", signum));
+		std::wcout << std::endl;
+		SPDLOG_CRITICAL(fmt::format(L"Signal {} detected (Illegal instruction)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Illegal instruction");
@@ -717,13 +662,11 @@ void WCH_signalHandler() {
 		WCH_cmd_line = false;
 		WCH_program_end = true;
 		WCH_PrintColor(0x07);
-		wcout << endl;
-		SPDLOG_CRITICAL(format(L"Signal {} detected (Access to illegal memory)", signum));
+		std::wcout << std::endl;
+		SPDLOG_CRITICAL(fmt::format(L"Signal {} detected (Access to illegal memory)", signum));
 		Sleep(500);
 		WCH_SetWindowStatus(false);
 		WCH_ShowBugMessagebox(signum, L"Access to illegal memory");
 		exit(signum);
 	});
 }
-
-#endif

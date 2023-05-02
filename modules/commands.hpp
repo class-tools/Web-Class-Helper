@@ -4,55 +4,6 @@ This source code file is under MIT License.
 Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: jsh-jsh ren-yc hjl2011
 */
-#ifndef COMMANDS_H
-#define COMMANDS_H
-#include "file-process.hpp"
-#include "init.hpp"
-#include "functions.hpp"
-#include "apis.hpp"
-#include "basic.hpp"
-
-extern const vector<wstring> WCH_list_weekday;
-extern const map<wstring, set<wstring>> WCH_choice_settings;
-extern const map<wstring, wstring> WCH_MIME_list;
-extern const map<wstring, function<void()>> WCH_support_command;
-extern const set<tuple<wstring, wstring, wstring, bool>> WCH_support_settings;
-extern const wstring WCH_progress_bar_str;
-extern const wstring WCH_path_data;
-extern const wstring WCH_path_temp;
-extern vector<wstring> WCH_list_command;
-extern set<tuple<int32_t, int32_t, wstring>> WCH_list_clock;
-extern set<wstring> WCH_list_task;
-extern set<pair<wstring, wstring>> WCH_list_work;
-extern wstring WCH_version;
-extern wstring WCH_path_exec;
-extern wstring WCH_title_window;
-extern HWND WCH_handle_window;
-extern HWND WCH_handle_tray;
-extern HMENU WCH_handle_menu;
-extern NOTIFYICONDATAW WCH_NID;
-extern ATL::CComPtr<ITaskbarList3> WCH_TBL;
-extern Json::Value WCH_Settings;
-extern Json::Value WCH_Language;
-extern int32_t WCH_num_clock;
-extern int32_t WCH_num_task;
-extern int32_t WCH_num_work;
-extern int32_t WCH_progress_bar_duration;
-extern bool WCH_cmd_line;
-extern bool WCH_is_focus;
-extern bool WCH_is_countdown;
-extern bool WCH_program_end;
-extern bool WCH_pre_start;
-extern ifstream fin;
-extern wifstream wfin;
-extern ofstream fout;
-extern wofstream wfout;
-extern Json::Reader JSON_Reader;
-extern Json::StreamWriterBuilder JSON_SWB;
-extern unique_ptr<Json::StreamWriter> JSON_SW;
-extern shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
-extern shared_ptr<spdlog::logger> LOG_logger;
-
 void WCH_save();
 void WCH_check_task_loop();
 
@@ -62,7 +13,7 @@ void WCH_open_wiki() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wcout << StrToWstr(WCH_Language["JumpWiki"].asString()) << endl;
+	std::wcout << StrToWstr(WCH_Language["JumpWiki"].asString()) << std::endl;
 	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/wiki/");
 }
 
@@ -72,7 +23,7 @@ void WCH_open_releases() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wcout << StrToWstr(WCH_Language["JumpReleases"].asString()) << endl;
+	std::wcout << StrToWstr(WCH_Language["JumpReleases"].asString()) << std::endl;
 	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/");
 }
 
@@ -82,7 +33,7 @@ void WCH_open_code() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wcout << StrToWstr(WCH_Language["JumpCode"].asString()) << endl;
+	std::wcout << StrToWstr(WCH_Language["JumpCode"].asString()) << std::endl;
 	_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/");
 }
 
@@ -92,7 +43,7 @@ void WCH_open_screenshot() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wcout << StrToWstr(WCH_Language["OpenScreenshotSaveFolder"].asString()) << endl;
+	std::wcout << StrToWstr(WCH_Language["OpenScreenshotSaveFolder"].asString()) << std::endl;
 	_wsystem((L"START \"\" \"" + StrToWstr(WCH_Settings["ScreenshotSavePath"].asString()) + L"\"").c_str());
 }
 
@@ -123,8 +74,8 @@ void WCH_clear() {
 		return;
 	}
 	system("CLS");
-	wcout << WCH_title_window << endl;
-	wcout << StrToWstr(WCH_Language["Start"].asString()) << endl;
+	std::wcout << WCH_title_window << std::endl;
+	std::wcout << StrToWstr(WCH_Language["Start"].asString()) << std::endl;
 }
 
 void WCH_exit() {
@@ -134,7 +85,7 @@ void WCH_exit() {
 		return;
 	}
 	WCH_save();
-	SPDLOG_INFO(format(L"Exiting \"Web Class Helper {}\"", WCH_version));
+	SPDLOG_INFO(fmt::format(L"Exiting \"Web Class Helper {}\"", WCH_version));
 	WCH_cmd_line = false;
 	WCH_program_end = true;
 	WCH_CheckAndDeleteFile(WCH_path_temp + L"\\WCH_SYSTEM_NORMAL.tmp");
@@ -176,27 +127,27 @@ void WCH_update() {
 		return;
 	}
 	try {
-		wcout << StrToWstr(WCH_Language["CheckUpdate"].asString()) << endl;
-		wstring FilePath = WCH_path_temp + L"\\WCH_UPD.tmp";
-		wstring url = L"https://class-tools.github.io/update/WCH?";
-		random_device rd;
-		mt19937 mtrand(rd());
-		url.append(to_wstring(mtrand()));
+		std::wcout << StrToWstr(WCH_Language["CheckUpdate"].asString()) << std::endl;
+		std::wstring FilePath = WCH_path_temp + L"\\WCH_UPD.tmp";
+		std::wstring url = L"https://class-tools.github.io/update/WCH?";
+		std::random_device rd;
+		std::mt19937 mtrand(rd());
+		url.append(std::to_wstring(mtrand()));
 		URLDownloadToFileW(0, url.c_str(), FilePath.c_str(), 0, 0);
-		wstring res;
+		std::wstring res;
 		wfin.open(FilePath);
-		getline(wfin, res);
+		std::getline(wfin, res);
 		wfin.close();
 		if (WCH_FileIsBlank(FilePath)) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		if (WCH_GetVersion(WCH_VER_MAIN) < WCH_GetVersion(res)) {
-			wcout << StrToWstr(WCH_Language["FindUpdate"].asString()) << endl;
+			std::wcout << StrToWstr(WCH_Language["FindUpdate"].asString()) << std::endl;
 			_wsystem(L"START https://github.com/class-tools/Web-Class-Helper/releases/latest/");
-			SPDLOG_INFO(format(L"Updating to version \"{}\"", res));
+			SPDLOG_INFO(fmt::format(L"Updating to version \"{}\"", res));
 		} else {
-			wcout << StrToWstr(WCH_Language["NoUpdate"].asString()) << endl;
-			SPDLOG_INFO(format(L"Program version equals or is greater than \"{}\"", res));
+			std::wcout << StrToWstr(WCH_Language["NoUpdate"].asString()) << std::endl;
+			SPDLOG_INFO(fmt::format(L"Program version equals or is greater than \"{}\"", res));
 		}
 		DeleteFileW(FilePath.c_str());
 	} catch (...) {
@@ -216,9 +167,9 @@ void WCH_license() {
 		WCH_FileProcessingFailed();
 		return;
 	}
-	wstring _res;
-	while (getline(wfin, _res)) {
-		wcout << _res << endl;
+	std::wstring _res;
+	while (std::getline(wfin, _res)) {
+		std::wcout << _res << std::endl;
 	}
 	wfin.close();
 }
@@ -229,10 +180,10 @@ void WCH_sysinfo() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	tuple<uint32_t, uint32_t, uint32_t> res = WCH_GetSystemVersion();
-	wcout << format(L"{}: {}.{}.{}", StrToWstr(WCH_Language["OSVersion"].asString()), get<0>(res), get<1>(res), get<2>(res)) << endl;
-	wcout << format(L"{}: {}", StrToWstr(WCH_Language["OSArchitecture"].asString()), WCH_GetSystemArchitecture()) << endl;
-	wcout << format(L"{}: {}", StrToWstr(WCH_Language["ProgramArchitecture"].asString()), WCH_Framework) << endl;
+	std::tuple<uint32_t, uint32_t, uint32_t> res = WCH_GetSystemVersion();
+	std::wcout << fmt::format(L"{}: {}.{}.{}", StrToWstr(WCH_Language["OSVersion"].asString()), get<0>(res), get<1>(res), get<2>(res)) << std::endl;
+	std::wcout << fmt::format(L"{}: {}", StrToWstr(WCH_Language["OSArchitecture"].asString()), WCH_GetSystemArchitecture()) << std::endl;
+	std::wcout << fmt::format(L"{}: {}", StrToWstr(WCH_Language["ProgramArchitecture"].asString()), StrToWstr(WCH_Architecture)) << std::endl;
 }
 
 void WCH_develop_opendata() {
@@ -275,19 +226,19 @@ void WCH_config_set() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	pair<bool, wstring> res = WCH_CheckConfigValid(WCH_list_command[2], WCH_list_command[3]);
+	std::pair<bool, std::wstring> res = WCH_CheckConfigValid(WCH_list_command[2], WCH_list_command[3]);
 	if (!res.first) {
 		WCH_InputCommandIncorrect();
 		return;
 	}
 	WCH_Settings[WstrToStr(WCH_list_command[2])] = WstrToStr(WCH_list_command[3]);
-	SPDLOG_INFO(format(L"The value of settings key \"{}\" has been changed to \"{}\" (Type: \"{}\")", WCH_list_command[2], WCH_list_command[3], res.second));
+	SPDLOG_INFO(fmt::format(L"The value of settings key \"{}\" has been changed to \"{}\" (Type: \"{}\")", WCH_list_command[2], WCH_list_command[3], res.second));
 	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
 		if (get<0>(*it) == WCH_list_command[2] && get<3>(*it)) {
 			MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
 			WCH_list_command.clear();
 			WCH_list_command.push_back(L"restart");
-			wcout << endl;
+			std::wcout << std::endl;
 			WCH_restart();
 		}
 	}
@@ -310,17 +261,17 @@ void WCH_config_list() {
 	}
 	MAXK = max(MAXK, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Key"].asString())));
 	MAXV = max(MAXV, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Value"].asString())));
-	wcout << StrToWstr(WCH_Language["Key"].asString());
+	std::wcout << StrToWstr(WCH_Language["Key"].asString());
 	WCH_PrintChar(MAXK - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Key"].asString())), L' ');
-	wcout << L" | " + StrToWstr(WCH_Language["Value"].asString()) << endl;
+	std::wcout << L" | " + StrToWstr(WCH_Language["Value"].asString()) << std::endl;
 	WCH_PrintChar(MAXK, L'-');
-	wcout << L" | ";
+	std::wcout << L" | ";
 	WCH_PrintChar(MAXV, L'-');
-	wcout << endl;
+	std::wcout << std::endl;
 	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++) {
-		wcout << get<0>(*it);
+		std::wcout << get<0>(*it);
 		WCH_PrintChar(MAXK - get<0>(*it).size(), L' ');
-		wcout << L" | " << StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString()) << endl;
+		std::wcout << L" | " << StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString()) << std::endl;
 	}
 }
 
@@ -330,35 +281,35 @@ void WCH_config_wizard() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
+	std::wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 	Json::Value valcfg;
-	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
+	SPDLOG_INFO(fmt::format(L"Reading file \"{}\"", FilePath));
 	if (!WCH_CheckFileHash(FilePath, StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
-		SPDLOG_CRITICAL(format(L"Data in file \"{}\" corrupted", FilePath));
+		SPDLOG_CRITICAL(fmt::format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
-		raise(SIGBREAK);
+		raise(SIGINT);
 	}
 	fin.open(FilePath);
-	ignore = JSON_Reader.parse(fin, valcfg);
+	std::ignore = JSON_Reader.parse(fin, valcfg);
 	fin.close();
 	int32_t cnt = 0;
 	bool flag = false;
 	for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
-		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][0].asString()), get<0>(*it)) << endl;
-		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][1].asString()), get<1>(*it)) << endl;
-		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][2].asString()), StrToWstr(valcfg["Content"][cnt].asString())) << endl;
-		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][4].asString()), StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString())) << endl;
-		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][3].asString()), get<2>(*it)) << endl;
-		wcout << format(L"{}: {}", StrToWstr(valcfg["Title"][5].asString()), StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString())) << endl;
+		std::wcout << fmt::format(L"{}: {}", StrToWstr(valcfg["Title"][0].asString()), get<0>(*it)) << std::endl;
+		std::wcout << fmt::format(L"{}: {}", StrToWstr(valcfg["Title"][1].asString()), get<1>(*it)) << std::endl;
+		std::wcout << fmt::format(L"{}: {}", StrToWstr(valcfg["Title"][2].asString()), StrToWstr(valcfg["Content"][cnt].asString())) << std::endl;
+		std::wcout << fmt::format(L"{}: {}", StrToWstr(valcfg["Title"][4].asString()), StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString())) << std::endl;
+		std::wcout << fmt::format(L"{}: {}", StrToWstr(valcfg["Title"][3].asString()), get<2>(*it)) << std::endl;
+		std::wcout << fmt::format(L"{}: {}", StrToWstr(valcfg["Title"][5].asString()), StrToWstr(WCH_Settings[WstrToStr(get<0>(*it))].asString())) << std::endl;
 		if (WCH_choice_settings.find(get<0>(*it)) != WCH_choice_settings.end()) {
-			wcout << StrToWstr(valcfg["Title"][6].asString()) << L":" << endl;
+			std::wcout << StrToWstr(valcfg["Title"][6].asString()) << L":" << std::endl;
 			for (auto ite = WCH_choice_settings.find(get<0>(*it))->second.begin(); ite != WCH_choice_settings.find(get<0>(*it))->second.end(); ite++) {
-				wcout << L" - " << *ite << endl;
+				std::wcout << L" - " << *ite << std::endl;
 			}
 		}
-		wcout << StrToWstr(WCH_Language["ConfigWizardPrompt"].asString()) << endl;
-		wstring _in;
-		wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
+		std::wcout << StrToWstr(WCH_Language["ConfigWizardPrompt"].asString()) << std::endl;
+		std::wstring _in;
+		std::wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
 		if (cnt == 0) {
 			size_t _nlc = WCH_NewlineCount(get<2>(*it)) + (WCH_choice_settings.find(get<0>(*it)) != WCH_choice_settings.end() ? WCH_choice_settings.find(get<0>(*it))->second.size() + 1 : 0);
 			CONSOLE_SCREEN_BUFFER_INFO _csbi = {};
@@ -370,20 +321,20 @@ void WCH_config_wizard() {
 			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), _crd);
 		}
 	BEGIN:
-		getline(wcin, _in);
-		if (wcin.eof()) {
+		std::getline(std::wcin, _in);
+		if (std::wcin.eof()) {
 			raise(SIGINT);
 		}
 		if (_in.size() != 0) {
-			pair<bool, wstring> res = WCH_CheckConfigValid(get<0>(*it), _in);
+			std::pair<bool, std::wstring> res = WCH_CheckConfigValid(get<0>(*it), _in);
 			if (!res.first) {
 				WCH_InputCommandIncorrect();
-				wcout << endl;
-				wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
+				std::wcout << std::endl;
+				std::wcout << StrToWstr(WCH_Settings["CommandPrompt"].asString()) << L" ";
 				goto BEGIN;
 			}
 			WCH_Settings[WstrToStr(get<0>(*it))] = WstrToStr(_in);
-			SPDLOG_INFO(format(L"The value of settings key \"{}\" has been changed to \"{}\" (Type: \"{}\")", get<0>(*it), _in, res.second));
+			SPDLOG_INFO(fmt::format(L"The value of settings key \"{}\" has been changed to \"{}\" (Type: \"{}\")", get<0>(*it), _in, res.second));
 			for (auto ite = WCH_support_settings.begin(); ite != WCH_support_settings.end(); ite++) {
 				if (get<0>(*ite) == get<0>(*it) && get<3>(*ite)) {
 					flag = true;
@@ -396,7 +347,7 @@ void WCH_config_wizard() {
 		MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
 		WCH_list_command.clear();
 		WCH_list_command.push_back(L"restart");
-		wcout << endl;
+		std::wcout << std::endl;
 		WCH_restart();
 	}
 }
@@ -418,7 +369,7 @@ void WCH_config_reset() {
 		MessageBoxW(NULL, StrToWstr(WCH_Language["WillRestart"].asString()).c_str(), L"WCH WARN", MB_ICONWARNING | MB_TOPMOST);
 		WCH_list_command.clear();
 		WCH_list_command.push_back(L"restart");
-		wcout << endl;
+		std::wcout << std::endl;
 		WCH_restart();
 	}
 }
@@ -430,7 +381,7 @@ void WCH_config() {
 		return;
 	}
 	transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
-	if (WCH_list_command[1] == L"set") {
+	if (WCH_list_command[1] == L"std::set") {
 		WCH_config_set();
 	} else if (WCH_list_command[1] == L"list") {
 		WCH_config_list();
@@ -452,7 +403,7 @@ void WCH_clock_add() {
 	try {
 		int32_t h = stoi(WCH_list_command[2]);
 		int32_t m = stoi(WCH_list_command[3]);
-		wstring Tname = WCH_list_command[4];
+		std::wstring Tname = WCH_list_command[4];
 		if (WCH_list_command.size() < 5 || h > 24 || m >= 60 || h < 1 || m < 0) {
 			WCH_InputCommandIncorrect();
 			return;
@@ -468,7 +419,7 @@ void WCH_clock_add() {
 				WCH_num_clock++;
 				WCH_list_clock.insert(make_tuple(h, m, Tname));
 			} else {
-				throw runtime_error("");
+				throw std::runtime_error("");
 			}
 		}
 	} catch (...) {
@@ -485,7 +436,7 @@ void WCH_clock_delete() {
 	try {
 		int32_t h = stoi(WCH_list_command[2]);
 		int32_t m = stoi(WCH_list_command[3]);
-		wstring Tname = WCH_list_command[4];
+		std::wstring Tname = WCH_list_command[4];
 		bool flag = false;
 		for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
 			if (get<0>(*it) == h && get<1>(*it) == m && get<2>(*it) == Tname) {
@@ -496,7 +447,7 @@ void WCH_clock_delete() {
 			}
 		}
 		if (!flag) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 	} catch (...) {
 		WCH_InputCommandIncorrect();
@@ -533,23 +484,23 @@ void WCH_clock_list() {
 	MAXH = max(MAXH, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Hour"].asString())));
 	MAXM = max(MAXM, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Minute"].asString())));
 	MAXT = max(MAXT, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Name"].asString())));
-	wcout << StrToWstr(WCH_Language["Hour"].asString());
+	std::wcout << StrToWstr(WCH_Language["Hour"].asString());
 	WCH_PrintChar(MAXH - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Hour"].asString())), L' ');
-	wcout << L" | " + StrToWstr(WCH_Language["Minute"].asString());
+	std::wcout << L" | " + StrToWstr(WCH_Language["Minute"].asString());
 	WCH_PrintChar(MAXM - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Minute"].asString())), L' ');
-	wcout << L" | " + StrToWstr(WCH_Language["Name"].asString()) << endl;
+	std::wcout << L" | " + StrToWstr(WCH_Language["Name"].asString()) << std::endl;
 	WCH_PrintChar(MAXH, L'-');
-	wcout << L" | ";
+	std::wcout << L" | ";
 	WCH_PrintChar(MAXM, L'-');
-	wcout << L" | ";
+	std::wcout << L" | ";
 	WCH_PrintChar(MAXT, L'-');
-	wcout << endl;
+	std::wcout << std::endl;
 	for (auto it = WCH_list_clock.begin(); it != WCH_list_clock.end(); it++) {
-		wcout << get<0>(*it);
+		std::wcout << get<0>(*it);
 		WCH_PrintChar(MAXH - WCH_GetNumDigits(get<0>(*it)), L' ');
-		wcout << L" | " << get<1>(*it);
+		std::wcout << L" | " << get<1>(*it);
 		WCH_PrintChar(MAXM - WCH_GetNumDigits(get<1>(*it)), L' ');
-		wcout << L" | " << get<2>(*it) << endl;
+		std::wcout << L" | " << get<2>(*it) << std::endl;
 	}
 }
 
@@ -579,7 +530,7 @@ void WCH_task_add() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring task = WCH_list_command[2];
+	std::wstring task = WCH_list_command[2];
 	if (WCH_list_task.find(task) != WCH_list_task.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
@@ -594,7 +545,7 @@ void WCH_task_delete() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring task = WCH_list_command[2];
+	std::wstring task = WCH_list_command[2];
 	if (WCH_list_task.find(task) == WCH_list_task.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
@@ -627,11 +578,11 @@ void WCH_task_list() {
 		return;
 	}
 	MAX = max(MAX, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["ProcessName"].asString())));
-	wcout << StrToWstr(WCH_Language["ProcessName"].asString()) << endl;
+	std::wcout << StrToWstr(WCH_Language["ProcessName"].asString()) << std::endl;
 	WCH_PrintChar(MAX, L'-');
-	wcout << endl;
+	std::wcout << std::endl;
 	for (auto it = WCH_list_task.begin(); it != WCH_list_task.end(); it++) {
-		wcout << *it << endl;
+		std::wcout << *it << std::endl;
 	}
 }
 
@@ -660,8 +611,8 @@ void WCH_work_add() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring work = WCH_list_command[2];
-	wstring tag = WCH_list_command.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_list_command[3];
+	std::wstring work = WCH_list_command[2];
+	std::wstring tag = WCH_list_command.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_list_command[3];
 	if (WCH_list_work.find(make_pair(work, tag)) != WCH_list_work.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
@@ -676,8 +627,8 @@ void WCH_work_delete() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring work = WCH_list_command[2];
-	wstring tag = WCH_list_command.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_list_command[3];
+	std::wstring work = WCH_list_command[2];
+	std::wstring tag = WCH_list_command.size() == 3 ? StrToWstr(WCH_Language["Unclassified"].asString()) : WCH_list_command[3];
 	if (WCH_list_work.find(make_pair(work, tag)) == WCH_list_work.end()) {
 		WCH_InputCommandIncorrect();
 	} else {
@@ -713,17 +664,17 @@ void WCH_work_list() {
 	}
 	MAXN = max(MAXN, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Name"].asString())));
 	MAXT = max(MAXT, WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Tag"].asString())));
-	wcout << StrToWstr(WCH_Language["Name"].asString());
+	std::wcout << StrToWstr(WCH_Language["Name"].asString());
 	WCH_PrintChar(MAXN - WCH_GetWstrDisplaySize(StrToWstr(WCH_Language["Name"].asString())), L' ');
-	wcout << L" | " + StrToWstr(WCH_Language["Tag"].asString()) << endl;
+	std::wcout << L" | " + StrToWstr(WCH_Language["Tag"].asString()) << std::endl;
 	WCH_PrintChar(MAXN, L'-');
-	wcout << L" | ";
+	std::wcout << L" | ";
 	WCH_PrintChar(MAXT, L'-');
-	wcout << endl;
+	std::wcout << std::endl;
 	for (auto it = WCH_list_work.begin(); it != WCH_list_work.end(); it++) {
-		wcout << it->first;
+		std::wcout << it->first;
 		WCH_PrintChar(MAXN - WCH_GetWstrDisplaySize(it->first), L' ');
-		wcout << L" | " << it->second << endl;
+		std::wcout << L" | " << it->second << std::endl;
 	}
 }
 
@@ -753,16 +704,16 @@ void WCH_game() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	random_device rd;
-	mt19937 mtrand(rd());
+	std::random_device rd;
+	std::mt19937 mtrand(rd());
 	int32_t inp = 0, ans = mtrand() % 10000 + 1;
 	bool flag = true;
-	wstring z = L"0";
-	vector<wstring> zv;
+	std::wstring z = L"0";
+	std::vector<std::wstring> zv;
 	zv.push_back(L"0");
 	while (true) {
-		wcout << StrToWstr(WCH_Language["InputNumber"].asString());
-		getline(wcin, z);
+		std::wcout << StrToWstr(WCH_Language["InputNumber"].asString());
+		std::getline(std::wcin, z);
 		zv = WCH_split(z);
 		if (zv.size() == 0) {
 			flag = false;
@@ -771,26 +722,26 @@ void WCH_game() {
 		try {
 			inp = stoi(zv[0]);
 		} catch (...) {
-			wcout << StrToWstr(WCH_Language["NumberOutOfRange"].asString()) << endl;
+			std::wcout << StrToWstr(WCH_Language["NumberOutOfRange"].asString()) << std::endl;
 			continue;
 		}
 		if (inp <= 0 || inp > 10000) {
-			wcout << StrToWstr(WCH_Language["NumberOutOfRange"].asString()) << endl;
+			std::wcout << StrToWstr(WCH_Language["NumberOutOfRange"].asString()) << std::endl;
 			continue;
 		}
 		if (inp > ans) {
-			wcout << StrToWstr(WCH_Language["NumberSmaller"].asString()) << endl;
+			std::wcout << StrToWstr(WCH_Language["NumberSmaller"].asString()) << std::endl;
 		} else if (inp < ans) {
-			wcout << StrToWstr(WCH_Language["NumberBigger"].asString()) << endl;
+			std::wcout << StrToWstr(WCH_Language["NumberBigger"].asString()) << std::endl;
 		} else {
 			break;
 		}
 	}
-	wcout << StrToWstr(WCH_Language["NumberAnswer"].asString()) << L" " << ans;
+	std::wcout << StrToWstr(WCH_Language["NumberAnswer"].asString()) << L" " << ans;
 	if (flag) {
-		wcout << StrToWstr(WCH_Language["NumberWin"].asString()) << endl;
+		std::wcout << StrToWstr(WCH_Language["NumberWin"].asString()) << std::endl;
 	} else {
-		wcout << StrToWstr(WCH_Language["NumberLose"].asString()) << endl;
+		std::wcout << StrToWstr(WCH_Language["NumberLose"].asString()) << std::endl;
 	}
 }
 
@@ -806,7 +757,7 @@ void WCH_prtscn() {
 	WCH_SaveImg();
 	WCH_Sleep(500);
 	WCH_SetWindowStatus(true);
-	wcout << StrToWstr(WCH_Language["Prtscn"].asString()) << endl;
+	std::wcout << StrToWstr(WCH_Language["Prtscn"].asString()) << std::endl;
 }
 
 void WCH_countdown() {
@@ -820,14 +771,14 @@ void WCH_countdown() {
 		int32_t m = stoi(WCH_list_command[2]);
 		int32_t s = stoi(WCH_list_command[3]);
 		if ((h == 0 && m == 0 && s == 0) || (h < 0 || m < 0 || s < 0) || (h >= 24 || m >= 60 || s >= 60)) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		WCH_is_countdown = true;
-		wcout << StrToWstr(WCH_Language["CountDown"].asString()) << endl;
+		std::wcout << StrToWstr(WCH_Language["CountDown"].asString()) << std::endl;
 		WCH_progress_bar_duration = h * 3600 + m * 60 + s;
 		WCH_ProgressBar();
 		if (StrToWstr(WCH_Settings["CountDownSoundPrompt"].asString()) == L"True") {
-			wcout << L"\a";
+			std::wcout << L"\a";
 		}
 		WCH_is_countdown = false;
 	} catch (...) {
@@ -848,7 +799,7 @@ void WCH_focus() {
 		WCH_Sleep(500);
 		WCH_SetTrayStatus(false);
 		WCH_Sleep(500);
-		thread T(WCH_check_task_loop);
+		std::thread T(WCH_check_task_loop);
 		T.detach();
 	}
 }
@@ -860,20 +811,20 @@ void WCH_trans() {
 		return;
 	}
 	try {
-		wstring FilePath = WCH_path_temp + L"\\WCH_TRANS.tmp";
+		std::wstring FilePath = WCH_path_temp + L"\\WCH_TRANS.tmp";
 		URLDownloadToFileW(NULL, (L"http://fanyi.youdao.com/openapi.do?keyfrom=xujiangtao&key=1490852988&type=data&doctype=json&version=1.1&only=translate&q=" + StrToWstr(UrlEncode(WstrToStr((WCH_list_command[1]))))).c_str(), FilePath.c_str(), 0, NULL);
 		if (WCH_FileIsBlank(FilePath)) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		Json::Value val;
 		fin.open(FilePath);
 		if (!JSON_Reader.parse(fin, val)) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		if (!val.isMember("translation")) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
-		wcout << StrToWstr(val["translation"][0].asString()) << endl;
+		std::wcout << StrToWstr(val["translation"][0].asString()) << std::endl;
 		fin.close();
 		DeleteFileW(FilePath.c_str());
 	} catch (...) {
@@ -889,15 +840,15 @@ void WCH_ow() {
 		return;
 	}
 	try {
-		wstring FilePath = WCH_path_temp + L"\\WCH_OW.tmp";
+		std::wstring FilePath = WCH_path_temp + L"\\WCH_OW.tmp";
 		URLDownloadToFileW(0, L"https://v1.hitokoto.cn/?encode=text", FilePath.c_str(), 0, 0);
 		if (WCH_FileIsBlank(FilePath)) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		fin.open(FilePath);
-		string res;
-		getline(fin, res);
-		wcout << StrToWstr(res) << endl;
+		std::string res;
+		std::getline(fin, res);
+		std::wcout << StrToWstr(res) << std::endl;
 		fin.close();
 		DeleteFileW(FilePath.c_str());
 	} catch (...) {
@@ -913,24 +864,24 @@ void WCH_fate() {
 		return;
 	}
 	try {
-		wstring FilePath = WCH_path_temp + L"\\WCH_FATE.tmp";
+		std::wstring FilePath = WCH_path_temp + L"\\WCH_FATE.tmp";
 		URLDownloadToFileW(NULL, (L"https://api.fanlisky.cn/api/qr-fortune/get/" + StrToWstr(UrlEncode(WstrToStr((WCH_GetUniIdent()))))).c_str(), FilePath.c_str(), 0, NULL);
 		if (WCH_FileIsBlank(FilePath)) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		Json::Value val;
 		fin.open(FilePath);
 		if (!JSON_Reader.parse(fin, val)) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		if (!val.isMember("data")) {
-			throw runtime_error("");
+			throw std::runtime_error("");
 		}
 		if (val["status"].asString() == "20011") {
-			wcout << StrToWstr(val["data"]["fortuneSummary"].asString()) << endl;
-			wcout << StrToWstr(val["data"]["luckyStar"].asString()) << endl;
-			wcout << StrToWstr(val["data"]["signText"].asString()) << endl;
-			wcout << StrToWstr(val["data"]["unSignText"].asString()) << endl;
+			std::wcout << StrToWstr(val["data"]["fortuneSummary"].asString()) << std::endl;
+			std::wcout << StrToWstr(val["data"]["luckyStar"].asString()) << std::endl;
+			std::wcout << StrToWstr(val["data"]["signText"].asString()) << std::endl;
+			std::wcout << StrToWstr(val["data"]["unSignText"].asString()) << std::endl;
 		}
 		fin.close();
 		DeleteFileW(FilePath.c_str());
@@ -947,7 +898,7 @@ void WCH_time() {
 		return;
 	}
 	WCH_Time q = WCH_GetTime();
-	wcout << format(L"{:04}/{:02}/{:02} {:02}:{:02}:{:02}", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second) << endl;
+	std::wcout << fmt::format(L"{:04}/{:02}/{:02} {:02}:{:02}:{:02}", q.Year, q.Month, q.Day, q.Hour, q.Minute, q.Second) << std::endl;
 }
 
 void WCH_help() {
@@ -956,20 +907,20 @@ void WCH_help() {
 		WCH_InputCommandIncorrect();
 		return;
 	}
-	wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\help.json";
+	std::wstring FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\help.json";
 	Json::Value val;
-	SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
+	SPDLOG_INFO(fmt::format(L"Reading file \"{}\"", FilePath));
 	if (!WCH_CheckFileHash(FilePath, StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_help : SHASUM_zhCN_help)) {
-		SPDLOG_CRITICAL(format(L"Data in file \"{}\" corrupted", FilePath));
+		SPDLOG_CRITICAL(fmt::format(L"Data in file \"{}\" corrupted", FilePath));
 		WCH_FileProcessingFailed();
-		raise(SIGBREAK);
+		raise(SIGINT);
 	}
 	fin.open(FilePath);
-	ignore = JSON_Reader.parse(fin, val);
+	std::ignore = JSON_Reader.parse(fin, val);
 	fin.close();
 	if (WCH_list_command.size() == 1) {
 		for (auto it = val["index"].begin(); it != val["index"].end(); it++) {
-			wcout << StrToWstr((*it).asString()) << endl;
+			std::wcout << StrToWstr((*it).asString()) << std::endl;
 		}
 	} else {
 		if (WCH_support_command.find(WCH_list_command[1]) == WCH_support_command.end()) {
@@ -978,19 +929,19 @@ void WCH_help() {
 		}
 		transform(WCH_list_command[1].begin(), WCH_list_command[1].end(), WCH_list_command[1].begin(), ::towlower);
 		for (auto it = val[WstrToStr(WCH_list_command[1])].begin(); it != val[WstrToStr(WCH_list_command[1])].end(); it++) {
-			wcout << StrToWstr((*it).asString()) << endl;
+			std::wcout << StrToWstr((*it).asString()) << std::endl;
 		}
 		if (WCH_list_command[1] == L"config") {
 			FilePath = WCH_GetExecDir() + L"\\resources\\" + StrToWstr(WCH_Settings["Language"].asString()) + L"\\config.json";
 			Json::Value valcfg;
-			SPDLOG_INFO(format(L"Reading file \"{}\"", FilePath));
+			SPDLOG_INFO(fmt::format(L"Reading file \"{}\"", FilePath));
 			if (!WCH_CheckFileHash(FilePath, StrToWstr(WCH_Settings["Language"].asString()) == L"en-US" ? SHASUM_enUS_config : SHASUM_zhCN_config)) {
-				SPDLOG_CRITICAL(format(L"Data in file \"{}\" corrupted", FilePath));
+				SPDLOG_CRITICAL(fmt::format(L"Data in file \"{}\" corrupted", FilePath));
 				WCH_FileProcessingFailed();
-				raise(SIGBREAK);
+				raise(SIGINT);
 			}
 			fin.open(FilePath);
-			ignore = JSON_Reader.parse(fin, valcfg);
+			std::ignore = JSON_Reader.parse(fin, valcfg);
 			fin.close();
 			size_t MAXKN = 0;
 			size_t MAXVT = 0;
@@ -1013,39 +964,37 @@ void WCH_help() {
 			MAXDE = max(MAXDE, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][2].asString())));
 			MAXDV = max(MAXDV, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][3].asString())));
 			MAXRR = max(MAXRR, WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][4].asString())));
-			wcout << StrToWstr(valcfg["Title"][0].asString());
+			std::wcout << StrToWstr(valcfg["Title"][0].asString());
 			WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][0].asString())), L' ');
-			wcout << L" | " + StrToWstr(valcfg["Title"][1].asString());
+			std::wcout << L" | " + StrToWstr(valcfg["Title"][1].asString());
 			WCH_PrintChar(MAXVT - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][1].asString())), L' ');
-			wcout << L" | " + StrToWstr(valcfg["Title"][2].asString());
+			std::wcout << L" | " + StrToWstr(valcfg["Title"][2].asString());
 			WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][2].asString())), L' ');
-			wcout << L" | " + StrToWstr(valcfg["Title"][3].asString());
+			std::wcout << L" | " + StrToWstr(valcfg["Title"][3].asString());
 			WCH_PrintChar(MAXDV - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Title"][3].asString())), L' ');
-			wcout << L" | " + StrToWstr(valcfg["Title"][4].asString()) << endl;
+			std::wcout << L" | " + StrToWstr(valcfg["Title"][4].asString()) << std::endl;
 			WCH_PrintChar(MAXKN, L'-');
-			wcout << L" | ";
+			std::wcout << L" | ";
 			WCH_PrintChar(MAXVT, L'-');
-			wcout << L" | ";
+			std::wcout << L" | ";
 			WCH_PrintChar(MAXDE, L'-');
-			wcout << L" | ";
+			std::wcout << L" | ";
 			WCH_PrintChar(MAXDV, L'-');
-			wcout << L" | ";
+			std::wcout << L" | ";
 			WCH_PrintChar(MAXRR, L'-');
-			wcout << endl;
+			std::wcout << std::endl;
 			cnt = 0;
 			for (auto it = WCH_support_settings.begin(); it != WCH_support_settings.end(); it++, cnt++) {
-				wcout << get<0>(*it);
+				std::wcout << get<0>(*it);
 				WCH_PrintChar(MAXKN - WCH_GetWstrDisplaySize(get<0>(*it)), L' ');
-				wcout << L" | " << get<1>(*it);
+				std::wcout << L" | " << get<1>(*it);
 				WCH_PrintChar(MAXVT - WCH_GetWstrDisplaySize(get<1>(*it)), L' ');
-				wcout << L" | " << StrToWstr(valcfg["Content"][cnt].asString());
+				std::wcout << L" | " << StrToWstr(valcfg["Content"][cnt].asString());
 				WCH_PrintChar(MAXDE - WCH_GetWstrDisplaySize(StrToWstr(valcfg["Content"][cnt].asString())), L' ');
-				wcout << L" | " << get<2>(*it);
+				std::wcout << L" | " << get<2>(*it);
 				WCH_PrintChar(MAXDV - WCH_GetWstrDisplaySize(get<2>(*it)), L' ');
-				wcout << L" | " << StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString()) << endl;
+				std::wcout << L" | " << StrToWstr(WCH_Language[get<3>(*it) ? "Yes" : "No"].asString()) << std::endl;
 			}
 		}
 	}
 }
-
-#endif
