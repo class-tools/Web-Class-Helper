@@ -1,3 +1,5 @@
+# Warning: This project was archived, all the branches of this repository will never be worked on. If you want to continue developing, the branch `gui` (broken) can be referenced.
+
 <p align="center">
 <img src="https://ren-yc.github.io/assets/ClassTools/WCH.png" width="200">
 </p>

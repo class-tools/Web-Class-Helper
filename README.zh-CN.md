@@ -1,3 +1,5 @@
+# 警告: 此项目已被归档, 此存储库的所有分支将永远不会被处理. 如果你希望继续开发, 分支 `gui` (损坏) 可以被参考.
+
 <p align="center">
 <img src="https://ren-yc.github.io/assets/ClassTools/WCH.png" width="200">
 </p>
